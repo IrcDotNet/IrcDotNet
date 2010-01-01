@@ -1,0 +1,10 @@
+IRC.NET is copyright © Alex Regueiro 2009.
+
+The following persons and groups are acknowledged for their contributions to
+certain releases.
+
+Version 0.1.0
+=============
+
+Alex Regueiro <alexreg@gmail.com>
+	Project Lead, Programming
