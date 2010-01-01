@@ -64,6 +64,28 @@ namespace IrcDotNet
         }
     }
 
+    public class IrcServerInfoEventArgs : EventArgs
+    {
+        public IrcServerInfoEventArgs(string address, int port)
+            : base()
+        {
+            this.Address = address;
+            this.Port = port;
+        }
+
+        public string Address
+        {
+            get;
+            private set;
+        }
+
+        public int Port
+        {
+            get;
+            private set;
+        }
+    }
+
     public class IrcErrorEventArgs : EventArgs
     {
         public IrcErrorEventArgs(Exception error)

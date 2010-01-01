@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace IrcDotNet.Tests
 {
-    // TODO: Test Kick and Ban methods of IrcChannelUser.
+    // TODO: Test Whois, Ban commands on IrcChannelUser.
     [TestClass()]
     public class IrcClientTestSet : InterdependentTestSet<IrcClientTestState>
     {

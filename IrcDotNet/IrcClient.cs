@@ -223,6 +223,8 @@ namespace IrcDotNet
         public event EventHandler<IrcErrorEventArgs> Error;
         public event EventHandler<EventArgs> ProtocolError;
         public event EventHandler<EventArgs> Registered;
+        public event EventHandler<IrcServerInfoEventArgs> ServerBounce;
+        public event EventHandler<EventArgs> ServerSupportedFeaturesReceived;
         public event EventHandler<IrcPingOrPongReceivedEventArgs> PingReceived;
         public event EventHandler<IrcPingOrPongReceivedEventArgs> PongReceived;
         public event EventHandler<EventArgs> MotdReceived;
@@ -472,22 +474,23 @@ namespace IrcDotNet
         [MessageProcessor("mode")]
         protected void ProcessMessageMode(IrcMessage message)
         {
-            // Check if mode applies to user or channel.
+            // Check if mode applies to channel or user.
             Debug.Assert(message.Parameters[0] != null);
             if (IsChannel(message.Parameters[0]))
             {
                 var channel = this.channels.Single(c => c.Name == message.Parameters[0]);
                 Debug.Assert(message.Parameters[1] != null);
-                channel.HandleModeChanged(message.Parameters[1]);
+                channel.HandleModesChanged(message.Parameters[1]);
             }
             else if (message.Parameters[0] == this.localUser.NickName)
             {
                 Debug.Assert(message.Parameters[1] != null);
-                this.localUser.HandleModeChanged(message.Parameters[1]);
+                this.localUser.HandleModesChanged(message.Parameters[1]);
             }
             else
             {
-                throw new InvalidOperationException(errorMessageCannotSetUserMode);
+                throw new InvalidOperationException(string.Format(errorMessageCannotSetUserMode,
+                    message.Parameters[0]));
             }
         }
 
@@ -585,15 +588,31 @@ namespace IrcDotNet
         }
 
         [MessageProcessor("005")]
-        protected void ProcessMessageReplyISupport(IrcMessage message)
+        protected void ProcessMessageReplyBounceOrISupport(IrcMessage message)
         {
             Debug.Assert(message.Parameters[1] != null);
-            for (int i = 1; i < message.Parameters.Count - 1; i++)
+            // Check if message is RPL_BOUNCE or RPL_ISUPPORT.
+            if (message.Parameters[1].StartsWith("Try server"))
             {
-                if (message.Parameters[i + 1] == null)
-                    break;
-                var tokenParts = message.Parameters[i].Split('=');
-                this.serverSupportedFeatures.Add(tokenParts[0], tokenParts.Length == 1 ? null : tokenParts[1]);
+                // RPL_BOUNCE
+                // Current server is redirecting client to new server.
+                var textParts = message.Parameters[0].Split(' ', ',');
+                var serverAddress = textParts[2];
+                var serverPort = int.Parse(textParts[6]);
+                OnServerBounce(new IrcServerInfoEventArgs(serverAddress, serverPort));
+            }
+            else
+            {
+                // RPL_ISUPPRT
+                // Add key/value pairs to dictionary of supported server features.
+                for (int i = 1; i < message.Parameters.Count - 1; i++)
+                {
+                    if (message.Parameters[i + 1] == null)
+                        break;
+                    var tokenParts = message.Parameters[i].Split('=');
+                    this.serverSupportedFeatures.Add(tokenParts[0], tokenParts.Length == 1 ? null : tokenParts[1]);
+                }
+                OnServerSupportedFeaturesReceived(new EventArgs());
             }
         }
 
@@ -768,7 +787,8 @@ namespace IrcDotNet
 
         protected void SendMessageChannelMode(string channel, string modes, IEnumerable<string> modeParameters = null)
         {
-            WriteMessage(null, "mode", channel, modes, modeParameters == null ? null : string.Join(",", modeParameters));
+            WriteMessage(null, "mode", channel, modes, modeParameters == null ?
+                null : string.Join(",", modeParameters));
         }
 
         protected void SendMessageTopic(string channel, string topic = null)
@@ -1153,72 +1173,6 @@ namespace IrcDotNet
             }
         }
 
-        protected virtual void OnConnected(EventArgs e)
-        {
-            if (this.Connected != null)
-                this.Connected(this, e);
-        }
-
-        protected virtual void OnConnectFailed(IrcErrorEventArgs e)
-        {
-            if (this.ConnectFailed != null)
-                this.ConnectFailed(this, e);
-        }
-
-        protected virtual void OnDisconnected(EventArgs e)
-        {
-            if (this.Disconnected != null)
-                this.Disconnected(this, e);
-        }
-
-        protected virtual void OnError(IrcErrorEventArgs e)
-        {
-            if (this.Error != null)
-                this.Error(this, e);
-        }
-
-        protected virtual void OnProtocolError(IrcErrorEventArgs e)
-        {
-            if (this.ProtocolError != null)
-                this.ProtocolError(this, e);
-        }
-
-        protected virtual void OnRegistered(EventArgs e)
-        {
-            if (this.Registered != null)
-                this.Registered(this, e);
-        }
-
-        protected virtual void OnPingReceived(IrcPingOrPongReceivedEventArgs e)
-        {
-            if (this.PingReceived != null)
-                this.PongReceived(this, e);
-        }
-
-        protected virtual void OnPongReceived(IrcPingOrPongReceivedEventArgs e)
-        {
-            if (this.PongReceived != null)
-                this.PongReceived(this, e);
-        }
-
-        protected virtual void OnMotdReceived(EventArgs e)
-        {
-            if (this.MotdReceived != null)
-                this.MotdReceived(this, e);
-        }
-
-        protected virtual void OnChannelJoined(IrcChannelEventArgs e)
-        {
-            if (this.ChannelJoined != null)
-                this.ChannelJoined(this, e);
-        }
-
-        protected virtual void OnChannelParted(IrcChannelEventArgs e)
-        {
-            if (this.ChannelParted != null)
-                this.ChannelParted(this, e);
-        }
-
         private void ConnectCallback(IAsyncResult ar)
         {
             try
@@ -1385,6 +1339,84 @@ namespace IrcDotNet
         {
             if (this.isDisposed)
                 throw new ObjectDisposedException(GetType().FullName);
+        }
+
+        protected virtual void OnConnected(EventArgs e)
+        {
+            if (this.Connected != null)
+                this.Connected(this, e);
+        }
+
+        protected virtual void OnConnectFailed(IrcErrorEventArgs e)
+        {
+            if (this.ConnectFailed != null)
+                this.ConnectFailed(this, e);
+        }
+
+        protected virtual void OnDisconnected(EventArgs e)
+        {
+            if (this.Disconnected != null)
+                this.Disconnected(this, e);
+        }
+
+        protected virtual void OnError(IrcErrorEventArgs e)
+        {
+            if (this.Error != null)
+                this.Error(this, e);
+        }
+
+        protected virtual void OnProtocolError(IrcErrorEventArgs e)
+        {
+            if (this.ProtocolError != null)
+                this.ProtocolError(this, e);
+        }
+
+        protected virtual void OnRegistered(EventArgs e)
+        {
+            if (this.Registered != null)
+                this.Registered(this, e);
+        }
+
+        protected virtual void OnServerBounce(IrcServerInfoEventArgs e)
+        {
+            if (this.ServerBounce != null)
+                this.ServerBounce(this, e);
+        }
+
+        protected virtual void OnServerSupportedFeaturesReceived(EventArgs e)
+        {
+            if (this.ServerSupportedFeaturesReceived != null)
+                this.ServerSupportedFeaturesReceived(this, e);
+        }
+        
+        protected virtual void OnPingReceived(IrcPingOrPongReceivedEventArgs e)
+        {
+            if (this.PingReceived != null)
+                this.PongReceived(this, e);
+        }
+
+        protected virtual void OnPongReceived(IrcPingOrPongReceivedEventArgs e)
+        {
+            if (this.PongReceived != null)
+                this.PongReceived(this, e);
+        }
+
+        protected virtual void OnMotdReceived(EventArgs e)
+        {
+            if (this.MotdReceived != null)
+                this.MotdReceived(this, e);
+        }
+
+        protected virtual void OnChannelJoined(IrcChannelEventArgs e)
+        {
+            if (this.ChannelJoined != null)
+                this.ChannelJoined(this, e);
+        }
+
+        protected virtual void OnChannelParted(IrcChannelEventArgs e)
+        {
+            if (this.ChannelParted != null)
+                this.ChannelParted(this, e);
         }
 
         protected delegate void MessageProcessor(IrcMessage message);

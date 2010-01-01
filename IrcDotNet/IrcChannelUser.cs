@@ -8,7 +8,6 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    // TODO: Raise event when modes are changed.
     public class IrcChannelUser : INotifyPropertyChanged
     {
         // Internal and exposable collections of channel modes currently active on user.
@@ -48,6 +47,7 @@ namespace IrcDotNet
             get { return this.user; }
         }
 
+        public event EventHandler<EventArgs> ModesChanged;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void Kick(string comment = null)
@@ -73,6 +73,18 @@ namespace IrcDotNet
         public void DeVoice()
         {
             this.channel.SetModes("-v", this.user.NickName);
+        }
+
+        internal void HandleModeChanged(string newModes)
+        {
+            this.modes.UpdateModes(newModes);
+            OnModesChanged(new EventArgs());
+        }
+
+        protected virtual void OnModesChanged(EventArgs e)
+        {
+            if (this.ModesChanged != null)
+                this.ModesChanged(this, e);
         }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)

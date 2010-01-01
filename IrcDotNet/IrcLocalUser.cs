@@ -8,7 +8,6 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    // TODO: Raise event when modes are changed.
     public class IrcLocalUser : IrcUser
     {
         // Internal and exposable collections of current modes of user.
@@ -56,7 +55,7 @@ namespace IrcDotNet
             this.Client.SetLocalUserModes(this, modes);
         }
 
-        internal void HandleModeChanged(string newModes)
+        internal void HandleModesChanged(string newModes)
         {
             this.modes.UpdateModes(newModes);
             OnModesChanged(new EventArgs());

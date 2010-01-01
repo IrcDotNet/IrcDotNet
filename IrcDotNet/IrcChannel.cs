@@ -130,9 +130,10 @@ namespace IrcDotNet
             OnUsersListReceived(new EventArgs());
         }
 
-        internal void HandleModeChanged(string newModes)
+        internal void HandleModesChanged(string newModes)
         {
             this.modes.UpdateModes(newModes);
+            // TODO: Handle mode changes of channel users.
             OnModesChanged(new EventArgs());
         }
 
