@@ -75,9 +75,12 @@ namespace IrcDotNet
             this.channel.SetModes("-v", this.user.NickName);
         }
 
-        internal void HandleModeChanged(string newModes)
+        internal void HandleModeChanged(bool add, char mode)
         {
-            this.modes.UpdateModes(newModes);
+            if (add)
+                this.modes.Add(mode);
+            else
+                this.modes.Remove(mode);
             OnModesChanged(new EventArgs());
         }
 

@@ -9,6 +9,8 @@ namespace IrcDotNet
 {
     public class IrcChannel : INotifyPropertyChanged
     {
+        private readonly char[] channelUserModes = new char[] { 'o', 'v' };
+
         private string name;
         private IrcChannelType type;
         private HashSet<char> modes;
@@ -130,10 +132,10 @@ namespace IrcDotNet
             OnUsersListReceived(new EventArgs());
         }
 
-        internal void HandleModesChanged(string newModes)
+        internal void HandleModesChanged(string newModes, IEnumerable<string> newModeParameters)
         {
-            this.modes.UpdateModes(newModes);
-            // TODO: Handle mode changes of channel users.
+            this.modes.UpdateModes(newModes, newModeParameters, channelUserModes, (add, mode, modeParameter) =>
+                this.users.Single(cu => cu.User.NickName == modeParameter).HandleModeChanged(add, mode));
             OnModesChanged(new EventArgs());
         }
 
@@ -162,7 +164,7 @@ namespace IrcDotNet
         internal bool HandleUserKicked(IrcChannelUser channelUser)
         {
             OnUserKicked(new IrcChannelUserEventArgs(channelUser));
-            return  this.users.Remove(channelUser);
+            return this.users.Remove(channelUser);
         }
 
         public readonly Guid foo = System.Guid.NewGuid();

@@ -29,6 +29,7 @@ namespace IrcDotNet
         private const string errorMessageInvalidRealName = "The specified real name is invalid.";
         private const string errorMessageInvalidUserMode = "The specified user mode is invalid.";
         private const string errorMessageCannotSetUserMode = "Cannot set user mode for '{0}'.";
+        private const string errorMessageTooManyModeParameters = "No more than 3 mode parameters may be sent per message.";
         private const string errorMessageInvalidChannelType = "The channel type ('{0}') sent by the server is invalid.";
 
         private const int defaultPort = 6667;
@@ -479,8 +480,11 @@ namespace IrcDotNet
             if (IsChannel(message.Parameters[0]))
             {
                 var channel = this.channels.Single(c => c.Name == message.Parameters[0]);
+
+                // Get specified channel modes and list of mode parameters
                 Debug.Assert(message.Parameters[1] != null);
-                channel.HandleModesChanged(message.Parameters[1]);
+                var modesAndParameters = GetModeAndParameters(message.Parameters.Skip(1));
+                channel.HandleModesChanged(modesAndParameters.Item1, modesAndParameters.Item2);
             }
             else if (message.Parameters[0] == this.localUser.NickName)
             {
@@ -787,8 +791,15 @@ namespace IrcDotNet
 
         protected void SendMessageChannelMode(string channel, string modes, IEnumerable<string> modeParameters = null)
         {
-            WriteMessage(null, "mode", channel, modes, modeParameters == null ?
-                null : string.Join(",", modeParameters));
+            string modeParametersList = null;
+            if (modeParameters != null)
+            {
+                var modeParametersArray = modeParameters.ToArray();
+                if (modeParametersArray.Length > 3)
+                    throw new ArgumentException(errorMessageTooManyModeParameters);
+                modeParametersList = string.Join(",", modeParametersArray);
+            }
+            WriteMessage(null, "mode", channel, modes, modeParametersList);
         }
 
         protected void SendMessageTopic(string channel, string topic = null)
@@ -1237,6 +1248,24 @@ namespace IrcDotNet
             ResetState();
         }
 
+        protected Tuple<string, IEnumerable<string>> GetModeAndParameters(IEnumerable<string> messageParameters)
+        {
+            var modes = new StringBuilder();
+            var modeParameters = new List<string>();
+            foreach (var p in messageParameters)
+            {
+                if (p == null)
+                    break;
+                else if (p.Length == 0)
+                    continue;
+                else if (p[0] == '+' || p[0] == '-')
+                    modes.Append(p);
+                else
+                    modeParameters.Add(p);
+            }
+            return Tuple.Create(modes.ToString(), (IEnumerable<string>)modeParameters.AsReadOnly());
+        }
+
         protected IEnumerable<IrcChannel> GetChannelsFromList(string namesList)
         {
             return namesList.Split(',').Select(n => this.channels.Single(c => c.Name == n));
@@ -1388,7 +1417,7 @@ namespace IrcDotNet
             if (this.ServerSupportedFeaturesReceived != null)
                 this.ServerSupportedFeaturesReceived(this, e);
         }
-        
+
         protected virtual void OnPingReceived(IrcPingOrPongReceivedEventArgs e)
         {
             if (this.PingReceived != null)
