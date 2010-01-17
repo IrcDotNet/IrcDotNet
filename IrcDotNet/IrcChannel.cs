@@ -7,7 +7,8 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    public class IrcChannel : INotifyPropertyChanged
+    // TODO: Implement (un)banning.
+    public class IrcChannel : INotifyPropertyChanged, IIrcMessageTarget, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
         private readonly char[] channelUserModes = new char[] { 'o', 'v' };
 
@@ -83,10 +84,15 @@ namespace IrcDotNet
         public event EventHandler<IrcChannelUserEventArgs> UserJoined;
         public event EventHandler<IrcChannelUserEventArgs> UserParted;
         public event EventHandler<IrcChannelUserEventArgs> UserKicked;
+        public event EventHandler<IrcMessageEventArgs> MessageReceived;
+        public event EventHandler<IrcMessageEventArgs> NoticeReceived;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public IrcChannelUser GetChannelUser(IrcUser user)
         {
+            if (user == null)
+                throw new ArgumentNullException("user");
+
             return this.users.SingleOrDefault(cu => cu.User == user);
         }
 
@@ -102,23 +108,37 @@ namespace IrcDotNet
 
         public void SetModes(IEnumerable<char> newModes)
         {
+            if (newModes == null)
+                throw new ArgumentNullException("newModes");
+
             SetModes(newModes.Except(this.modes), this.modes.Except(newModes));
         }
 
         public void SetModes(IEnumerable<char> setModes, IEnumerable<char> unsetModes,
             IEnumerable<string> modeParameters = null)
         {
+            if (setModes == null)
+                throw new ArgumentNullException("setModes");
+            if (unsetModes == null)
+                throw new ArgumentNullException("unsetModes");
+
             SetModes("+" + string.Join(string.Empty, setModes) + "-" + string.Join(string.Empty, unsetModes),
                 modeParameters);
         }
 
         public void SetModes(string modes, params string[] modeParameters)
         {
+            if (modes == null)
+                throw new ArgumentNullException("modes");
+
             SetModes(modes, (IEnumerable<string>)modeParameters);
         }
 
         public void SetModes(string modes, IEnumerable<string> modeParameters = null)
         {
+            if (modes == null)
+                throw new ArgumentNullException("modes");
+
             this.client.SetChannelModes(this, modes, modeParameters);
         }
 
@@ -145,29 +165,37 @@ namespace IrcDotNet
             OnUserJoined(new IrcChannelUserEventArgs(channelUser));
         }
 
-        internal bool HandleUserParted(IrcUser user)
+        internal void HandleUserParted(IrcUser user)
         {
-            return HandleUserParted(this.users.Single(u => u.User == user));
+            HandleUserParted(this.users.Single(u => u.User == user));
         }
 
-        internal bool HandleUserParted(IrcChannelUser channelUser)
+        internal void HandleUserParted(IrcChannelUser channelUser)
         {
             OnUserParted(new IrcChannelUserEventArgs(channelUser));
-            return this.users.Remove(channelUser); ;
+            this.users.Remove(channelUser); ;
         }
 
-        internal bool HandleUserKicked(IrcUser user)
+        internal void HandleUserKicked(IrcUser user)
         {
-            return HandleUserKicked(this.users.Single(u => u.User == user));
+            HandleUserKicked(this.users.Single(u => u.User == user));
         }
 
-        internal bool HandleUserKicked(IrcChannelUser channelUser)
+        internal void HandleUserKicked(IrcChannelUser channelUser)
         {
             OnUserKicked(new IrcChannelUserEventArgs(channelUser));
-            return this.users.Remove(channelUser);
+            this.users.Remove(channelUser);
         }
 
-        public readonly Guid foo = System.Guid.NewGuid();
+        internal void HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
+        {
+            OnMessageReceived(new IrcMessageEventArgs(source, targets, text));
+        }
+
+        internal void HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
+        {
+            OnNoticeReceived(new IrcMessageEventArgs(source, targets, text));
+        }
 
         protected virtual void OnUsersListReceived(EventArgs e)
         {
@@ -205,11 +233,53 @@ namespace IrcDotNet
                 this.UserKicked(this, e);
         }
 
+        protected virtual void OnMessageReceived(IrcMessageEventArgs e)
+        {
+            if (this.MessageReceived != null)
+                this.MessageReceived(this, e);
+        }
+
+        protected virtual void OnNoticeReceived(IrcMessageEventArgs e)
+        {
+            if (this.NoticeReceived != null)
+                this.NoticeReceived(this, e);
+        }
+
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             if (this.PropertyChanged != null)
                 this.PropertyChanged(this, e);
         }
+
+        public override string ToString()
+        {
+            return this.name;
+        }
+
+        #region IIrcMessageTarget Members
+
+        string IIrcMessageTarget.Name
+        {
+            get { return this.Name; }
+        }
+
+        #endregion
+
+        #region IIrcMessageReceiveHandler Members
+
+        void IIrcMessageReceiveHandler.HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets,
+            string text)
+        {
+            HandleMessageReceived(source, targets, text);
+        }
+
+        void IIrcMessageReceiveHandler.HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets,
+            string text)
+        {
+            HandleNoticeReceived(source, targets, text);
+        }
+
+        #endregion
     }
 
     public enum IrcChannelType

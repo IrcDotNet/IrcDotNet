@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Reflection;
 
@@ -17,12 +18,13 @@ namespace IrcDotNet
     // TODO: Handle and raise events for numeric error responses.
     public class IrcClient : IDisposable
     {
-        // Error messages to be used in thrown exceptions.
+        // Error messages used for throwing exceptions.
         private const string errorMessageTooManyParams = "No more than 15 command parameters may be specified.";
         private const string errorMessageLineTooLong = "The length of the line must not exceed 510 characters.";
         private const string errorMessageInvalidMiddleParam = "The non-trailing parameter '{0}' is invalid.";
         private const string errorMessageInvalidTrailingParam = "The trailing parameter '{0}' is invalid.";
-        private const string errorMessageBadMessageCommand = "The command '{0}' was not recognised.";
+        private const string errorMessageInvalidSource = "The source '{0}' of the message was not recognised as either a server or user.";
+        private const string errorMessageInvalidMessageCommand = "The command '{0}' was not recognised.";
         private const string errorMessageInvalidPassword = "The specified password is invalid.";
         private const string errorMessageInvalidNickName = "The specified nick name is invalid.";
         private const string errorMessageInvalidUserName = "The specified user name is invalid.";
@@ -30,11 +32,43 @@ namespace IrcDotNet
         private const string errorMessageInvalidUserMode = "The specified user mode is invalid.";
         private const string errorMessageCannotSetUserMode = "Cannot set user mode for '{0}'.";
         private const string errorMessageTooManyModeParameters = "No more than 3 mode parameters may be sent per message.";
-        private const string errorMessageInvalidChannelType = "The channel type ('{0}') sent by the server is invalid.";
+        private const string errorMessageInvalidChannelType = "The channel type '{0}' sent by the server is invalid.";
+        private const string errorMessageSourceNotUser = "The message source '{0}' is not a user.";
+        private const string errorMessageInvalidTargetName = "A target name may not contain any ',' character.";
+        private const string errorMessageTextCannotContainNewLine = "Text sent in a message or notice must not contain a new line";
 
         private const int defaultPort = 6667;
         private const int maxParamsCount = 15;
 
+        // Regular expressions used for extracting information from protocol messages.
+        private static readonly string regexNickName;
+        private static readonly string regexUserName;
+        private static readonly string regexHostName;
+        private static readonly string regexChannelName;
+        private static readonly string regexTargetMask;
+        private static readonly string regexServerName;
+        private static readonly string regexNickNameId;
+        private static readonly string regexUserNameId;
+        private static readonly string regexMessagePrefix;
+        private static readonly string regexMessageTarget;
+
+        static IrcClient()
+        {
+            regexNickName = @"(?<nick>[^!@]+)";
+            regexUserName = @"(?<user>[^!@]+)";
+            regexHostName = @"(?<host>[^%@]+?\..*)";
+            regexChannelName = @"(?<channel>[#+!&].+)";
+            regexTargetMask = @"(?<targetMask>[$#].+)";
+            regexServerName = @"(?<server>[^%@]+?\..*)";
+            regexNickNameId = string.Format(@"{0}(?:(?:!{1})?@{2})?", regexNickName, regexUserName, regexHostName);
+            regexUserNameId = string.Format(@"{0}(?:(?:%{1})?@{2}|%{1})", regexUserName, regexHostName, regexServerName);
+            regexMessagePrefix = string.Format(@"^(?:{0}|{1})$", regexServerName, regexNickNameId);
+            regexMessageTarget = string.Format(@"^(?:{0}|{1}|{2}|{3})$", regexChannelName, regexUserNameId,
+                regexTargetMask, regexNickNameId);
+        }
+
+        // Internal collection of all known servers.
+        private Collection<IrcServer> servers;
         // True if connection has been registered with server;
         private bool isRegistered;
         // Stores information about local user.
@@ -47,7 +81,7 @@ namespace IrcDotNet
         // Internal and exposable collections of all currently joined channels.
         private ObservableCollection<IrcChannel> channels;
         private IrcChannelCollection channelsReadOnly;
-        // Internal and exposable collections of all currently known users.
+        // Internal and exposable collections of all known users.
         private ObservableCollection<IrcUser> users;
         private IrcUserCollection usersReadOnly;
 
@@ -223,6 +257,7 @@ namespace IrcDotNet
         public event EventHandler<EventArgs> Disconnected;
         public event EventHandler<IrcErrorEventArgs> Error;
         public event EventHandler<EventArgs> ProtocolError;
+        public event EventHandler<IrcErrorMessageEventArgs> ErrorMessageReceived;
         public event EventHandler<EventArgs> Registered;
         public event EventHandler<IrcServerInfoEventArgs> ServerBounce;
         public event EventHandler<EventArgs> ServerSupportedFeaturesReceived;
@@ -231,13 +266,75 @@ namespace IrcDotNet
         public event EventHandler<EventArgs> MotdReceived;
         public event EventHandler<IrcChannelEventArgs> ChannelJoined;
         public event EventHandler<IrcChannelEventArgs> ChannelParted;
+        public event EventHandler<EventArgs> WhoIsReplyReceived;
+        public event EventHandler<EventArgs> WhoWasReplyReceived;
 
-        public void Ping(string target = null)
+        public void WhoIs(params string[] nickNameMasks)
         {
-            SendMessagePing(this.localUser.NickName, target);
+            WhoIs(nickNameMasks);
+        }
+
+        public void WhoIs(IEnumerable<string> nickNameMasks)
+        {
+            SendMessageWhoIs(nickNameMasks);
+        }
+
+        public void WhoWas(params string[] nickNames)
+        {
+            WhoWas(nickNames);
+        }
+
+        public void WhoWas(IEnumerable<string> nickNames, int entriesCount = -1)
+        {
+            SendMessageWhoWas(nickNames, entriesCount);
+        }
+
+        public void GetMotd(string server = null)
+        {
+            SendMessageMotd(server);
+        }
+
+        public void GetNetworkStatistics(string serverMask = null, string targetServer = null)
+        {
+            SendMessageLusers(serverMask, targetServer);
+        }
+
+        public void GetServerVersion(string server = null)
+        {
+            SendMessageVersion(server);
+        }
+
+        public void GetServerStats(string query = null, string server = null)
+        {
+            SendMessageStats(query, server);
+        }
+
+        public void GetServerLinks(string serverMask = null, string targetServer = null)
+        {
+            SendMessageStats(targetServer, serverMask);
+        }
+
+        public void GetServerTime(string server = null)
+        {
+            SendMessageTime(server);
+        }
+
+        public void Ping(string server = null)
+        {
+            SendMessagePing(this.localUser.NickName, server);
         }
 
         #region Proxy Methods
+
+        internal void SetAway(string text)
+        {
+            SendMessageAway(text);
+        }
+
+        internal void UnsetAway()
+        {
+            SendMessageAway();
+        }
 
         internal void GetChannelModes(IrcChannel channel, string modes = null)
         {
@@ -287,6 +384,30 @@ namespace IrcDotNet
         internal void Kick(IEnumerable<IrcChannelUser> channelUsers, string comment = null)
         {
             SendMessageKick(channelUsers.Select(cu => Tuple.Create(cu.Channel.Name, cu.User.NickName)), comment);
+        }
+
+        internal void SendPrivateMessage(IEnumerable<string> targetsNames, string text)
+        {
+            var targetsNamesArray = targetsNames.ToArray();
+            var targets = targetsNamesArray.Select(n => GetMessageTarget(n)).ToArray();
+            CheckTextValid(text);
+            SendMessagePrivateMessage(targetsNamesArray, text);
+            this.localUser.HandleMessageSent(targets, text);
+        }
+
+        internal void SendNotice(IEnumerable<string> targetsNames, string text)
+        {
+            var targetsNamesArray = targetsNames.ToArray();
+            var targets = targetsNamesArray.Select(n => GetMessageTarget(n)).ToArray();
+            CheckTextValid(text);
+            SendMessageNotice(targetsNamesArray, text);
+            this.localUser.HandleMessageSent(targets, text);
+        }
+
+        private void CheckTextValid(string text)
+        {
+            if (text.Any(c => c == '\r' || c == '\n'))
+                throw new ArgumentException(errorMessageTextCannotContainNewLine, "text");
         }
 
         #endregion
@@ -361,7 +482,7 @@ namespace IrcDotNet
                             break;
                     }
 
-                    var message = new IrcMessage(prefix, command, parameters);
+                    var message = new IrcMessage(this, prefix, command, parameters);
                     ReadMessage(message);
                 }
             }
@@ -424,8 +545,6 @@ namespace IrcDotNet
         [MessageProcessor("nick")]
         protected void ProcessMessageNick(IrcMessage message)
         {
-            Debug.Assert(message.Prefix != null);
-            var origin = GetUserByPrefix(message.Prefix);
             Debug.Assert(message.Parameters[0] != null);
             this.localUser.NickName = message.Parameters[0];
         }
@@ -433,10 +552,11 @@ namespace IrcDotNet
         [MessageProcessor("join")]
         protected void ProcessMessageJoin(IrcMessage message)
         {
-            Debug.Assert(message.Prefix != null);
-            var origin = GetUserByPrefix(message.Prefix);
+            var sourceUser = message.Source as IrcUser;
+            if (sourceUser == null)
+                throw new InvalidOperationException(string.Format(errorMessageSourceNotUser, message.Source.Name));
             Debug.Assert(message.Parameters[0] != null);
-            if (origin == this.localUser)
+            if (sourceUser == this.localUser)
             {
                 // Local user has joined one or more channels. Add channels to collection.
                 var channels = message.Parameters[0].Split(',').Select(n => new IrcChannel(n)).ToArray();
@@ -447,17 +567,18 @@ namespace IrcDotNet
             {
                 // Remote user has joined one or more channels.
                 var channels = GetChannelsFromList(message.Parameters[0]).ToArray();
-                channels.ForEach(c => c.HandleUserJoined(new IrcChannelUser(origin)));
+                channels.ForEach(c => c.HandleUserJoined(new IrcChannelUser(sourceUser)));
             }
         }
 
         [MessageProcessor("part")]
         protected void ProcessMessagePart(IrcMessage message)
         {
-            Debug.Assert(message.Prefix != null);
-            var origin = GetUserByPrefix(message.Prefix);
+            var sourceUser = message.Source as IrcUser;
+            if (sourceUser == null)
+                throw new InvalidOperationException(string.Format(errorMessageSourceNotUser, message.Source.Name));
             Debug.Assert(message.Parameters[0] != null);
-            if (origin == this.localUser)
+            if (sourceUser == this.localUser)
             {
                 // Local user has parted one or more channels. Remove channel from collections.
                 var channels = GetChannelsFromList(message.Parameters[0]).ToArray();
@@ -468,7 +589,7 @@ namespace IrcDotNet
             {
                 // Remote user has parted one or more channels.
                 var channels = GetChannelsFromList(message.Parameters[0]).ToArray();
-                channels.ForEach(c => c.HandleUserParted(new IrcChannelUser(origin)));
+                channels.ForEach(c => c.HandleUserParted(new IrcChannelUser(sourceUser)));
             }
         }
 
@@ -477,11 +598,11 @@ namespace IrcDotNet
         {
             // Check if mode applies to channel or user.
             Debug.Assert(message.Parameters[0] != null);
-            if (IsChannel(message.Parameters[0]))
+            if (IsChannelName(message.Parameters[0]))
             {
-                var channel = this.channels.Single(c => c.Name == message.Parameters[0]);
+                var channel = GetChannelFromName(message.Parameters[0]);
 
-                // Get specified channel modes and list of mode parameters
+                // Get channel modes and list of mode parameters from message parameters.
                 Debug.Assert(message.Parameters[1] != null);
                 var modesAndParameters = GetModeAndParameters(message.Parameters.Skip(1));
                 channel.HandleModesChanged(modesAndParameters.Item1, modesAndParameters.Item2);
@@ -502,7 +623,7 @@ namespace IrcDotNet
         protected void ProcessMessageTopic(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
-            var channel = this.channels.Single(c => c.Name == message.Parameters[0]);
+            var channel = GetChannelFromName(message.Parameters[0]);
             Debug.Assert(message.Parameters[1] != null);
             channel.Topic = message.Parameters[1];
         }
@@ -534,6 +655,46 @@ namespace IrcDotNet
             }
         }
 
+        [MessageProcessor("privmsg")]
+        protected void ProcessMessagePrivateMessage(IrcMessage message)
+        {
+            // Get list of message targets.
+            Debug.Assert(message.Parameters[0] != null);
+            var targets = message.Parameters[0].Split(',').Select(n => GetMessageTarget(n)).ToArray();
+
+            // Get message text.
+            Debug.Assert(message.Parameters[1] != null);
+            var text = message.Parameters[1];
+
+            // Process message for each given target.
+            foreach (var curTarget in targets)
+            {
+                Debug.Assert(curTarget != null);
+                var messageHandler = (curTarget as IIrcMessageReceiveHandler) ?? this.localUser;
+                messageHandler.HandleMessageReceived(message.Source, targets, text);
+            }
+        }
+
+        [MessageProcessor("notice")]
+        protected void ProcessMessageNotice(IrcMessage message)
+        {
+            // Get list of message targets.
+            Debug.Assert(message.Parameters[0] != null);
+            var targets = message.Parameters[0].Split(',').Select(n => GetMessageTarget(n)).ToArray();
+
+            // Get message text.
+            Debug.Assert(message.Parameters[1] != null);
+            var text = message.Parameters[1];
+
+            // Process notice for each given target.
+            foreach (var curTarget in targets)
+            {
+                Debug.Assert(curTarget != null);
+                var messageHandler = (curTarget as IIrcMessageReceiveHandler) ?? this.localUser;
+                messageHandler.HandleNoticeReceived(message.Source, targets, text);
+            }
+        }
+
         [MessageProcessor("ping")]
         protected void ProcessMessagePing(IrcMessage message)
         {
@@ -550,6 +711,14 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[0] != null);
             var server = message.Parameters[0];
             OnPongReceived(new IrcPingOrPongReceivedEventArgs(server));
+        }
+
+        [MessageProcessor("error")]
+        protected void ProcessMessageError(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] != null);
+            var errorMessage = message.Parameters[0];
+            OnErrorMessageReceived(new IrcErrorMessageEventArgs(errorMessage));
         }
 
         [MessageProcessor("001")]
@@ -607,7 +776,7 @@ namespace IrcDotNet
             }
             else
             {
-                // RPL_ISUPPRT
+                // RPL_ISUPPORT
                 // Add key/value pairs to dictionary of supported server features.
                 for (int i = 1; i < message.Parameters.Count - 1; i++)
                 {
@@ -620,11 +789,13 @@ namespace IrcDotNet
             }
         }
 
+        // TODO: Handle WHOIS/WHOWAS replies.
+        
         [MessageProcessor("332")]
         protected void ProcessMessageReplyTopic(IrcMessage message)
         {
             Debug.Assert(message.Parameters[1] != null);
-            var channel = this.channels.Single(c => c.Name == message.Parameters[1]);
+            var channel = GetChannelFromName(message.Parameters[1]);
             Debug.Assert(message.Parameters[2] != null);
             channel.Topic = message.Parameters[2];
         }
@@ -633,7 +804,7 @@ namespace IrcDotNet
         protected void ProcessMessageReplyNameReply(IrcMessage message)
         {
             Debug.Assert(message.Parameters[2] != null);
-            var channel = this.channels.Single(c => c.Name == message.Parameters[2]);
+            var channel = GetChannelFromName(message.Parameters[2]);
             if (channel != null)
             {
                 Debug.Assert(message.Parameters[1] != null);
@@ -680,7 +851,7 @@ namespace IrcDotNet
                     }
 
                     // Find user by nick name and add it to collection of channel users.
-                    var user = GetUserByNickName(userNickName);
+                    var user = GetUserFromNickName(userNickName);
                     channel.HandleUserJoined(new IrcChannelUser(user, userMode));
                 }
             }
@@ -690,7 +861,7 @@ namespace IrcDotNet
         protected void ProcessMessageReplyEndOfNames(IrcMessage message)
         {
             Debug.Assert(message.Parameters[1] != null);
-            var channel = this.channels.Single(c => c.Name == message.Parameters[1]);
+            var channel = GetChannelFromName(message.Parameters[1]);
             channel.HandleUsersListReceived();
         }
 
@@ -833,14 +1004,26 @@ namespace IrcDotNet
                 string.Join(",", users.Select(user => user.Item2)), comment);
         }
 
-        protected void SendMessagePrivateMessage(string target, string text)
+        protected void SendMessagePrivateMessage(IEnumerable<string> targets, string text)
         {
-            WriteMessage(null, "privmsg", target, text);
+            var targetsArray = targets.ToArray();
+            foreach (var target in targetsArray)
+            {
+                if (target.Contains(","))
+                    throw new ArgumentException(errorMessageInvalidTargetName, "arguments");
+            }
+            WriteMessage(null, "privmsg", string.Join(",", targetsArray), text);
         }
 
-        protected void SendMessageNotice(string target, string text)
+        protected void SendMessageNotice(IEnumerable<string> targets, string text)
         {
-            WriteMessage(null, "notice", target, text);
+            var targetsArray = targets.ToArray();
+            foreach (var target in targetsArray)
+            {
+                if (target.Contains(","))
+                    throw new ArgumentException(errorMessageInvalidTargetName, "arguments");
+            }
+            WriteMessage(null, "notice", string.Join(",", targetsArray), text);
         }
 
         protected void SendMessageMotd(string target = null)
@@ -908,14 +1091,14 @@ namespace IrcDotNet
             WriteMessage(null, "who", mask, onlyOperators ? "o" : null);
         }
 
-        protected void SendMessageWhois(IEnumerable<string> masks, string target = null)
+        protected void SendMessageWhoIs(IEnumerable<string> nickNameMasks, string target = null)
         {
-            WriteMessage(null, "whois", target, string.Join(",", masks));
+            WriteMessage(null, "whois", target, string.Join(",", nickNameMasks));
         }
 
-        protected void SendMessageWhowas(IEnumerable<string> nickNames, int count = -1, string target = null)
+        protected void SendMessageWhoWas(IEnumerable<string> nickNames, int entriesCount = -1, string target = null)
         {
-            WriteMessage(null, "whowas", string.Join(",", nickNames), count.ToString(), target);
+            WriteMessage(null, "whowas", string.Join(",", nickNames), entriesCount.ToString(), target);
         }
 
         protected void SendMessageKill(string nickName, string comment)
@@ -982,12 +1165,12 @@ namespace IrcDotNet
 
         protected void WriteMessage(string prefix, string command, params string[] parameters)
         {
-            WriteMessage(new IrcMessage(null, command, parameters));
+            WriteMessage(new IrcMessage(this, null, command, parameters));
         }
 
         protected void WriteMessage(string prefix, string command, IEnumerable<string> parameters)
         {
-            WriteMessage(new IrcMessage(null, command, parameters.ToArray()));
+            WriteMessage(new IrcMessage(this, null, command, parameters.ToArray()));
         }
 
         protected void WriteMessage(IrcMessage message)
@@ -1268,7 +1451,7 @@ namespace IrcDotNet
 
         protected IEnumerable<IrcChannel> GetChannelsFromList(string namesList)
         {
-            return namesList.Split(',').Select(n => this.channels.Single(c => c.Name == n));
+            return namesList.Split(',').Select(n => GetChannelFromName(n));
         }
 
         protected IEnumerable<IrcUser> GetUsersFromList(string nickNamesList)
@@ -1276,54 +1459,154 @@ namespace IrcDotNet
             return nickNamesList.Split(',').Select(n => this.users.Single(u => u.NickName == n));
         }
 
-        protected IrcUser GetUserByPrefix(string prefix)
+        protected bool IsChannelName(string name)
         {
-            // Extract user information from prefix. Format is `nickname [ [ "!" user ] "@" host ]`.
-            string nickName = null, userName = null, host = null;
-            var sep1Index = prefix.IndexOf('!');
-            var sep2Index = prefix.IndexOf('@', sep1Index + 1);
-            if (sep1Index == -1)
+            return Regex.IsMatch(name, regexChannelName);
+        }
+
+        protected IIrcMessageTarget GetMessageTarget(string targetName)
+        {
+            Debug.Assert(targetName.Length > 0);
+
+            // Check whether target name represents channel, user, or target mask.
+            var targetNameMatch = Regex.Match(targetName, regexMessageTarget);
+            var channelName = targetNameMatch.Groups["channel"].GetValue();
+            var nickName = targetNameMatch.Groups["nick"].GetValue();
+            var userName = targetNameMatch.Groups["user"].GetValue();
+            var hostName = targetNameMatch.Groups["host"].GetValue();
+            var serverName = targetNameMatch.Groups["server"].GetValue();
+            var targetMask = targetNameMatch.Groups["targetMask"].GetValue();
+            if (channelName != null)
             {
-                nickName = prefix;
+                return GetChannelFromName(channelName);
+            }
+            else if (nickName != null)
+            {
+                // Find user by nick name. If no user exists in list, create it and set its properties.
+                bool createdNew;
+                var user = GetUserFromNickName(nickName, out createdNew);
+                if (createdNew)
+                {
+                    user.UserName = userName;
+                    user.HostName = hostName;
+                }
+                return user;
+            }
+            else if (userName != null)
+            {
+                // Find user by user  name. If no user exists in list, create it and set its properties.
+                bool createdNew;
+                var user = GetUserFromNickName(nickName, out createdNew);
+                if (createdNew)
+                {
+                    user.HostName = hostName;
+                }
+                return user;
+            }
+            else if (targetMask != null)
+            {
+                return new IrcTargetMask(targetMask);
             }
             else
             {
-                nickName = prefix.Substring(0, sep1Index);
-                if (sep2Index == -1)
-                {
-                    userName = prefix.Substring(sep1Index + 1);
-                }
-                else
-                {
-                    userName = prefix.Substring(sep1Index + 1, sep2Index - sep1Index - 1);
-                    host = prefix.Substring(sep2Index + 1);
-                }
+                throw new InvalidOperationException(string.Format(errorMessageInvalidSource, targetName));
             }
-
-            // Find user by nick name. If no user exists in list, create it and set its properties.
-            bool createdNew;
-            var user = GetUserByNickName(nickName, out createdNew);
-            if (createdNew)
-            {
-                user.UserName = userName;
-                user.Host = host;
-            }
-            return user;
         }
 
-        protected IrcUser GetUserByNickName(string nickName)
+        protected IIrcMessageSource GetSourceFromPrefix(string prefix)
+        {
+            if (prefix == null)
+                return null;
+            Debug.Assert(prefix.Length > 0);
+
+            // Check whether prefix represents server or user.
+            var prefixMatch = Regex.Match(prefix, regexMessagePrefix);
+            var serverName = prefixMatch.Groups["server"].GetValue();
+            var nickName = prefixMatch.Groups["nick"].GetValue();
+            var userName = prefixMatch.Groups["user"].GetValue();
+            var hostName = prefixMatch.Groups["host"].GetValue();
+            if (serverName != null)
+            {
+                return GetServerFromHostName(serverName);
+            }
+            else if (nickName != null)
+            {
+                // Find user by nick name. If no user exists in list, create it and set its properties.
+                bool createdNew;
+                var user = GetUserFromNickName(nickName, out createdNew);
+                if (createdNew)
+                {
+                    user.UserName = userName;
+                    user.HostName = hostName;
+                }
+                return user;
+            }
+            else
+            {
+                throw new InvalidOperationException(string.Format(errorMessageInvalidSource, prefix));
+            }
+        }
+
+        protected IrcServer GetServerFromHostName(string hostName)
         {
             bool createdNew;
-            return GetUserByNickName(nickName, out createdNew);
+            return GetServerFromHostName(hostName, out createdNew);
         }
 
-        protected IrcUser GetUserByNickName(string nickName, out bool createdNew)
+        protected IrcServer GetServerFromHostName(string hostName, out bool createdNew)
+        {
+            // Search for server  with given name in list of known servers. If it does not exist, add it.
+            var server = this.servers.SingleOrDefault(s => s.HostName == hostName);
+            if (server == null)
+            {
+                server = new IrcServer(hostName);
+                this.servers.Add(server);
+                createdNew = true;
+            }
+            else
+            {
+                createdNew = false;
+            }
+            return server;
+        }
+
+        protected IrcChannel GetChannelFromName(string channelName)
+        {
+            bool createdNew;
+            return GetChannelFromName(channelName, out createdNew);
+        }
+
+        protected IrcChannel GetChannelFromName(string channelName, out bool createdNew)
+        {
+            // Search for channel with given name in list of known channel. If it does not exist, add it.
+            var channel = this.channels.SingleOrDefault(c => c.Name == channelName);
+            if (channel == null)
+            {
+                channel = new IrcChannel(channelName);
+                this.channels.Add(channel);
+                createdNew = true;
+            }
+            else
+            {
+                createdNew = false;
+            }
+            return channel;
+        }
+
+        protected IrcUser GetUserFromNickName(string nickName)
+        {
+            bool createdNew;
+            return GetUserFromNickName(nickName, out createdNew);
+        }
+
+        protected IrcUser GetUserFromNickName(string nickName, out bool createdNew)
         {
             // Search for user with given nick name in list of known users. If it does not exist, add it.
-            var user = users.SingleOrDefault(u => u.NickName == nickName);
+            var user = this.users.SingleOrDefault(u => u.NickName == nickName);
             if (user == null)
             {
-                user = new IrcUser(nickName);
+                user = new IrcUser();
+                user.NickName = nickName;
                 this.users.Add(user);
                 createdNew = true;
             }
@@ -1334,9 +1617,28 @@ namespace IrcDotNet
             return user;
         }
 
-        protected bool IsChannel(string name)
+        protected IrcUser GetUserFromUserName(string userName)
         {
-            return name[0] == '&' || name[0] == '#' || name[0] == '+' || name[0] == '!';
+            bool createdNew;
+            return GetUserFromUserName(userName, out createdNew);
+        }
+
+        protected IrcUser GetUserFromUserName(string userName, out bool createdNew)
+        {
+            // Search for user with given nick name in list of known users. If it does not exist, add it.
+            var user = this.users.SingleOrDefault(u => u.UserName == userName);
+            if (user == null)
+            {
+                user = new IrcUser();
+                user.UserName = userName;
+                this.users.Add(user);
+                createdNew = true;
+            }
+            else
+            {
+                createdNew = false;
+            }
+            return user;
         }
 
         private int GetNumericUserMode(ICollection<char> mode)
@@ -1353,6 +1655,7 @@ namespace IrcDotNet
 
         private void ResetState()
         {
+            this.servers = new Collection<IrcServer>();
             this.isRegistered = false;
             this.localUser = null;
             this.serverSupportedFeatures = new Dictionary<string, string>();
@@ -1400,6 +1703,12 @@ namespace IrcDotNet
                 this.ProtocolError(this, e);
         }
 
+        protected virtual void OnErrorMessageReceived(IrcErrorMessageEventArgs e)
+        {
+            if (this.ErrorMessageReceived != null)
+                this.ErrorMessageReceived(this, e);
+        }
+        
         protected virtual void OnRegistered(EventArgs e)
         {
             if (this.Registered != null)
@@ -1448,6 +1757,18 @@ namespace IrcDotNet
                 this.ChannelParted(this, e);
         }
 
+        protected virtual void OnWhoIsReplyReceived(EventArgs e)
+        {
+            if (this.WhoIsReplyReceived != null)
+                this.WhoIsReplyReceived(this, e);
+        }
+
+        protected virtual void OnWhoWasReplyReceived(EventArgs e)
+        {
+            if (this.WhoWasReplyReceived != null)
+                this.WhoWasReplyReceived(this, e);
+        }
+        
         protected delegate void MessageProcessor(IrcMessage message);
 
         protected class MessageProcessorAttribute : Attribute
@@ -1466,20 +1787,19 @@ namespace IrcDotNet
 
         protected struct IrcMessage
         {
+            public IIrcMessageSource Source;
+
             public string Prefix;
             public string Command;
             public IList<string> Parameters;
 
-            public IrcMessage(string command, IList<string> parameters)
-                : this(null, command, parameters)
-            {
-            }
-
-            public IrcMessage(string prefix, string command, IList<string> parameters)
+            public IrcMessage(IrcClient client, string prefix, string command, IList<string> parameters)
             {
                 this.Prefix = prefix;
                 this.Command = command;
                 this.Parameters = parameters;
+
+                this.Source = client.GetSourceFromPrefix(prefix);
             }
         }
 

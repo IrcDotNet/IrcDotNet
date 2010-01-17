@@ -6,11 +6,19 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{4C04B011-7998-4549-A3B5-E57AAF5A2966}"
 	ProjectSection(SolutionItems) = preProject
 		Authors.txt = Authors.txt
+		License.txt = License.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrcDotNet.Tests", "IrcDotNet.Tests\IrcDotNet.Tests.csproj", "{0F93F768-3B81-499C-AF1B-7977254FA9ED}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2876EA5B-E979-49B0-A086-B36BBA329085}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3E6A3748-68FD-42DD-A12E-9C275C08EF44}"
+	ProjectSection(SolutionItems) = preProject
+		IRC.NET.vsmdi = IRC.NET.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{654EAC03-631B-42A4-8E63-7DBDA01ED111}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution

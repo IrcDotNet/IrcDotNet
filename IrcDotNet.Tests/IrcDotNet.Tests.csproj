@@ -40,6 +40,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Common\CollectionUtilities.cs">
+      <Link>Collections\CollectionUtilities.cs</Link>
+    </Compile>
     <Compile Include="InterdependentTestSet.cs" />
     <Compile Include="IrcClientTestSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

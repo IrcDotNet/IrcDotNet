@@ -17,7 +17,7 @@ namespace IrcDotNet
         private IrcChannel channel;
         private IrcUser user;
 
-        public IrcChannelUser(IrcUser user, IEnumerable<char> modes = null)
+        internal IrcChannelUser(IrcUser user, IEnumerable<char> modes = null)
         {
             this.user = user;
 
@@ -25,6 +25,11 @@ namespace IrcDotNet
             this.modesReadOnly = new ReadOnlySet<char>(this.modes);
             if (modes != null)
                 this.modes.AddRange(modes);
+        }
+
+        public bool IsAay
+        {
+            get { return this.modes.Contains('a'); }
         }
 
         public ReadOnlySet<char> Modes
@@ -94,6 +99,11 @@ namespace IrcDotNet
         {
             if (this.PropertyChanged != null)
                 this.PropertyChanged(this, e);
+        }
+
+        public override string ToString()
+        {
+            return this.channel.Name + "/" + this.user.NickName;
         }
     }
 }

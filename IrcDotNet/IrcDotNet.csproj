@@ -40,9 +40,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collections\CollectionExtensions.cs" />
+    <Compile Include="..\Common\CollectionUtilities.cs">
+      <Link>Collections\CollectionUtilities.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ReadOnlyDictionary.cs">
+      <Link>Collections\ReadOnlyDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\ReadOnlySet.cs">
+      <Link>Collections\ReadOnlySet.cs</Link>
+    </Compile>
+    <Compile Include="IIrcMessageSendHandler.cs" />
+    <Compile Include="IIrcMessageReceiveHandler.cs" />
+    <Compile Include="IIrcMessageSource.cs" />
+    <Compile Include="IIrcMessageReceiver.cs" />
+    <Compile Include="IIrcMessageTarget.cs" />
     <Compile Include="IrcChannelUserCollection.cs" />
+    <Compile Include="IrcTargetMask.cs" />
     <Compile Include="IrcLocalUser.cs" />
+    <Compile Include="IrcServer.cs" />
     <Compile Include="IrcUserCollection.cs" />
     <Compile Include="IrcChannelCollection.cs" />
     <Compile Include="IrcChannelUser.cs" />
@@ -50,13 +65,15 @@
     <Compile Include="IrcClient.cs" />
     <Compile Include="IrcUser.cs" />
     <Compile Include="IrcUtilities.cs" />
-    <Compile Include="EventArgs.cs" />
+    <Compile Include="IrcEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Collections\ReadOnlyDictionary.cs" />
-    <Compile Include="Collections\ReadOnlySet.cs" />
+    <Compile Include="TextUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CTCP\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

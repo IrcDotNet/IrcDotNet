@@ -13,7 +13,7 @@ namespace IrcDotNet
     {
         private IrcClient client;
 
-        public IrcUserCollection(IrcClient client, ObservableCollection<IrcUser> list)
+        internal IrcUserCollection(IrcClient client, ObservableCollection<IrcUser> list)
             : base(list)
         {
             this.client = client;

@@ -7,9 +7,6 @@ namespace IrcDotNet
 {
     public static class IrcUtilities
     {
-        // Error messages to be used in thrown exceptions.
-        private const string errorMessageModesWithParamsNotSpecified = "A collection modes with parameters must be specified.";
-        private const string errorMessageModeParamHandlerNotSpecified = "A mode parameter handler function must be specified.";
         private const string errorMessageNotEnoughModeParams = "Not enough mode parameters were specified for the given modes.";
 
         // Reads list of mode changes, where each group of modes is prefixed by a '+' or '-', representing respectively
@@ -18,12 +15,16 @@ namespace IrcDotNet
             IEnumerable<string> newModeParameters = null, ICollection<char> modesWithParameters = null,
             Action<bool, char, string> handleModeParameter = null)
         {
+            if (collection == null)
+                throw new ArgumentNullException("collection");
+            if (newModes == null)
+                throw new ArgumentNullException("newModes");
             if (newModeParameters != null)
             {
                 if (modesWithParameters == null)
-                    throw new ArgumentNullException("modesWithParameters", errorMessageModesWithParamsNotSpecified);
+                    throw new ArgumentNullException("modesWithParameters");
                 if (handleModeParameter == null)
-                    throw new ArgumentNullException("handleModeParameter", errorMessageModeParamHandlerNotSpecified);
+                    throw new ArgumentNullException("handleModeParameter");
             }
 
             bool? addMode = null;

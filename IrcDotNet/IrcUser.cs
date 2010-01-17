@@ -6,25 +6,24 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    public class IrcUser : INotifyPropertyChanged
+    public class IrcUser : INotifyPropertyChanged, IIrcMessageSource, IIrcMessageTarget
     {
         private string nickName;
         private string userName;
         private string realName;
-        private string host;
+        private string hostName;
 
         private IrcClient client;
 
         internal IrcUser(string nickName, string userName, string realName)
-            : this(nickName)
         {
+            this.nickName = nickName;
             this.userName = userName;
             this.realName = realName;
         }
 
-        internal IrcUser(string nickName)
+        internal IrcUser()
         {
-            this.nickName = nickName;
         }
 
         public string NickName
@@ -33,8 +32,8 @@ namespace IrcDotNet
             internal set
             {
                 this.nickName = value;
-                    OnNickNameChanged(new EventArgs());
-                    OnPropertyChanged(new PropertyChangedEventArgs("NickName"));
+                OnNickNameChanged(new EventArgs());
+                OnPropertyChanged(new PropertyChangedEventArgs("NickName"));
             }
         }
 
@@ -58,13 +57,13 @@ namespace IrcDotNet
             }
         }
 
-        public string Host
+        public string HostName
         {
-            get { return this.host; }
+            get { return this.hostName; }
             internal set
             {
-                this.host = value;
-                OnPropertyChanged(new PropertyChangedEventArgs("Host"));
+                this.hostName = value;
+                OnPropertyChanged(new PropertyChangedEventArgs("HostName"));
             }
         }
 
@@ -81,6 +80,16 @@ namespace IrcDotNet
         public event EventHandler<EventArgs> NickNameChanged;
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public void WhoIs()
+        {
+            this.client.WhoIs(new[] { this.nickName });
+        }
+
+        public void WhoWas(int entriesCount = -1)
+        {
+            this.client.WhoWas(new[] { this.nickName }, entriesCount);
+        }
+
         protected virtual void OnNickNameChanged(EventArgs e)
         {
             if (this.NickNameChanged != null)
@@ -92,5 +101,28 @@ namespace IrcDotNet
             if (this.PropertyChanged != null)
                 this.PropertyChanged(this, e);
         }
+
+        public override string ToString()
+        {
+            return this.nickName;
+        }
+
+        #region IIrcMessageSource Members
+
+        string IIrcMessageSource.Name
+        {
+            get { return this.NickName; }
+        }
+
+        #endregion
+
+        #region IIrcMessageTarget Members
+
+        string IIrcMessageTarget.Name
+        {
+            get { return this.NickName; }
+        }
+
+        #endregion
     }
 }
