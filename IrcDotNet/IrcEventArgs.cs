@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Collections.ObjectModel;
 
 namespace IrcDotNet
 {
@@ -150,6 +150,40 @@ namespace IrcDotNet
         }
 
         public string ErrorMessage
+        {
+            get;
+            private set;
+        }
+    }
+
+    public class IrcProtocolErrorEventArgs : EventArgs
+    {
+        public IrcProtocolErrorEventArgs(int code, IList<string> parameters, string message)
+            : base()
+        {
+            if (parameters == null)
+                throw new ArgumentNullException("parameters");
+            if (message == null)
+                throw new ArgumentNullException("message");
+
+            this.Code = code;
+            this.Parameters = new ReadOnlyCollection<string>(parameters);
+            this.Message = message;
+        }
+
+        public int Code
+        {
+            get;
+            private set;
+        }
+
+        public IList<string> Parameters
+        {
+            get;
+            private set;
+        }
+
+        public string Message
         {
             get;
             private set;

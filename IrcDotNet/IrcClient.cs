@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -12,10 +11,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Reflection;
+using System.Globalization;
 
 namespace IrcDotNet
 {
-    // TODO: Handle and raise events for numeric error responses.
     public class IrcClient : IDisposable
     {
         // Error messages used for throwing exceptions.
@@ -94,6 +93,8 @@ namespace IrcDotNet
         private bool canDisconnect;
         // Dictionary of message processor routines, keyed by their command names.
         private Dictionary<string, MessageProcessor> messageProcessors;
+        // Array of message processor routines, keyed by their numeric codes (000 to 999).
+        private Dictionary<int, MessageProcessor> numMessageProcessors;
 
         private bool isDisposed = false;
 
@@ -105,6 +106,7 @@ namespace IrcDotNet
 
             this.messageProcessors = new Dictionary<string, MessageProcessor>(
                 StringComparer.InvariantCultureIgnoreCase);
+            this.numMessageProcessors = new Dictionary<int, MessageProcessor>(1000);
             InitialiseMessageProcessors();
 
             ResetState();
@@ -118,15 +120,6 @@ namespace IrcDotNet
         public bool IsRegistered
         {
             get { return this.isRegistered; }
-        }
-
-        public string NickName
-        {
-            get { return this.localUser.NickName; }
-            set
-            {
-                SendMessageNick(value);
-            }
         }
 
         public IrcLocalUser LocalUser
@@ -256,7 +249,7 @@ namespace IrcDotNet
         public event EventHandler<IrcErrorEventArgs> ConnectFailed;
         public event EventHandler<EventArgs> Disconnected;
         public event EventHandler<IrcErrorEventArgs> Error;
-        public event EventHandler<EventArgs> ProtocolError;
+        public event EventHandler<IrcProtocolErrorEventArgs> ProtocolError;
         public event EventHandler<IrcErrorMessageEventArgs> ErrorMessageReceived;
         public event EventHandler<EventArgs> Registered;
         public event EventHandler<IrcServerInfoEventArgs> ServerBounce;
@@ -266,12 +259,12 @@ namespace IrcDotNet
         public event EventHandler<EventArgs> MotdReceived;
         public event EventHandler<IrcChannelEventArgs> ChannelJoined;
         public event EventHandler<IrcChannelEventArgs> ChannelParted;
-        public event EventHandler<EventArgs> WhoIsReplyReceived;
+        public event EventHandler<IrcUserEventArgs> WhoIsReplyReceived;
         public event EventHandler<EventArgs> WhoWasReplyReceived;
 
         public void WhoIs(params string[] nickNameMasks)
         {
-            WhoIs(nickNameMasks);
+            WhoIs((IEnumerable<string>)nickNameMasks);
         }
 
         public void WhoIs(IEnumerable<string> nickNameMasks)
@@ -281,7 +274,7 @@ namespace IrcDotNet
 
         public void WhoWas(params string[] nickNames)
         {
-            WhoWas(nickNames);
+            WhoWas((IEnumerable<string>)nickNames);
         }
 
         public void WhoWas(IEnumerable<string> nickNames, int entriesCount = -1)
@@ -325,6 +318,11 @@ namespace IrcDotNet
         }
 
         #region Proxy Methods
+
+        internal void SetNickName(string nickName)
+        {
+            SendMessageNick(nickName);
+        }
 
         internal void SetAway(string text)
         {
@@ -401,7 +399,7 @@ namespace IrcDotNet
             var targets = targetsNamesArray.Select(n => GetMessageTarget(n)).ToArray();
             CheckTextValid(text);
             SendMessageNotice(targetsNamesArray, text);
-            this.localUser.HandleMessageSent(targets, text);
+            this.localUser.HandleNoticeSent(targets, text);
         }
 
         private void CheckTextValid(string text)
@@ -426,7 +424,28 @@ namespace IrcDotNet
                     var methodDelegate = (MessageProcessor)Delegate.CreateDelegate(typeof(MessageProcessor), this,
                         methodInfo);
                     foreach (var attribute in messageProcessorAttributes)
-                        this.messageProcessors.Add(attribute.Command, methodDelegate);
+                    {
+                        var commandRangeParts = attribute.Command.Split('-');
+                        if (commandRangeParts.Length == 2)
+                        {
+                            // Numeric command range was specified.
+                            var commandRangeStart = int.Parse(commandRangeParts[0]);
+                            var commandRangeEnd = int.Parse(commandRangeParts[1]);
+                            for (int code = commandRangeStart; code <= commandRangeEnd; code++)
+                                this.numMessageProcessors.Add(code, methodDelegate);
+                        }
+                        else
+                        {
+                            // Single command was specified. Check whether it is numeric or alphabetic.
+                            int commandCode;
+                            if (int.TryParse(attribute.Command, out commandCode))
+                                // Numeric
+                                this.numMessageProcessors.Add(commandCode, methodDelegate);
+                            else
+                                // Alphabetic
+                                this.messageProcessors.Add(attribute.Command, methodDelegate);
+                        }
+                    }
                 }
             }
         }
@@ -515,9 +534,12 @@ namespace IrcDotNet
 
         private void ReadMessage(IrcMessage message)
         {
-            // Try to find message processor for command of given message.
+            // Try to find corresponding message processor for command of given message.
             MessageProcessor msgProc;
-            if (this.messageProcessors.TryGetValue(message.Command, out msgProc))
+            int commandCode;
+            if (this.messageProcessors.TryGetValue(message.Command, out msgProc) ||
+                (int.TryParse(message.Command, out commandCode) &&
+                this.numMessageProcessors.TryGetValue(commandCode, out msgProc)))
             {
                 try
                 {
@@ -725,9 +747,14 @@ namespace IrcDotNet
         protected void ProcessMessageReplyWelcome(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
-            this.localUser.NickName = message.Parameters[0];
             Debug.Assert(message.Parameters[1] != null);
             this.WelcomeMessage = message.Parameters[1];
+
+            // Extract nick name, user name, and host name from welcome message. Use fallback info if not present.
+            var nickNameIdMatch = Regex.Match(this.WelcomeMessage.Split(' ').Last(), regexNickNameId);
+            this.localUser.NickName = nickNameIdMatch.Groups["nick"].GetValue() ?? this.localUser.NickName;
+            this.localUser.UserName = nickNameIdMatch.Groups["user"].GetValue() ?? this.localUser.UserName;
+            this.localUser.HostName = nickNameIdMatch.Groups["host"].GetValue() ?? this.localUser.HostName;
 
             this.isRegistered = true;
             OnRegistered(new EventArgs());
@@ -736,6 +763,7 @@ namespace IrcDotNet
         [MessageProcessor("002")]
         protected void ProcessMessageReplyYourHost(IrcMessage message)
         {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
             Debug.Assert(message.Parameters[1] != null);
             this.YourHostMessage = message.Parameters[1];
         }
@@ -743,6 +771,7 @@ namespace IrcDotNet
         [MessageProcessor("003")]
         protected void ProcessMessageReplyCreated(IrcMessage message)
         {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
             Debug.Assert(message.Parameters[1] != null);
             this.ServerCreatedMessage = message.Parameters[1];
         }
@@ -750,6 +779,7 @@ namespace IrcDotNet
         [MessageProcessor("004")]
         protected void ProcessMessageReplyMyInfo(IrcMessage message)
         {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
             Debug.Assert(message.Parameters[1] != null);
             this.ServerName = message.Parameters[1];
             Debug.Assert(message.Parameters[2] != null);
@@ -763,6 +793,7 @@ namespace IrcDotNet
         [MessageProcessor("005")]
         protected void ProcessMessageReplyBounceOrISupport(IrcMessage message)
         {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
             Debug.Assert(message.Parameters[1] != null);
             // Check if message is RPL_BOUNCE or RPL_ISUPPORT.
             if (message.Parameters[1].StartsWith("Try server"))
@@ -789,11 +820,86 @@ namespace IrcDotNet
             }
         }
 
-        // TODO: Handle WHOIS/WHOWAS replies.
-        
+        [MessageProcessor("311")]
+        protected void ProcessMessageReplyWhoIsUser(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+            Debug.Assert(message.Parameters[1] != null);
+            var user = GetUserFromNickName(message.Parameters[1]);
+            Debug.Assert(message.Parameters[2] != null);
+            user.UserName = message.Parameters[2];
+            Debug.Assert(message.Parameters[3] != null);
+            user.HostName = message.Parameters[3];
+            Debug.Assert(message.Parameters[4] != null);
+            Debug.Assert(message.Parameters[5] != null);
+            user.RealName = message.Parameters[5];
+        }
+
+        [MessageProcessor("312")]
+        protected void ProcessMessageReplyWhoIsServer(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+            Debug.Assert(message.Parameters[1] != null);
+            var user = GetUserFromNickName(message.Parameters[1]);
+            Debug.Assert(message.Parameters[2] != null);
+            user.ServerName = message.Parameters[2];
+            Debug.Assert(message.Parameters[3] != null);
+            user.ServerInfo = message.Parameters[3];
+        }
+
+        [MessageProcessor("313")]
+        protected void ProcessMessageReplyWhoIsOperator(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+            Debug.Assert(message.Parameters[1] != null);
+            var user = GetUserFromNickName(message.Parameters[1]);
+            user.IsOperator = true;
+        }
+
+        [MessageProcessor("317")]
+        protected void ProcessMessageReplyWhoIsIdle(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+            Debug.Assert(message.Parameters[1] != null);
+            var user = GetUserFromNickName(message.Parameters[1]);
+            Debug.Assert(message.Parameters[2] != null);
+            user.IdleDuration = TimeSpan.FromSeconds(int.Parse(message.Parameters[2]));
+        }
+
+        [MessageProcessor("318")]
+        protected void ProcessMessageReplyEndOfWhoIs(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+            Debug.Assert(message.Parameters[1] != null);
+            var user = GetUserFromNickName(message.Parameters[1]);
+            OnWhoIsReplyReceived(new IrcUserEventArgs(user));
+        }
+
+        [MessageProcessor("319")]
+        protected void ProcessMessageReplyWhoIsChannels(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+            Debug.Assert(message.Parameters[1] != null);
+            var user = GetUserFromNickName(message.Parameters[1]);
+            
+            Debug.Assert(message.Parameters[2] != null);
+            foreach (var channelId in message.Parameters[2].Split(' '))
+            {
+                if (channelId.Length == 0)
+                    return;
+
+                // Find user by nick name and add it to collection of channel users.
+                var channelNameAndUserMode = ExtractUserMode(channelId);
+                var channel = GetChannelFromName(channelNameAndUserMode.Item1);
+                if(channel.GetChannelUser(user) == null)
+                    channel.HandleUserJoined(new IrcChannelUser(user, channelNameAndUserMode.Item2));
+            }
+        }
+
         [MessageProcessor("332")]
         protected void ProcessMessageReplyTopic(IrcMessage message)
         {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
             Debug.Assert(message.Parameters[1] != null);
             var channel = GetChannelFromName(message.Parameters[1]);
             Debug.Assert(message.Parameters[2] != null);
@@ -803,27 +909,14 @@ namespace IrcDotNet
         [MessageProcessor("353")]
         protected void ProcessMessageReplyNameReply(IrcMessage message)
         {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
             Debug.Assert(message.Parameters[2] != null);
             var channel = GetChannelFromName(message.Parameters[2]);
             if (channel != null)
             {
                 Debug.Assert(message.Parameters[1] != null);
                 Debug.Assert(message.Parameters[1].Length == 1);
-                switch (message.Parameters[1][0])
-                {
-                    case '=':
-                        channel.Type = IrcChannelType.Public;
-                        break;
-                    case '*':
-                        channel.Type = IrcChannelType.Private;
-                        break;
-                    case '@':
-                        channel.Type = IrcChannelType.Secret;
-                        break;
-                    default:
-                        throw new InvalidOperationException(string.Format(errorMessageInvalidChannelType,
-                            message.Parameters[1]));
-                }
+                channel.Type = GetChannelType(message.Parameters[1][0]);
 
                 Debug.Assert(message.Parameters[3] != null);
                 foreach (var userId in message.Parameters[3].Split(' '))
@@ -831,28 +924,10 @@ namespace IrcDotNet
                     if (userId.Length == 0)
                         return;
 
-                    // Extract nick name and mode of user.
-                    string userMode;
-                    string userNickName;
-                    switch (userId[0])
-                    {
-                        case '@':
-                            userMode = "o";
-                            userNickName = userId.Substring(1);
-                            break;
-                        case '+':
-                            userMode = "v";
-                            userNickName = userId.Substring(1);
-                            break;
-                        default:
-                            userMode = string.Empty;
-                            userNickName = userId;
-                            break;
-                    }
-
                     // Find user by nick name and add it to collection of channel users.
-                    var user = GetUserFromNickName(userNickName);
-                    channel.HandleUserJoined(new IrcChannelUser(user, userMode));
+                    var userNickNameAndMode = ExtractUserMode(userId);
+                    var user = GetUserFromNickName(userNickNameAndMode.Item1);
+                    channel.HandleUserJoined(new IrcChannelUser(user, userNickNameAndMode.Item2));
                 }
             }
         }
@@ -860,6 +935,7 @@ namespace IrcDotNet
         [MessageProcessor("366")]
         protected void ProcessMessageReplyEndOfNames(IrcMessage message)
         {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
             Debug.Assert(message.Parameters[1] != null);
             var channel = GetChannelFromName(message.Parameters[1]);
             channel.HandleUsersListReceived();
@@ -868,6 +944,7 @@ namespace IrcDotNet
         [MessageProcessor("372")]
         protected void ProcessMessageReplyMotd(IrcMessage message)
         {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
             Debug.Assert(message.Parameters[1] != null);
             this.motdBuilder.Clear();
             this.motdBuilder.AppendLine(message.Parameters[1]);
@@ -876,6 +953,7 @@ namespace IrcDotNet
         [MessageProcessor("375")]
         protected void ProcessMessageReplyMotdStart(IrcMessage message)
         {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
             Debug.Assert(message.Parameters[1] != null);
             this.motdBuilder.AppendLine(message.Parameters[1]);
         }
@@ -883,11 +961,37 @@ namespace IrcDotNet
         [MessageProcessor("376")]
         protected void ProcessMessageReplyMotdEnd(IrcMessage message)
         {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
             Debug.Assert(message.Parameters[1] != null);
             this.motdBuilder.AppendLine(message.Parameters[1]);
-
             this.MessageOfTheDay = this.motdBuilder.ToString();
             OnMotdReceived(new EventArgs());
+        }
+
+        [MessageProcessor("400-599")]
+        protected void ProcessMessageNumericError(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // Extract error parameters and message text from message parameters.
+            Debug.Assert(message.Parameters[1] != null);
+            var errorParameters = new List<string>();
+            string errorMessage = null;
+            for (int i = 1; i < message.Parameters.Count; i++)
+            {
+                if (i + 1 == message.Parameters.Count || message.Parameters[i + 1] == null)
+                {
+                    errorMessage = message.Parameters[i];
+                    break;
+                }
+                else
+                {
+                    errorParameters.Add(message.Parameters[i]);
+                }
+            }
+
+            Debug.Assert(errorMessage != null);
+            OnProtocolError(new IrcProtocolErrorEventArgs(int.Parse(message.Command), errorParameters, errorMessage));
         }
 
         #endregion
@@ -1151,12 +1255,12 @@ namespace IrcDotNet
             WriteMessage(null, "wallops", text);
         }
 
-        protected void SendMessageUserhost(IEnumerable<string> nickNames)
+        protected void SendMessageUserHost(IEnumerable<string> nickNames)
         {
             WriteMessage(null, "userhost", nickNames);
         }
 
-        protected void SendMessageIson(IEnumerable<string> nickNames)
+        protected void SendMessageIsOn(IEnumerable<string> nickNames)
         {
             WriteMessage(null, "ison", nickNames);
         }
@@ -1375,6 +1479,8 @@ namespace IrcDotNet
                 this.stream = this.client.GetStream();
                 this.writer = new StreamWriter(this.stream, Encoding.ASCII);
                 this.reader = new StreamReader(this.stream, Encoding.ASCII);
+
+                HandleClientConnected((IrcConnectContext)ar.AsyncState);
                 this.readThread.Start();
 
                 OnConnected(new EventArgs());
@@ -1383,8 +1489,6 @@ namespace IrcDotNet
             {
                 OnConnectFailed(new IrcErrorEventArgs(ex));
             }
-
-            HandleClientConnected((IrcConnectContext)ar.AsyncState);
         }
 
         private void HandleClientConnecting()
@@ -1431,6 +1535,19 @@ namespace IrcDotNet
             ResetState();
         }
 
+        protected Tuple<string, string> ExtractUserMode(string input)
+        {
+            switch (input[0])
+            {
+                case '@':
+                    return Tuple.Create(input.Substring(1), "o");
+                case '+':
+                    return Tuple.Create(input.Substring(1), "v");
+                default:
+                    return Tuple.Create(input, string.Empty);
+            }
+        }
+
         protected Tuple<string, IEnumerable<string>> GetModeAndParameters(IEnumerable<string> messageParameters)
         {
             var modes = new StringBuilder();
@@ -1462,6 +1579,21 @@ namespace IrcDotNet
         protected bool IsChannelName(string name)
         {
             return Regex.IsMatch(name, regexChannelName);
+        }
+
+        protected IrcChannelType GetChannelType(char type)
+        {
+            switch (type)
+            {
+                case '=':
+                    return IrcChannelType.Public;
+                case '*':
+                    return IrcChannelType.Private;
+                case '@':
+                    return IrcChannelType.Secret;
+                default:
+                    throw new InvalidOperationException(string.Format(errorMessageInvalidChannelType, type));
+            }
         }
 
         protected IIrcMessageTarget GetMessageTarget(string targetName)
@@ -1697,7 +1829,7 @@ namespace IrcDotNet
                 this.Error(this, e);
         }
 
-        protected virtual void OnProtocolError(IrcErrorEventArgs e)
+        protected virtual void OnProtocolError(IrcProtocolErrorEventArgs e)
         {
             if (this.ProtocolError != null)
                 this.ProtocolError(this, e);
@@ -1708,7 +1840,7 @@ namespace IrcDotNet
             if (this.ErrorMessageReceived != null)
                 this.ErrorMessageReceived(this, e);
         }
-        
+
         protected virtual void OnRegistered(EventArgs e)
         {
             if (this.Registered != null)
@@ -1757,7 +1889,7 @@ namespace IrcDotNet
                 this.ChannelParted(this, e);
         }
 
-        protected virtual void OnWhoIsReplyReceived(EventArgs e)
+        protected virtual void OnWhoIsReplyReceived(IrcUserEventArgs e)
         {
             if (this.WhoIsReplyReceived != null)
                 this.WhoIsReplyReceived(this, e);
@@ -1768,7 +1900,7 @@ namespace IrcDotNet
             if (this.WhoWasReplyReceived != null)
                 this.WhoWasReplyReceived(this, e);
         }
-        
+
         protected delegate void MessageProcessor(IrcMessage message);
 
         protected class MessageProcessorAttribute : Attribute

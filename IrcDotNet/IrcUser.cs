@@ -12,6 +12,10 @@ namespace IrcDotNet
         private string userName;
         private string realName;
         private string hostName;
+        private string serverName;
+        private string serverInfo;
+        private bool isOperator;
+        private TimeSpan idleDuration;
 
         private IrcClient client;
 
@@ -20,6 +24,10 @@ namespace IrcDotNet
             this.nickName = nickName;
             this.userName = userName;
             this.realName = realName;
+            this.serverName = null;
+            this.serverInfo = null;
+            this.isOperator = false;
+            this.idleDuration = TimeSpan.Zero;
         }
 
         internal IrcUser()
@@ -67,6 +75,46 @@ namespace IrcDotNet
             }
         }
 
+        public string ServerName
+        {
+            get { return this.serverName; }
+            internal set
+            {
+                this.serverName = value;
+                OnPropertyChanged(new PropertyChangedEventArgs("ServerName"));
+            }
+        }
+
+        public string ServerInfo
+        {
+            get { return this.serverInfo; }
+            internal set
+            {
+                this.serverInfo = value;
+                OnPropertyChanged(new PropertyChangedEventArgs("ServerInfo"));
+            }
+        }
+
+        public bool IsOperator
+        {
+            get { return this.isOperator; }
+            internal set
+            {
+                this.isOperator = value;
+                OnPropertyChanged(new PropertyChangedEventArgs("IsOperator"));
+            }
+        }
+
+        public TimeSpan IdleDuration
+        {
+            get { return this.idleDuration; }
+            internal set
+            {
+                this.idleDuration = value;
+                OnPropertyChanged(new PropertyChangedEventArgs("IdleDuration"));
+            }
+        }
+
         public IrcClient Client
         {
             get { return this.client; }
@@ -88,6 +136,19 @@ namespace IrcDotNet
         public void WhoWas(int entriesCount = -1)
         {
             this.client.WhoWas(new[] { this.nickName }, entriesCount);
+        }
+
+        public IEnumerable<IrcChannelUser> GetChannelUsers()
+        {
+            // Get each channel user corresponding to this user that is member of any channel.
+            foreach (var channel in this.client.Channels)
+            {
+                foreach (var channelUser in channel.Users)
+                {
+                    if (channelUser.User == this)
+                        yield return channelUser;
+                }
+            }
         }
 
         protected virtual void OnNickNameChanged(EventArgs e)

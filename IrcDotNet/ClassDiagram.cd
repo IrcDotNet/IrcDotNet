@@ -33,7 +33,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="IrcDotNet.IrcUserCollection">
-    <Position X="7.25" Y="14" Width="3.25" />
+    <Position X="7.25" Y="15.25" Width="3.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -48,7 +48,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>gAAAAIIAAAAAIAAEICAQEAAAgQAAgAMEAQAABAEAAAQ=</HashCode>
+      <HashCode>gAiAAIIAAIAIIASEKCAUEAAAgQAAgAMEAQAABAEAgAQ=</HashCode>
       <FileName>IrcUser.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -81,7 +81,7 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>PkWc2ud2Z2PuW1rVWUaAUbPUv7/Sswu46f9ev0R52OE=</HashCode>
+      <HashCode>PkWc2md2Z2PuW1rVWUeAEbPUv7/Sswq46f9ev0x52PE=</HashCode>
       <FileName>IrcClient.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -97,18 +97,18 @@
     </TypeIdentifier>
   </Class>
   <Class Name="IrcDotNet.IrcLocalUser">
-    <Position X="7.25" Y="6.75" Width="3.25" />
+    <Position X="7.25" Y="7.75" Width="3.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>CAAAggEARAACCGQAADQIAAAEQEJAAUAEAAEAAAAADwA=</HashCode>
+      <HashCode>CAAAggEARAACCGQAADUIAAAEQEJAAUAEAAEAAAAADwA=</HashCode>
       <FileName>IrcLocalUser.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="IrcDotNet.IrcServer">
-    <Position X="3.75" Y="17" Width="2" />
+    <Position X="3.75" Y="18.25" Width="2" />
     <TypeIdentifier>
       <HashCode>gAAAAIAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
       <FileName>IrcServer.cs</FileName>
@@ -116,7 +116,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="IrcDotNet.IrcTargetMask">
-    <Position X="6" Y="17" Width="2.25" />
+    <Position X="6" Y="18.25" Width="2.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -127,42 +127,42 @@
     <Lollipop Position="0.2" />
   </Class>
   <Interface Name="IrcDotNet.IIrcMessageReceiveHandler">
-    <Position X="10" Y="21.25" Width="2.25" />
+    <Position X="10" Y="22.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
       <FileName>IIrcMessageReceiveHandler.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcMessageReceiver">
-    <Position X="12.5" Y="21.25" Width="1.75" />
+    <Position X="12.5" Y="22.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAQAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IIrcMessageReceiver.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcMessageSource">
-    <Position X="3.75" Y="21.25" Width="1.75" />
+    <Position X="3.75" Y="22.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IIrcMessageSource.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcMessageTarget">
-    <Position X="5.75" Y="21.25" Width="1.75" />
+    <Position X="5.75" Y="22.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IIrcMessageTarget.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcMessageSendHandler">
-    <Position X="7.75" Y="21.25" Width="2" />
+    <Position X="7.75" Y="22.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAA=</HashCode>
       <FileName>IIrcMessageSendHandler.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="IrcDotNet.IrcTargetMaskType">
-    <Position X="6" Y="19.5" Width="2.25" />
+    <Position X="6" Y="20.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAQAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IrcTargetMask.cs</FileName>

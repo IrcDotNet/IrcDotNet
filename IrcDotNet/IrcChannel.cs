@@ -7,7 +7,6 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    // TODO: Implement (un)banning.
     public class IrcChannel : INotifyPropertyChanged, IIrcMessageTarget, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
         private readonly char[] channelUserModes = new char[] { 'o', 'v' };

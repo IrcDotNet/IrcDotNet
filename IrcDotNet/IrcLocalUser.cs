@@ -114,6 +114,14 @@ namespace IrcDotNet
             this.Client.SendNotice(targets, text);
         }
 
+        public void SetNickName(string nickName)
+        {
+            if (nickName == null)
+                throw new ArgumentNullException("nickName");
+
+            this.Client.SetNickName(nickName);
+        }
+
         public void SetAway(string text)
         {
             if (text == null)
@@ -176,7 +184,7 @@ namespace IrcDotNet
 
         internal void HandleNoticeSent(IList<IIrcMessageTarget> targets, string text)
         {
-            OnMessageSent(new IrcMessageEventArgs(this, targets, text));
+            OnNoticeSent(new IrcMessageEventArgs(this, targets, text));
         }
 
         internal void HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
