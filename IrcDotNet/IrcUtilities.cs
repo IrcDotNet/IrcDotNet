@@ -47,13 +47,12 @@ namespace IrcDotNet
                             throw new InvalidOperationException(errorMessageNotEnoughModeParams);
                         handleModeParameter(addMode.Value, mode, modeParametersEnumerator.Current);
                     }
-                    else if (addMode.Value)
+                    else
                     {
-                        collection.Add(mode);
-                    }
-                    else if (!addMode.Value)
-                    {
-                        collection.Remove(mode);
+                        if (addMode.Value)
+                            collection.Add(mode);
+                        else
+                            collection.Remove(mode);
                     }
                 }
             }

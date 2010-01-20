@@ -1807,98 +1807,114 @@ namespace IrcDotNet
 
         protected virtual void OnConnected(EventArgs e)
         {
-            if (this.Connected != null)
-                this.Connected(this, e);
+            var handler = this.Connected;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnConnectFailed(IrcErrorEventArgs e)
         {
-            if (this.ConnectFailed != null)
-                this.ConnectFailed(this, e);
+            var handler = this.ConnectFailed;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnDisconnected(EventArgs e)
         {
-            if (this.Disconnected != null)
-                this.Disconnected(this, e);
+            var handler = this.Disconnected;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnError(IrcErrorEventArgs e)
         {
-            if (this.Error != null)
-                this.Error(this, e);
+            var handler = this.Error;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnProtocolError(IrcProtocolErrorEventArgs e)
         {
-            if (this.ProtocolError != null)
-                this.ProtocolError(this, e);
+            var handler = this.ProtocolError;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnErrorMessageReceived(IrcErrorMessageEventArgs e)
         {
-            if (this.ErrorMessageReceived != null)
-                this.ErrorMessageReceived(this, e);
+            var handler = this.ErrorMessageReceived;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnRegistered(EventArgs e)
         {
-            if (this.Registered != null)
-                this.Registered(this, e);
+            var handler = this.Registered;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnServerBounce(IrcServerInfoEventArgs e)
         {
-            if (this.ServerBounce != null)
-                this.ServerBounce(this, e);
+            var handler = this.ServerBounce;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnServerSupportedFeaturesReceived(EventArgs e)
         {
-            if (this.ServerSupportedFeaturesReceived != null)
-                this.ServerSupportedFeaturesReceived(this, e);
+            var handler = this.ServerSupportedFeaturesReceived;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnPingReceived(IrcPingOrPongReceivedEventArgs e)
         {
-            if (this.PingReceived != null)
-                this.PongReceived(this, e);
+            var handler = this.PingReceived;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnPongReceived(IrcPingOrPongReceivedEventArgs e)
         {
-            if (this.PongReceived != null)
-                this.PongReceived(this, e);
+            var handler = this.PongReceived;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnMotdReceived(EventArgs e)
         {
-            if (this.MotdReceived != null)
-                this.MotdReceived(this, e);
+            var handler = this.MotdReceived;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnChannelJoined(IrcChannelEventArgs e)
         {
-            if (this.ChannelJoined != null)
-                this.ChannelJoined(this, e);
+            var handler = this.ChannelJoined;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnChannelParted(IrcChannelEventArgs e)
         {
-            if (this.ChannelParted != null)
-                this.ChannelParted(this, e);
+            var handler = this.ChannelParted;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnWhoIsReplyReceived(IrcUserEventArgs e)
         {
-            if (this.WhoIsReplyReceived != null)
-                this.WhoIsReplyReceived(this, e);
+            var handler = this.WhoIsReplyReceived;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnWhoWasReplyReceived(EventArgs e)
         {
-            if (this.WhoWasReplyReceived != null)
-                this.WhoWasReplyReceived(this, e);
+            var handler = this.WhoWasReplyReceived;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected delegate void MessageProcessor(IrcMessage message);

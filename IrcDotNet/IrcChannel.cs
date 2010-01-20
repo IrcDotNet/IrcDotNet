@@ -198,56 +198,65 @@ namespace IrcDotNet
 
         protected virtual void OnUsersListReceived(EventArgs e)
         {
-            if (this.UsersListReceived != null)
-                this.UsersListReceived(this, e);
+            var handler = this.UsersListReceived;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnModesChanged(EventArgs e)
         {
-            if (this.ModesChanged != null)
-                this.ModesChanged(this, e);
+            var handler = this.ModesChanged;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnTopicChanged(EventArgs e)
         {
-            if (this.TopicChanged != null)
-                this.TopicChanged(this, e);
+            var handler = this.TopicChanged;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnUserJoined(IrcChannelUserEventArgs e)
         {
-            if (this.UserJoined != null)
-                this.UserJoined(this, e);
+            var handler = this.UserJoined;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnUserParted(IrcChannelUserEventArgs e)
         {
-            if (this.UserParted != null)
-                this.UserParted(this, e);
+            var handler = this.UserParted;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnUserKicked(IrcChannelUserEventArgs e)
         {
-            if (this.UserKicked != null)
-                this.UserKicked(this, e);
+            var handler = this.UserKicked;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnMessageReceived(IrcMessageEventArgs e)
         {
-            if (this.MessageReceived != null)
-                this.MessageReceived(this, e);
+            var handler = this.MessageReceived;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnNoticeReceived(IrcMessageEventArgs e)
         {
-            if (this.NoticeReceived != null)
-                this.NoticeReceived(this, e);
+            var handler = this.NoticeReceived;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, e);
+            var handler = this.PropertyChanged;
+            if (handler != null)
+                handler(this, e);
         }
 
         public override string ToString()

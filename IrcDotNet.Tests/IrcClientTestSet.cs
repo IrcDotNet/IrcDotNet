@@ -42,10 +42,11 @@ namespace IrcDotNet.Tests
         private static AutoResetEvent client1WhoWasReplyReceived;
         private static AutoResetEvent client1ChannelUsersListReceivedEvent;
         private static AutoResetEvent client1ChannelModeChangedEvent;
+        private static AutoResetEvent client1ChannelUserModeChangedEvent;
         private static AutoResetEvent client1ChannelUserKickedEvent;
         private static AutoResetEvent client1ChannelMessageReceivedEvent;
         private static AutoResetEvent client1ChannelNoticeReceivedEvent;
-
+        
         private static AutoResetEvent client2ConnectedEvent;
         private static AutoResetEvent client2DisconnectedEvent;
         private static AutoResetEvent client2ErrorEvent;
@@ -99,6 +100,8 @@ namespace IrcDotNet.Tests
             Func<string> getRandomUserId = () => Guid.NewGuid().ToString().Substring(0, 8);
             nickName1 = userName1 = string.Format("itb-{0}", getRandomUserId());
             nickName2 = userName2 = string.Format("itb-{0}", getRandomUserId());
+            Debug.WriteLine("Cllient 1 user has nick name '{0}' and user name '{1}'.", nickName1, userName1);
+            Debug.WriteLine("Cllient 2 user has nick name '{0}' and user name '{1}'.", nickName2, userName2);
             client1.Connect(serverHostName, serverPassword, nickName1, userName1, realName);
             client2.Connect(serverHostName, serverPassword, nickName2, userName2, realName);
 
@@ -156,7 +159,7 @@ namespace IrcDotNet.Tests
             if (client1ErrorEvent != null)
                 client1ErrorEvent.Set();
 
-            Debug.WriteLine("Protocol error: " + e.Error.Message);
+            Debug.Fail("Protocol error: " + e.Error.Message);
         }
 
         private static void client1_ProtocolError(object sender, EventArgs e)
@@ -497,28 +500,6 @@ namespace IrcDotNet.Tests
             Assert.IsTrue(client1.LocalUser.Modes.Contains('w'), "Local user mode is unchanged.");
         }
 
-        // Test requires that client 2 user is currently member of channel.
-        [TestMethod(), TestDependency(IrcClientTestState.Registered | IrcClientTestState.InChannel)]
-        public void WhoIsTest()
-        {
-            var whoIsUser = client1.Users.Single(u => u.NickName == client2.LocalUser.NickName);
-            client1.WhoIs(whoIsUser.NickName);
-            Assert.IsTrue(WaitForClientEvent(client1WhoIsReplyReceived, 10000), "Client 1 did not receive WhoIs reply.");
-            Assert.AreEqual(userName2, whoIsUser.NickName);
-            Assert.AreEqual(realName, whoIsUser.RealName);
-            Assert.IsTrue(whoIsUser.HostName != null && whoIsUser.HostName.Length > 1);
-            Assert.AreEqual(serverHostName, whoIsUser.ServerName);
-            Assert.IsFalse(whoIsUser.IsOperator);
-            var channel = client1.Channels.First();
-            Assert.IsTrue(whoIsUser.GetChannelUsers().First().Channel == channel);
-        }
-
-        [TestMethod(), TestDependency(IrcClientTestState.Registered)]
-        public void WhoWasTest()
-        {
-            // TODO: Test WhoWas command.
-        }
-
         [TestMethod(), TestDependency(IrcClientTestState.Registered, SetState = IrcClientTestState.InChannel)]
         public void JoinChannelTest()
         {
@@ -542,6 +523,26 @@ namespace IrcDotNet.Tests
         }
 
         [TestMethod(), TestDependency(IrcClientTestState.InChannel)]
+        public void ChannelLocalUserModeTest()
+        {
+            // Local user should already have 'o' mode on joining channel.
+            var channel = client1.Channels.Single(c => c.Name == testChannelName);
+            var channelUser = channel.Users.First();
+            Assert.IsTrue(channelUser.Modes.Contains('o'),
+                "Local user does not initially have 'o' mode in channel.");
+            channelUser.ModesChanged += (sender, e) =>
+                {
+                    if (client1ChannelUsersListReceivedEvent != null)
+                        client1ChannelUsersListReceivedEvent.Set();
+                };
+            channelUser.Voice();
+            Assert.IsTrue(WaitForClientEvent(client1ChannelUsersListReceivedEvent, 10000),
+                "Channel mode of local user was not changed to '+v'.");
+            Assert.IsTrue(channelUser.Modes.Contains('v'),
+                "Local user does not have 'v' mode in channel.");
+        }
+
+        [TestMethod(), TestDependency(IrcClientTestState.InChannel)]
         public void ChannelModeTest()
         {
             var channel = client1.Channels.Single(c => c.Name == testChannelName);
@@ -551,23 +552,13 @@ namespace IrcDotNet.Tests
                 "Channel mode is not initially 'ns'.");
             Assert.IsFalse(channel.Modes.Contains('m'), "Channel already has mode 'm'.");
             channel.SetModes("+m");
-            Assert.IsTrue(WaitForClientEvent(client1ChannelModeChangedEvent, 10000), "Channel mode was not changed.");
+            Assert.IsTrue(WaitForClientEvent(client1ChannelModeChangedEvent, 10000),
+                "Channel mode was not changed to '+m'.");
             Assert.IsTrue(channel.Modes.Contains('m'), "Channel does not have mode 'm'.");
             channel.SetModes("-m");
-            Assert.IsTrue(WaitForClientEvent(client1ChannelModeChangedEvent, 10000), "Channel mode was not changed.");
+            Assert.IsTrue(WaitForClientEvent(client1ChannelModeChangedEvent, 10000),
+                "Channel mode was not changed to '-m'.");
             Assert.IsFalse(channel.Modes.Contains('m'), "Channel still has mode 'm'.");
-        }
-
-        [TestMethod(), TestDependency(IrcClientTestState.InChannel)]
-        public void ChannelLocalUserModeTest()
-        {
-            // Local user should already have 'o' mode on join.
-            var channel = client1.Channels.Single(c => c.Name == testChannelName);
-            Assert.IsTrue(channel.Users[0].Modes.Contains('o'),
-                "Local user does not initially have 'o' mode in channel.");
-            channel.Users[0].Voice();
-            Assert.IsFalse(channel.Users[0].Modes.Contains('v'),
-                "Local user does not have 'v' mode in channel.");
         }
 
         [TestMethod(), TestDependency(IrcClientTestState.InChannel)]
@@ -624,6 +615,28 @@ namespace IrcDotNet.Tests
         {
             client1.Channels.Join(testChannelName);
             Assert.IsTrue(WaitForClientEvent(client1ChannelJoinedEvent, 10000), "Could not rejoin channel.");
+        }
+
+        // Test requires that client 2 user is currently member of channel.
+        [TestMethod(), TestDependency(IrcClientTestState.Registered | IrcClientTestState.InChannel)]
+        public void WhoIsTest()
+        {
+            var whoIsUser = client1.Users.Single(u => u.NickName == client2.LocalUser.NickName);
+            client1.WhoIs(whoIsUser.NickName);
+            Assert.IsTrue(WaitForClientEvent(client1WhoIsReplyReceived, 10000), "Client 1 did not receive WhoIs reply.");
+            Assert.AreEqual(userName2, whoIsUser.NickName);
+            Assert.AreEqual(realName, whoIsUser.RealName);
+            Assert.IsTrue(whoIsUser.HostName != null && whoIsUser.HostName.Length > 1);
+            Assert.AreEqual(serverHostName, whoIsUser.ServerName);
+            Assert.IsFalse(whoIsUser.IsOperator);
+            var channel = client1.Channels.First();
+            Assert.IsTrue(whoIsUser.GetChannelUsers().First().Channel == channel);
+        }
+
+        [TestMethod(), TestDependency(IrcClientTestState.Registered)]
+        public void WhoWasTest()
+        {
+            // TODO: Test WhoWas command.
         }
 
         [TestMethod(), TestDependency(IrcClientTestState.InChannel, UnsetState = IrcClientTestState.InChannel)]

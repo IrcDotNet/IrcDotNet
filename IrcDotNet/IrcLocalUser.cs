@@ -199,32 +199,37 @@ namespace IrcDotNet
 
         protected virtual void OnModesChanged(EventArgs e)
         {
-            if (this.ModesChanged != null)
-                this.ModesChanged(this, e);
+            var handler = this.ModesChanged;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnMessageSent(IrcMessageEventArgs e)
         {
-            if (this.MessageSent != null)
-                this.MessageSent(this, e);
+            var handler = this.MessageSent;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnMessageReceived(IrcMessageEventArgs e)
         {
-            if (this.MessageReceived != null)
-                this.MessageReceived(this, e);
+            var handler = this.MessageReceived;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnNoticeSent(IrcMessageEventArgs e)
         {
-            if (this.NoticeSent != null)
-                this.NoticeSent(this, e);
+            var handler = this.NoticeSent;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnNoticeReceived(IrcMessageEventArgs e)
         {
-            if (this.NoticeReceived != null)
-                this.NoticeReceived(this, e);
+            var handler = this.NoticeReceived;
+            if (handler != null)
+                handler(this, e);
         }
 
         #region IIrcMessageSendHandler Members

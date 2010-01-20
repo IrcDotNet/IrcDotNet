@@ -153,14 +153,16 @@ namespace IrcDotNet
 
         protected virtual void OnNickNameChanged(EventArgs e)
         {
-            if (this.NickNameChanged != null)
-                this.NickNameChanged(this, e);
+            var handler = this.NickNameChanged;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, e);
+            var handler = this.PropertyChanged;
+            if (handler != null)
+                handler(this, e);
         }
 
         public override string ToString()

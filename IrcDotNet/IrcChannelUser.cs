@@ -91,14 +91,16 @@ namespace IrcDotNet
 
         protected virtual void OnModesChanged(EventArgs e)
         {
-            if (this.ModesChanged != null)
-                this.ModesChanged(this, e);
+            var handler = this.ModesChanged;
+            if (handler != null)
+                handler(this, e);
         }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, e);
+            var handler = this.PropertyChanged;
+            if (handler != null)
+                handler(this, e);
         }
 
         public override string ToString()
