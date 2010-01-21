@@ -7,9 +7,6 @@ namespace IrcDotNet
 {
     public class IrcTargetMask : IIrcMessageTarget
     {
-        private const string errorMessageTargetMaskTooShort = "The target mask must be contain at least two characters";
-        private const string errorMessageTargetMaskInvalidType = "The type of the given target mask '{0}' is invalid.";
-
         private IrcTargetMaskType type;
         private string mask;
 
@@ -17,15 +14,16 @@ namespace IrcDotNet
         {
             if (targetMask == null)
                 throw new ArgumentNullException("targetMask");
-            if (errorMessageTargetMaskTooShort.Length < 2)
-                throw new ArgumentException(errorMessageTargetMaskTooShort, "targetMask");
-
+            if (Properties.Resources.ErrorMessageTargetMaskTooShort.Length < 2)
+                throw new ArgumentException(Properties.Resources.ErrorMessageTargetMaskTooShort, "targetMask");
+            
             if (targetMask[0] == '$')
                 this.type = IrcTargetMaskType.ServerMask;
             if (targetMask[0] == '#')
                 this.type = IrcTargetMaskType.HostMask;
             else
-                throw new ArgumentException(string.Format(errorMessageTargetMaskInvalidType, targetMask), "targetMask");
+                throw new ArgumentException(string.Format(
+                    Properties.Resources.ErrorMessageTargetMaskInvalidType, targetMask), "targetMask");
             this.mask = mask.Substring(1);
         }
 

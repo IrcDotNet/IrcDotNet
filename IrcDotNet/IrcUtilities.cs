@@ -7,8 +7,6 @@ namespace IrcDotNet
 {
     public static class IrcUtilities
     {
-        private const string errorMessageNotEnoughModeParams = "Not enough mode parameters were specified for the given modes.";
-
         // Reads list of mode changes, where each group of modes is prefixed by a '+' or '-', representing respectively
         // setting or unsetting of the given modes.
         public static void UpdateModes(this ICollection<char> collection, string newModes,
@@ -44,7 +42,7 @@ namespace IrcDotNet
                     if (newModeParameters != null && modesWithParameters.Contains(mode))
                     {
                         if (!modeParametersEnumerator.MoveNext())
-                            throw new InvalidOperationException(errorMessageNotEnoughModeParams);
+                            throw new InvalidOperationException(Properties.Resources.ErrorMessageNotEnoughModeParams);
                         handleModeParameter(addMode.Value, mode, modeParametersEnumerator.Current);
                     }
                     else

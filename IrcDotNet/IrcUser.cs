@@ -126,6 +126,7 @@ namespace IrcDotNet
         }
 
         public event EventHandler<EventArgs> NickNameChanged;
+        public event EventHandler<IrcCommentEventArgs> Quit;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void WhoIs()
@@ -151,9 +152,21 @@ namespace IrcDotNet
             }
         }
 
+        internal void HandeQuit(string comment)
+        {
+            OnQuit(new IrcCommentEventArgs(comment));
+        }
+
         protected virtual void OnNickNameChanged(EventArgs e)
         {
             var handler = this.NickNameChanged;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        protected virtual void OnQuit(IrcCommentEventArgs e)
+        {
+            var handler = this.Quit;
             if (handler != null)
                 handler(this, e);
         }

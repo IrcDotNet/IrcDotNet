@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace IrcDotNet.Tests
 {
+    // TODO: Expand state machine for test dependencies.
     // Set of all tests for IRC client.
     [TestClass()]
     public class IrcClientTestSet : InterdependentTestSet<IrcClientTestState>
@@ -20,6 +21,7 @@ namespace IrcDotNet.Tests
         private const string realName = "IRC.NET Test Bot";
 
         // Data used for testing.
+        private const string quitMessage = "Client 2 quitting test.";
         private const string testMessage1 = "This is the first test message.";
         private const string testMessage2 = "This is the second test message.";
 
@@ -40,13 +42,17 @@ namespace IrcDotNet.Tests
         private static AutoResetEvent client1ChannelPartedEvent;
         private static AutoResetEvent client1WhoIsReplyReceived;
         private static AutoResetEvent client1WhoWasReplyReceived;
+        private static AutoResetEvent client1UserQuitEvent;
         private static AutoResetEvent client1ChannelUsersListReceivedEvent;
         private static AutoResetEvent client1ChannelModeChangedEvent;
+        private static AutoResetEvent client1ChannelTopicChangedEvent;
         private static AutoResetEvent client1ChannelUserModeChangedEvent;
+        private static AutoResetEvent client1ChannelUserJoinedEvent;
+        private static AutoResetEvent client1ChannelUserPartedEvent;
         private static AutoResetEvent client1ChannelUserKickedEvent;
         private static AutoResetEvent client1ChannelMessageReceivedEvent;
         private static AutoResetEvent client1ChannelNoticeReceivedEvent;
-        
+
         private static AutoResetEvent client2ConnectedEvent;
         private static AutoResetEvent client2DisconnectedEvent;
         private static AutoResetEvent client2ErrorEvent;
@@ -60,6 +66,9 @@ namespace IrcDotNet.Tests
         private static AutoResetEvent client2ChannelMessageReceivedEvent;
         private static AutoResetEvent client2ChannelNoticeReceivedEvent;
 #pragma warning restore 0649
+
+        // Data received from tests.
+        private static string client1UserQuitComment;
 
         // Primary and secondary client, with associated user information.
         private static IrcClient client1, client2;
@@ -263,6 +272,14 @@ namespace IrcDotNet.Tests
                 client1LocalUserNoticeReceivedEvent.Set();
         }
 
+        private static void client2_User_Quit(object sender, IrcCommentEventArgs e)
+        {
+            client1UserQuitComment = e.Comment;
+
+            if (client1UserQuitEvent != null)
+                client1UserQuitEvent.Set();
+        }
+
         private static void client1_Channel_UsersListReceived(object sender, EventArgs e)
         {
             if (client1ChannelUsersListReceivedEvent != null)
@@ -277,17 +294,24 @@ namespace IrcDotNet.Tests
 
         private static void client1_Channel_TopicChanged(object sender, EventArgs e)
         {
-            //
+            if (client1ChannelTopicChangedEvent != null)
+                client1ChannelTopicChangedEvent.Set();
         }
 
         private static void client1_Channel_UserJoined(object sender, IrcChannelUserEventArgs e)
         {
-            //
+            e.ChannelUser.User.Quit += client2_User_Quit;
+
+            if (client1ChannelUserJoinedEvent != null)
+                client1ChannelUserJoinedEvent.Set();
         }
 
         private static void client1_Channel_UserParted(object sender, IrcChannelUserEventArgs e)
         {
-            //
+            e.ChannelUser.User.Quit -= client2_User_Quit;
+
+            if (client1ChannelUserPartedEvent != null)
+                client1ChannelUserPartedEvent.Set();
         }
 
         private static void client1_Channel_UserKicked(object sender, IrcChannelUserEventArgs e)
@@ -453,8 +477,14 @@ namespace IrcDotNet.Tests
         {
             client1.Disconnect();
             Assert.IsTrue(client1DisconnectedEvent.WaitOne(5000), "Client 1 failed to disconnect from server.");
+        }
 
-            client2.Disconnect();
+        [TestMethod(), TestDependency(IrcClientTestState.Connected)]
+        public void QuitTest()
+        {
+            client2.Quit(quitMessage);
+            Assert.IsTrue(client1UserQuitEvent.WaitOne(10000), "Client 2 failed to quit from server.");
+            //Assert.AreEqual(quitMessage, client1UserQuitComment, "Did not receive correct quit message when client 2 quit.");
             Assert.IsTrue(client2DisconnectedEvent.WaitOne(5000), "Client 2 failed to disconnect from server.");
         }
 
@@ -510,6 +540,33 @@ namespace IrcDotNet.Tests
             Assert.IsTrue(WaitForClientEvent(client1ChannelJoinedEvent, 10000), "Client 1 could not join channel.");
             client2.Channels.Join(testChannelName);
             Assert.IsTrue(WaitForClientEvent(client2ChannelJoinedEvent, 10000), "Client 2 could not join channel.");
+
+            // Check that client 1 sees both local user and client 2 user join channel.
+            var client1Channel = client1.Channels.First();
+            Assert.IsTrue(WaitForClientEvent(client1ChannelUserJoinedEvent, 10000),
+                "Client 1 did not see local user join channel.");
+            Assert.IsTrue(client1Channel.Users.Count >= 1 &&
+                client1Channel.Users[0].User == client1.LocalUser,
+                "Client 1 does not see local user in channel.");
+            Assert.IsTrue(WaitForClientEvent(client1ChannelUserJoinedEvent, 10000),
+                "Client 1 did not see client 2 user join channel.");
+            Assert.IsTrue(client1Channel.Users.Count >= 2 &&
+                client1Channel.Users[1].User.NickName == client2.LocalUser.NickName,
+                "Client 1 does not see client 2 user in channel.");
+        }
+
+        [TestMethod(), TestDependency(IrcClientTestState.Registered, SetState = IrcClientTestState.InChannel)]
+        public void RejoinChannelTest()
+        {
+            client1.Channels.Join(testChannelName);
+            Assert.IsTrue(WaitForClientEvent(client1ChannelJoinedEvent, 10000), "Could not rejoin channel.");
+        }
+
+        [TestMethod(), TestDependency(IrcClientTestState.InChannel, UnsetState = IrcClientTestState.InChannel)]
+        public void PartChannelTest()
+        {
+            client1.Channels.Part(testChannelName);
+            Assert.IsTrue(WaitForClientEvent(client1ChannelPartedEvent, 10000), "Client 1 could not part channel.");
         }
 
         [TestMethod(), TestDependency(IrcClientTestState.InChannel)]
@@ -532,11 +589,11 @@ namespace IrcDotNet.Tests
                 "Local user does not initially have 'o' mode in channel.");
             channelUser.ModesChanged += (sender, e) =>
                 {
-                    if (client1ChannelUsersListReceivedEvent != null)
-                        client1ChannelUsersListReceivedEvent.Set();
+                    if (client1ChannelUserModeChangedEvent != null)
+                        client1ChannelUserModeChangedEvent.Set();
                 };
             channelUser.Voice();
-            Assert.IsTrue(WaitForClientEvent(client1ChannelUsersListReceivedEvent, 10000),
+            Assert.IsTrue(WaitForClientEvent(client1ChannelUserModeChangedEvent, 10000),
                 "Channel mode of local user was not changed to '+v'.");
             Assert.IsTrue(channelUser.Modes.Contains('v'),
                 "Local user does not have 'v' mode in channel.");
@@ -610,13 +667,6 @@ namespace IrcDotNet.Tests
                 "Collection of channels still contain channel from which kicked.");
         }
 
-        [TestMethod(), TestDependency(IrcClientTestState.Registered, SetState = IrcClientTestState.InChannel)]
-        public void RejoinChannelTest()
-        {
-            client1.Channels.Join(testChannelName);
-            Assert.IsTrue(WaitForClientEvent(client1ChannelJoinedEvent, 10000), "Could not rejoin channel.");
-        }
-
         // Test requires that client 2 user is currently member of channel.
         [TestMethod(), TestDependency(IrcClientTestState.Registered | IrcClientTestState.InChannel)]
         public void WhoIsTest()
@@ -637,15 +687,6 @@ namespace IrcDotNet.Tests
         public void WhoWasTest()
         {
             // TODO: Test WhoWas command.
-        }
-
-        [TestMethod(), TestDependency(IrcClientTestState.InChannel, UnsetState = IrcClientTestState.InChannel)]
-        public void PartChannelTest()
-        {
-            client1.Channels.Part(testChannelName);
-            Assert.IsTrue(WaitForClientEvent(client1ChannelPartedEvent, 10000), "Client 1 could not part channel.");
-            client2.Channels.Part(testChannelName);
-            Assert.IsTrue(WaitForClientEvent(client2ChannelPartedEvent, 10000), "Client 2 could not part channel.");
         }
 
         protected override void CheckTestState(IrcClientTestState requiredState)

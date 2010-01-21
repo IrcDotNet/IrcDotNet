@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <OrderedTest name="completeircclient" storage="c:\users\alex\documents\visual studio 2010\projects\irc.net\0.1\ircdotnet.tests\completeircclient.orderedtest" id="1e5f385c-9e50-435e-8944-b2823ddca2ed" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
-  <Execution id="2a7ea9fd-6b7c-4ba5-a1be-d4d68482e5a6" />
+  <Execution id="3e4b9b53-56c3-405a-bfad-6f953108e353" />
   <TestLinks>
     <TestLink id="497fd5c1-1c86-5d74-077a-1a64aadb48ea" name="ConnectTest" storage="bin\debug\ircdotnet.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
     <TestLink id="111ccf33-b6da-9efe-8e32-e8a4f8a18499" name="RegisterTest" storage="bin\debug\ircdotnet.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
@@ -17,6 +17,7 @@
     <TestLink id="b909f0ac-b131-0155-a848-422cba2fdad1" name="RejoinChannelTest" storage="bin\debug\ircdotnet.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
     <TestLink id="dc06b4b7-b27c-d1ad-1b45-af37276f25cd" name="WhoIsTest" storage="bin\debug\ircdotnet.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
     <TestLink id="b0d19706-bf68-366e-616f-18331c223439" name="WhoWasTest" storage="bin\debug\ircdotnet.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="50f8eebe-ccd0-6faa-0a43-f5f62aa1cf11" name="QuitTest" storage="bin\debug\ircdotnet.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
     <TestLink id="642fdada-57f6-bde0-c918-88de25341931" name="PartChannelTest" storage="bin\debug\ircdotnet.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
     <TestLink id="12cd0fbd-5265-66d3-a3bf-950724309547" name="DisconnectTest" storage="bin\debug\ircdotnet.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
   </TestLinks>

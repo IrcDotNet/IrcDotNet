@@ -48,7 +48,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>gAiAAIIAAIAIIASEKCAUEAAAgQAAgAMEAQAABAEAgAQ=</HashCode>
+      <HashCode>gAiAAIIAAIAIIASEKCAUEAAAgQAAgAMUAQAABAEAgQQ=</HashCode>
       <FileName>IrcUser.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -81,7 +81,7 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>PkWc2md2Z2PuW1rVWUeAEbPUv7/Sswq46f9ev0x52PE=</HashCode>
+      <HashCode>PkWc0md2ZnOuU1rVWUeAEbPUv6/Sswq46f9ev0x52fE=</HashCode>
       <FileName>IrcClient.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -121,7 +121,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAEAQAAMAAAAAABAAAAAQCAAAAAgAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAEAAAAAABAAAAAQCAAAAAgAA=</HashCode>
       <FileName>IrcTargetMask.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />

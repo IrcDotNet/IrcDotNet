@@ -161,28 +161,28 @@ namespace IrcDotNet
         internal void HandleUserJoined(IrcChannelUser channelUser)
         {
             this.users.Add(channelUser);
-            OnUserJoined(new IrcChannelUserEventArgs(channelUser));
+            OnUserJoined(new IrcChannelUserEventArgs(channelUser, null));
         }
 
-        internal void HandleUserParted(IrcUser user)
+        internal void HandleUserParted(IrcUser user, string comment)
         {
-            HandleUserParted(this.users.Single(u => u.User == user));
+            HandleUserParted(this.users.Single(u => u.User == user), comment);
         }
 
-        internal void HandleUserParted(IrcChannelUser channelUser)
+        internal void HandleUserParted(IrcChannelUser channelUser, string comment)
         {
-            OnUserParted(new IrcChannelUserEventArgs(channelUser));
+            OnUserParted(new IrcChannelUserEventArgs(channelUser, comment));
             this.users.Remove(channelUser); ;
         }
 
-        internal void HandleUserKicked(IrcUser user)
+        internal void HandleUserKicked(IrcUser user, string comment)
         {
-            HandleUserKicked(this.users.Single(u => u.User == user));
+            HandleUserKicked(this.users.Single(u => u.User == user), comment);
         }
 
-        internal void HandleUserKicked(IrcChannelUser channelUser)
+        internal void HandleUserKicked(IrcChannelUser channelUser, string comment)
         {
-            OnUserKicked(new IrcChannelUserEventArgs(channelUser));
+            OnUserKicked(new IrcChannelUserEventArgs(channelUser, comment));
             this.users.Remove(channelUser);
         }
 
