@@ -15,7 +15,7 @@ namespace IrcDotNet
         private ReadOnlySet<char> modesReadOnly;
 
         internal IrcLocalUser(string nickName, string userName, string realName, IEnumerable<char> modes = null)
-            : base(nickName, userName, realName)
+            : base(true, nickName, userName, realName)
         {
             this.modes = new HashSet<char>();
             this.modesReadOnly = new ReadOnlySet<char>(this.modes);

@@ -94,6 +94,21 @@ namespace IrcDotNet
         }
     }
 
+    public class IrcNameEventArgs : EventArgs
+    {
+        public IrcNameEventArgs(string name)
+            : base()
+        {
+            this.Name = name;
+        }
+
+        public string Name
+        {
+            get;
+            private set;
+        }
+    }
+
     public class IrcCommentEventArgs : EventArgs
     {
         // `comment` can be null.

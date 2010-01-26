@@ -5,7 +5,7 @@ using System.Text;
 
 namespace System.Collections
 {
-    internal static class CollectionExtensions
+    public static class CollectionExtensions
     {
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> range)
         {

@@ -15,6 +15,7 @@ using System.Threading;
 
 namespace IrcDotNet
 {
+    // TODO: Flood protection.
     public partial class IrcClient : IDisposable
     {
         private const int defaultPort = 6667;
@@ -68,6 +69,7 @@ namespace IrcDotNet
 
         private TcpClient client;
         private Thread readThread;
+        private Thread writeThread;
         private NetworkStream stream;
         private StreamWriter writer;
         private StreamReader reader;
@@ -84,6 +86,7 @@ namespace IrcDotNet
         {
             this.client = new TcpClient();
             this.readThread = new Thread(ReadLoop);
+            this.writeThread = new Thread(WriteLoop);
             this.canDisconnect = false;
 
             this.messageProcessors = new Dictionary<string, MessageProcessor>(
@@ -207,6 +210,12 @@ namespace IrcDotNet
                             this.readThread.Join(1000);
                         this.readThread = null;
                     }
+                    if (this.writeThread != null)
+                    {
+                        if (this.writeThread.IsAlive)
+                            this.writeThread.Join(1000);
+                        this.writeThread = null;
+                    }
                     if (this.stream != null)
                     {
                         this.stream.Close();
@@ -241,25 +250,31 @@ namespace IrcDotNet
         public event EventHandler<EventArgs> MotdReceived;
         public event EventHandler<IrcChannelEventArgs> ChannelJoined;
         public event EventHandler<IrcChannelEventArgs> ChannelParted;
+        public event EventHandler<IrcNameEventArgs> WhoReplyReceived;
         public event EventHandler<IrcUserEventArgs> WhoIsReplyReceived;
-        public event EventHandler<EventArgs> WhoWasReplyReceived;
+        public event EventHandler<IrcUserEventArgs> WhoWasReplyReceived;
 
-        public void WhoIs(params string[] nickNameMasks)
+        public void QueryWho(string mask = null, bool onlyOperators = false)
         {
-            WhoIs((IEnumerable<string>)nickNameMasks);
+            SendMessageWho(mask, onlyOperators);
         }
 
-        public void WhoIs(IEnumerable<string> nickNameMasks)
+        public void QueryWhoIs(params string[] nickNameMasks)
+        {
+            QueryWhoIs((IEnumerable<string>)nickNameMasks);
+        }
+
+        public void QueryWhoIs(IEnumerable<string> nickNameMasks)
         {
             SendMessageWhoIs(nickNameMasks);
         }
 
-        public void WhoWas(params string[] nickNames)
+        public void QueryWhoWas(params string[] nickNames)
         {
-            WhoWas((IEnumerable<string>)nickNames);
+            QueryWhoWas((IEnumerable<string>)nickNames);
         }
 
-        public void WhoWas(IEnumerable<string> nickNames, int entriesCount = -1)
+        public void QueryWhoWas(IEnumerable<string> nickNames, int entriesCount = -1)
         {
             SendMessageWhoWas(nickNames, entriesCount);
         }
@@ -441,7 +456,7 @@ namespace IrcDotNet
         {
             try
             {
-                // Read each message, one per line, from network stream.
+                // Read each message from network stream, one per line, until client is disconnected.
                 while (this.client != null && this.client.Connected)
                 {
                     var line = this.reader.ReadLine();
@@ -490,6 +505,43 @@ namespace IrcDotNet
 
                     var message = new IrcMessage(this, prefix, command, parameters);
                     ReadMessage(message);
+                }
+            }
+            catch (IOException exIO)
+            {
+                var socketException = exIO.InnerException as SocketException;
+                if (socketException != null)
+                {
+                    switch (socketException.SocketErrorCode)
+                    {
+                        case SocketError.Interrupted:
+                        case SocketError.NotConnected:
+                            return;
+                    }
+                }
+
+                OnError(new IrcErrorEventArgs(exIO));
+            }
+#if !DEBUG
+            catch (Exception ex)
+            {
+                OnError(new IrcErrorEventArgs(ex));
+            }
+#endif
+            finally
+            {
+                DisconnectInternal();
+            }
+        }
+
+        private void WriteLoop()
+        {
+            try
+            {
+                // Continuously write messages in send queue to network stream, within given rate limit.
+                while (this.client != null && this.client.Connected)
+                {
+                    // TODO: Implement write loop.
                 }
             }
             catch (IOException exIO)
@@ -766,6 +818,7 @@ namespace IrcDotNet
 
                 HandleClientConnected((IrcConnectContext)ar.AsyncState);
                 this.readThread.Start();
+                this.writeThread.Start();
 
                 OnConnected(new EventArgs());
             }
@@ -1012,19 +1065,20 @@ namespace IrcDotNet
             return channel;
         }
 
-        protected IrcUser GetUserFromNickName(string nickName)
+        protected IrcUser GetUserFromNickName(string nickName, bool isOnline = true)
         {
             bool createdNew;
-            return GetUserFromNickName(nickName, out createdNew);
+            return GetUserFromNickName(nickName, out createdNew, isOnline);
         }
 
-        protected IrcUser GetUserFromNickName(string nickName, out bool createdNew)
+        protected IrcUser GetUserFromNickName(string nickName, out bool createdNew, bool isOnline = true)
         {
             // Search for user with given nick name in list of known users. If it does not exist, add it.
             var user = this.users.SingleOrDefault(u => u.NickName == nickName);
             if (user == null)
             {
                 user = new IrcUser();
+                user.IsOnline = isOnline;
                 user.NickName = nickName;
                 this.users.Add(user);
                 createdNew = true;
@@ -1190,6 +1244,12 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        protected virtual void OnWhoReplyReceived(IrcNameEventArgs e)
+        {
+            var handler = this.WhoReplyReceived;
+            if (handler != null)
+                handler(this, e);
+        }
         protected virtual void OnWhoIsReplyReceived(IrcUserEventArgs e)
         {
             var handler = this.WhoIsReplyReceived;
@@ -1197,7 +1257,7 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
-        protected virtual void OnWhoWasReplyReceived(EventArgs e)
+        protected virtual void OnWhoWasReplyReceived(IrcUserEventArgs e)
         {
             var handler = this.WhoWasReplyReceived;
             if (handler != null)

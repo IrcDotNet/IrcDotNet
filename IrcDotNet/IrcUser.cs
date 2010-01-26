@@ -8,6 +8,7 @@ namespace IrcDotNet
 {
     public class IrcUser : INotifyPropertyChanged, IIrcMessageSource, IIrcMessageTarget
     {
+        private bool isOnline;
         private string nickName;
         private string userName;
         private string realName;
@@ -15,11 +16,14 @@ namespace IrcDotNet
         private string serverName;
         private string serverInfo;
         private bool isOperator;
+        private bool isAway;
+        private string awayMessage;
         private TimeSpan idleDuration;
+        private int hopCount;
 
         private IrcClient client;
 
-        internal IrcUser(string nickName, string userName, string realName)
+        internal IrcUser(bool isOnline, string nickName, string userName, string realName)
         {
             this.nickName = nickName;
             this.userName = userName;
@@ -27,11 +31,24 @@ namespace IrcDotNet
             this.serverName = null;
             this.serverInfo = null;
             this.isOperator = false;
+            this.isAway = false;
+            this.awayMessage = null;
             this.idleDuration = TimeSpan.Zero;
+            this.hopCount = 0;
         }
 
         internal IrcUser()
         {
+        }
+
+        public bool IsOnline
+        {
+            get { return this.isOnline; }
+            internal set
+            {
+                this.isOnline = value;
+                OnPropertyChanged(new PropertyChangedEventArgs("IsOnline"));
+            }
         }
 
         public string NickName
@@ -105,6 +122,27 @@ namespace IrcDotNet
             }
         }
 
+        public bool IsAway
+        {
+            get { return this.isAway; }
+            internal set
+            {
+                this.isAway = value;
+                OnIsAwayChanged(new EventArgs());
+                OnPropertyChanged(new PropertyChangedEventArgs("IsAway"));
+            }
+        }
+
+        public string AwayMessage
+        {
+            get { return this.awayMessage; }
+            internal set
+            {
+                this.awayMessage = value;
+                OnPropertyChanged(new PropertyChangedEventArgs("AwayMessage"));
+            }
+        }
+
         public TimeSpan IdleDuration
         {
             get { return this.idleDuration; }
@@ -112,6 +150,16 @@ namespace IrcDotNet
             {
                 this.idleDuration = value;
                 OnPropertyChanged(new PropertyChangedEventArgs("IdleDuration"));
+            }
+        }
+        
+        public int HopCount
+        {
+            get { return this.hopCount; }
+            internal set
+            {
+                this.hopCount = value;
+                OnPropertyChanged(new PropertyChangedEventArgs("HopCount"));
             }
         }
 
@@ -126,17 +174,18 @@ namespace IrcDotNet
         }
 
         public event EventHandler<EventArgs> NickNameChanged;
+        public event EventHandler<EventArgs> IsAwayChanged;
         public event EventHandler<IrcCommentEventArgs> Quit;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void WhoIs()
         {
-            this.client.WhoIs(new[] { this.nickName });
+            this.client.QueryWhoIs(new[] { this.nickName });
         }
 
         public void WhoWas(int entriesCount = -1)
         {
-            this.client.WhoWas(new[] { this.nickName }, entriesCount);
+            this.client.QueryWhoWas(new[] { this.nickName }, entriesCount);
         }
 
         public IEnumerable<IrcChannelUser> GetChannelUsers()
@@ -164,6 +213,13 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        protected virtual void OnIsAwayChanged(EventArgs e)
+        {
+            var handler = this.IsAwayChanged;
+            if (handler != null)
+                handler(this, e);
+        }
+        
         protected virtual void OnQuit(IrcCommentEventArgs e)
         {
             var handler = this.Quit;
