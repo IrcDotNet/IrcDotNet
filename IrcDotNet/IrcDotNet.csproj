@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IrcStandardFloodPreventer.cs" />
+    <Compile Include="IIrcFloodPreventer.cs" />
     <Compile Include="IIrcMessageSendHandler.cs" />
     <Compile Include="IIrcMessageReceiveHandler.cs" />
     <Compile Include="IIrcMessageSource.cs" />

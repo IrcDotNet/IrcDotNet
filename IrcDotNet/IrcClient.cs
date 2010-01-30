@@ -15,7 +15,6 @@ using System.Threading;
 
 namespace IrcDotNet
 {
-    // TODO: Flood protection.
     public partial class IrcClient : IDisposable
     {
         private const int defaultPort = 6667;
@@ -37,7 +36,7 @@ namespace IrcDotNet
         {
             regexNickName = @"(?<nick>[^!@]+)";
             regexUserName = @"(?<user>[^!@]+)";
-            regexHostName = @"(?<host>[^%@]+?\..*)";
+            regexHostName = @"(?<host>[^%@]+)";
             regexChannelName = @"(?<channel>[#+!&].+)";
             regexTargetMask = @"(?<targetMask>[$#].+)";
             regexServerName = @"(?<server>[^%@]+?\..*)";
@@ -79,6 +78,10 @@ namespace IrcDotNet
         private Dictionary<string, MessageProcessor> messageProcessors;
         // Array of message processor routines, keyed by their numeric codes (000 to 999).
         private Dictionary<int, MessageProcessor> numMessageProcessors;
+        // Queue of messages to be sent by write loop when appropiate.
+        private Queue<string> messageSendQueue;
+        // Prevents client from flooding server with messages by limiting send rate.
+        private IIrcFloodPreventer floodPreventer;
 
         private bool isDisposed = false;
 
@@ -88,12 +91,13 @@ namespace IrcDotNet
             this.readThread = new Thread(ReadLoop);
             this.writeThread = new Thread(WriteLoop);
             this.canDisconnect = false;
-
             this.messageProcessors = new Dictionary<string, MessageProcessor>(
                 StringComparer.InvariantCultureIgnoreCase);
             this.numMessageProcessors = new Dictionary<int, MessageProcessor>(1000);
-            InitialiseMessageProcessors();
+            this.messageSendQueue = new Queue<string>();
+            this.floodPreventer = null;
 
+            InitialiseMessageProcessors();
             ResetState();
         }
 
@@ -173,6 +177,12 @@ namespace IrcDotNet
         public IrcUserCollection Users
         {
             get { return this.usersReadOnly; }
+        }
+
+        public IIrcFloodPreventer FloodPreventer
+        {
+            get { return floodPreventer; }
+            set { this.floodPreventer = value; }
         }
 
         public bool IsConnected
@@ -463,7 +473,7 @@ namespace IrcDotNet
                     if (line == null)
                         break;
 
-                    Trace.WriteLine(">>> " + line);
+                    Debug.WriteLine(DateTime.Now.ToLongTimeString() + " >>> " + line);
 
                     string prefix = null;
                     string command = null;
@@ -541,7 +551,21 @@ namespace IrcDotNet
                 // Continuously write messages in send queue to network stream, within given rate limit.
                 while (this.client != null && this.client.Connected)
                 {
-                    // TODO: Implement write loop.
+                    // Send messages in send queue until flood preventer stops it.
+                    while (this.messageSendQueue.Count > 0)
+                    {
+                        if (this.floodPreventer != null && !this.floodPreventer.CanSendMessage())
+                            break;
+                        var line = this.messageSendQueue.Dequeue();
+                        this.writer.WriteLine(line);
+                        if (this.floodPreventer != null)
+                            this.floodPreventer.HandleMessageSent();
+
+                        Debug.WriteLine(DateTime.Now.ToLongTimeString() + " <<< " + line);
+                    }
+                    this.writer.Flush();
+
+                    Thread.Sleep(50);
                 }
             }
             catch (IOException exIO)
@@ -597,7 +621,7 @@ namespace IrcDotNet
             else
             {
                 // Unknown command.
-                Trace.TraceWarning("Unknown message command '{0}'.", message.Command);
+                Debug.WriteLine("Unknown message command '{0}'.", message.Command);
             }
         }
 
@@ -634,6 +658,14 @@ namespace IrcDotNet
             WriteMessage(line.ToString());
         }
 
+        private void WriteMessage(string line)
+        {
+            if (line.Length > 510)
+                throw new ArgumentException(Properties.Resources.ErrorMessageLineTooLong, "line");
+
+            messageSendQueue.Enqueue(line);
+        }
+
         private string CheckMiddleParam(string value)
         {
             for (int i = 0; i < value.Length; i++)
@@ -657,42 +689,6 @@ namespace IrcDotNet
             }
 
             return value;
-        }
-
-        private void WriteMessage(string line)
-        {
-            if (line.Length > 510)
-                throw new ArgumentException(Properties.Resources.ErrorMessageLineTooLong, "line");
-
-            try
-            {
-                this.writer.WriteLine(line);
-                this.writer.Flush();
-
-                Trace.WriteLine("<<< " + line);
-            }
-            catch (IOException exIO)
-            {
-                var socketException = exIO.InnerException as SocketException;
-                if (socketException != null)
-                {
-                    switch (socketException.SocketErrorCode)
-                    {
-                        case SocketError.NotConnected:
-                            DisconnectInternal();
-                            return;
-                    }
-                }
-
-                OnError(new IrcErrorEventArgs(exIO));
-            }
-#if !DEBUG
-            catch (Exception ex)
-            {
-                OnError(new IrcErrorEventArgs(ex));
-                DisconnectInternal();
-            }
-#endif
         }
 
         public void Connect(string host, string password,
@@ -795,8 +791,16 @@ namespace IrcDotNet
         {
             if (this.client != null && this.client.Client.Connected)
             {
-                SendMessageQuit();
-                this.client.Client.Disconnect(true);
+                try
+                {
+                    SendMessageQuit();
+                    this.client.Client.Disconnect(true);
+                }
+                catch(SocketException exSocket)
+                {
+                    if (exSocket.SocketErrorCode != SocketError.NotConnected)
+                        throw;
+                }
             }
 
             if (this.canDisconnect)
@@ -830,19 +834,14 @@ namespace IrcDotNet
 
         private void HandleClientConnecting()
         {
-#if DEBUG
-            Trace.TraceInformation("Connecting to server...");
-#endif
+            Debug.WriteLine("Connecting to server...");
 
             this.canDisconnect = true;
         }
 
         private void HandleClientConnected(IrcConnectContext initState)
         {
-#if DEBUG
-            Trace.TraceInformation("Connected to server '{0}'.",
-                ((IPEndPoint)this.client.Client.RemoteEndPoint).Address);
-#endif
+            Debug.WriteLine("Connected to server '{0}'.", ((IPEndPoint)this.client.Client.RemoteEndPoint).Address);
 
             try
             {
@@ -865,9 +864,7 @@ namespace IrcDotNet
 
         private void HandleClientClosed()
         {
-#if DEBUG
-            Trace.TraceInformation("Disconnected from server.");
-#endif
+            Debug.WriteLine("Disconnected from server.");
 
             ResetState();
         }
