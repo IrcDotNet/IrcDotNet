@@ -123,10 +123,13 @@
   <data name="ErrorMessageInvalidChannelType" xml:space="preserve">
     <value>The channel type '{0}' sent by the server is invalid.</value>
   </data>
+  <data name="ErrorMessageInvalidCommand" xml:space="preserve">
+    <value>The message command name '{0}' is invalid.</value>
+  </data>
   <data name="ErrorMessageInvalidMessageCommand" xml:space="preserve">
     <value>The command '{0}' was not recognised.</value>
   </data>
-  <data name="ErrorMessageInvalidMiddleParam" xml:space="preserve">
+  <data name="ErrorMessageInvalidMiddleParameter" xml:space="preserve">
     <value>The non-trailing parameter '{0}' is invalid.</value>
   </data>
   <data name="ErrorMessageInvalidNickName" xml:space="preserve">
@@ -134,6 +137,9 @@
   </data>
   <data name="ErrorMessageInvalidPassword" xml:space="preserve">
     <value>The specified password is invalid.</value>
+  </data>
+  <data name="ErrorMessageInvalidPrefix" xml:space="preserve">
+    <value>The message prefix '{0}' is invalid.</value>
   </data>
   <data name="ErrorMessageInvalidRealName" xml:space="preserve">
     <value>The specified real name is invalid.</value>
@@ -144,7 +150,7 @@
   <data name="ErrorMessageInvalidTargetName" xml:space="preserve">
     <value>A target name may not contain any ',' character.</value>
   </data>
-  <data name="ErrorMessageInvalidTrailingParam" xml:space="preserve">
+  <data name="ErrorMessageInvalidTrailingParameter" xml:space="preserve">
     <value>The trailing parameter '{0}' is invalid.</value>
   </data>
   <data name="ErrorMessageInvalidUserMode" xml:space="preserve">
@@ -156,7 +162,7 @@
   <data name="ErrorMessageLineTooLong" xml:space="preserve">
     <value>The length of the line must not exceed 510 characters.</value>
   </data>
-  <data name="ErrorMessageNotEnoughModeParams" xml:space="preserve">
+  <data name="ErrorMessageNotEnoughModeParameters" xml:space="preserve">
     <value>Not enough mode parameters were specified for the given modes.</value>
   </data>
   <data name="ErrorMessageSourceNotUser" xml:space="preserve">

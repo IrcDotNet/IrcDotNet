@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -12,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
@@ -830,16 +830,30 @@ namespace IrcDotNet
             }
         }
 
+        /// <inheritdoc cref="WriteMessage(string, string, IEnumerable{string})"/>
         protected void WriteMessage(string prefix, string command, params string[] parameters)
         {
             WriteMessage(new IrcMessage(this, null, command, parameters));
         }
 
+        /// <inheritdoc cref="WriteMessage(IrcMessage)"/>
+        /// <param name="prefix">The message prefix, which represents the source of the message.</param>
+        /// <param name="command">The name of the command.</param>
+        /// <param name="parameters">A collection of the parameters to the command.</param>
         protected void WriteMessage(string prefix, string command, IEnumerable<string> parameters)
         {
             WriteMessage(new IrcMessage(this, null, command, parameters.ToArray()));
         }
 
+        /// <summary>
+        /// Writes the specified message (prefix, command, and parameters) to the network stream.
+        /// </summary>
+        /// <param name="message">The message to write.</param>
+        /// <remarks>
+        /// This method adds the specified message to the send queue and then immediately returns.
+        /// The message is in fact only sent when the write loop takes the message from the queue and sends it over the
+        /// connection.
+        /// </remarks>
         protected void WriteMessage(IrcMessage message)
         {
             if (message.Parameters.Count > maxParamsCount)
@@ -847,18 +861,18 @@ namespace IrcDotNet
 
             var line = new StringBuilder();
             if (message.Prefix != null)
-                line.Append(":" + message.Prefix + " ");
-            line.Append(message.Command.ToUpper());
+                line.Append(":" + CheckPrefix(message.Prefix) + " ");
+            line.Append(CheckCommand(message.Command).ToUpper());
             for (int i = 0; i < message.Parameters.Count - 1; i++)
             {
                 if (message.Parameters[i] != null)
-                    line.Append(" " + CheckMiddleParam(message.Parameters[i].ToString()));
+                    line.Append(" " + CheckMiddleParameter(message.Parameters[i].ToString()));
             }
             if (message.Parameters.Count > 0)
             {
                 var lastParameter = message.Parameters[message.Parameters.Count - 1];
                 if (lastParameter != null)
-                    line.Append(" :" + CheckTrailingParam(lastParameter));
+                    line.Append(" :" + CheckTrailingParameter(lastParameter));
             }
             WriteMessage(line.ToString());
         }
@@ -871,37 +885,56 @@ namespace IrcDotNet
             messageSendQueue.Enqueue(line);
         }
 
-        private string CheckMiddleParam(string value)
+        private string CheckPrefix(string value)
         {
-            if (value.Length == 0)
+            if (value.Length == 0 || value.Any(IsInvalidMessageChar))
             {
                 throw new ArgumentException(string.Format(
-                    Properties.Resources.ErrorMessageInvalidMiddleParam, value), "value");
-            }
-
-            for (int i = 0; i < value.Length; i++)
-            {
-                if (value[i] == '\0' || value[i] == '\r' || value[i] == '\n' || value[i] == ' ' ||
-                    (i == 0 && value[i] == ':'))
-                    throw new ArgumentException(string.Format(
-                        Properties.Resources.ErrorMessageInvalidMiddleParam, value), "value");
+                    Properties.Resources.ErrorMessageInvalidPrefix, value), "value");
             }
 
             return value;
         }
 
-        private string CheckTrailingParam(string value)
+        private string CheckCommand(string value)
         {
-            for (int i = 0; i < value.Length; i++)
+            if (value.Length == 0 || value.Any(IsInvalidMessageChar))
             {
-                if (value[i] == '\0' || value[i] == '\r' || value[i] == '\n')
-                    throw new ArgumentException(string.Format(
-                        Properties.Resources.ErrorMessageInvalidTrailingParam, value), "value");
+                throw new ArgumentException(string.Format(
+                    Properties.Resources.ErrorMessageInvalidCommand, value), "value");
             }
 
             return value;
         }
 
+        private string CheckMiddleParameter(string value)
+        {
+            if (value.Length == 0 || value.Any(c => IsInvalidMessageChar(c)) || value[0] == ':')
+            {
+                throw new ArgumentException(string.Format(
+                    Properties.Resources.ErrorMessageInvalidMiddleParameter, value), "value");
+            }
+
+            return value;
+        }
+
+        private string CheckTrailingParameter(string value)
+        {
+            if (value.Length == 0 || value.Any(c => IsInvalidMessageChar(c)))
+            {
+                throw new ArgumentException(string.Format(
+                    Properties.Resources.ErrorMessageInvalidMiddleParameter, value), "value");
+            }
+
+            return value;
+        }
+
+        private bool IsInvalidMessageChar(char value)
+        {
+            return value == '\0' || value == '\r' || value == '\n';
+        }
+
+        /// <inheritdoc cref="Connect(string, int, string, string, string, string, IColleciton<char>)"/>
         public void Connect(string host, string password,
             string nickName, string userName, string realName, ICollection<char> userMode = null)
         {
@@ -910,6 +943,9 @@ namespace IrcDotNet
             Connect(host, defaultPort, password, nickName, userName, realName, userMode);
         }
 
+        /// <inheritdoc cref="Connect(IPEndPoint, string, string, string, string, IColleciton<char>)"/>
+        /// <param name="host">The name of the remote host.</param>
+        /// <param name="port">The port number of the remote host.</param>
         public void Connect(string host, int port, string password,
             string nickName, string userName, string realName, ICollection<char> userMode = null)
         {
@@ -921,6 +957,7 @@ namespace IrcDotNet
             HandleClientConnecting();
         }
 
+        /// <inheritdoc cref="Connect(IPAddress, int, string, string, string, string, IColleciton{char})"/>
         public void Connect(IPAddress address, string password,
             string nickName, string userName, string realName, ICollection<char> userMode = null)
         {
@@ -929,6 +966,9 @@ namespace IrcDotNet
             Connect(address, defaultPort, password, nickName, userName, realName, userMode);
         }
 
+        /// <inheritdoc cref="Connect(IPEndPoint, string, string, string, string, IColleciton<char>)"/>
+        /// <param name="address">An IP addresses that designates the remote host.</param>
+        /// <param name="port">The port number of the remote host.</param>
         public void Connect(IPAddress address, int port, string password,
             string nickName, string userName, string realName, ICollection<char> userMode = null)
         {
@@ -940,6 +980,7 @@ namespace IrcDotNet
             HandleClientConnecting();
         }
 
+        /// <inheritdoc cref="Connect(IPAddress[], string, string, string, string, IColleciton{char})"/>
         public void Connect(IPAddress[] addresses, string password,
             string nickName, string userName, string realName, ICollection<char> userMode = null)
         {
@@ -948,6 +989,9 @@ namespace IrcDotNet
             Connect(addresses, defaultPort, password, nickName, userName, realName, userMode);
         }
 
+        /// <inheritdoc cref="Connect(IPEndPoint, string, string, string, string, IColleciton{char})"/>
+        /// <param name="addresses">A collection of one or more IP addresses that designates the remote host.</param>
+        /// <param name="port">The port number of the remote host.</param>
         public void Connect(IPAddress[] addresses, int port, string password,
             string nickName, string userName, string realName, ICollection<char> userMode = null)
         {
@@ -959,6 +1003,16 @@ namespace IrcDotNet
             HandleClientConnecting();
         }
 
+        /// <summary>
+        /// Connects to a server using the specified host and user information.
+        /// </summary>
+        /// <param name="remoteEP">The network endpoint (IP address and port) of the server to which to connect.</param>
+        /// <param name="password">The password to register with the server.</param>
+        /// <param name="nickName">The nick name to register with the server. This can later be changed.</param>
+        /// <param name="userName">The user name to register with the server.</param>
+        /// <param name="realName">The real name to register with the server.</param>
+        /// <param name="userMode">The initial user mode to register with the server. The value should not contain any
+        /// character except 'w' or 'i'.</param>
         public void Connect(IPEndPoint remoteEP, string password, string nickName,
             string userName, string realName, ICollection<char> userMode = null)
         {
@@ -992,12 +1046,18 @@ namespace IrcDotNet
                 };
         }
 
+        /// <summary>
+        /// Disconnects immediately from the server. A quit message is sent if the connection is still active.
+        /// </summary>
         public void Disconnect()
         {
             CheckDisposed();
             DisconnectInternal();
         }
 
+        /// <summary>
+        /// Disconnects from the server, regardless of whether the client object has already been disposed.
+        /// </summary>
         protected void DisconnectInternal()
         {
             if (this.client != null && this.client.Client.Connected)
@@ -1474,14 +1534,39 @@ namespace IrcDotNet
             }
         }
 
+        /// <summary>
+        /// Represents a message that is sent/received by the client/server. A message contains a prefix (representing
+        /// the source), a command name (a word or three-digit number), and an arbitrary number of parameters (up to a
+        /// maximum of 15).
+        /// </summary>
         protected struct IrcMessage
         {
+            /// <summary>
+            /// The source of the message, which is the object represented by <see cref="Prefix"/>.
+            /// </summary>
             public IIrcMessageSource Source;
 
+            /// <summary>
+            /// The message prefix.
+            /// </summary>
             public string Prefix;
+            /// <summary>
+            /// The name of the command.
+            /// </summary>
             public string Command;
+            /// <summary>
+            /// A list of the parameters to the message.
+            /// </summary>
             public IList<string> Parameters;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="IrcMessage"/> struct.
+            /// </summary>
+            /// <param name="client">A client object that has sent/will received the message.</param>
+            /// <param name="prefix">The message prefix, which represents the source of the message.</param>
+            /// <param name="command">The command name; either a word or 3-digit number.</param>
+            /// <param name="parameters">A lisit of the parameters to the message, containing a maximum of 15 items.
+            /// </param>
             public IrcMessage(IrcClient client, string prefix, string command, IList<string> parameters)
             {
                 this.Prefix = prefix;

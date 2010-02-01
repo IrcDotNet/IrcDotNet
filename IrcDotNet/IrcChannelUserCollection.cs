@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {

@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using IrcDotNet.Common.Collections;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace IrcDotNet.Tests
@@ -134,12 +134,13 @@ namespace IrcDotNet.Tests
                 client2 = null;
             }
 
-            // Dispose wait handles for all events.
+            // Dispose all event wait handles in class.
             GetAllWaitHandlesFields().ForEach(fieldInfo => ((IDisposable)fieldInfo.GetValue(null)).Dispose());
         }
 
         private static IEnumerable<FieldInfo> GetAllWaitHandlesFields()
         {
+            // Return collection of all static event wait handles in class.
             return typeof(IrcClientTestSet).GetFields(BindingFlags.Static | BindingFlags.NonPublic)
                 .Where(fieldInfo => typeof(EventWaitHandle).IsAssignableFrom(fieldInfo.FieldType));
         }

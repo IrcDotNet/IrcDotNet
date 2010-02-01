@@ -42,7 +42,7 @@ namespace IrcDotNet
                     if (newModeParameters != null && modesWithParameters.Contains(mode))
                     {
                         if (!modeParametersEnumerator.MoveNext())
-                            throw new InvalidOperationException(Properties.Resources.ErrorMessageNotEnoughModeParams);
+                            throw new InvalidOperationException(Properties.Resources.ErrorMessageNotEnoughModeParameters);
                         handleModeParameter(addMode.Value, mode, modeParametersEnumerator.Current);
                     }
                     else

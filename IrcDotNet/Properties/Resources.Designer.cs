@@ -79,6 +79,15 @@ namespace IrcDotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The message command name &apos;{0}&apos; is invalid..
+        /// </summary>
+        internal static string ErrorMessageInvalidCommand {
+            get {
+                return ResourceManager.GetString("ErrorMessageInvalidCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The command &apos;{0}&apos; was not recognised..
         /// </summary>
         internal static string ErrorMessageInvalidMessageCommand {
@@ -90,9 +99,9 @@ namespace IrcDotNet.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The non-trailing parameter &apos;{0}&apos; is invalid..
         /// </summary>
-        internal static string ErrorMessageInvalidMiddleParam {
+        internal static string ErrorMessageInvalidMiddleParameter {
             get {
-                return ResourceManager.GetString("ErrorMessageInvalidMiddleParam", resourceCulture);
+                return ResourceManager.GetString("ErrorMessageInvalidMiddleParameter", resourceCulture);
             }
         }
         
@@ -111,6 +120,15 @@ namespace IrcDotNet.Properties {
         internal static string ErrorMessageInvalidPassword {
             get {
                 return ResourceManager.GetString("ErrorMessageInvalidPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The message prefix &apos;{0}&apos; is invalid..
+        /// </summary>
+        internal static string ErrorMessageInvalidPrefix {
+            get {
+                return ResourceManager.GetString("ErrorMessageInvalidPrefix", resourceCulture);
             }
         }
         
@@ -144,9 +162,9 @@ namespace IrcDotNet.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The trailing parameter &apos;{0}&apos; is invalid..
         /// </summary>
-        internal static string ErrorMessageInvalidTrailingParam {
+        internal static string ErrorMessageInvalidTrailingParameter {
             get {
-                return ResourceManager.GetString("ErrorMessageInvalidTrailingParam", resourceCulture);
+                return ResourceManager.GetString("ErrorMessageInvalidTrailingParameter", resourceCulture);
             }
         }
         
@@ -180,9 +198,9 @@ namespace IrcDotNet.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Not enough mode parameters were specified for the given modes..
         /// </summary>
-        internal static string ErrorMessageNotEnoughModeParams {
+        internal static string ErrorMessageNotEnoughModeParameters {
             get {
-                return ResourceManager.GetString("ErrorMessageNotEnoughModeParams", resourceCulture);
+                return ResourceManager.GetString("ErrorMessageNotEnoughModeParameters", resourceCulture);
             }
         }
         
