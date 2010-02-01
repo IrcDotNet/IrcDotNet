@@ -27,7 +27,7 @@ namespace IrcDotNet
                 this.modes.AddRange(modes);
         }
 
-        public bool IsAay
+        public bool IsAway
         {
             get { return this.modes.Contains('a'); }
         }

@@ -15,6 +15,9 @@ using System.Threading;
 
 namespace IrcDotNet
 {
+    /// <summary>
+    /// Provides methods for communicating with an IRC (Internet Relay Chat) server.
+    /// </summary>
     public partial class IrcClient : IDisposable
     {
         private const int defaultPort = 6667;
@@ -85,6 +88,9 @@ namespace IrcDotNet
 
         private bool isDisposed = false;
 
+        /// <summary>
+        /// Initialises a new instance of the <see cref="IrcClient"/> class.
+        /// </summary>
         public IrcClient()
         {
             this.client = new TcpClient();
@@ -101,106 +107,195 @@ namespace IrcDotNet
             ResetState();
         }
 
+        /// <summary>
+        /// Finalises an instance of the <see cref="IrcClient"/> class.
+        /// </summary>
         ~IrcClient()
         {
             Dispose(false);
         }
 
+        /// <summary>
+        /// Gets whether the client connection has been registered with the server.
+        /// </summary>
+        /// <value><see langword="true"/> if the connection has been registered; <see langword="false"/>, otherwise.
+        /// </value>
         public bool IsRegistered
         {
             get { return this.isRegistered; }
         }
 
+        /// <summary>
+        /// Gets the local user. The local user is the user managed by this client connection.
+        /// </summary>
+        /// <value>The local user.</value>
         public IrcLocalUser LocalUser
         {
             get { return this.localUser; }
         }
 
+        /// <summary>
+        /// Gets the Welcome message sent by the server.
+        /// This value is set after successful registration of the connection.
+        /// </summary>
+        /// <value>The server Welcome message.</value>
         public string WelcomeMessage
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets the Your Host message sent by the server.
+        /// This value is set after successful registration of the connection.
+        /// </summary>
+        /// <value>The server Your Host message.</value>
         public string YourHostMessage
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets the Created message sent by the server.
+        /// This value is set after successful registration of the connection.
+        /// </summary>
+        /// <value>The server Created message.</value>
         public string ServerCreatedMessage
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets the host name of the server.
+        /// This value is set after successful registration of the connection.
+        /// </summary>
+        /// <value>The server host name.</value>
         public string ServerName
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets the version of the server.
+        /// This value is set after successful registration of the connection.
+        /// </summary>
+        /// <value>The server version.</value>
         public string ServerVersion
         {
             get;
             private set;
         }
 
-        public string ServerAvailableUserModes
+        /// <summary>
+        /// Gets a collection of the user modes available on the server.
+        /// This value is set after successful registration of the connection.
+        /// </summary>
+        /// <value>A list of user modes available on the server.</value>
+        public IEnumerable<char> ServerAvailableUserModes
         {
             get;
             private set;
         }
 
-        public string ServerAvailableChannelModes
+        /// <summary>
+        /// Gets a collection of the channel modes available on the server.
+        /// This value is set after successful registration of the connection.
+        /// </summary>
+        /// <value>A list of channel modes available on the server.</value>
+        public IEnumerable<char> ServerAvailableChannelModes
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets a dictionary of the features supported by the server, keyed by feature name, as returned by the
+        /// ISUPPORT message.
+        /// This value is set after successful registration of the connection.
+        /// </summary>
+        /// <value>A dictionary of features supported by the server.</value>
         public ReadOnlyDictionary<string, string> ServerSupportedFeatures
         {
             get { return this.serverSupportedFeaturesReadOnly; }
         }
 
+        /// <summary>
+        /// Gets the Message of the Day (MOTD) sent by the server.
+        /// This value is set after successful registration of the connection.
+        /// </summary>
+        /// <value>The Message of the Day sent by the server.</value>
         public string MessageOfTheDay
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets a collection of all channels known to the client.
+        /// </summary>
+        /// <value>A collection of known channels.</value>
         public IrcChannelCollection Channels
         {
             get { return this.channelsReadOnly; }
         }
 
+        /// <summary>
+        /// Gets a collection of all users known to the client, including the local user.
+        /// </summary>
+        /// <value>A collection of known users.</value>
         public IrcUserCollection Users
         {
             get { return this.usersReadOnly; }
         }
 
+        /// <summary>
+        /// Gets or sets an object that limits the rate of outgoing messages in order to prevent flooding the server.
+        /// The value is <see langword="null"/> by default, which indicates that no flood prevention should be
+        /// performed.
+        /// </summary>
+        /// <value>A flood preventer object.</value>
         public IIrcFloodPreventer FloodPreventer
         {
             get { return floodPreventer; }
             set { this.floodPreventer = value; }
         }
 
+        /// <summary>
+        /// Gets whether the client is currently connected to a server.
+        /// </summary>
+        /// <value><see langword="true"/> if the client is connected; <see langword="false"/>, otherwise.</value>
         public bool IsConnected
         {
             get { return this.client.Connected; }
         }
 
+        /// <summary>
+        /// Gets whether the <see cref="IrcClient"/> object has been disposed.
+        /// </summary>
+        /// <value><see langword="true"/> if the <see cref="IrcClient"/> object has been disposed;
+        /// <see langword="false"/>, otherwise.</value>
         public bool IsDisposed
         {
             get { return this.isDisposed; }
         }
 
+        /// <summary>
+        /// Releases all resources used by the <see cref="IrcClient"/> object.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Releases all resources used by the <see cref="IrcClient"/>.
+        /// </summary>
+        /// <param name="disposing"><see langword="true"/> if the user is actively disposing the object;
+        /// <see langword="false"/> if the garbage collector is finalising the object.</param>
         protected void Dispose(bool disposing)
         {
             if (!this.isDisposed)
@@ -246,84 +341,194 @@ namespace IrcDotNet
             this.isDisposed = true;
         }
 
+        /// <summary>
+        /// Occurs when the client has connected to the server.
+        /// </summary>
         public event EventHandler<EventArgs> Connected;
+        /// <summary>
+        /// Occurs when the client has failed to connect to the server.
+        /// </summary>
         public event EventHandler<IrcErrorEventArgs> ConnectFailed;
+        /// <summary>
+        /// Occurs when the client has disconnected from the server.
+        /// </summary>
         public event EventHandler<EventArgs> Disconnected;
+        /// <summary>
+        /// Occurs when the client encounters an error.
+        /// </summary>
         public event EventHandler<IrcErrorEventArgs> Error;
+        /// <summary>
+        /// Occurs when a protocol (numeric) error is received from the server.
+        /// </summary>
         public event EventHandler<IrcProtocolErrorEventArgs> ProtocolError;
+        /// <summary>
+        /// Occurs when an Error message is received from the server.
+        /// </summary>
         public event EventHandler<IrcErrorMessageEventArgs> ErrorMessageReceived;
+        /// <summary>
+        /// Occurs when the connection has been registered.
+        /// </summary>
         public event EventHandler<EventArgs> Registered;
+        /// <summary>
+        /// Occurs when a bounce message is received from the server, telling the client to connect to a new server.
+        /// </summary>
         public event EventHandler<IrcServerInfoEventArgs> ServerBounce;
+        /// <summary>
+        /// Occurs when a list of features supported by the server (ISUPPORT) has been received.
+        /// This event may be raised more than once after registration, depending on the size of the list received.
+        /// </summary>
         public event EventHandler<EventArgs> ServerSupportedFeaturesReceived;
+        /// <summary>
+        /// Occurs when a ping query is received from the server.
+        /// The client automatically replies to pings from the server; this event is only a notification.
+        /// </summary>
         public event EventHandler<IrcPingOrPongReceivedEventArgs> PingReceived;
+        /// <summary>
+        /// Occurs when a pong reply is received from the server.
+        /// </summary>
         public event EventHandler<IrcPingOrPongReceivedEventArgs> PongReceived;
+        /// <summary>
+        /// Occurs when the Message of the Day (MOTD) has been received from the server.
+        /// </summary>
         public event EventHandler<EventArgs> MotdReceived;
-        public event EventHandler<IrcChannelEventArgs> ChannelJoined;
-        public event EventHandler<IrcChannelEventArgs> ChannelParted;
+        /// <summary>
+        /// Occurs when a reply to a Who query has been received from the server.
+        /// </summary>
         public event EventHandler<IrcNameEventArgs> WhoReplyReceived;
+        /// <summary>
+        /// Occurs when a reply to a Who Is query has been received from the server.
+        /// </summary>
         public event EventHandler<IrcUserEventArgs> WhoIsReplyReceived;
+        /// <summary>
+        /// Occurs when a reply to a Who Was query has been received from the server.
+        /// </summary>
         public event EventHandler<IrcUserEventArgs> WhoWasReplyReceived;
 
+        /// <summary>
+        /// Sends a Who query to the server targeting the specified channel or user masks.
+        /// </summary>
+        /// <param name="mask">A wildcard expression for matching against channel names; or if none can be found,
+        /// host names, server names, real names, and nick names of users.</param>
+        /// <param name="onlyOperators"><see langword="true"/> to match only server operators; otherwise,
+        /// <see langword="false"/>. Default is to match all users.</param>
         public void QueryWho(string mask = null, bool onlyOperators = false)
         {
             SendMessageWho(mask, onlyOperators);
         }
 
+        /// <inheritdoc cref="QueryWhoIs(IEnumerable{string})"/>
         public void QueryWhoIs(params string[] nickNameMasks)
         {
             QueryWhoIs((IEnumerable<string>)nickNameMasks);
         }
 
+        /// <overloads>Sends a Who Is query to the server.</overloads>
+        /// <summary>
+        /// Sends a Who Is query to server targeting the specified nick name masks.
+        /// </summary>
+        /// <param name="nickNameMasks">A collection of wildcard expressions for matching against nick names of users.
+        /// </param>
         public void QueryWhoIs(IEnumerable<string> nickNameMasks)
         {
             SendMessageWhoIs(nickNameMasks);
         }
 
+        /// <inheritdoc cref="QueryWhoWas(IEnumerable{string}, int)"/>
         public void QueryWhoWas(params string[] nickNames)
         {
             QueryWhoWas((IEnumerable<string>)nickNames);
         }
 
+        /// <summary>
+        /// Sends a Who Was query to server targeting the specified nick names.
+        /// </summary>
+        /// <param name="nickNames">The nick names of the users to query.</param>
+        /// <param name="entriesCount">The maximum number of entries to return from the query. Default is an unlimited
+        /// number.</param>
         public void QueryWhoWas(IEnumerable<string> nickNames, int entriesCount = -1)
         {
             SendMessageWhoWas(nickNames, entriesCount);
         }
 
-        public void GetMotd(string server = null)
+        /// <summary>
+        /// Requests the Message of the Day (MOTD) from the specified server.
+        /// </summary>
+        /// <param name="serverName">The name of the server from which to request the MOTD. Default is the current
+        /// server.</param>
+        public void GetMessageOfTheDay(string serverName = null)
         {
-            SendMessageMotd(server);
+            SendMessageMotd(serverName);
         }
 
+        /// <summary>
+        /// Requests statistics about the size of the network.
+        /// If <paramref name="serverMask"/> is specified, then the server only returns information about the part of
+        /// the network formed by the servers whose names match the mask; otherwise, the information concerns the whole
+        /// network
+        /// </summary>
+        /// <param name="serverMask">A wildcard expression for matching against server names. Default matches the whole
+        /// network.</param>
+        /// <param name="targetServer">The server to which to forward the request.</param>
         public void GetNetworkStatistics(string serverMask = null, string targetServer = null)
         {
-            SendMessageLusers(serverMask, targetServer);
+            SendMessageLUsers(serverMask, targetServer);
         }
 
-        public void GetServerVersion(string server = null)
+        /// <summary>
+        /// Requests the version of the specified server.
+        /// </summary>
+        /// <param name="serverName">The name of the server whose version to request.</param>
+        public void GetServerVersion(string serverName = null)
         {
-            SendMessageVersion(server);
+            SendMessageVersion(serverName);
         }
 
-        public void GetServerStats(string query = null, string server = null)
+        /// <summary>
+        /// Requests the statistics of the specified server.
+        /// </summary>
+        /// <param name="query">The query that indicates to the server what statistics to return.</param>
+        /// <param name="serverName">The name of the server whose statistics to request.</param>
+        public void GetServerStats(string query = null, string serverName = null)
         {
-            SendMessageStats(query, server);
+            SendMessageStats(query, serverName);
         }
 
+        /// <summary>
+        /// Requests a list of all servers known by the target server.
+        /// If <paramref name="serverMask"/> is specified, then the server only returns information about the part of
+        /// the network formed by the servers whose names match the mask; otherwise, the information concerns the whole
+        /// network.
+        /// </summary>
+        /// <param name="serverMask">A wildcard expression for matching against server names. Default matches the whole
+        /// network.</param>
+        /// <param name="targetServer">The server to which to forward the request.</param>
         public void GetServerLinks(string serverMask = null, string targetServer = null)
         {
             SendMessageStats(targetServer, serverMask);
         }
 
-        public void GetServerTime(string server = null)
+        /// <summary>
+        /// Requests the local time on the specified server.
+        /// </summary>
+        /// <param name="serverName">The name of the server whose time to request</param>
+        public void GetServerTime(string serverName = null)
         {
-            SendMessageTime(server);
+            SendMessageTime(serverName);
         }
 
-        public void Ping(string server = null)
+        /// <summary>
+        /// Sends a ping to the specified server.
+        /// </summary>
+        /// <param name="serverName">The name of the server to ping.</param>
+        public void Ping(string serverName = null)
         {
-            SendMessagePing(this.localUser.NickName, server);
+            SendMessagePing(this.localUser.NickName, serverName);
         }
 
+        /// <summary>
+        /// Quits the server, sending the specified comment.
+        /// </summary>
+        /// <param name="comment">The comment to send to the server upon quitting.</param>
         public void Quit(string comment = null)
         {
             SendMessageQuit(comment);
@@ -668,6 +873,12 @@ namespace IrcDotNet
 
         private string CheckMiddleParam(string value)
         {
+            if (value.Length == 0)
+            {
+                throw new ArgumentException(string.Format(
+                    Properties.Resources.ErrorMessageInvalidMiddleParam, value), "value");
+            }
+
             for (int i = 0; i < value.Length; i++)
             {
                 if (value[i] == '\0' || value[i] == '\r' || value[i] == '\n' || value[i] == ' ' ||
@@ -796,7 +1007,7 @@ namespace IrcDotNet
                     SendMessageQuit();
                     this.client.Client.Disconnect(true);
                 }
-                catch(SocketException exSocket)
+                catch (SocketException exSocket)
                 {
                     if (exSocket.SocketErrorCode != SocketError.NotConnected)
                         throw;
@@ -1223,20 +1434,6 @@ namespace IrcDotNet
         protected virtual void OnMotdReceived(EventArgs e)
         {
             var handler = this.MotdReceived;
-            if (handler != null)
-                handler(this, e);
-        }
-
-        protected virtual void OnChannelJoined(IrcChannelEventArgs e)
-        {
-            var handler = this.ChannelJoined;
-            if (handler != null)
-                handler(this, e);
-        }
-
-        protected virtual void OnChannelParted(IrcChannelEventArgs e)
-        {
-            var handler = this.ChannelParted;
             if (handler != null)
                 handler(this, e);
         }

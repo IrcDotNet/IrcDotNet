@@ -13,8 +13,14 @@ namespace IrcDotNet
         [MessageProcessor("nick")]
         protected void ProcessMessageNick(IrcMessage message)
         {
+            var sourceUser = message.Source as IrcUser;
+            if (sourceUser == null)
+                throw new InvalidOperationException(string.Format(
+                    Properties.Resources.ErrorMessageSourceNotUser, message.Source.Name));
+
+            // Local or remote user has changed nick name.
             Debug.Assert(message.Parameters[0] != null);
-            this.localUser.NickName = message.Parameters[0];
+            sourceUser.NickName = message.Parameters[0];
         }
 
         [MessageProcessor("quit")]
@@ -24,7 +30,11 @@ namespace IrcDotNet
             if (sourceUser == null)
                 throw new InvalidOperationException(string.Format(
                     Properties.Resources.ErrorMessageSourceNotUser, message.Source.Name));
+
+            // Remote user has quit server.
+            Debug.Assert(message.Parameters[0] != null);
             sourceUser.HandeQuit(message.Parameters[0]);
+            this.users.Remove(sourceUser);
         }
 
         [MessageProcessor("join")]
@@ -34,20 +44,14 @@ namespace IrcDotNet
             if (sourceUser == null)
                 throw new InvalidOperationException(string.Format(
                     Properties.Resources.ErrorMessageSourceNotUser, message.Source.Name));
+
+            // Local or remote user has joined one or more channels.
             Debug.Assert(message.Parameters[0] != null);
+            var channels = GetChannelsFromList(message.Parameters[0]).ToArray();
             if (sourceUser == this.localUser)
-            {
-                // Local user has joined one or more channels. Add channels to collection.
-                var channels = message.Parameters[0].Split(',').Select(n => new IrcChannel(n)).ToArray();
-                this.channels.AddRange(channels);
-                channels.ForEach(c => OnChannelJoined(new IrcChannelEventArgs(c, null)));
-            }
+                channels.ForEach(c => this.localUser.HandleJoinedChannel(c));
             else
-            {
-                // Remote user has joined one or more channels.
-                var channels = GetChannelsFromList(message.Parameters[0]).ToArray();
                 channels.ForEach(c => c.HandleUserJoined(new IrcChannelUser(sourceUser)));
-            }
         }
 
         [MessageProcessor("part")]
@@ -57,21 +61,15 @@ namespace IrcDotNet
             if (sourceUser == null)
                 throw new InvalidOperationException(string.Format(
                     Properties.Resources.ErrorMessageSourceNotUser, message.Source.Name));
+
+            // Local or remote user has left one or more channels.
             Debug.Assert(message.Parameters[0] != null);
             var comment = message.Parameters[1];
+            var channels = GetChannelsFromList(message.Parameters[0]).ToArray();
             if (sourceUser == this.localUser)
-            {
-                // Local user has parted one or more channels. Remove channel from collections.
-                var channels = GetChannelsFromList(message.Parameters[0]).ToArray();
-                this.channels.RemoveRange(channels);
-                channels.ForEach(c => OnChannelParted(new IrcChannelEventArgs(c, comment)));
-            }
+                channels.ForEach(c => this.localUser.HandleLeftChannel(c));
             else
-            {
-                // Remote user has parted one or more channels.
-                var channels = GetChannelsFromList(message.Parameters[0]).ToArray();
-                channels.ForEach(c => c.HandleUserParted(sourceUser, comment));
-            }
+                channels.ForEach(c => c.HandleUserLeft(sourceUser, comment));
         }
 
         [MessageProcessor("mode")]
@@ -117,6 +115,7 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[1] != null);
             var users = GetUsersFromList(message.Parameters[1]).ToArray();
             var comment = message.Parameters[2];
+
             // Handle kick command for each user given in message.
             foreach (var channelUser in Enumerable.Zip(channels, users,
                 (channel, user) => channel.GetChannelUser(user)))
@@ -127,7 +126,9 @@ namespace IrcDotNet
                     var channel = channelUser.Channel;
                     this.channels.Remove(channel);
                     channelUser.Channel.HandleUserKicked(channelUser, comment);
-                    OnChannelParted(new IrcChannelEventArgs(channel, comment));
+                    this.localUser.HandleLeftChannel(channel);
+
+                    // Local user has left channel. Do not process other kicks.
                     break;
                 }
                 else
@@ -513,7 +514,7 @@ namespace IrcDotNet
                     // Find user by nick name and add it to collection of channel users.
                     var userNickNameAndMode = ExtractUserMode(userId);
                     var user = GetUserFromNickName(userNickNameAndMode.Item1);
-                    channel.HandleUserJoined(new IrcChannelUser(user, userNickNameAndMode.Item2));
+                    channel.HandleUserInitialPresence(new IrcChannelUser(user, userNickNameAndMode.Item2));
                 }
             }
         }

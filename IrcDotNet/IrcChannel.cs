@@ -81,7 +81,7 @@ namespace IrcDotNet
         public event EventHandler<EventArgs> ModesChanged;
         public event EventHandler<EventArgs> TopicChanged;
         public event EventHandler<IrcChannelUserEventArgs> UserJoined;
-        public event EventHandler<IrcChannelUserEventArgs> UserParted;
+        public event EventHandler<IrcChannelUserEventArgs> UserLeft;
         public event EventHandler<IrcChannelUserEventArgs> UserKicked;
         public event EventHandler<IrcMessageEventArgs> MessageReceived;
         public event EventHandler<IrcMessageEventArgs> NoticeReceived;
@@ -146,6 +146,11 @@ namespace IrcDotNet
             this.client.Part(new[] { this.name }, comment);
         }
 
+        internal void HandleUserInitialPresence(IrcChannelUser channelUser)
+        {
+            this.users.Add(channelUser);
+        }
+
         internal void HandleUsersListReceived()
         {
             OnUsersListReceived(new EventArgs());
@@ -164,14 +169,14 @@ namespace IrcDotNet
             OnUserJoined(new IrcChannelUserEventArgs(channelUser, null));
         }
 
-        internal void HandleUserParted(IrcUser user, string comment)
+        internal void HandleUserLeft(IrcUser user, string comment)
         {
-            HandleUserParted(this.users.Single(u => u.User == user), comment);
+            HandleUserLeft(this.users.Single(u => u.User == user), comment);
         }
 
-        internal void HandleUserParted(IrcChannelUser channelUser, string comment)
+        internal void HandleUserLeft(IrcChannelUser channelUser, string comment)
         {
-            OnUserParted(new IrcChannelUserEventArgs(channelUser, comment));
+            OnUserLeft(new IrcChannelUserEventArgs(channelUser, comment));
             this.users.Remove(channelUser); ;
         }
 
@@ -224,9 +229,9 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
-        protected virtual void OnUserParted(IrcChannelUserEventArgs e)
+        protected virtual void OnUserLeft(IrcChannelUserEventArgs e)
         {
-            var handler = this.UserParted;
+            var handler = this.UserLeft;
             if (handler != null)
                 handler(this, e);
         }

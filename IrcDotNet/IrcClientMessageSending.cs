@@ -145,7 +145,7 @@ namespace IrcDotNet
             WriteMessage(null, "motd", target);
         }
 
-        protected void SendMessageLusers(string serverMask = null, string target = null)
+        protected void SendMessageLUsers(string serverMask = null, string target = null)
         {
             WriteMessage(null, "lusers", serverMask, target);
         }

@@ -28,7 +28,18 @@ namespace IrcDotNet
             get { return this.modesReadOnly; }
         }
 
+        /// <summary>
+        /// Occurs when the modes of the local user have changed.
+        /// </summary>
         public event EventHandler<EventArgs> ModesChanged;
+        /// <summary>
+        /// Occurs when the local user has joined a channel.
+        /// </summary>
+        public event EventHandler<IrcChannelEventArgs> JoinedChannel;
+        /// <summary>
+        /// Occurs when the local user has left a channel.
+        /// </summary>
+        public event EventHandler<IrcChannelEventArgs> LeftChannel;
         public event EventHandler<IrcMessageEventArgs> MessageSent;
         public event EventHandler<IrcMessageEventArgs> MessageReceived;
         public event EventHandler<IrcMessageEventArgs> NoticeSent;
@@ -177,6 +188,16 @@ namespace IrcDotNet
             OnModesChanged(new EventArgs());
         }
 
+        internal void HandleJoinedChannel(IrcChannel channel)
+        {
+            OnJoinedChannel(new IrcChannelEventArgs(channel, null));
+        }
+
+        internal void HandleLeftChannel(IrcChannel channel)
+        {
+            OnLeftChannel(new IrcChannelEventArgs(channel, null));
+        }
+
         internal void HandleMessageSent(IList<IIrcMessageTarget> targets, string text)
         {
             OnMessageSent(new IrcMessageEventArgs(this, targets, text));
@@ -200,6 +221,20 @@ namespace IrcDotNet
         protected virtual void OnModesChanged(EventArgs e)
         {
             var handler = this.ModesChanged;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        protected virtual void OnJoinedChannel(IrcChannelEventArgs e)
+        {
+            var handler = this.JoinedChannel;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        protected virtual void OnLeftChannel(IrcChannelEventArgs e)
+        {
+            var handler = this.LeftChannel;
             if (handler != null)
                 handler(this, e);
         }
