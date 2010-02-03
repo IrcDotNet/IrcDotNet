@@ -8,6 +8,9 @@ using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    /// <summary>
+    /// Represents an IRC channel that resides on a specific <see cref="IrcClient"/>.
+    /// </summary>
     public class IrcChannel : INotifyPropertyChanged, IIrcMessageTarget, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
         private readonly char[] channelUserModes = new char[] { 'o', 'v' };
@@ -32,11 +35,19 @@ namespace IrcDotNet
             this.usersReadOnly = new IrcChannelUserCollection(this, this.users);
         }
 
+        /// <summary>
+        /// Gets the name of the channel.
+        /// </summary>
+        /// <value>The name of the channel.</value>
         public string Name
         {
             get { return this.name; }
         }
 
+        /// <summary>
+        /// Gets the type of the channel.
+        /// </summary>
+        /// <value>The type of the channel.</value>
         public IrcChannelType Type
         {
             get { return this.type; }
@@ -47,11 +58,19 @@ namespace IrcDotNet
             }
         }
 
+        /// <summary>
+        /// Gets a read-only collection of the modes the channel currently has.
+        /// </summary>
+        /// <value>The current modes of the channel.</value>
         public ReadOnlySet<char> Modes
         {
             get { return modesReadOnly; }
         }
 
+        /// <summary>
+        /// Gets the current topic of the channel.
+        /// </summary>
+        /// <value>The current topic of the channel.</value>
         public string Topic
         {
             get { return this.topic; }
@@ -63,14 +82,22 @@ namespace IrcDotNet
             }
         }
 
+        /// <summary>
+        /// Gets a collection of all <see cref="IrcChannelUser"/>s currently in the channel.
+        /// </summary>
+        /// <value>A collection of all users currently in the channel.</value>
         public IrcChannelUserCollection Users
         {
             get { return this.usersReadOnly; }
         }
 
+        /// <summary>
+        /// Gets the client to which the channel belongs.
+        /// </summary>
+        /// <value>The client to which the channel belongs.</value>
         public IrcClient Client
         {
-            get { return this.client; }
+            get { return this.client;}
             internal set
             {
                 this.client = value;
@@ -78,16 +105,51 @@ namespace IrcDotNet
             }
         }
 
+        /// <summary>
+        /// Occurs when the list of users in the channel has been received.
+        /// The list of users is sent initially upon joining the channel, or on the request of the client.
+        /// </summary>
         public event EventHandler<EventArgs> UsersListReceived;
+        /// <summary>
+        /// Occurs when any of the modes of the channel have changed.
+        /// </summary>
         public event EventHandler<EventArgs> ModesChanged;
+        /// <summary>
+        /// Occurs when the topic of the channel has changed.
+        /// </summary>
         public event EventHandler<EventArgs> TopicChanged;
+        /// <summary>
+        /// Occurs when a user has joined the channel.
+        /// </summary>
         public event EventHandler<IrcChannelUserEventArgs> UserJoined;
+        /// <summary>
+        /// Occurs when a user has left the channel.
+        /// </summary>
         public event EventHandler<IrcChannelUserEventArgs> UserLeft;
+        /// <summary>
+        /// Occurs when a user is kicked from the channel.
+        /// </summary>
         public event EventHandler<IrcChannelUserEventArgs> UserKicked;
+        /// <summary>
+        /// Occurs when the channel receives a message.
+        /// </summary>
         public event EventHandler<IrcMessageEventArgs> MessageReceived;
+        /// <summary>
+        /// Occurs when the channel receives a notice.
+        /// </summary>
         public event EventHandler<IrcMessageEventArgs> NoticeReceived;
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Gets the <see cref="IrcChannelUser"/> in the channel that corresponds to the specified
+        /// <see cref="IrcUser"/>, or <see langword="null"/> if none is found.
+        /// </summary>
+        /// <param name="user">The <see cref="IrcUser"/> for which to look.</param>
+        /// <returns>The <see cref="IrcChannelUser"/> in the channel that corresponds to the specified
+        /// <see cref="IrcUser"/>, or <see langword="null"/> if none is found.</returns>
         public IrcChannelUser GetChannelUser(IrcUser user)
         {
             if (user == null)
@@ -142,9 +204,13 @@ namespace IrcDotNet
             this.client.SetChannelModes(this, modes, modeParameters);
         }
 
-        public void Part(string comment = null)
+        /// <summary>
+        /// Leaves the channel, with the specified comment.
+        /// </summary>
+        /// <param name="comment">The comment to give when leaving the channel. Default is no comment.</param>
+        public void Leave(string comment = null)
         {
-            this.client.Part(new[] { this.name }, comment);
+            this.client.Leave(new[] { this.name }, comment);
         }
 
         internal void HandleUserInitialPresence(IrcChannelUser channelUser)
@@ -157,7 +223,7 @@ namespace IrcDotNet
             OnUsersListReceived(new EventArgs());
         }
 
-        internal void HandleModesChanged(string newModes, IEnumerable<string> newModeParameters)
+        internal void HandleModesChanged(IEnumerable<char> newModes, IEnumerable<string> newModeParameters)
         {
             this.modes.UpdateModes(newModes, newModeParameters, channelUserModes, (add, mode, modeParameter) =>
                 this.users.Single(cu => cu.User.NickName == modeParameter).HandleModeChanged(add, mode));
@@ -202,6 +268,10 @@ namespace IrcDotNet
             OnNoticeReceived(new IrcMessageEventArgs(source, targets, text));
         }
 
+        /// <summary>
+        /// Raises the <see cref="UsersListReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected virtual void OnUsersListReceived(EventArgs e)
         {
             var handler = this.UsersListReceived;
@@ -209,6 +279,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="ModesChanged"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected virtual void OnModesChanged(EventArgs e)
         {
             var handler = this.ModesChanged;
@@ -216,6 +290,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="TopicChanged"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected virtual void OnTopicChanged(EventArgs e)
         {
             var handler = this.TopicChanged;
@@ -223,6 +301,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="UserJoined"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcChannelUserEventArgs"/> instance containing the event data.</param>
         protected virtual void OnUserJoined(IrcChannelUserEventArgs e)
         {
             var handler = this.UserJoined;
@@ -230,6 +312,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="UserLeft"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcChannelUserEventArgs"/> instance containing the event data.</param>
         protected virtual void OnUserLeft(IrcChannelUserEventArgs e)
         {
             var handler = this.UserLeft;
@@ -237,6 +323,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="UserKicked"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcChannelUserEventArgs"/> instance containing the event data.</param>
         protected virtual void OnUserKicked(IrcChannelUserEventArgs e)
         {
             var handler = this.UserKicked;
@@ -244,6 +334,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="MessageReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcMessageEventArgs"/> instance containing the event data.</param>
         protected virtual void OnMessageReceived(IrcMessageEventArgs e)
         {
             var handler = this.MessageReceived;
@@ -251,6 +345,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="NoticeReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcMessageEventArgs"/> instance containing the event data.</param>
         protected virtual void OnNoticeReceived(IrcMessageEventArgs e)
         {
             var handler = this.NoticeReceived;
@@ -258,6 +356,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="PropertyChangedEventArgs"/> instance containing the event data.</param>
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             var handler = this.PropertyChanged;
@@ -265,11 +367,15 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Returns a string representation of this instance.
+        /// </summary>
+        /// <returns>A string that represents this instance.</returns>
         public override string ToString()
         {
             return this.name;
         }
-
+        
         #region IIrcMessageTarget Members
 
         string IIrcMessageTarget.Name
@@ -295,12 +401,28 @@ namespace IrcDotNet
 
         #endregion
     }
-
+    
+    /// <summary>
+    /// Defines the types of channels. Each channel may only be of a single type at any one time.
+    /// </summary>
     public enum IrcChannelType
     {
+        /// <summary>
+        /// The channel type is unspecified.
+        /// </summary>
         Unspecified,
+        /// <summary>
+        /// The channel is public. The server always lists this channel.
+        /// </summary>
         Public,
+        /// <summary>
+        /// The channel is private. The server never lists this channel.
+        /// </summary>
         Private,
+        /// <summary>
+        /// The channel is secret. The server never lists this channel and pretends it does not exist when responding to
+        /// queries.
+        /// </summary>
         Secret,
     }
 }

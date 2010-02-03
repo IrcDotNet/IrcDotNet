@@ -581,7 +581,7 @@ namespace IrcDotNet
             SendMessageJoin(channels);
         }
 
-        internal void Part(IEnumerable<string> channels, string comment = null)
+        internal void Leave(IEnumerable<string> channels, string comment = null)
         {
             SendMessagePart(channels, comment);
         }
@@ -845,15 +845,16 @@ namespace IrcDotNet
             WriteMessage(new IrcMessage(this, null, command, parameters.ToArray()));
         }
 
+        /// <inheritdoc cref="WriteMessage(string)"/>
         /// <summary>
         /// Writes the specified message (prefix, command, and parameters) to the network stream.
         /// </summary>
         /// <param name="message">The message to write.</param>
-        /// <remarks>
-        /// This method adds the specified message to the send queue and then immediately returns.
-        /// The message is in fact only sent when the write loop takes the message from the queue and sends it over the
-        /// connection.
-        /// </remarks>
+        /// <exception cref="ArgumentException"><paramref name="message"/> contains more than 15 many parameters. -or-
+        /// The value of <see cref="IrcMessage.Prefix"/> of <paramref name="message"/> is invalid. -or-
+        /// The value of <see cref="IrcMessage.Command"/> of <paramref name="message"/> is invalid. -or-
+        /// The value of one of the items of <see cref="IrcMessage.Parameters"/> of <paramref name="message"/> is
+        /// invalid.</exception>
         protected void WriteMessage(IrcMessage message)
         {
             if (message.Parameters.Count > maxParamsCount)
@@ -877,8 +878,21 @@ namespace IrcDotNet
             WriteMessage(line.ToString());
         }
 
+        /// <summary>
+        /// Writes the specified line to the network stream.
+        /// </summary>
+        /// <param name="line">The line to send.</param>
+        /// <remarks>
+        /// This method adds the specified line to the send queue and then immediately returns.
+        /// The message is in fact only sent when the write loop takes the message from the queue and sends it over the
+        /// connection.
+        /// </remarks>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ArgumentException"><paramref name="line"/> is longer than 510 characters.</exception>
         private void WriteMessage(string line)
         {
+            CheckDisposed();
+
             if (line.Length > 510)
                 throw new ArgumentException(Properties.Resources.ErrorMessageLineTooLong, "line");
 
@@ -1013,6 +1027,7 @@ namespace IrcDotNet
         /// <param name="realName">The real name to register with the server.</param>
         /// <param name="userMode">The initial user mode to register with the server. The value should not contain any
         /// character except 'w' or 'i'.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void Connect(IPEndPoint remoteEP, string password, string nickName,
             string userName, string realName, ICollection<char> userMode = null)
         {
@@ -1049,6 +1064,7 @@ namespace IrcDotNet
         /// <summary>
         /// Disconnects immediately from the server. A quit message is sent if the connection is still active.
         /// </summary>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void Disconnect()
         {
             CheckDisposed();
@@ -1140,6 +1156,11 @@ namespace IrcDotNet
             ResetState();
         }
 
+        /// <summary>
+        /// Extracts the nick name and user mode from the specified value.
+        /// </summary>
+        /// <param name="input">The input value, containing a nick name prefixed by a user mode.</param>
+        /// <returns>A 2-tuple of the nick name and user mode.</returns>
         protected Tuple<string, string> ExtractUserMode(string input)
         {
             switch (input[0])
@@ -1153,7 +1174,15 @@ namespace IrcDotNet
             }
         }
 
-        protected Tuple<string, IEnumerable<string>> GetModeAndParameters(IEnumerable<string> messageParameters)
+        /// <summary>
+        /// Gets a collection of mode characters and mode parameters from the specified mode parameters.
+        /// </summary>
+        /// <param name="messageParameters">A collection of message parameters, which consists of mode strings and mode
+        /// parameters. A mode string is of the form `( "+" / "-" ) *( mode character  )`, and a mode parameter is arbitrary text.</param>
+        /// <returns>A 2-tuple of a collection of mode characters and a collection of mode parameters.
+        /// Each mode parameter corresponds to a single mode character, in the same order.</returns>
+        protected Tuple<IEnumerable<char>, IEnumerable<string>> GetModeAndParameters(
+            IEnumerable<string> messageParameters)
         {
             var modes = new StringBuilder();
             var modeParameters = new List<string>();
@@ -1168,24 +1197,66 @@ namespace IrcDotNet
                 else
                     modeParameters.Add(p);
             }
-            return Tuple.Create(modes.ToString(), (IEnumerable<string>)modeParameters.AsReadOnly());
+            return Tuple.Create((IEnumerable<char>)modes.ToString(),
+                (IEnumerable<string>)modeParameters.AsReadOnly());
         }
 
+        /// <summary>
+        /// Gets a list of channel objects from the specified comma-separated list of channel names.
+        /// </summary>
+        /// <param name="namesList">A value that contains a comma-separated list of names of channels.</param>
+        /// <returns>A list of channel objects that corresponds to the given list of channel names.</returns>
         protected IEnumerable<IrcChannel> GetChannelsFromList(string namesList)
         {
             return namesList.Split(',').Select(n => GetChannelFromName(n));
         }
 
+        /// <summary>
+        /// Gets a list of user objedcts from the specified comma-separated list of nick names.
+        /// </summary>
+        /// <param name="nickNamesList">A value that contains a comma-separated list of nick names of users.</param>
+        /// <returns>A list of user objects that corresponds to the given list of nick names.</returns>
         protected IEnumerable<IrcUser> GetUsersFromList(string nickNamesList)
         {
             return nickNamesList.Split(',').Select(n => this.users.Single(u => u.NickName == n));
         }
 
+        /// <summary>
+        /// Determines whether the specified name refers to a channel.
+        /// </summary>
+        /// <param name="name">The name to check.</param>
+        /// <returns><see langword="true"/> if the specified name represents a channel; <see langword="false"/>,
+        /// otherwise.</returns>
         protected bool IsChannelName(string name)
         {
             return Regex.IsMatch(name, regexChannelName);
         }
 
+        /// <summary>
+        /// Gets the type of the channel from the specified character.
+        /// </summary>
+        /// <param name="type">A character that represents the type of the channel. The character may be one of the following:
+        /// <list type="bullet">
+        ///     <listheader>
+        ///         <term>Character</term>
+        ///         <description>Channel type</description>
+        ///     </listheader>
+        ///     <item>
+        ///         <term>=</term>
+        ///         <description>Public channel</description>
+        ///     </item>
+        ///     <item>
+        ///         <term>*</term>
+        ///         <description>Private channel</description>
+        ///     </item>
+        ///     <item>
+        ///         <term>@</term>
+        ///         <description>Secret channel</description>
+        ///     </item>
+        /// </list></param>
+        /// <returns>The channel type that corresponds to the specified character.</returns>
+        /// <exception cref="ArgumentException"><paramref name="type"/> does not correspond to any known channel type.
+        /// </exception>
         protected IrcChannelType GetChannelType(char type)
         {
             switch (type)
@@ -1197,11 +1268,20 @@ namespace IrcDotNet
                 case '@':
                     return IrcChannelType.Secret;
                 default:
-                    throw new InvalidOperationException(string.Format(
-                        Properties.Resources.ErrorMessageInvalidChannelType, type));
+                    throw new ArgumentException(string.Format(
+                        Properties.Resources.ErrorMessageInvalidChannelType, type), "type");
             }
         }
 
+        /// <summary>
+        /// Gets the target of a message from the specified name.
+        /// A message target may be an <see cref="IrcUser"/>, <see cref="IrcChannel"/>, or <see cref="IrcTargetMask"/>.
+        /// </summary>
+        /// <param name="targetName">The name of the target.</param>
+        /// <returns>The target object that corresponds to the given name. The object is an instance of
+        /// <see cref="IrcUser"/>, <see cref="IrcChannel"/>, or <see cref="IrcTargetMask"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="targetName"/> does not represent a valid message target.
+        /// </exception>
         protected IIrcMessageTarget GetMessageTarget(string targetName)
         {
             Debug.Assert(targetName.Length > 0);
@@ -1222,7 +1302,7 @@ namespace IrcDotNet
             {
                 // Find user by nick name. If no user exists in list, create it and set its properties.
                 bool createdNew;
-                var user = GetUserFromNickName(nickName, out createdNew);
+                var user = GetUserFromNickName(nickName, true, out createdNew);
                 if (createdNew)
                 {
                     user.UserName = userName;
@@ -1234,7 +1314,7 @@ namespace IrcDotNet
             {
                 // Find user by user  name. If no user exists in list, create it and set its properties.
                 bool createdNew;
-                var user = GetUserFromNickName(nickName, out createdNew);
+                var user = GetUserFromNickName(nickName, true, out createdNew);
                 if (createdNew)
                 {
                     user.HostName = hostName;
@@ -1247,11 +1327,20 @@ namespace IrcDotNet
             }
             else
             {
-                throw new InvalidOperationException(string.Format(
-                    Properties.Resources.ErrorMessageInvalidSource, targetName));
+                throw new ArgumentException(string.Format(
+                    Properties.Resources.ErrorMessageInvalidSource, targetName), "targetName");
             }
         }
 
+        /// <summary>
+        /// Gets the source of a message from the specified prefix.
+        /// A message source may be a <see cref="IrcUser"/> or <see cref="IrcServer"/>.
+        /// </summary>
+        /// <param name="prefix">The raw prefix of the message.</param>
+        /// <returns>The message source that corresponds to the specified prefix. The object is an instance of
+        /// <see cref="IrcUser"/> or <see cref="IrcServer"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="prefix"/> does not represent a valid message source.
+        /// </exception>
         protected IIrcMessageSource GetSourceFromPrefix(string prefix)
         {
             if (prefix == null)
@@ -1272,7 +1361,7 @@ namespace IrcDotNet
             {
                 // Find user by nick name. If no user exists in list, create it and set its properties.
                 bool createdNew;
-                var user = GetUserFromNickName(nickName, out createdNew);
+                var user = GetUserFromNickName(nickName, true, out createdNew);
                 if (createdNew)
                 {
                     user.UserName = userName;
@@ -1282,17 +1371,25 @@ namespace IrcDotNet
             }
             else
             {
-                throw new InvalidOperationException(string.Format(
-                    Properties.Resources.ErrorMessageInvalidSource, prefix));
+                throw new ArgumentException(string.Format(
+                    Properties.Resources.ErrorMessageInvalidSource, prefix), "prefix");
             }
         }
 
+        /// <inheritdoc cref="GetServerFromHostName(string, out bool)"/>
         protected IrcServer GetServerFromHostName(string hostName)
         {
             bool createdNew;
             return GetServerFromHostName(hostName, out createdNew);
         }
 
+        /// <summary>
+        /// Gets the server with the specified host name, creating it if necessary.
+        /// </summary>
+        /// <param name="hostName">The host name of the server.</param>
+        /// <param name="createdNew"><see langword="true"/> if the server object was created during the call;
+        /// <see langword="false"/>, otherwise.</param>
+        /// <returns>The server object that corresponds to the specified host name.</returns>
         protected IrcServer GetServerFromHostName(string hostName, out bool createdNew)
         {
             // Search for server  with given name in list of known servers. If it does not exist, add it.
@@ -1310,12 +1407,20 @@ namespace IrcDotNet
             return server;
         }
 
+        /// <inheritdoc cref="GetChannelFromName(string, out bool)"/>
         protected IrcChannel GetChannelFromName(string channelName)
         {
             bool createdNew;
             return GetChannelFromName(channelName, out createdNew);
         }
 
+        /// <summary>
+        /// Gets the channel with the specified name, creating it if necessary.
+        /// </summary>
+        /// <param name="channelName">The name of the channel.</param>
+        /// <param name="createdNew"><see langword="true"/> if the channel object was created during the call;
+        /// <see langword="false"/>, otherwise.</param>
+        /// <returns>The channel object that corresponds to the specified name.</returns>
         protected IrcChannel GetChannelFromName(string channelName, out bool createdNew)
         {
             // Search for channel with given name in list of known channel. If it does not exist, add it.
@@ -1333,20 +1438,30 @@ namespace IrcDotNet
             return channel;
         }
 
+        /// <inheritdoc cref="GetUserFromNickName(string, bool, out bool)"/>
         protected IrcUser GetUserFromNickName(string nickName, bool isOnline = true)
         {
             bool createdNew;
-            return GetUserFromNickName(nickName, out createdNew, isOnline);
+            return GetUserFromNickName(nickName, isOnline, out createdNew);
         }
 
-        protected IrcUser GetUserFromNickName(string nickName, out bool createdNew, bool isOnline = true)
+        /// <summary>
+        /// Gets the user with the specified nick name, creating it if necessary.
+        /// </summary>
+        /// <param name="nickName">The nick name of the user.</param>
+        /// <param name="isOnline"><see langword="true"/> if the user is currently online;
+        /// <see langword="false"/>, if the user is currently offline.
+        /// The <see cref="IrcUser.IsOnline"/> property of the user object is set to this value.</param>
+        /// <param name="createdNew"><see langword="true"/> if the user object was created during the call;
+        /// <see langword="false"/>, otherwise.</param>
+        /// <returns>The user object that corresponds to the specified nick name.</returns>
+        protected IrcUser GetUserFromNickName(string nickName, bool isOnline, out bool createdNew)
         {
             // Search for user with given nick name in list of known users. If it does not exist, add it.
             var user = this.users.SingleOrDefault(u => u.NickName == nickName);
             if (user == null)
             {
                 user = new IrcUser();
-                user.IsOnline = isOnline;
                 user.NickName = nickName;
                 this.users.Add(user);
                 createdNew = true;
@@ -1355,15 +1470,24 @@ namespace IrcDotNet
             {
                 createdNew = false;
             }
+            user.IsOnline = isOnline;
             return user;
         }
 
+        /// <inheritdoc cref="GetUserFromUserName(string, out bool)"/>
         protected IrcUser GetUserFromUserName(string userName)
         {
             bool createdNew;
             return GetUserFromUserName(userName, out createdNew);
         }
 
+        /// <summary>
+        /// Gets the user with the specified user name, creating it if necessary.
+        /// </summary>
+        /// <param name="userName">The user name of the user.</param>
+        /// <param name="createdNew"><see langword="true"/> if the user object was created during the call;
+        /// <see langword="false"/>, otherwise.</param>
+        /// <returns>The user object that corresponds to the specified user name.</returns>
         protected IrcUser GetUserFromUserName(string userName, out bool createdNew)
         {
             // Search for user with given nick name in list of known users. If it does not exist, add it.
@@ -1408,12 +1532,20 @@ namespace IrcDotNet
             this.usersReadOnly = new IrcUserCollection(this, this.users);
         }
 
+        /// <summary>
+        /// Throws an exception if the object has been dispoed; otherwise, simply returns immediately.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException">The object has already been disposed.</exception>
         protected void CheckDisposed()
         {
             if (this.isDisposed)
                 throw new ObjectDisposedException(GetType().FullName);
         }
 
+        /// <summary>
+        /// Raises the <see cref="Connected"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected virtual void OnConnected(EventArgs e)
         {
             var handler = this.Connected;
@@ -1421,6 +1553,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="ConnectFailed"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcErrorEventArgs"/> instance containing the event data.</param>
         protected virtual void OnConnectFailed(IrcErrorEventArgs e)
         {
             var handler = this.ConnectFailed;
@@ -1428,6 +1564,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="Disconnected"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected virtual void OnDisconnected(EventArgs e)
         {
             var handler = this.Disconnected;
@@ -1435,6 +1575,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="Error"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcErrorEventArgs"/> instance containing the event data.</param>
         protected virtual void OnError(IrcErrorEventArgs e)
         {
             var handler = this.Error;
@@ -1442,6 +1586,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="ProtocolError"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcProtocolErrorEventArgs"/> instance containing the event data.</param>
         protected virtual void OnProtocolError(IrcProtocolErrorEventArgs e)
         {
             var handler = this.ProtocolError;
@@ -1449,6 +1597,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="ErrorMessageReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcErrorMessageEventArgs"/> instance containing the event data.</param>
         protected virtual void OnErrorMessageReceived(IrcErrorMessageEventArgs e)
         {
             var handler = this.ErrorMessageReceived;
@@ -1456,6 +1608,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="Registered"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected virtual void OnRegistered(EventArgs e)
         {
             var handler = this.Registered;
@@ -1463,6 +1619,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="ServerBounce"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcServerInfoEventArgs"/> instance containing the event data.</param>
         protected virtual void OnServerBounce(IrcServerInfoEventArgs e)
         {
             var handler = this.ServerBounce;
@@ -1470,6 +1630,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="ServerSupportedFeaturesReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected virtual void OnServerSupportedFeaturesReceived(EventArgs e)
         {
             var handler = this.ServerSupportedFeaturesReceived;
@@ -1477,6 +1641,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="PingReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcPingOrPongReceivedEventArgs"/> instance containing the event data.</param>
         protected virtual void OnPingReceived(IrcPingOrPongReceivedEventArgs e)
         {
             var handler = this.PingReceived;
@@ -1484,6 +1652,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="PongReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcPingOrPongReceivedEventArgs"/> instance containing the event data.</param>
         protected virtual void OnPongReceived(IrcPingOrPongReceivedEventArgs e)
         {
             var handler = this.PongReceived;
@@ -1491,6 +1663,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="MotdReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected virtual void OnMotdReceived(EventArgs e)
         {
             var handler = this.MotdReceived;
@@ -1498,12 +1674,21 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="WhoReplyReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcNameEventArgs"/> instance containing the event data.</param>
         protected virtual void OnWhoReplyReceived(IrcNameEventArgs e)
         {
             var handler = this.WhoReplyReceived;
             if (handler != null)
                 handler(this, e);
         }
+
+        /// <summary>
+        /// Raises the <see cref="WhoIsReplyReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcUserEventArgs"/> instance containing the event data.</param>
         protected virtual void OnWhoIsReplyReceived(IrcUserEventArgs e)
         {
             var handler = this.WhoIsReplyReceived;
@@ -1511,6 +1696,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="WhoWasReplyReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcUserEventArgs"/> instance containing the event data.</param>
         protected virtual void OnWhoWasReplyReceived(IrcUserEventArgs e)
         {
             var handler = this.WhoWasReplyReceived;
@@ -1518,15 +1707,30 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Represents a method that processes <see cref="IrcMessage"/>s.
+        /// </summary>
+        /// <param name="message">The message that the method should process.</param>
         protected delegate void MessageProcessor(IrcMessage message);
 
+        /// <summary>
+        /// Indicates that a method processes <see cref="IrcMessage"/>s for a given command.
+        /// </summary>
         protected class MessageProcessorAttribute : Attribute
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MessageProcessorAttribute"/> class.
+            /// </summary>
+            /// <param name="command">The name of the command for which messages are processed.</param>
             public MessageProcessorAttribute(string command)
             {
                 this.Command = command;
             }
 
+            /// <summary>
+            /// Gets the name of the command for which messages are processed.
+            /// </summary>
+            /// <value>The command name.</value>
             public string Command
             {
                 get;

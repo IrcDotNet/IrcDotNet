@@ -50,7 +50,7 @@ namespace IrcDotNet
 
         public void Part(IEnumerable<string> channels, string comment = null)
         {
-            this.Client.Part(channels, comment);
+            this.Client.Leave(channels, comment);
         }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)

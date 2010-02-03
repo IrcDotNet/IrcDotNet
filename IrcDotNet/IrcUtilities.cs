@@ -5,11 +5,22 @@ using System.Text;
 
 namespace IrcDotNet
 {
+    /// <summary>
+    /// Contains common utilities for IRC-related functionality.
+    /// </summary>
     public static class IrcUtilities
     {
         // Reads list of mode changes, where each group of modes is prefixed by a '+' or '-', representing respectively
         // setting or unsetting of the given modes.
-        public static void UpdateModes(this ICollection<char> collection, string newModes,
+        /// <summary>
+        /// Updates the modes.
+        /// </summary>
+        /// <param name="collection">The collection.</param>
+        /// <param name="newModes">The new modes.</param>
+        /// <param name="newModeParameters">The new mode parameters.</param>
+        /// <param name="modesWithParameters">The modes with parameters.</param>
+        /// <param name="handleModeParameter">The handle mode parameter.</param>
+        public static void UpdateModes(this ICollection<char> collection, IEnumerable<char> newModes,
             IEnumerable<string> newModeParameters = null, ICollection<char> modesWithParameters = null,
             Action<bool, char, string> handleModeParameter = null)
         {

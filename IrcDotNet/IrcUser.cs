@@ -6,6 +6,9 @@ using System.Text;
 
 namespace IrcDotNet
 {
+    /// <summary>
+    /// Represents an IRC user that resides on a specific <see cref="IrcClient"/>.
+    /// </summary>
     public class IrcUser : INotifyPropertyChanged, IIrcMessageSource, IIrcMessageTarget
     {
         private bool isOnline;
@@ -206,6 +209,10 @@ namespace IrcDotNet
             OnQuit(new IrcCommentEventArgs(comment));
         }
 
+        /// <summary>
+        /// Raises the <see cref="NickNameChanged"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected virtual void OnNickNameChanged(EventArgs e)
         {
             var handler = this.NickNameChanged;
@@ -213,13 +220,21 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="IsAwayChanged"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected virtual void OnIsAwayChanged(EventArgs e)
         {
             var handler = this.IsAwayChanged;
             if (handler != null)
                 handler(this, e);
         }
-        
+
+        /// <summary>
+        /// Raises the <see cref="Quit"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcCommentEventArgs"/> instance containing the event data.</param>
         protected virtual void OnQuit(IrcCommentEventArgs e)
         {
             var handler = this.Quit;
@@ -227,6 +242,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="E:PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="PropertyChangedEventArgs"/> instance containing the event data.</param>
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             var handler = this.PropertyChanged;
@@ -234,6 +253,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Returns a string representation of this instance.
+        /// </summary>
+        /// <returns>A string that represents this instance.</returns>
         public override string ToString()
         {
             return this.nickName;
