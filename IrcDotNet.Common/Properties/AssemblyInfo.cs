@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("IRC.NET")]
-[assembly: AssemblyDescription("Library for communicating via the Internet Relay Chat protocol, using the .NET Framework 3.5.")]
+[assembly: AssemblyTitle("IRC.NET Common")]
+[assembly: AssemblyDescription("Common functionality for IRC.NET assemblies.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("IRC.NET")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("67fa7d1e-5e04-4af5-93ec-f57d0183be2b")]
+[assembly: Guid("1f74ac13-2ef0-463d-b3f2-4fdbe50426a4")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace System.Collections
+namespace IrcDotNet.Common.Collections
 {
-    internal static class CollectionExtensions
+    /// <summary>
+    /// Contains common utilities for functionality relating to collections.
+    /// </summary>
+    public static class CollectionExtensions
     {
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> range)
         {

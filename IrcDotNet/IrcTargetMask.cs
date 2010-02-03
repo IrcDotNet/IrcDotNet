@@ -5,30 +5,47 @@ using System.Text;
 
 namespace IrcDotNet
 {
+    /// <summary>
+    /// Represents a mask of an IRC server name or host name, used for specifying the targets of a message.
+    /// </summary>
     public class IrcTargetMask : IIrcMessageTarget
     {
-        private const string errorMessageTargetMaskTooShort = "The target mask must be contain at least two characters";
-        private const string errorMessageTargetMaskInvalidType = "The type of the given target mask '{0}' is invalid.";
-
         private IrcTargetMaskType type;
         private string mask;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IrcTargetMask"/> class.
+        /// </summary>
+        /// <param name="targetMask">A wildcard expression for matching agsint server names or host names.
+        /// If the first character is '$', the mask is a server mask; if the first character is '#', the mask is a host
+        /// mask.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="targetMask"/> is <see langword="null"/></exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="targetMask"/> is too short. -or-
+        /// <paramref name="targetMask"/> does not respresent a known mask type.
+        /// </exception>
         public IrcTargetMask(string targetMask)
         {
             if (targetMask == null)
                 throw new ArgumentNullException("targetMask");
-            if (errorMessageTargetMaskTooShort.Length < 2)
-                throw new ArgumentException(errorMessageTargetMaskTooShort, "targetMask");
-
+            if (Properties.Resources.ErrorMessageTargetMaskTooShort.Length < 2)
+                throw new ArgumentException(Properties.Resources.ErrorMessageTargetMaskTooShort, "targetMask");
+            
             if (targetMask[0] == '$')
                 this.type = IrcTargetMaskType.ServerMask;
             if (targetMask[0] == '#')
                 this.type = IrcTargetMaskType.HostMask;
             else
-                throw new ArgumentException(string.Format(errorMessageTargetMaskInvalidType, targetMask), "targetMask");
+                throw new ArgumentException(string.Format(
+                    Properties.Resources.ErrorMessageTargetMaskInvalidType, targetMask), "targetMask");
             this.mask = mask.Substring(1);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IrcTargetMask"/> class.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="mask">The mask.</param>
         public IrcTargetMask(IrcTargetMaskType type, string mask)
         {
             if (!Enum.IsDefined(typeof(IrcTargetMaskType), type))
@@ -40,16 +57,29 @@ namespace IrcDotNet
             this.mask = mask;
         }
 
+        /// <summary>
+        /// Gets the type of the target mask; either a server mask or channel mask.
+        /// </summary>
+        /// <value>The type of the mask.</value>
         public IrcTargetMaskType Type
         {
             get { return this.type; }
         }
 
+        /// <summary>
+        /// Gets a wildcard expression for matching against target names.
+        /// The <see cref="Type"/> property determines the type of the mask.
+        /// </summary>
+        /// <value>The target mask.</value>
         public string Mask
         {
             get { return this.mask; }
         }
 
+        /// <summary>
+        /// Returns a string representation of this instance.
+        /// </summary>
+        /// <returns>A string that represents this instance.</returns>
         public override string ToString()
         {
             return this.mask;
@@ -75,9 +105,18 @@ namespace IrcDotNet
         #endregion
     }
 
+    /// <summary>
+    /// Defines the type of a target mask.
+    /// </summary>
     public enum IrcTargetMaskType
     {
+        /// <summary>
+        /// A mask of a server name.
+        /// </summary>
         ServerMask,
+        /// <summary>
+        /// A mask of a host name.
+        /// </summary>
         HostMask,
     }
 }

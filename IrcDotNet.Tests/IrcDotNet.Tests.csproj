@@ -40,14 +40,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Common\CollectionUtilities.cs">
-      <Link>Collections\CollectionUtilities.cs</Link>
-    </Compile>
-    <Compile Include="InterdependentTestSet.cs" />
+    <Compile Include="TestStateManager.cs" />
     <Compile Include="IrcClientTestSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IrcDotNet.Common\IrcDotNet.Common.csproj">
+      <Project>{9138300E-94C6-4F79-999F-6830FA76488E}</Project>
+      <Name>IrcDotNet.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IrcDotNet\IrcDotNet.csproj">
       <Project>{47D551DA-96ED-4EF6-96BF-4832059D4700}</Project>
       <Name>IrcDotNet</Name>

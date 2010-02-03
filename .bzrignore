@@ -4,5 +4,5 @@
 *.user
 bin/
 obj/
+Output/
 ./TestResults/
-./Hosting/

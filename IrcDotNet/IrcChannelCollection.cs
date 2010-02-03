@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
@@ -50,7 +50,7 @@ namespace IrcDotNet
 
         public void Part(IEnumerable<string> channels, string comment = null)
         {
-            this.Client.Part(channels, comment);
+            this.Client.Leave(channels, comment);
         }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)

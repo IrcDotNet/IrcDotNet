@@ -40,10 +40,10 @@ namespace IrcDotNet
         }
     }
 
-    public class IrcChannelUserEventArgs : EventArgs
+    public class IrcChannelUserEventArgs : IrcCommentEventArgs
     {
-        public IrcChannelUserEventArgs(IrcChannelUser channelUser)
-            : base()
+        public IrcChannelUserEventArgs(IrcChannelUser channelUser, string comment)
+            : base(comment)
         {
             if (channelUser == null)
                 throw new ArgumentNullException("channelUser");
@@ -58,10 +58,10 @@ namespace IrcDotNet
         }
     }
 
-    public class IrcChannelEventArgs : EventArgs
+    public class IrcChannelEventArgs : IrcCommentEventArgs
     {
-        public IrcChannelEventArgs(IrcChannel channel)
-            : base()
+        public IrcChannelEventArgs(IrcChannel channel, string comment)
+            : base(comment)
         {
             if (channel == null)
                 throw new ArgumentNullException("channel");
@@ -76,10 +76,10 @@ namespace IrcDotNet
         }
     }
 
-    public class IrcUserEventArgs : EventArgs
+    public class IrcUserEventArgs : IrcCommentEventArgs
     {
-        public IrcUserEventArgs(IrcUser user)
-            : base()
+        public IrcUserEventArgs(IrcUser user, string comment)
+            : base(comment)
         {
             if (user == null)
                 throw new ArgumentNullException("user");
@@ -88,6 +88,37 @@ namespace IrcDotNet
         }
 
         public IrcUser User
+        {
+            get;
+            private set;
+        }
+    }
+
+    public class IrcNameEventArgs : EventArgs
+    {
+        public IrcNameEventArgs(string name)
+            : base()
+        {
+            this.Name = name;
+        }
+
+        public string Name
+        {
+            get;
+            private set;
+        }
+    }
+
+    public class IrcCommentEventArgs : EventArgs
+    {
+        // `comment` can be null.
+        public IrcCommentEventArgs(string comment)
+            : base()
+        {
+            this.Comment = comment;
+        }
+
+        public string Comment
         {
             get;
             private set;
@@ -140,16 +171,16 @@ namespace IrcDotNet
 
     public class IrcErrorMessageEventArgs : EventArgs
     {
-        public IrcErrorMessageEventArgs(string errorMessage)
+        public IrcErrorMessageEventArgs(string message)
             : base()
         {
-            if (errorMessage == null)
-                throw new ArgumentNullException("errorMessage");
+            if (message == null)
+                throw new ArgumentNullException("message");
 
-            this.ErrorMessage = errorMessage;
+            this.Message = message;
         }
 
-        public string ErrorMessage
+        public string Message
         {
             get;
             private set;
