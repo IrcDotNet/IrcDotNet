@@ -8,6 +8,9 @@ using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    /// <summary>
+    /// Represents an IRC user that resides on a specific channel on a specific <see cref="IrcClient"/>.
+    /// </summary>
     public class IrcChannelUser : INotifyPropertyChanged
     {
         // Internal and exposable collections of channel modes currently active on user.
@@ -27,16 +30,19 @@ namespace IrcDotNet
                 this.modes.AddRange(modes);
         }
 
-        public bool IsAway
-        {
-            get { return this.modes.Contains('a'); }
-        }
-
+        /// <summary>
+        /// A read-only collection of the channel modes the user currently has.
+        /// </summary>
+        /// <value>The current channel modes of the user.</value>
         public ReadOnlySet<char> Modes
         {
             get { return this.modesReadOnly; }
         }
 
+        /// <summary>
+        /// Gets or sets the channel.
+        /// </summary>
+        /// <value>The channel.</value>
         public IrcChannel Channel
         {
             get { return this.channel; }
@@ -47,12 +53,22 @@ namespace IrcDotNet
             }
         }
 
+        /// <summary>
+        /// Gets the <see cref="IrcUser"/> that is represented by the <see cref="IrcChannelUser"/>.
+        /// </summary>
+        /// <value>The <see cref="IrcUser"/> that is represented by the <see cref="IrcChannelUser"/>.</value>
         public IrcUser User
         {
             get { return this.user; }
         }
 
+        /// <summary>
+        /// Occurs when the channel modes of the user have changed.
+        /// </summary>
         public event EventHandler<EventArgs> ModesChanged;
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void Kick(string comment = null)
@@ -89,6 +105,10 @@ namespace IrcDotNet
             OnModesChanged(new EventArgs());
         }
 
+        /// <summary>
+        /// Raises the <see cref="ModesChanged"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected virtual void OnModesChanged(EventArgs e)
         {
             var handler = this.ModesChanged;
@@ -96,6 +116,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="PropertyChangedEventArgs"/> instance containing the event data.</param>
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             var handler = this.PropertyChanged;
@@ -103,6 +127,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Returns a string representation of this instance.
+        /// </summary>
+        /// <returns>A string that represents this instance.</returns>
         public override string ToString()
         {
             return this.channel.Name + "/" + this.user.NickName;

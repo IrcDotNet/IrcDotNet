@@ -526,9 +526,9 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Quits the server, sending the specified comment.
+        /// Quits the server, giving the specified comment.
         /// </summary>
-        /// <param name="comment">The comment to send to the server upon quitting.</param>
+        /// <param name="comment">The comment to send the server upon quitting.</param>
         public void Quit(string comment = null)
         {
             SendMessageQuit(comment);
@@ -850,11 +850,13 @@ namespace IrcDotNet
         /// Writes the specified message (prefix, command, and parameters) to the network stream.
         /// </summary>
         /// <param name="message">The message to write.</param>
-        /// <exception cref="ArgumentException"><paramref name="message"/> contains more than 15 many parameters. -or-
+        /// <exception cref="ArgumentException">
+        /// <paramref name="message"/> contains more than 15 many parameters. -or-
         /// The value of <see cref="IrcMessage.Prefix"/> of <paramref name="message"/> is invalid. -or-
         /// The value of <see cref="IrcMessage.Command"/> of <paramref name="message"/> is invalid. -or-
         /// The value of one of the items of <see cref="IrcMessage.Parameters"/> of <paramref name="message"/> is
-        /// invalid.</exception>
+        /// invalid.
+        /// </exception>
         protected void WriteMessage(IrcMessage message)
         {
             if (message.Parameters.Count > maxParamsCount)
@@ -948,7 +950,7 @@ namespace IrcDotNet
             return value == '\0' || value == '\r' || value == '\n';
         }
 
-        /// <inheritdoc cref="Connect(string, int, string, string, string, string, IColleciton<char>)"/>
+        /// <inheritdoc cref="Connect(string, int, string, string, string, string, ICollection{char})"/>
         public void Connect(string host, string password,
             string nickName, string userName, string realName, ICollection<char> userMode = null)
         {
@@ -957,7 +959,7 @@ namespace IrcDotNet
             Connect(host, defaultPort, password, nickName, userName, realName, userMode);
         }
 
-        /// <inheritdoc cref="Connect(IPEndPoint, string, string, string, string, IColleciton<char>)"/>
+        /// <inheritdoc cref="Connect(IPEndPoint, string, string, string, string, ICollection{char})"/>
         /// <param name="host">The name of the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
         public void Connect(string host, int port, string password,
@@ -971,7 +973,7 @@ namespace IrcDotNet
             HandleClientConnecting();
         }
 
-        /// <inheritdoc cref="Connect(IPAddress, int, string, string, string, string, IColleciton{char})"/>
+        /// <inheritdoc cref="Connect(IPAddress, int, string, string, string, string, ICollection{char})"/>
         public void Connect(IPAddress address, string password,
             string nickName, string userName, string realName, ICollection<char> userMode = null)
         {
@@ -980,7 +982,7 @@ namespace IrcDotNet
             Connect(address, defaultPort, password, nickName, userName, realName, userMode);
         }
 
-        /// <inheritdoc cref="Connect(IPEndPoint, string, string, string, string, IColleciton<char>)"/>
+        /// <inheritdoc cref="Connect(IPEndPoint, string, string, string, string, ICollection{char})"/>
         /// <param name="address">An IP addresses that designates the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
         public void Connect(IPAddress address, int port, string password,
@@ -994,7 +996,7 @@ namespace IrcDotNet
             HandleClientConnecting();
         }
 
-        /// <inheritdoc cref="Connect(IPAddress[], string, string, string, string, IColleciton{char})"/>
+        /// <inheritdoc cref="Connect(IPAddress[], string, string, string, string, ICollection{char})"/>
         public void Connect(IPAddress[] addresses, string password,
             string nickName, string userName, string realName, ICollection<char> userMode = null)
         {
@@ -1003,7 +1005,7 @@ namespace IrcDotNet
             Connect(addresses, defaultPort, password, nickName, userName, realName, userMode);
         }
 
-        /// <inheritdoc cref="Connect(IPEndPoint, string, string, string, string, IColleciton{char})"/>
+        /// <inheritdoc cref="Connect(IPEndPoint, string, string, string, string, ICollection{char})"/>
         /// <param name="addresses">A collection of one or more IP addresses that designates the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
         public void Connect(IPAddress[] addresses, int port, string password,
@@ -1176,13 +1178,14 @@ namespace IrcDotNet
 
         /// <summary>
         /// Gets a collection of mode characters and mode parameters from the specified mode parameters.
+        /// Combines multiple mode strings into a single mode string.
         /// </summary>
         /// <param name="messageParameters">A collection of message parameters, which consists of mode strings and mode
-        /// parameters. A mode string is of the form `( "+" / "-" ) *( mode character  )`, and a mode parameter is arbitrary text.</param>
-        /// <returns>A 2-tuple of a collection of mode characters and a collection of mode parameters.
+        /// parameters. A mode string is of the form `( "+" / "-" ) *( mode character )`, and specifies mode changes.
+        /// A mode parameter is arbitrary text associated with a certain mode.</param>
+        /// <returns>A 2-tuple of a single mode string and a collection of mode parameters.
         /// Each mode parameter corresponds to a single mode character, in the same order.</returns>
-        protected Tuple<IEnumerable<char>, IEnumerable<string>> GetModeAndParameters(
-            IEnumerable<string> messageParameters)
+        protected Tuple<string, IEnumerable<string>> GetModeAndParameters(IEnumerable<string> messageParameters)
         {
             var modes = new StringBuilder();
             var modeParameters = new List<string>();
@@ -1197,8 +1200,7 @@ namespace IrcDotNet
                 else
                     modeParameters.Add(p);
             }
-            return Tuple.Create((IEnumerable<char>)modes.ToString(),
-                (IEnumerable<string>)modeParameters.AsReadOnly());
+            return Tuple.Create(modes.ToString(), (IEnumerable<string>)modeParameters.AsReadOnly());
         }
 
         /// <summary>
@@ -1235,7 +1237,8 @@ namespace IrcDotNet
         /// <summary>
         /// Gets the type of the channel from the specified character.
         /// </summary>
-        /// <param name="type">A character that represents the type of the channel. The character may be one of the following:
+        /// <param name="type">A character that represents the type of the channel.
+        /// The character may be one of the following:
         /// <list type="bullet">
         ///     <listheader>
         ///         <term>Character</term>

@@ -5,6 +5,9 @@ using System.Text;
 
 namespace IrcDotNet.Common.Collections
 {
+    /// <summary>
+    /// Contains common utilities for functionality relating to collections.
+    /// </summary>
     public static class CollectionExtensions
     {
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> range)

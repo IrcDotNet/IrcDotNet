@@ -8,6 +8,10 @@ using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    /// <summary>
+    /// Represents the local user of a specific <see cref="IrcClient"/>.
+    /// The local user is the user as which the client has connected and registered.
+    /// </summary>
     public class IrcLocalUser : IrcUser, IIrcMessageSendHandler, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
         // Internal and exposable collections of current modes of user.
@@ -23,6 +27,10 @@ namespace IrcDotNet
                 this.modes.AddRange(modes);
         }
 
+        /// <summary>
+        /// A read-only collection of the modes the user currently has.
+        /// </summary>
+        /// <value>The current modes of the user.</value>
         public ReadOnlySet<char> Modes
         {
             get { return this.modesReadOnly; }
@@ -40,9 +48,21 @@ namespace IrcDotNet
         /// Occurs when the local user has left a channel.
         /// </summary>
         public event EventHandler<IrcChannelEventArgs> LeftChannel;
+        /// <summary>
+        /// Occurs when a message has been sent.
+        /// </summary>
         public event EventHandler<IrcMessageEventArgs> MessageSent;
+        /// <summary>
+        /// Occurs when the local user has sent a message.
+        /// </summary>
         public event EventHandler<IrcMessageEventArgs> MessageReceived;
+        /// <summary>
+        /// Occurs when the local user has sent a notice.
+        /// </summary>
         public event EventHandler<IrcMessageEventArgs> NoticeSent;
+        /// <summary>
+        /// Occurs when the local user has received a notice.
+        /// </summary>
         public event EventHandler<IrcMessageEventArgs> NoticeReceived;
 
         public void SendMessage(IIrcMessageTarget target, string text)
@@ -218,6 +238,10 @@ namespace IrcDotNet
             OnNoticeReceived(new IrcMessageEventArgs(source, targets, text));
         }
 
+        /// <summary>
+        /// Raises the <see cref="ModesChanged"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected virtual void OnModesChanged(EventArgs e)
         {
             var handler = this.ModesChanged;
@@ -225,6 +249,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="JoinedChannel"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcChannelEventArgs"/> instance containing the event data.</param>
         protected virtual void OnJoinedChannel(IrcChannelEventArgs e)
         {
             var handler = this.JoinedChannel;
@@ -232,6 +260,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="LeftChannel"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcChannelEventArgs"/> instance containing the event data.</param>
         protected virtual void OnLeftChannel(IrcChannelEventArgs e)
         {
             var handler = this.LeftChannel;
@@ -239,6 +271,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="MessageSent"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcMessageEventArgs"/> instance containing the event data.</param>
         protected virtual void OnMessageSent(IrcMessageEventArgs e)
         {
             var handler = this.MessageSent;
@@ -246,6 +282,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="MessageReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcMessageEventArgs"/> instance containing the event data.</param>
         protected virtual void OnMessageReceived(IrcMessageEventArgs e)
         {
             var handler = this.MessageReceived;
@@ -253,6 +293,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="NoticeSent"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcMessageEventArgs"/> instance containing the event data.</param>
         protected virtual void OnNoticeSent(IrcMessageEventArgs e)
         {
             var handler = this.NoticeSent;
@@ -260,6 +304,10 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="NoticeReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcMessageEventArgs"/> instance containing the event data.</param>
         protected virtual void OnNoticeReceived(IrcMessageEventArgs e)
         {
             var handler = this.NoticeReceived;

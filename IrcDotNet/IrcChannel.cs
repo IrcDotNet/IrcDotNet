@@ -131,11 +131,11 @@ namespace IrcDotNet
         /// </summary>
         public event EventHandler<IrcChannelUserEventArgs> UserKicked;
         /// <summary>
-        /// Occurs when the channel receives a message.
+        /// Occurs when the channel has received a message.
         /// </summary>
         public event EventHandler<IrcMessageEventArgs> MessageReceived;
         /// <summary>
-        /// Occurs when the channel receives a notice.
+        /// Occurs when the channel has received a notice.
         /// </summary>
         public event EventHandler<IrcMessageEventArgs> NoticeReceived;
         /// <summary>
@@ -150,6 +150,7 @@ namespace IrcDotNet
         /// <param name="user">The <see cref="IrcUser"/> for which to look.</param>
         /// <returns>The <see cref="IrcChannelUser"/> in the channel that corresponds to the specified
         /// <see cref="IrcUser"/>, or <see langword="null"/> if none is found.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="user"/> is <see langword="null"/>.</exception>
         public IrcChannelUser GetChannelUser(IrcUser user)
         {
             if (user == null)
@@ -158,16 +159,28 @@ namespace IrcDotNet
             return this.users.SingleOrDefault(cu => cu.User == user);
         }
 
+        /// <summary>
+        /// Gets the current channel modes, or if <paramref name="modes"/> is specified, the settings for the specified
+        /// modes.
+        /// </summary>
+        /// <param name="modes">The modes for which to get the current settings. Default is to request all current
+        /// channel modes.</param>
         public void GetModes(string modes = null)
         {
-            this.client.GetChannelModes(this, null);
+            this.client.GetChannelModes(this, modes);
         }
 
+        /// <inheritdoc cref="SetModes(IEnumerable{char})"/>
         public void SetModes(params char[] newModes)
         {
             SetModes((IEnumerable<char>)newModes);
         }
 
+        /// <inheritdoc cref="SetModes(string, IEnumerable{string})"/>
+        /// <param name="newModes">A collection of mode characters that should become the new modes.
+        /// Any modes in the collection that are not currently set will be set, and any nodes not in the collection that
+        /// are currently set will be unset.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="newModes"/> is <see langword="null"/>.</exception>
         public void SetModes(IEnumerable<char> newModes)
         {
             if (newModes == null)
@@ -176,6 +189,9 @@ namespace IrcDotNet
             SetModes(newModes.Except(this.modes), this.modes.Except(newModes));
         }
 
+        /// <inheritdoc cref="SetModes(string, IEnumerable{string})"/>
+        /// <exception cref="ArgumentNullException"><paramref name="setModes"/> is <see langword="null"/>. -or-
+        /// <paramref name="unsetModes"/> is <see langword="null"/>.</exception>
         public void SetModes(IEnumerable<char> setModes, IEnumerable<char> unsetModes,
             IEnumerable<string> modeParameters = null)
         {
@@ -188,6 +204,7 @@ namespace IrcDotNet
                 modeParameters);
         }
 
+        /// <inheritdoc cref="SetModes(string, IEnumerable{string})"/>
         public void SetModes(string modes, params string[] modeParameters)
         {
             if (modes == null)
@@ -196,6 +213,13 @@ namespace IrcDotNet
             SetModes(modes, (IEnumerable<string>)modeParameters);
         }
 
+        /// <summary>
+        /// Sets the specified modes on the channel.
+        /// </summary>
+        /// <param name="modes">The mode string that specifies mode changes, which takes the form
+        /// `( "+" / "-" ) *( mode character )`.</param>
+        /// <param name="modeParameters">A collection of parameters to he modes. Default is none.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="modes"/> is <see langword="null"/>.</exception>
         public void SetModes(string modes, IEnumerable<string> modeParameters = null)
         {
             if (modes == null)
@@ -205,9 +229,10 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Leaves the channel, with the specified comment.
+        /// Leaves the channel, giving the specified comment.
         /// </summary>
-        /// <param name="comment">The comment to give when leaving the channel. Default is no comment.</param>
+        /// <param name="comment">The comment to send the server when leaving the channel. Default is no comment.
+        /// </param>
         public void Leave(string comment = null)
         {
             this.client.Leave(new[] { this.name }, comment);
@@ -223,7 +248,7 @@ namespace IrcDotNet
             OnUsersListReceived(new EventArgs());
         }
 
-        internal void HandleModesChanged(IEnumerable<char> newModes, IEnumerable<string> newModeParameters)
+        internal void HandleModesChanged(string newModes, IEnumerable<string> newModeParameters)
         {
             this.modes.UpdateModes(newModes, newModeParameters, channelUserModes, (add, mode, modeParameter) =>
                 this.users.Single(cu => cu.User.NickName == modeParameter).HandleModeChanged(add, mode));

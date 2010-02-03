@@ -5,6 +5,9 @@ using System.Text;
 
 namespace IrcDotNet
 {
+    /// <summary>
+    /// Represents an IRC server.
+    /// </summary>
     public class IrcServer : IIrcMessageSource
     {
         private string hostName;
@@ -14,11 +17,19 @@ namespace IrcDotNet
             this.hostName = hostName;
         }
 
+        /// <summary>
+        /// Gets the host name of the server.
+        /// </summary>
+        /// <value>The host name of the server.</value>
         public string HostName
         {
             get { return this.hostName; }
         }
 
+        /// <summary>
+        /// Returns a string representation of this instance.
+        /// </summary>
+        /// <returns>A string that represents this instance.</returns>
         public override string ToString()
         {
             return this.hostName;

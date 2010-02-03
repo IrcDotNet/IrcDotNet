@@ -8,6 +8,7 @@ namespace IrcDotNet
     public interface IIrcFloodPreventer
     {
         bool CanSendMessage();
+
         void HandleMessageSent();
     }
 }
