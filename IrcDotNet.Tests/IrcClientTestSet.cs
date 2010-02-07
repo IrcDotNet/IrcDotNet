@@ -85,6 +85,9 @@ namespace IrcDotNet.Tests
             stateManager = new TestStateManager<IrcClientTestState>();
 
             client1 = new IrcClient();
+#if DEBUG
+            client1.ClientId = "1";
+#endif
             client1.FloodPreventer = new IrcStandardFloodPreventer(4, 2000);
             client1.Connected += client1_Connected;
             client1.ConnectFailed += client1_ConnectFailed;
@@ -98,6 +101,9 @@ namespace IrcDotNet.Tests
             client1.WhoWasReplyReceived += client1_WhoWasReplyReceived;
 
             client2 = new IrcClient();
+#if DEBUG
+            client2.ClientId = "2";
+#endif
             client2.Connected += client2_Connected;
             client2.ConnectFailed += client2_ConnectFailed;
             client2.Disconnected += client2_Disconnected;

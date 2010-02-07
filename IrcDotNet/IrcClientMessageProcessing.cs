@@ -8,6 +8,7 @@ using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    // Defines all message processors for the client.
     partial class IrcClient
     {
         [MessageProcessor("nick")]

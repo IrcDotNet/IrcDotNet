@@ -26,4 +26,3 @@ the following methods.
  * Report a bug at <https://bugs.launchpad.net/ircdotnet/+filebug>.
 
  * Talk to us on IRC at <irc://freenode.net/#ircdotnet>.
-

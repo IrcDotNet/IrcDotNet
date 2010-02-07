@@ -14,13 +14,16 @@ namespace IrcDotNet
     /// </summary>
     public class IrcLocalUser : IrcUser, IIrcMessageSendHandler, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
+        // True if local user is service; false, if local user is normal user.
+        private bool isService;
         // Internal and exposable collections of current modes of user.
         private HashSet<char> modes;
         private ReadOnlySet<char> modesReadOnly;
 
-        internal IrcLocalUser(string nickName, string userName, string realName, IEnumerable<char> modes = null)
+        internal IrcLocalUser(bool isService, string nickName, string userName, string realName, IEnumerable<char> modes = null)
             : base(true, nickName, userName, realName)
         {
+            this.isService = isService;
             this.modes = new HashSet<char>();
             this.modesReadOnly = new ReadOnlySet<char>(this.modes);
             if (modes != null)
@@ -34,6 +37,16 @@ namespace IrcDotNet
         public ReadOnlySet<char> Modes
         {
             get { return this.modesReadOnly; }
+        }
+
+        /// <summary>
+        /// Gets whether the local user is a service or normal user.
+        /// </summary>
+        /// <value><see langword="true"/> if the user is a service; <see langword="false"/>, if the user is a normal
+        /// user.</value>
+        public bool IsService
+        {
+            get { return this.isService; }
         }
 
         /// <summary>
@@ -65,6 +78,8 @@ namespace IrcDotNet
         /// </summary>
         public event EventHandler<IrcMessageEventArgs> NoticeReceived;
 
+        /// <inheritdoc cref="SendMessage(IEnumerable{IIrcMessageTarget}, string)"/>
+        /// <param name="target">The <see cref="IIrcMessageTarget"/> to which to send the message.</param>
         public void SendMessage(IIrcMessageTarget target, string text)
         {
             if (target == null)
@@ -75,6 +90,12 @@ namespace IrcDotNet
             SendMessage(new[] { target }, text);
         }
 
+        /// <inheritdoc cref="SendMessage(IEnumerable{string}, string)"/>
+        /// <summary>
+        /// <inheritdoc cref="SendMessage(IEnumerable{string}, string)" select="/summary/node()"/>
+        /// A message target may be an <see cref="IrcUser"/>, <see cref="IrcChannel"/>, or <see cref="IrcTargetMask"/>.
+        /// </summary>
+        /// <param name="target">A collection of <see cref="IIrcMessageTarget"/>s to which to send the message.</param>
         public void SendMessage(IEnumerable<IIrcMessageTarget> targets, string text)
         {
             if (targets == null)
@@ -85,6 +106,8 @@ namespace IrcDotNet
             SendMessage(targets.Select(t => t.Name), text);
         }
 
+        /// <inheritdoc cref="SendMessage(IEnumerable{string}, string)"/>
+        /// <param name="target">The name of the target to which to send the message.</param>
         public void SendMessage(string target, string text)
         {
             if (target == null)
@@ -95,6 +118,11 @@ namespace IrcDotNet
             SendMessage(new[] { target }, text);
         }
 
+        /// <summary>
+        /// Sends a message to the specified target.
+        /// </summary>
+        /// <param name="targets">A collection of the names of targets to which to send the message.</param>
+        /// <param name="text">The ASCII-encoded text of the message to send.</param>
         public void SendMessage(IEnumerable<string> targets, string text)
         {
             if (targets == null)
@@ -105,6 +133,8 @@ namespace IrcDotNet
             this.Client.SendPrivateMessage(targets, text);
         }
 
+        /// <inheritdoc cref="SendNotice(IEnumerable{IIrcMessageTarget}, string)"/>
+        /// <param name="target">The <see cref="IIrcMessageTarget"/> to which to send the notice.</param>
         public void SendNotice(IIrcMessageTarget target, string text)
         {
             if (target == null)
@@ -115,6 +145,12 @@ namespace IrcDotNet
             SendNotice(new[] { target }, text);
         }
 
+        /// <inheritdoc cref="SendNotice(IEnumerable{string}, string)"/>
+        /// <summary>
+        /// <inheritdoc cref="SendNotice(IEnumerable{string}, string)" select="/summary/node()"/>
+        /// A message target may be an <see cref="IrcUser"/>, <see cref="IrcChannel"/>, or <see cref="IrcTargetMask"/>.
+        /// </summary>
+        /// <param name="target">A collection of <see cref="IIrcMessageTarget"/>s to which to send the notice.</param>
         public void SendNotice(IEnumerable<IIrcMessageTarget> targets, string text)
         {
             if (targets == null)
@@ -125,6 +161,8 @@ namespace IrcDotNet
             SendNotice(targets.Select(t => t.Name), text);
         }
 
+        /// <inheritdoc cref="SendNotice(IEnumerable{string}, string)"/>
+        /// <param name="target">The name of the target to which to send the notice.</param>
         public void SendNotice(string target, string text)
         {
             if (target == null)
@@ -135,6 +173,11 @@ namespace IrcDotNet
             SendNotice(new[] { target }, text);
         }
 
+        /// <summary>
+        /// Sends a notice to the specified target.
+        /// </summary>
+        /// <param name="targets">A collection of the names of targets to which to send the notice.</param>
+        /// <param name="text">The ASCII-encoded text of the notice to send.</param>
         public void SendNotice(IEnumerable<string> targets, string text)
         {
             if (targets == null)
@@ -145,6 +188,10 @@ namespace IrcDotNet
             this.Client.SendNotice(targets, text);
         }
 
+        /// <summary>
+        /// Sets the nick name of the local user to the specified text.
+        /// </summary>
+        /// <param name="nickName">The new nick name of the local user.</param>
         public void SetNickName(string nickName)
         {
             if (nickName == null)
@@ -153,6 +200,10 @@ namespace IrcDotNet
             this.Client.SetNickName(nickName);
         }
 
+        /// <summary>
+        /// Sets the local user as away, giving the specified message.
+        /// </summary>
+        /// <param name="text">The text of the response sent to a user when they try to message you while away.</param>
         public void SetAway(string text)
         {
             if (text == null)
@@ -161,21 +212,33 @@ namespace IrcDotNet
             this.Client.SetAway(text);
         }
 
+        /// <summary>
+        /// Sets the local user as here (no longer away).
+        /// </summary>
         public void UnsetAway()
         {
             this.Client.UnsetAway();
         }
 
+        /// <summary>
+        /// Requests a list of the current modes of the user.
+        /// </summary>
         public void GetModes()
         {
             this.Client.GetLocalUserModes(this);
         }
 
+        /// <inheritdoc cref="SetModes(IEnumerable{char})"/>
         public void SetModes(params char[] newModes)
         {
             SetModes((IEnumerable<char>)newModes);
         }
 
+        /// <inheritdoc cref="SetModes(string)"/>
+        /// <param name="newModes">A collection of mode characters that should become the new modes.
+        /// Any modes in the collection that are not currently set will be set, and any nodes not in the collection that
+        /// are currently set will be unset.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="newModes"/> is <see langword="null"/>.</exception>
         public void SetModes(IEnumerable<char> newModes)
         {
             if (newModes == null)
@@ -184,6 +247,9 @@ namespace IrcDotNet
             SetModes(newModes.Except(this.modes), this.modes.Except(newModes));
         }
 
+        /// <inheritdoc cref="SetModes(string)"/>
+        /// <exception cref="ArgumentNullException"><paramref name="setModes"/> is <see langword="null"/>. -or-
+        /// <paramref name="unsetModes"/> is <see langword="null"/>.</exception>
         public void SetModes(IEnumerable<char> setModes, IEnumerable<char> unsetModes)
         {
             if (setModes == null)
@@ -194,6 +260,12 @@ namespace IrcDotNet
             SetModes("+" + string.Join(string.Empty, setModes) + "-" + string.Join(string.Empty, unsetModes));
         }
 
+        /// <summary>
+        /// Sets the specified modes on the local user.
+        /// </summary>
+        /// <param name="modes">The mode string that specifies mode changes, which takes the form
+        /// `( "+" / "-" ) *( mode character )`.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="modes"/> is <see langword="null"/>.</exception>
         public void SetModes(string modes)
         {
             if (modes == null)

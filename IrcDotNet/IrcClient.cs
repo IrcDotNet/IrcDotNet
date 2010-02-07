@@ -15,8 +15,10 @@ using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    // TODO: Add Connect methods for registering as service.
     /// <summary>
     /// Provides methods for communicating with an IRC (Internet Relay Chat) server.
+    /// Do not inherit unless protocol itself is being extended.
     /// </summary>
     public partial class IrcClient : IDisposable
     {
@@ -70,6 +72,7 @@ namespace IrcDotNet
         private IrcUserCollection usersReadOnly;
 
         private TcpClient client;
+        private AutoResetEvent disconnectedEvent;
         private Thread readThread;
         private Thread writeThread;
         private NetworkStream stream;
@@ -94,6 +97,7 @@ namespace IrcDotNet
         public IrcClient()
         {
             this.client = new TcpClient();
+            this.disconnectedEvent = new AutoResetEvent(false);
             this.readThread = new Thread(ReadLoop);
             this.writeThread = new Thread(WriteLoop);
             this.canDisconnect = false;
@@ -114,6 +118,14 @@ namespace IrcDotNet
         {
             Dispose(false);
         }
+
+#if DEBUG
+        public string ClientId
+        {
+            get;
+            set;
+        }
+#endif
 
         /// <summary>
         /// Gets whether the client connection has been registered with the server.
@@ -309,6 +321,11 @@ namespace IrcDotNet
                         this.client.Close();
                         this.client = null;
                     }
+                    if (this.disconnectedEvent != null)
+                    {
+                        this.disconnectedEvent.Dispose();
+                        this.disconnectedEvent = null;
+                    }
                     if (this.readThread != null)
                     {
                         if (this.readThread.IsAlive)
@@ -411,14 +428,19 @@ namespace IrcDotNet
         /// host names, server names, real names, and nick names of users.</param>
         /// <param name="onlyOperators"><see langword="true"/> to match only server operators; otherwise,
         /// <see langword="false"/>. Default is to match all users.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void QueryWho(string mask = null, bool onlyOperators = false)
         {
+            CheckDisposed();
+
             SendMessageWho(mask, onlyOperators);
         }
 
         /// <inheritdoc cref="QueryWhoIs(IEnumerable{string})"/>
         public void QueryWhoIs(params string[] nickNameMasks)
         {
+            CheckDisposed();
+
             QueryWhoIs((IEnumerable<string>)nickNameMasks);
         }
 
@@ -428,14 +450,19 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="nickNameMasks">A collection of wildcard expressions for matching against nick names of users.
         /// </param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void QueryWhoIs(IEnumerable<string> nickNameMasks)
         {
+            CheckDisposed();
+
             SendMessageWhoIs(nickNameMasks);
         }
 
         /// <inheritdoc cref="QueryWhoWas(IEnumerable{string}, int)"/>
         public void QueryWhoWas(params string[] nickNames)
         {
+            CheckDisposed();
+
             QueryWhoWas((IEnumerable<string>)nickNames);
         }
 
@@ -445,8 +472,11 @@ namespace IrcDotNet
         /// <param name="nickNames">The nick names of the users to query.</param>
         /// <param name="entriesCount">The maximum number of entries to return from the query. Default is an unlimited
         /// number.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void QueryWhoWas(IEnumerable<string> nickNames, int entriesCount = -1)
         {
+            CheckDisposed();
+
             SendMessageWhoWas(nickNames, entriesCount);
         }
 
@@ -455,8 +485,11 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="serverName">The name of the server from which to request the MOTD. Default is the current
         /// server.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void GetMessageOfTheDay(string serverName = null)
         {
+            CheckDisposed();
+
             SendMessageMotd(serverName);
         }
 
@@ -469,8 +502,11 @@ namespace IrcDotNet
         /// <param name="serverMask">A wildcard expression for matching against server names. Default matches the whole
         /// network.</param>
         /// <param name="targetServer">The server to which to forward the request.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void GetNetworkStatistics(string serverMask = null, string targetServer = null)
         {
+            CheckDisposed();
+
             SendMessageLUsers(serverMask, targetServer);
         }
 
@@ -478,8 +514,11 @@ namespace IrcDotNet
         /// Requests the version of the specified server.
         /// </summary>
         /// <param name="serverName">The name of the server whose version to request.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void GetServerVersion(string serverName = null)
         {
+            CheckDisposed();
+
             SendMessageVersion(serverName);
         }
 
@@ -488,8 +527,11 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="query">The query that indicates to the server what statistics to return.</param>
         /// <param name="serverName">The name of the server whose statistics to request.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void GetServerStats(string query = null, string serverName = null)
         {
+            CheckDisposed();
+
             SendMessageStats(query, serverName);
         }
 
@@ -502,17 +544,23 @@ namespace IrcDotNet
         /// <param name="serverMask">A wildcard expression for matching against server names. Default matches the whole
         /// network.</param>
         /// <param name="targetServer">The server to which to forward the request.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void GetServerLinks(string serverMask = null, string targetServer = null)
         {
+            CheckDisposed();
+
             SendMessageStats(targetServer, serverMask);
         }
 
         /// <summary>
         /// Requests the local time on the specified server.
         /// </summary>
-        /// <param name="serverName">The name of the server whose time to request</param>
+        /// <param name="serverName">The name of the server whose local time to request.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void GetServerTime(string serverName = null)
         {
+            CheckDisposed();
+
             SendMessageTime(serverName);
         }
 
@@ -520,17 +568,42 @@ namespace IrcDotNet
         /// Sends a ping to the specified server.
         /// </summary>
         /// <param name="serverName">The name of the server to ping.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void Ping(string serverName = null)
         {
+            CheckDisposed();
+
             SendMessagePing(this.localUser.NickName, serverName);
+        }
+
+        /// <inheritdoc cref="Quit(string)"/>
+        /// <summary>
+        /// Quits the server, giving the specified comment. Waits the specified time before forcefully disconnecting.
+        /// </summary>
+        /// <param name="timeout">The number of milliseconds to wait before forcefully disconnecting.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        public void Quit(string comment = null, int timeout = Timeout.Infinite)
+        {
+            CheckDisposed();
+
+            Quit(comment);
+            if (!this.disconnectedEvent.WaitOne(timeout))
+                Disconnect();
         }
 
         /// <summary>
         /// Quits the server, giving the specified comment.
         /// </summary>
-        /// <param name="comment">The comment to send the server upon quitting.</param>
+        /// <param name="comment">The comment to send to the server.</param>
+        /// <remarks>
+        /// Note that because this message is not sent immediately, calling <see cref="Disconnect"/> immediately after
+        /// this will likely disconnect the client before it has a chance to send the command.
+        /// </remarks>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void Quit(string comment = null)
         {
+            CheckDisposed();
+
             SendMessageQuit(comment);
         }
 
@@ -678,7 +751,9 @@ namespace IrcDotNet
                     if (line == null)
                         break;
 
-                    Debug.WriteLine(DateTime.Now.ToLongTimeString() + " >>> " + line);
+#if DEBUG
+                    Debug.WriteLine(string.Format("{0:HH:mm:ss} ({1}) >>> {2}", DateTime.Now, this.ClientId, line));
+#endif
 
                     string prefix = null;
                     string command = null;
@@ -766,7 +841,9 @@ namespace IrcDotNet
                         if (this.floodPreventer != null)
                             this.floodPreventer.HandleMessageSent();
 
-                        Debug.WriteLine(DateTime.Now.ToLongTimeString() + " <<< " + line);
+#if DEBUG
+                        Debug.WriteLine(string.Format("{0:HH:mm:ss} ({1}) <<< {2}", DateTime.Now, this.ClientId, line));
+#endif
                     }
                     this.writer.Flush();
 
@@ -826,7 +903,7 @@ namespace IrcDotNet
             else
             {
                 // Unknown command.
-                Debug.WriteLine("Unknown message command '{0}'.", message.Command);
+                Debug.WriteLine(string.Format("Unknown message command '{0}'.", message.Command));
             }
         }
 
@@ -969,7 +1046,7 @@ namespace IrcDotNet
 
             DisconnectInternal();
             this.client.BeginConnect(host, port, ConnectCallback,
-                CreateConnectState(password, nickName, userName, realName, userMode));
+                CreateConnectContext(password, nickName, userName, realName, userMode));
             HandleClientConnecting();
         }
 
@@ -992,7 +1069,7 @@ namespace IrcDotNet
 
             DisconnectInternal();
             this.client.BeginConnect(address, port, ConnectCallback,
-                CreateConnectState(password, nickName, userName, realName, userMode));
+                CreateConnectContext(password, nickName, userName, realName, userMode));
             HandleClientConnecting();
         }
 
@@ -1015,7 +1092,7 @@ namespace IrcDotNet
 
             DisconnectInternal();
             this.client.BeginConnect(addresses, port, ConnectCallback,
-                CreateConnectState(password, nickName, userName, realName, userMode));
+                CreateConnectContext(password, nickName, userName, realName, userMode));
             HandleClientConnecting();
         }
 
@@ -1037,15 +1114,14 @@ namespace IrcDotNet
 
             DisconnectInternal();
             this.client.BeginConnect(remoteEP.Address, remoteEP.Port, ConnectCallback,
-                CreateConnectState(password, nickName, userName, realName, userMode));
+                CreateConnectContext(password, nickName, userName, realName, userMode));
             HandleClientConnecting();
         }
 
-        private object CreateConnectState(string password, string nickName, string userName, string realName,
-            ICollection<char> userMode)
+        // Creates connect context for local user.
+        private IrcConnectContext CreateConnectContext(string password, string nickName, string userName,
+            string realName, ICollection<char> userMode)
         {
-            CheckDisposed();
-
             if (nickName == null)
                 throw new ArgumentException(Properties.Resources.ErrorMessageInvalidNickName, "nickName");
             if (userName == null)
@@ -1057,9 +1133,31 @@ namespace IrcDotNet
                 {
                     Password = password,
                     NickName = nickName,
+                    IsService = false,
                     UserName = userName,
                     RealName = realName,
                     UserMode = userMode,
+                };
+        }
+
+        // Creates connect context for service.
+        private IrcConnectContext CreateConnectContext(string password, string nickName, string distribution,
+            string description)
+        {
+            if (nickName == null)
+                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidNickName, "nickName");
+            if (distribution == null)
+                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidNickName, "distribution");
+            if (description == null)
+                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidNickName, "description");
+
+            return new IrcConnectContext
+                {
+                    Password = password,
+                    NickName = nickName,
+                    IsService = true,
+                    Distribution = distribution,
+                    Description = description,
                 };
         }
 
@@ -1067,6 +1165,11 @@ namespace IrcDotNet
         /// Disconnects immediately from the server. A quit message is sent if the connection is still active.
         /// </summary>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <remarks>
+        /// This method closes the client connection immediately, and does not send a quit message to the server.
+        /// To disconnect from the IRC server gracefully, call <see cref="M:Quit"/> and wait for the connection to be
+        /// closed.
+        /// </remarks>
         public void Disconnect()
         {
             CheckDisposed();
@@ -1082,7 +1185,6 @@ namespace IrcDotNet
             {
                 try
                 {
-                    SendMessageQuit();
                     this.client.Client.Disconnect(true);
                 }
                 catch (SocketException exSocket)
@@ -1130,18 +1232,28 @@ namespace IrcDotNet
 
         private void HandleClientConnected(IrcConnectContext initState)
         {
-            Debug.WriteLine("Connected to server '{0}'.", ((IPEndPoint)this.client.Client.RemoteEndPoint).Address);
+            Debug.WriteLine(string.Format("Connected to server at '{0}'.",
+                ((IPEndPoint)this.client.Client.RemoteEndPoint).Address));
 
             try
             {
                 if (initState.Password != null)
                     SendMessagePassword(initState.Password);
-                SendMessageNick(initState.NickName);
-                SendMessageUser(initState.UserName, GetNumericUserMode(initState.UserMode), initState.RealName);
+                if (initState.IsService)
+                {
+                    // Register as service.
+                    SendMessageService(initState.NickName, initState.Distribution, initState.Description);
+                }
+                else
+                {
+                    // Register as normal user.
+                    SendMessageNick(initState.NickName);
+                    SendMessageUser(initState.UserName, GetNumericUserMode(initState.UserMode), initState.RealName);
+                }
 
                 // Initialise local user and add it to collection.
-                this.localUser = new IrcLocalUser(initState.NickName, initState.UserName, initState.RealName,
-                    initState.UserMode);
+                this.localUser = new IrcLocalUser(initState.IsService, initState.NickName, initState.UserName,
+                    initState.RealName, initState.UserMode);
                 this.users.Add(this.localUser);
             }
             catch (Exception ex)
@@ -1155,6 +1267,7 @@ namespace IrcDotNet
         {
             Debug.WriteLine("Disconnected from server.");
 
+            this.disconnectedEvent.Set();
             ResetState();
         }
 
@@ -1281,8 +1394,7 @@ namespace IrcDotNet
         /// A message target may be an <see cref="IrcUser"/>, <see cref="IrcChannel"/>, or <see cref="IrcTargetMask"/>.
         /// </summary>
         /// <param name="targetName">The name of the target.</param>
-        /// <returns>The target object that corresponds to the given name. The object is an instance of
-        /// <see cref="IrcUser"/>, <see cref="IrcChannel"/>, or <see cref="IrcTargetMask"/>.</returns>
+        /// <returns>The target object that corresponds to the given name.</returns>
         /// <exception cref="ArgumentException"><paramref name="targetName"/> does not represent a valid message target.
         /// </exception>
         protected IIrcMessageTarget GetMessageTarget(string targetName)
@@ -1787,10 +1899,17 @@ namespace IrcDotNet
         private struct IrcConnectContext
         {
             public string Password;
-            public string UserName;
             public string NickName;
+            public bool IsService;
+
+            // Parameters for normal user.
+            public string UserName;
             public string RealName;
             public ICollection<char> UserMode;
+
+            // Parameters for service.
+            public string Distribution;
+            public string Description;
         }
     }
 }

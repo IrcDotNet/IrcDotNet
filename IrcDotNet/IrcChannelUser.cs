@@ -71,26 +71,42 @@ namespace IrcDotNet
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Kicks the user from the channel, giving the specified comment.
+        /// </summary>
+        /// <param name="comment">The comment to give regarding the kick. Default is no comment.</param>
         public void Kick(string comment = null)
         {
             this.channel.Client.Kick(new[] { this }, comment);
         }
 
+        /// <summary>
+        /// Ops the user in the channel.
+        /// </summary>
         public void Op()
         {
             this.channel.SetModes("+o", this.user.NickName);
         }
 
+        /// <summary>
+        /// Deops the user in the channel.
+        /// </summary>
         public void DeOp()
         {
             this.channel.SetModes("-o", this.user.NickName);
         }
 
+        /// <summary>
+        /// Voices the user in the channel.
+        /// </summary>
         public void Voice()
         {
             this.channel.SetModes("+v", this.user.NickName);
         }
 
+        /// <summary>
+        /// Devoices the user in the channel
+        /// </summary>
         public void DeVoice()
         {
             this.channel.SetModes("-v", this.user.NickName);

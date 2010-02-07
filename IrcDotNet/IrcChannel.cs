@@ -160,7 +160,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets the current channel modes, or if <paramref name="modes"/> is specified, the settings for the specified
+        /// Requests a list of the current modes of the channel, or if <paramref name="modes"/> is specified, the settings for the specified
         /// modes.
         /// </summary>
         /// <param name="modes">The modes for which to get the current settings. Default is to request all current

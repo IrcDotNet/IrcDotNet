@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{4C04
 	ProjectSection(SolutionItems) = preProject
 		Authors.txt = Authors.txt
 		License.txt = License.txt
+		Readme.txt = Readme.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrcDotNet.Tests", "IrcDotNet.Tests\IrcDotNet.Tests.csproj", "{0F93F768-3B81-499C-AF1B-7977254FA9ED}"

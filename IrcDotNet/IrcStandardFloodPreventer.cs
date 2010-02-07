@@ -23,7 +23,7 @@ namespace IrcDotNet
             this.counterPeriod = counterPeriod;
 
             this.messageCounter = 0;
-            this.lastCounterDecrementTime = DateTime.Now.Ticks;
+            this.lastCounterDecrementTime = 0;
         }
 
         public int MaxMessageBurst
@@ -48,7 +48,8 @@ namespace IrcDotNet
             // Update time of last decrement of counter to theoretical time of decrement.
             this.lastCounterDecrementTime = currentTime - (elapsedMilliseconds % this.counterPeriod);
 
-            return this.messageCounter <= this.maxMessageBurst;
+            //return this.messageCounter <= this.maxMessageBurst;
+            return true;
         }
 
         public void HandleMessageSent()
