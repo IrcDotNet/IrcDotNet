@@ -7,10 +7,15 @@ using System.Text;
 
 namespace IrcDotNet.Common.Collections
 {
-    [Serializable(), DebuggerDisplay("Count = {Count}")]
+#if !SILVERLIGHT
+    [Serializable()]
+#endif
+    [DebuggerDisplay("Count = {Count}")]
     public class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>,
-        IEnumerable<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable, ISerializable,
-        IDeserializationCallback
+        IEnumerable<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable
+#if !SILVERLIGHT
+        , ISerializable, IDeserializationCallback
+#endif
     {
         private IDictionary<TKey, TValue> dictionary;
 
@@ -210,6 +215,8 @@ namespace IrcDotNet.Common.Collections
 
         #endregion
 
+#if !SILVERLIGHT
+
         #region ISerializable Members
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -227,5 +234,7 @@ namespace IrcDotNet.Common.Collections
         }
 
         #endregion
+
+#endif
     }
 }

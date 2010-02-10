@@ -425,7 +425,8 @@ namespace IrcDotNet
         /// Sends a Who query to the server targeting the specified channel or user masks.
         /// </summary>
         /// <param name="mask">A wildcard expression for matching against channel names; or if none can be found,
-        /// host names, server names, real names, and nick names of users.</param>
+        /// host names, server names, real names, and nick names of users. If the value is <see langword="null"/>,
+        /// all users are matched.</param>
         /// <param name="onlyOperators"><see langword="true"/> to match only server operators; 
         /// <see langword="false"/> to match all users.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>

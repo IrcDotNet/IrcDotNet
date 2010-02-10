@@ -343,7 +343,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends a query to trace the route to the specifier server.
+        /// Sends a query to trace the route to the server.
         /// </summary>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
@@ -353,7 +353,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends a request for information about the administrator of the server.
         /// </summary>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
@@ -363,7 +363,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends a request for general information about the server program.
         /// </summary>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
@@ -373,30 +373,33 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends a request to list services currently connected to the netwrok/
         /// </summary>
-        /// <param name="mask">The mask.</param>
-        /// <param name="type">The type.</param>
+        /// <param name="mask">A wildcard expression for matching against the names of services.</param>
+        /// <param name="type">The type of services to list.</param>
         protected void SendMessageServlist(string mask = null, string type = null)
         {
             WriteMessage(null, "servlist", mask, type);
         }
 
         /// <summary>
-        /// TODO
+        /// Sends a query message to a service.
         /// </summary>
-        /// <param name="serviceName">Name of the service.</param>
-        /// <param name="text">The text.</param>
+        /// <param name="serviceName">The name of the service.</param>
+        /// <param name="text">The text of the message to send.</param>
         protected void SendMessageSquery(string serviceName, string text)
         {
             WriteMessage(null, "squery", serviceName, text);
         }
 
         /// <summary>
-        /// TODO
+        /// Sends a request to perform a Who query on users.
         /// </summary>
-        /// <param name="mask">The mask.</param>
-        /// <param name="onlyOperators">if set to <c>true</c> [only operators].</param>
+        /// <param name="mask">A wildcard expression for matching against channel names; or if none can be found,
+        /// host names, server names, real names, and nick names of users. If the value is <see langword="null"/>,
+        /// all users are matched.</param>
+        /// <param name="onlyOperators"><see langword="true"/> to match only server operators; 
+        /// <see langword="false"/> to match all users.</param>
         protected void SendMessageWho(string mask = null, bool onlyOperators = false)
         {
             WriteMessage(null, "who", mask, onlyOperators ? "o" : null);

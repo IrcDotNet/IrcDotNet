@@ -53,8 +53,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ClientBin\IrcDotNet.Tests.xap" />
-    <Content Include="Silverlight IrcDotNet.TestsTestPage.aspx" />
-    <Content Include="Silverlight IrcDotNet.TestsTestPage.html" />
+    <Content Include="TestPage.aspx" />
+    <Content Include="TestPage.html" />
     <Content Include="Silverlight.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

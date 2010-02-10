@@ -7,8 +7,14 @@ using System.Text;
 
 namespace IrcDotNet.Common.Collections
 {
-    [Serializable(), DebuggerDisplay("Count = {Count}")]
-    public class ReadOnlySet<T> : ISet<T>, ISerializable, IDeserializationCallback
+#if !SILVERLIGHT
+    [Serializable()]
+#endif
+    [DebuggerDisplay("Count = {Count}")]
+    public class ReadOnlySet<T> : ISet<T>
+#if !SILVERLIGHT
+        , ISerializable, IDeserializationCallback
+#endif
     {
         private ISet<T> set;
 
@@ -136,6 +142,8 @@ namespace IrcDotNet.Common.Collections
 
         #endregion
 
+#if !SILVERLIGHT
+
         #region ISerializable Members
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -153,5 +161,7 @@ namespace IrcDotNet.Common.Collections
         }
 
         #endregion
+
+#endif
     }
 }
