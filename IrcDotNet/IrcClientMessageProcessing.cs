@@ -11,6 +11,10 @@ namespace IrcDotNet
     // Defines all message processors for the client.
     partial class IrcClient
     {
+        /// <summary>
+        /// Process NICK messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("nick")]
         protected void ProcessMessageNick(IrcMessage message)
         {
@@ -24,6 +28,10 @@ namespace IrcDotNet
             sourceUser.NickName = message.Parameters[0];
         }
 
+        /// <summary>
+        /// Process QUIT messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("quit")]
         protected void ProcessMessageQuit(IrcMessage message)
         {
@@ -38,6 +46,10 @@ namespace IrcDotNet
             this.users.Remove(sourceUser);
         }
 
+        /// <summary>
+        /// Process JOIN messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("join")]
         protected void ProcessMessageJoin(IrcMessage message)
         {
@@ -55,6 +67,10 @@ namespace IrcDotNet
                 channels.ForEach(c => c.HandleUserJoined(new IrcChannelUser(sourceUser)));
         }
 
+        /// <summary>
+        /// Process PART messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("part")]
         protected void ProcessMessagePart(IrcMessage message)
         {
@@ -73,6 +89,10 @@ namespace IrcDotNet
                 channels.ForEach(c => c.HandleUserLeft(sourceUser, comment));
         }
 
+        /// <summary>
+        /// Process MODE messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("mode")]
         protected void ProcessMessageMode(IrcMessage message)
         {
@@ -99,6 +119,10 @@ namespace IrcDotNet
             }
         }
 
+        /// <summary>
+        /// Process TOPIC messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("topic")]
         protected void ProcessMessageTopic(IrcMessage message)
         {
@@ -108,6 +132,10 @@ namespace IrcDotNet
             channel.Topic = message.Parameters[1];
         }
 
+        /// <summary>
+        /// Process KICK messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("kick")]
         protected void ProcessMessageKick(IrcMessage message)
         {
@@ -140,6 +168,10 @@ namespace IrcDotNet
             }
         }
 
+        /// <summary>
+        /// Process PRIVMSG messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("privmsg")]
         protected void ProcessMessagePrivateMessage(IrcMessage message)
         {
@@ -160,6 +192,10 @@ namespace IrcDotNet
             }
         }
 
+        /// <summary>
+        /// Process NOTICE messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("notice")]
         protected void ProcessMessageNotice(IrcMessage message)
         {
@@ -180,6 +216,10 @@ namespace IrcDotNet
             }
         }
 
+        /// <summary>
+        /// Process PING messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("ping")]
         protected void ProcessMessagePing(IrcMessage message)
         {
@@ -190,6 +230,10 @@ namespace IrcDotNet
             SendMessagePong(this.localUser.NickName, target);
         }
 
+        /// <summary>
+        /// Process PONG messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("pong")]
         protected void ProcessMessagePong(IrcMessage message)
         {
@@ -198,6 +242,10 @@ namespace IrcDotNet
             OnPongReceived(new IrcPingOrPongReceivedEventArgs(server));
         }
 
+        /// <summary>
+        /// Process ERROR messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("error")]
         protected void ProcessMessageError(IrcMessage message)
         {
@@ -206,6 +254,10 @@ namespace IrcDotNet
             OnErrorMessageReceived(new IrcErrorMessageEventArgs(errorMessage));
         }
 
+        /// <summary>
+        /// Process 001 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("001")]
         protected void ProcessMessageReplyWelcome(IrcMessage message)
         {
@@ -223,6 +275,10 @@ namespace IrcDotNet
             OnRegistered(new EventArgs());
         }
 
+        /// <summary>
+        /// Process 002 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("002")]
         protected void ProcessMessageReplyYourHost(IrcMessage message)
         {
@@ -232,6 +288,10 @@ namespace IrcDotNet
             this.YourHostMessage = message.Parameters[1];
         }
 
+        /// <summary>
+        /// Process 003 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("003")]
         protected void ProcessMessageReplyCreated(IrcMessage message)
         {
@@ -241,6 +301,10 @@ namespace IrcDotNet
             this.ServerCreatedMessage = message.Parameters[1];
         }
 
+        /// <summary>
+        /// Process 004 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("004")]
         protected void ProcessMessageReplyMyInfo(IrcMessage message)
         {
@@ -256,6 +320,10 @@ namespace IrcDotNet
             this.ServerAvailableChannelModes = message.Parameters[4];
         }
 
+        /// <summary>
+        /// Process 005 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("005")]
         protected void ProcessMessageReplyBounceOrISupport(IrcMessage message)
         {
@@ -287,6 +355,10 @@ namespace IrcDotNet
             }
         }
 
+        /// <summary>
+        /// Process 301 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("301")]
         protected void ProcessMessageReplyAway(IrcMessage message)
         {
@@ -299,6 +371,10 @@ namespace IrcDotNet
             user.IsAway = true;
         }
 
+        /// <summary>
+        /// Process 305 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("305")]
         protected void ProcessMessageReplyUnAway(IrcMessage message)
         {
@@ -307,6 +383,10 @@ namespace IrcDotNet
             this.localUser.IsAway = false;
         }
 
+        /// <summary>
+        /// Process 306 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("306")]
         protected void ProcessMessageReplyNowAway(IrcMessage message)
         {
@@ -315,6 +395,10 @@ namespace IrcDotNet
             this.localUser.IsAway = true;
         }
 
+        /// <summary>
+        /// Process 311 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("311")]
         protected void ProcessMessageReplyWhoIsUser(IrcMessage message)
         {
@@ -331,6 +415,10 @@ namespace IrcDotNet
             user.RealName = message.Parameters[5];
         }
 
+        /// <summary>
+        /// Process 312 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("312")]
         protected void ProcessMessageReplyWhoIsServer(IrcMessage message)
         {
@@ -344,6 +432,10 @@ namespace IrcDotNet
             user.ServerInfo = message.Parameters[3];
         }
 
+        /// <summary>
+        /// Process 313 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("313")]
         protected void ProcessMessageReplyWhoIsOperator(IrcMessage message)
         {
@@ -354,6 +446,10 @@ namespace IrcDotNet
             user.IsOperator = true;
         }
 
+        /// <summary>
+        /// Process 317 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("317")]
         protected void ProcessMessageReplyWhoIsIdle(IrcMessage message)
         {
@@ -365,6 +461,10 @@ namespace IrcDotNet
             user.IdleDuration = TimeSpan.FromSeconds(int.Parse(message.Parameters[2]));
         }
 
+        /// <summary>
+        /// Process 318 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("318")]
         protected void ProcessMessageReplyEndOfWhoIs(IrcMessage message)
         {
@@ -375,6 +475,10 @@ namespace IrcDotNet
             OnWhoIsReplyReceived(new IrcUserEventArgs(user, null));
         }
 
+        /// <summary>
+        /// Process 319 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("319")]
         protected void ProcessMessageReplyWhoIsChannels(IrcMessage message)
         {
@@ -397,6 +501,10 @@ namespace IrcDotNet
             }
         }
 
+        /// <summary>
+        /// Process 314 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("314")]
         protected void ProcessMessageReplyWhoWasUser(IrcMessage message)
         {
@@ -413,6 +521,10 @@ namespace IrcDotNet
             user.RealName = message.Parameters[5];
         }
 
+        /// <summary>
+        /// Process 369 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("369")]
         protected void ProcessMessageReplyEndOfWhoWas(IrcMessage message)
         {
@@ -423,6 +535,10 @@ namespace IrcDotNet
             OnWhoWasReplyReceived(new IrcUserEventArgs(user, null));
         }
 
+        /// <summary>
+        /// Process 352 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("352")]
         protected void ProcessMessageReplyWhoReply(IrcMessage message)
         {
@@ -472,6 +588,10 @@ namespace IrcDotNet
             user.RealName = lastParamParts[1];
         }
 
+        /// <summary>
+        /// Process 315 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("315")]
         protected void ProcessMessageReplyEndOfWho(IrcMessage message)
         {
@@ -482,6 +602,10 @@ namespace IrcDotNet
             OnWhoReplyReceived(new IrcNameEventArgs(mask));
         }
 
+        /// <summary>
+        /// Process 332 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("332")]
         protected void ProcessMessageReplyTopic(IrcMessage message)
         {
@@ -493,6 +617,10 @@ namespace IrcDotNet
             channel.Topic = message.Parameters[2];
         }
 
+        /// <summary>
+        /// Process 353 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("353")]
         protected void ProcessMessageReplyNameReply(IrcMessage message)
         {
@@ -520,6 +648,10 @@ namespace IrcDotNet
             }
         }
 
+        /// <summary>
+        /// Process 366 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("366")]
         protected void ProcessMessageReplyEndOfNames(IrcMessage message)
         {
@@ -530,6 +662,10 @@ namespace IrcDotNet
             channel.HandleUsersListReceived();
         }
 
+        /// <summary>
+        /// Process 372 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("372")]
         protected void ProcessMessageReplyMotd(IrcMessage message)
         {
@@ -540,6 +676,10 @@ namespace IrcDotNet
             this.motdBuilder.AppendLine(message.Parameters[1]);
         }
 
+        /// <summary>
+        /// Process 375 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("375")]
         protected void ProcessMessageReplyMotdStart(IrcMessage message)
         {
@@ -549,6 +689,10 @@ namespace IrcDotNet
             this.motdBuilder.AppendLine(message.Parameters[1]);
         }
 
+        /// <summary>
+        /// Process 376 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("376")]
         protected void ProcessMessageReplyMotdEnd(IrcMessage message)
         {
@@ -560,6 +704,10 @@ namespace IrcDotNet
             OnMotdReceived(new EventArgs());
         }
 
+        /// <summary>
+        /// Process numeric error (range 400 - 599) responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
         [MessageProcessor("400-599")]
         protected void ProcessMessageNumericError(IrcMessage message)
         {

@@ -426,8 +426,8 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="mask">A wildcard expression for matching against channel names; or if none can be found,
         /// host names, server names, real names, and nick names of users.</param>
-        /// <param name="onlyOperators"><see langword="true"/> to match only server operators; otherwise,
-        /// <see langword="false"/>. Default is to match all users.</param>
+        /// <param name="onlyOperators"><see langword="true"/> to match only server operators; 
+        /// <see langword="false"/> to match all users.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void QueryWho(string mask = null, bool onlyOperators = false)
         {
@@ -470,8 +470,8 @@ namespace IrcDotNet
         /// Sends a Who Was query to server targeting the specified nick names.
         /// </summary>
         /// <param name="nickNames">The nick names of the users to query.</param>
-        /// <param name="entriesCount">The maximum number of entries to return from the query. Default is an unlimited
-        /// number.</param>
+        /// <param name="entriesCount">The maximum number of entries to return from the query. A negative value
+        /// specifies to return an unlimited number of entries.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void QueryWhoWas(IEnumerable<string> nickNames, int entriesCount = -1)
         {
@@ -483,8 +483,8 @@ namespace IrcDotNet
         /// <summary>
         /// Requests the Message of the Day (MOTD) from the specified server.
         /// </summary>
-        /// <param name="serverName">The name of the server from which to request the MOTD. Default is the current
-        /// server.</param>
+        /// <param name="serverName">The name of the server from which to request the MOTD, or <see langword="null"/>
+        /// for the current server.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void GetMessageOfTheDay(string serverName = null)
         {
@@ -499,9 +499,10 @@ namespace IrcDotNet
         /// the network formed by the servers whose names match the mask; otherwise, the information concerns the whole
         /// network
         /// </summary>
-        /// <param name="serverMask">A wildcard expression for matching against server names. Default matches the whole
-        /// network.</param>
-        /// <param name="targetServer">The server to which to forward the request.</param>
+        /// <param name="serverMask">A wildcard expression for matching against server names, or <see langword="null"/>
+        /// to match the entire network.</param>
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void GetNetworkStatistics(string serverMask = null, string targetServer = null)
         {
@@ -541,9 +542,10 @@ namespace IrcDotNet
         /// the network formed by the servers whose names match the mask; otherwise, the information concerns the whole
         /// network.
         /// </summary>
-        /// <param name="serverMask">A wildcard expression for matching against server names. Default matches the whole
-        /// network.</param>
-        /// <param name="targetServer">The server to which to forward the request.</param>
+        /// <param name="serverMask">A wildcard expression for matching against server names, or <see langword="null"/>
+        /// to match the entire network.</param>
+        /// <param name="targetServer">The name of the server to which to forward the request, or <see langword="null"/>
+        /// for the current server.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void GetServerLinks(string serverMask = null, string targetServer = null)
         {

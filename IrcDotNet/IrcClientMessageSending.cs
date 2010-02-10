@@ -5,7 +5,6 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    // TODO: Finish writing XML comments for methods.
     // Defines all message senders for the client.
     partial class IrcClient
     {
@@ -45,8 +44,8 @@ namespace IrcDotNet
         /// Sends a request to register the client as a service on the server.
         /// </summary>
         /// <param name="nickName">The nick name of the service.</param>
-        /// <param name="distribution">A wildcard expression for matching against server names that determines where the
-        /// service is visible.</param>
+        /// <param name="distribution">A wildcard expression for matching against server names, which determines where
+        /// the service is visible.</param>
         /// <param name="description">A description of the service.</param>
         protected void SendMessageService(string nickName, string distribution, string description = "")
         {
@@ -67,7 +66,7 @@ namespace IrcDotNet
         /// Sends an update or request for the current modes of the specified user.
         /// </summary>
         /// <param name="nickName">The nick name of the user whose modes to update/request.</param>
-        /// <param name="modes">The mode string that indicates the modes of the user to change.</param>
+        /// <param name="modes">The mode string that indicates the user modes to change.</param>
         protected void SendMessageUserMode(string nickName, string modes = null)
         {
             WriteMessage(null, "mode", nickName, modes);
@@ -94,17 +93,15 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message leave all.
+        /// Sends a request to leave all channels in which the user is currently present.
         /// </summary>
         protected void SendMessageLeaveAll()
         {
             WriteMessage(null, "join", "0");
         }
 
-        /// <summary>
-        /// Sends the message join.
-        /// </summary>
-        /// <param name="channels">The channels.</param>
+        /// <inheritdoc cref="SendMessageJoin(IEnumerable{string})"/>
+        /// <param name="channels">A collection of 2-tuples of the names and keys of the channels to join.</param>
         protected void SendMessageJoin(IEnumerable<Tuple<string, string>> channels)
         {
             WriteMessage(null, "join", string.Join(",", channels.Select(c => c.Item1)),
@@ -112,41 +109,32 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message join.
+        /// Sends a request to join the specified channels.
         /// </summary>
-        /// <param name="channels">The channels.</param>
+        /// <param name="channels">A collection of the names of the channels to join.</param>
         protected void SendMessageJoin(IEnumerable<string> channels)
         {
             WriteMessage(null, "join", string.Join(",", channels));
         }
 
         /// <summary>
-        /// Sends the message part.
+        /// Sends a request to leave the specified channels.
         /// </summary>
-        /// <param name="channels">The channels.</param>
-        /// <param name="comment">The comment.</param>
+        /// <param name="channels">A collection of the names of the channels to leave.</param>
+        /// <param name="comment">The comment to send the server, or <see langword="null"/> for none.</param>
         protected void SendMessagePart(IEnumerable<string> channels, string comment = null)
         {
             WriteMessage(null, "part", string.Join(",", channels), comment);
         }
 
         /// <summary>
-        /// Sends the message channel mode.
+        /// Sends an update for the modes of the specified channel.
         /// </summary>
-        /// <param name="channel">The channel.</param>
-        /// <param name="modes">The modes.</param>
-        protected void SendMessageChannelMode(string channel, string modes = null)
-        {
-            WriteMessage(null, "mode", channel, modes);
-        }
-
-        /// <summary>
-        /// Sends the message channel mode.
-        /// </summary>
-        /// <param name="channel">The channel.</param>
-        /// <param name="modes">The modes.</param>
-        /// <param name="modeParameters">The mode parameters.</param>
-        protected void SendMessageChannelMode(string channel, string modes, IEnumerable<string> modeParameters = null)
+        /// <param name="channel">The channel whose modes to update.</param>
+        /// <param name="modes">The mode string that indicates the channel modes to change.</param>
+        /// <param name="modeParameters">A collection of parameters to the specified <paramref name="modes"/>.</param>
+        protected void SendMessageChannelMode(string channel, string modes = null,
+            IEnumerable<string> modeParameters = null)
         {
             string modeParametersList = null;
             if (modeParameters != null)
@@ -160,72 +148,74 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message topic.
+        /// Sends an update or request for the topic of the specified channel.
         /// </summary>
-        /// <param name="channel">The channel.</param>
-        /// <param name="topic">The topic.</param>
+        /// <param name="channel">The name of the channel whois topic to change.</param>
+        /// <param name="topic">The new topic to set, or <see langword="null"/> to request the current topic.</param>
         protected void SendMessageTopic(string channel, string topic = null)
         {
             WriteMessage(null, "topic", channel, topic);
         }
 
         /// <summary>
-        /// Sends the message names.
+        /// Sends a request to list all names visible to the client.
         /// </summary>
-        /// <param name="channels">The channels.</param>
-        /// <param name="target">The target.</param>
-        protected void SendMessageNames(IEnumerable<string> channels = null, string target = null)
+        /// <param name="channels">A collection of the names of channels for which to list users, or
+        /// <see langword="null"/> for all channels.</param>
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageNames(IEnumerable<string> channels = null, string targetServer = null)
         {
-            WriteMessage(null, "names", channels == null ? null : string.Join(",", channels), target);
+            WriteMessage(null, "names", channels == null ? null : string.Join(",", channels), targetServer);
         }
 
         /// <summary>
-        /// Sends the message list.
+        /// Sends a request to list channels and their topics.
         /// </summary>
-        /// <param name="channels">The channels.</param>
-        /// <param name="target">The target.</param>
-        protected void SendMessageList(IEnumerable<string> channels = null, string target = null)
+        /// <param name="channels">A collection of the names of channels to list, or <see langword="null"/> for all
+        /// channels.</param>
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageList(IEnumerable<string> channels = null, string targetServer = null)
         {
-            WriteMessage(null, "list", channels == null ? null : string.Join(",", channels), target);
+            WriteMessage(null, "list", channels == null ? null : string.Join(",", channels), targetServer);
         }
 
         /// <summary>
-        /// Sends the message invite.
+        /// Sends a request to invite the specifier user to the specified channel.
         /// </summary>
-        /// <param name="channel">The channel.</param>
-        /// <param name="nickName">Name of the nick.</param>
+        /// <param name="channel">The name of the channel to which to invite the user.</param>
+        /// <param name="nickName">The nick name of the user to invite.</param>
         protected void SendMessageInvite(string channel, string nickName)
         {
             WriteMessage(null, "invite", nickName, channel);
         }
 
-        /// <summary>
-        /// Sends the message kick.
-        /// </summary>
-        /// <param name="channel">The channel.</param>
-        /// <param name="nickNames">The nick names.</param>
-        /// <param name="comment">The comment.</param>
+        /// <inheritdoc cref="SendMessageKick(IEnumerable{Tuple{string, string}}, strnig)"/>
+        /// <param name="nickNames">A collection of the nick names of the users to kick from the channel.</param>
         protected void SendMessageKick(string channel, IEnumerable<string> nickNames, string comment = null)
         {
             WriteMessage(null, "kick", channel, string.Join(",", nickNames), comment);
         }
 
         /// <summary>
-        /// Sends the message kick.
+        /// Sends a request to kick the specifier users from the specified channel.
         /// </summary>
-        /// <param name="users">The users.</param>
-        /// <param name="comment">The comment.</param>
-        protected void SendMessageKick(IEnumerable<Tuple<string, string>> users, string comment = null)
+        /// <param name="channel">The name of the channel from which to kick the users.</param>
+        /// <param name="channelsUsers">A collection of 2-tuples of channel names and the nick names of the users to
+        /// kick from the channel.</param>
+        /// <param name="comment">The comment to send the server, or <see langword="null"/> for none.</param>
+        protected void SendMessageKick(IEnumerable<Tuple<string, string>> channelsUsers, string comment = null)
         {
-            WriteMessage(null, "kick", string.Join(",", users.Select(user => user.Item1)),
-                string.Join(",", users.Select(user => user.Item2)), comment);
+            WriteMessage(null, "kick", string.Join(",", channelsUsers.Select(user => user.Item1)),
+                string.Join(",", channelsUsers.Select(user => user.Item2)), comment);
         }
 
         /// <summary>
-        /// Sends the message private message.
+        /// Sends a private message to the specified targets.
         /// </summary>
-        /// <param name="targets">The targets.</param>
-        /// <param name="text">The text.</param>
+        /// <param name="targets">A collection of the targets to which to send the message.</param>
+        /// <param name="text">The text of the message to send.</param>
         protected void SendMessagePrivateMessage(IEnumerable<string> targets, string text)
         {
             var targetsArray = targets.ToArray();
@@ -238,10 +228,10 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message notice.
+        /// Sends a notice to the specified targets.
         /// </summary>
-        /// <param name="targets">The targets.</param>
-        /// <param name="text">The text.</param>
+        /// <param name="targets">A collection of the targets to which to send the message.</param>
+        /// <param name="text">The text of the message to send.</param>
         protected void SendMessageNotice(IEnumerable<string> targets, string text)
         {
             var targetsArray = targets.ToArray();
@@ -254,102 +244,136 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message motd.
+        /// Sends a request to receive the Message of the Day (MOTD) from the server.
         /// </summary>
-        /// <param name="target">The target.</param>
-        protected void SendMessageMotd(string target = null)
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/> for
+        /// the current server.</param>
+        protected void SendMessageMotd(string targetServer = null)
         {
-            WriteMessage(null, "motd", target);
+            WriteMessage(null, "motd", targetServer);
         }
 
         /// <summary>
-        /// Sends the message L users.
+        /// Sends a request to get statistics about the size of the IRC network.
         /// </summary>
-        /// <param name="serverMask">The server mask.</param>
-        /// <param name="target">The target.</param>
-        protected void SendMessageLUsers(string serverMask = null, string target = null)
+        /// <param name="serverMask">A wildcard expression for matching against .</param>
+        /// to match the entire network.</param>
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageLUsers(string serverMask = null, string targetServer = null)
         {
-            WriteMessage(null, "lusers", serverMask, target);
+            WriteMessage(null, "lusers", serverMask, targetServer);
         }
 
         /// <summary>
-        /// Sends the message version.
+        /// Sends a request for the version of the server program.
         /// </summary>
-        /// <param name="target">The target.</param>
-        protected void SendMessageVersion(string target = null)
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageVersion(string targetServer = null)
         {
-            WriteMessage(null, "version", target);
+            WriteMessage(null, "version", targetServer);
         }
 
         /// <summary>
-        /// Sends the message stats.
+        /// Sends a request to query stastics for the server.
         /// </summary>
-        /// <param name="query">The query.</param>
-        /// <param name="target">The target.</param>
-        protected void SendMessageStats(string query = null, string target = null)
+        /// <param name="query">The query to send the server. The syntax for this value is dependent on the
+        /// implementation of the server, but should support the following query characters:
+        /// <list type="bullet">
+        ///   <listheader>
+        ///     <term>Character</term>
+        ///     <description>Query</description>
+        ///   </listheader>
+        ///   <item>
+        ///     <term>l</term>
+        ///     <description>A list of connections of the server and information about them.</description>
+        ///   </item>
+        ///   <item>
+        ///     <term>m</term>
+        ///     <description>The usage count for each of the commands supported by the server.</description>
+        ///   </item>
+        ///   <item>
+        ///     <term>o</term>
+        ///     <description>A list of all server operators.</description>
+        ///   </item>
+        ///   <item>
+        ///     <term>u</term>
+        ///     <description>The duration for which the server has been running since its last start.</description>
+        ///   </item>
+        /// </list></param>
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageStats(string query = null, string targetServer = null)
         {
-            WriteMessage(null, "stats", query, target);
+            WriteMessage(null, "stats", query, targetServer);
         }
 
         /// <summary>
-        /// Sends the message links.
+        /// Sends a request to list all other servers linked to the server.
         /// </summary>
-        /// <param name="serverMask">The server mask.</param>
-        /// <param name="remoteServer">The remote server.</param>
-        protected void SendMessageLinks(string serverMask = null, string remoteServer = null)
+        /// <param name="serverMask">A wildcard expression for matching the names of servers to list.</param>
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageLinks(string serverMask = null, string targetServer = null)
         {
-            WriteMessage(null, "links", remoteServer, serverMask);
+            WriteMessage(null, "links", targetServer, serverMask);
         }
 
         /// <summary>
-        /// Sends the message time.
+        /// Sends a request to query the local time on the server.
         /// </summary>
-        /// <param name="target">The target.</param>
-        protected void SendMessageTime(string target = null)
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageTime(string targetServer = null)
         {
-            WriteMessage(null, "time", target);
+            WriteMessage(null, "time", targetServer);
         }
 
         /// <summary>
-        /// Sends the message connect.
+        /// Sends a request for the server to try to connect to another server.
         /// </summary>
-        /// <param name="target">The target.</param>
-        /// <param name="port">The port.</param>
-        /// <param name="remoteServer">The remote server.</param>
-        protected void SendMessageConnect(string target, int port, string remoteServer = null)
+        /// <param name="hostName">The host name of the other server to which the server should connect.</param>
+        /// <param name="port">The port on the other server to which the server should connect.</param>
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageConnect(string hostName, int port, string targetServer = null)
         {
-            WriteMessage(null, "connect", target, port.ToString(), remoteServer);
+            WriteMessage(null, "connect", hostName, port.ToString(), targetServer);
         }
 
         /// <summary>
-        /// Sends the message trace.
+        /// Sends a query to trace the route to the specifier server.
         /// </summary>
-        /// <param name="target">The target.</param>
-        protected void SendMessageTrace(string target = null)
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageTrace(string targetServer = null)
         {
-            WriteMessage(null, "trace", target);
+            WriteMessage(null, "trace", targetServer);
         }
 
         /// <summary>
-        /// Sends the message admin.
+        /// TODO
         /// </summary>
-        /// <param name="target">The target.</param>
-        protected void SendMessageAdmin(string target = null)
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageAdmin(string targetServer = null)
         {
-            WriteMessage(null, "admin", target);
+            WriteMessage(null, "admin", targetServer);
         }
 
         /// <summary>
-        /// Sends the message info.
+        /// TODO
         /// </summary>
-        /// <param name="target">The target.</param>
-        protected void SendMessageInfo(string target = null)
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageInfo(string targetServer = null)
         {
-            WriteMessage(null, "info", target);
+            WriteMessage(null, "info", targetServer);
         }
 
         /// <summary>
-        /// Sends the message servlist.
+        /// TODO
         /// </summary>
         /// <param name="mask">The mask.</param>
         /// <param name="type">The type.</param>
@@ -359,7 +383,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message squery.
+        /// TODO
         /// </summary>
         /// <param name="serviceName">Name of the service.</param>
         /// <param name="text">The text.</param>
@@ -369,7 +393,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message who.
+        /// TODO
         /// </summary>
         /// <param name="mask">The mask.</param>
         /// <param name="onlyOperators">if set to <c>true</c> [only operators].</param>
@@ -379,28 +403,30 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message who is.
+        /// TODO
         /// </summary>
         /// <param name="nickNameMasks">The nick name masks.</param>
-        /// <param name="target">The target.</param>
-        protected void SendMessageWhoIs(IEnumerable<string> nickNameMasks, string target = null)
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageWhoIs(IEnumerable<string> nickNameMasks, string targetServer = null)
         {
-            WriteMessage(null, "whois", target, string.Join(",", nickNameMasks));
+            WriteMessage(null, "whois", targetServer, string.Join(",", nickNameMasks));
         }
 
         /// <summary>
-        /// Sends the message who was.
+        /// TODO
         /// </summary>
         /// <param name="nickNames">The nick names.</param>
         /// <param name="entriesCount">The entries count.</param>
-        /// <param name="target">The target.</param>
-        protected void SendMessageWhoWas(IEnumerable<string> nickNames, int entriesCount = -1, string target = null)
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageWhoWas(IEnumerable<string> nickNames, int entriesCount = -1, string targetServer = null)
         {
-            WriteMessage(null, "whowas", string.Join(",", nickNames), entriesCount.ToString(), target);
+            WriteMessage(null, "whowas", string.Join(",", nickNames), entriesCount.ToString(), targetServer);
         }
 
         /// <summary>
-        /// Sends the message kill.
+        /// TODO
         /// </summary>
         /// <param name="nickName">Name of the nick.</param>
         /// <param name="comment">The comment.</param>
@@ -410,36 +436,39 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message ping.
+        /// TODO
         /// </summary>
         /// <param name="server">The server.</param>
-        /// <param name="target">The target.</param>
-        protected void SendMessagePing(string server, string target = null)
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessagePing(string server, string targetServer = null)
         {
-            WriteMessage(null, "ping", server, target);
+            WriteMessage(null, "ping", server, targetServer);
         }
 
         /// <summary>
-        /// Sends the message pong.
+        /// TODO
         /// </summary>
         /// <param name="server">The server.</param>
-        /// <param name="target">The target.</param>
-        protected void SendMessagePong(string server, string target = null)
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessagePong(string server, string targetServer = null)
         {
-            WriteMessage(null, "pong", server, target);
+            WriteMessage(null, "pong", server, targetServer);
         }
 
         /// <summary>
-        /// Sends the message away.
+        /// TODO
         /// </summary>
-        /// <param name="text">The text.</param>
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
         protected void SendMessageAway(string text = null)
         {
             WriteMessage(null, "away", text);
         }
 
         /// <summary>
-        /// Sends the message rehash.
+        /// TODO
         /// </summary>
         protected void SendMessageRehash()
         {
@@ -447,7 +476,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message die.
+        /// TODO
         /// </summary>
         protected void SendMessageDie()
         {
@@ -455,7 +484,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message restart.
+        /// TODO
         /// </summary>
         protected void SendMessageRestart()
         {
@@ -463,27 +492,29 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message summon.
+        /// TODO
         /// </summary>
         /// <param name="user">The user.</param>
-        /// <param name="target">The target.</param>
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
         /// <param name="channel">The channel.</param>
-        protected void SendMessageSummon(string user, string target = null, string channel = null)
+        protected void SendMessageSummon(string user, string targetServer = null, string channel = null)
         {
-            WriteMessage(null, "summon", user, target, channel);
+            WriteMessage(null, "summon", user, targetServer, channel);
         }
 
         /// <summary>
-        /// Sends the message users.
+        /// TODO
         /// </summary>
-        /// <param name="target">The target.</param>
-        protected void SendMessageUsers(string target = null)
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        protected void SendMessageUsers(string targetServer = null)
         {
-            WriteMessage(null, "users", target);
+            WriteMessage(null, "users", targetServer);
         }
 
         /// <summary>
-        /// Sends the message wallpos.
+        /// TODO
         /// </summary>
         /// <param name="text">The text.</param>
         protected void SendMessageWallpos(string text)
@@ -492,7 +523,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message user host.
+        /// TODO
         /// </summary>
         /// <param name="nickNames">The nick names.</param>
         protected void SendMessageUserHost(IEnumerable<string> nickNames)
@@ -501,7 +532,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends the message is on.
+        /// TODO
         /// </summary>
         /// <param name="nickNames">The nick names.</param>
         protected void SendMessageIsOn(IEnumerable<string> nickNames)

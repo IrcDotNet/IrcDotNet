@@ -262,8 +262,8 @@ namespace IrcDotNet
         /// <summary>
         /// Sends a Who Was query to server for the user.
         /// </summary>
-        /// <param name="entriesCount">The maximum number of entries that the server should return. Default is unlimited
-        /// number.</param>
+        /// <param name="entriesCount">The maximum number of entries that the server should return. A negative number
+        /// specifies an unlimited number of entries.</param>
         public void WhoWas(int entriesCount = -1)
         {
             this.client.QueryWhoWas(new[] { this.nickName }, entriesCount);

@@ -160,11 +160,11 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Requests a list of the current modes of the channel, or if <paramref name="modes"/> is specified, the settings for the specified
-        /// modes.
+        /// Requests a list of the current modes of the channel, or if <paramref name="modes"/> is specified, the
+        /// settings for the specified modes.
         /// </summary>
-        /// <param name="modes">The modes for which to get the current settings. Default is to request all current
-        /// channel modes.</param>
+        /// <param name="modes">The modes for which to get the current settings, or <see langword="null"/> for all
+        /// current channel modes.</param>
         public void GetModes(string modes = null)
         {
             this.client.GetChannelModes(this, modes);
@@ -218,7 +218,8 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="modes">The mode string that specifies mode changes, which takes the form
         /// `( "+" / "-" ) *( mode character )`.</param>
-        /// <param name="modeParameters">A collection of parameters to he modes. Default is none.</param>
+        /// <param name="modeParameters">A collection of parameters to he modes, or <see langword="null"/> for no
+        /// parameters.</param>
         /// <exception cref="ArgumentNullException"><paramref name="modes"/> is <see langword="null"/>.</exception>
         public void SetModes(string modes, IEnumerable<string> modeParameters = null)
         {
@@ -231,8 +232,8 @@ namespace IrcDotNet
         /// <summary>
         /// Leaves the channel, giving the specified comment.
         /// </summary>
-        /// <param name="comment">The comment to send the server when leaving the channel. Default is no comment.
-        /// </param>
+        /// <param name="comment">The comment to send the server when leaving the channel, or <see langword="null"/> for
+        /// no comment.</param>
         public void Leave(string comment = null)
         {
             this.client.Leave(new[] { this.name }, comment);
