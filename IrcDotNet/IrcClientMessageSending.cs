@@ -406,7 +406,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends request to perform a WhoIs query on users.
         /// </summary>
         /// <param name="nickNameMasks">The nick name masks.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
@@ -417,7 +417,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends a request to perform a WhoWas query on users.
         /// </summary>
         /// <param name="nickNames">The nick names.</param>
         /// <param name="entriesCount">The entries count.</param>
@@ -429,7 +429,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends message to server perform a Kill request on user.
         /// </summary>
         /// <param name="nickName">Name of the nick.</param>
         /// <param name="comment">The comment.</param>
@@ -439,7 +439,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends message to server to perform a Ping request.
         /// </summary>
         /// <param name="server">The server.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
@@ -450,7 +450,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends message to server to perform a Pong request.
         /// </summary>
         /// <param name="server">The server.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
@@ -461,7 +461,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends message to server to perform a Away request with Away Message
         /// </summary>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
@@ -471,7 +471,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends message to server to engage reprocessing of configuration files(s)
         /// </summary>
         protected void SendMessageRehash()
         {
@@ -479,7 +479,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends message to server to engage shutdown.
         /// </summary>
         protected void SendMessageDie()
         {
@@ -487,7 +487,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends message to server to initiate Restart.
         /// </summary>
         protected void SendMessageRestart()
         {
@@ -495,7 +495,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends message to users on server to join the channel.
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
@@ -507,7 +507,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends a message to server to return a list of users and respective information.
         /// </summary>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
@@ -517,7 +517,8 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends a message to the server sending message text parameter 
+        /// to all operators connected to the server and / or all users with user mode 'w'.
         /// </summary>
         /// <param name="text">The text.</param>
         protected void SendMessageWallpos(string text)
@@ -526,7 +527,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends message to server to return a list of information for the respective users specified.
         /// </summary>
         /// <param name="nickNames">The nick names.</param>
         protected void SendMessageUserHost(IEnumerable<string> nickNames)
@@ -535,7 +536,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// TODO
+        /// Sends query message to server to return those users specified that are currently connected to the server.
         /// </summary>
         /// <param name="nickNames">The nick names.</param>
         protected void SendMessageIsOn(IEnumerable<string> nickNames)
