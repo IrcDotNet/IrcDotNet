@@ -375,17 +375,34 @@ namespace IrcDotNet
         /// </summary>
         public event EventHandler<IrcErrorEventArgs> Error;
         /// <summary>
+        /// Occurs when a raw message has been sent to the server.
+        /// </summary>
+        public event EventHandler<IrcRawMessageEventArgs> RawMessageSent;
+        /// <summary>
+        /// Occurs when a raw message has been received from the server.
+        /// </summary>
+        public event EventHandler<IrcRawMessageEventArgs> RawMessageReceived;
+        /// <summary>
         /// Occurs when a protocol (numeric) error is received from the server.
         /// </summary>
         public event EventHandler<IrcProtocolErrorEventArgs> ProtocolError;
         /// <summary>
-        /// Occurs when an Error message is received from the server.
+        /// Occurs when an error message (ERROR command) is received from the server.
         /// </summary>
         public event EventHandler<IrcErrorMessageEventArgs> ErrorMessageReceived;
         /// <summary>
         /// Occurs when the connection has been registered.
         /// </summary>
         public event EventHandler<EventArgs> Registered;
+        /// <summary>
+        /// Occurs when the client information has been received from the server, following registration.
+        /// </summary>
+        /// <remarks>
+        /// Client information is accessible via <see cref="WelcomeMessage"/>, <see cref="YourHostMessage"/>,
+        /// <see cref="ServerCreatedMessage"/>, <see cref="ServerName"/>, <see cref="ServerVersion"/>,
+        /// <see cref="ServerAvailableUserModes"/>, and <see cref="ServerAvailableChannelModes"/>.
+        /// </remarks>
+        public event EventHandler<EventArgs> ClientInfoReceived;
         /// <summary>
         /// Occurs when a bounce message is received from the server, telling the client to connect to a new server.
         /// </summary>
@@ -442,6 +459,9 @@ namespace IrcDotNet
         {
             CheckDisposed();
 
+            if (nickNameMasks == null)
+                throw new ArgumentNullException("nickNames");
+
             QueryWhoIs((IEnumerable<string>)nickNameMasks);
         }
 
@@ -452,9 +472,13 @@ namespace IrcDotNet
         /// <param name="nickNameMasks">A collection of wildcard expressions for matching against nick names of users.
         /// </param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="nickNameMasks"/> is <see langword="null"/>.</exception>
         public void QueryWhoIs(IEnumerable<string> nickNameMasks)
         {
             CheckDisposed();
+
+            if (nickNameMasks == null)
+                throw new ArgumentNullException("nickNames");
 
             SendMessageWhoIs(nickNameMasks);
         }
@@ -463,6 +487,9 @@ namespace IrcDotNet
         public void QueryWhoWas(params string[] nickNames)
         {
             CheckDisposed();
+
+            if (nickNames == null)
+                throw new ArgumentNullException("nickNames");
 
             QueryWhoWas((IEnumerable<string>)nickNames);
         }
@@ -474,9 +501,13 @@ namespace IrcDotNet
         /// <param name="entriesCount">The maximum number of entries to return from the query. A negative value
         /// specifies to return an unlimited number of entries.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="nickNames"/> is <see langword="null"/>.</exception>
         public void QueryWhoWas(IEnumerable<string> nickNames, int entriesCount = -1)
         {
             CheckDisposed();
+
+            if (nickNames == null)
+                throw new ArgumentNullException("nickNames");
 
             SendMessageWhoWas(nickNames, entriesCount);
         }
@@ -585,11 +616,11 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="timeout">The number of milliseconds to wait before forcefully disconnecting.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void Quit(string comment = null, int timeout = Timeout.Infinite)
+        public void Quit(int timeout, string comment = null)
         {
             CheckDisposed();
 
-            Quit(comment);
+            SendMessageQuit(comment);
             if (!this.disconnectedEvent.WaitOne(timeout))
                 Disconnect();
         }
@@ -608,6 +639,22 @@ namespace IrcDotNet
             CheckDisposed();
 
             SendMessageQuit(comment);
+        }
+
+        /// <summary>
+        /// Sends the specified raw message to the server.
+        /// </summary>
+        /// <param name="message">The text (single line) of the message to send the server.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null"/>.</exception>
+        public void SendRawMessage(string message)
+        {
+            CheckDisposed();
+
+            if (message == null)
+                throw new ArgumentNullException("message");
+
+            WriteMessage(message);
         }
 
         #region Proxy Methods
@@ -882,6 +929,8 @@ namespace IrcDotNet
 
         private void ReadMessage(IrcMessage message)
         {
+            OnRawMessageReceived(new IrcRawMessageEventArgs(message));
+
             // Try to find corresponding message processor for command of given message.
             MessageProcessor msgProc;
             int commandCode;
@@ -943,9 +992,15 @@ namespace IrcDotNet
                 throw new ArgumentException(Properties.Resources.ErrorMessageTooManyParams, "parameters");
 
             var line = new StringBuilder();
+
+            // Append prefix to line, if specified.
             if (message.Prefix != null)
                 line.Append(":" + CheckPrefix(message.Prefix) + " ");
+
+            // Append command name to line.
             line.Append(CheckCommand(message.Command).ToUpper());
+
+            // Append each parameter to line, adding a ':' before the last parameter.
             for (int i = 0; i < message.Parameters.Count - 1; i++)
             {
                 if (message.Parameters[i] != null)
@@ -957,7 +1012,9 @@ namespace IrcDotNet
                 if (lastParameter != null)
                     line.Append(" :" + CheckTrailingParameter(lastParameter));
             }
+
             WriteMessage(line.ToString());
+            OnRawMessageSent(new IrcRawMessageEventArgs(message));
         }
 
         /// <summary>
@@ -1705,6 +1762,28 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        /// Raises the <see cref="RawMessageSent"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        protected virtual void OnRawMessageSent(IrcRawMessageEventArgs e)
+        {
+            var handler = this.RawMessageSent;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="RawMessageReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        protected virtual void OnRawMessageReceived(IrcRawMessageEventArgs e)
+        {
+            var handler = this.RawMessageReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
         /// Raises the <see cref="ProtocolError"/> event.
         /// </summary>
         /// <param name="e">The <see cref="IrcProtocolErrorEventArgs"/> instance containing the event data.</param>
@@ -1722,6 +1801,17 @@ namespace IrcDotNet
         protected virtual void OnErrorMessageReceived(IrcErrorMessageEventArgs e)
         {
             var handler = this.ErrorMessageReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="ClientInfoReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        protected virtual void OnClientInfoReceived(EventArgs e)
+        {
+            var handler = this.ClientInfoReceived;
             if (handler != null)
                 handler(this, e);
         }
@@ -1861,7 +1951,7 @@ namespace IrcDotNet
         /// the source), a command name (a word or three-digit number), and an arbitrary number of parameters (up to a
         /// maximum of 15).
         /// </summary>
-        protected struct IrcMessage
+        public struct IrcMessage
         {
             /// <summary>
             /// The source of the message, which is the object represented by <see cref="Prefix"/>.

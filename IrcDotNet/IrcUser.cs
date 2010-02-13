@@ -45,7 +45,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets or sets whether the user is currently connected to the IRC network. This value may not be always be
+        /// Gets whether the user is currently connected to the IRC network. This value may not be always be
         /// up-to-date.
         /// </summary>
         /// <value><see langword="true"/> if the user is currently online; <see langword="false"/> if the user is

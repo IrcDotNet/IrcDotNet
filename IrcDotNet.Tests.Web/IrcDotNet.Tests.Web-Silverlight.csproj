@@ -13,7 +13,7 @@
     <RootNamespace>IrcDotNet.Tests.Web</RootNamespace>
     <AssemblyName>IrcDotNet.Tests.Web</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <SilverlightApplicationList>{994741D9-52AC-4CEE-A136-1A17A0A80B12}|..\Silverlight IrcDotNet.Tests\Silverlight IrcDotNet.Tests.csproj|ClientBin|False</SilverlightApplicationList>
+    <SilverlightApplicationList>{994741D9-52AC-4CEE-A136-1A17A0A80B12}|..\IrcDotNet.Tests\IrcDotNet.Tests-Silverlight.csproj|ClientBin|False</SilverlightApplicationList>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,7 +54,6 @@
   <ItemGroup>
     <Content Include="ClientBin\IrcDotNet.Tests.xap" />
     <Content Include="TestPage.aspx" />
-    <Content Include="TestPage.html" />
     <Content Include="Silverlight.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

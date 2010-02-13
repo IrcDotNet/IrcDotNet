@@ -31,7 +31,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// A read-only collection of the modes the user currently has.
+        /// Gets a read-only collection of the modes the user currently has.
         /// </summary>
         /// <value>The current modes of the user.</value>
         public ReadOnlySet<char> Modes

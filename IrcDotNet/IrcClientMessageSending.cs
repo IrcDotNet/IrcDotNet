@@ -75,7 +75,7 @@ namespace IrcDotNet
         /// <summary>
         /// Sends a notification to the server indicating that the client is quitting the network.
         /// </summary>
-        /// <param name="comment">The comment to send the server.</param>
+        /// <param name="comment">The comment to send the server, or <see langword="null"/> for none.</param>
         protected void SendMessageQuit(string comment = null)
         {
             WriteMessage(null, "quit", comment);
@@ -406,9 +406,10 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends request to perform a WhoIs query on users.
+        /// Sends a request to perform a WhoIs query on users.
         /// </summary>
-        /// <param name="nickNameMasks">The nick name masks.</param>
+        /// <param name="nickNameMasks">A collection of wildcard expressions for matching against the nick names of
+        /// users.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
         protected void SendMessageWhoIs(IEnumerable<string> nickNameMasks, string targetServer = null)
@@ -419,8 +420,9 @@ namespace IrcDotNet
         /// <summary>
         /// Sends a request to perform a WhoWas query on users.
         /// </summary>
-        /// <param name="nickNames">The nick names.</param>
-        /// <param name="entriesCount">The entries count.</param>
+        /// <param name="nickNameMasks">A collection of wildcard expressions for matching against the nick names of
+        /// users.</param>
+        /// <param name="entriesCount">The maximum number of (most recent) entries to return.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
         protected void SendMessageWhoWas(IEnumerable<string> nickNames, int entriesCount = -1, string targetServer = null)
@@ -429,19 +431,19 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends message to server perform a Kill request on user.
+        /// Sends a request to disconnect the specified user from the server.
         /// </summary>
-        /// <param name="nickName">Name of the nick.</param>
-        /// <param name="comment">The comment.</param>
+        /// <param name="nickName">The nick name of the user to disconnect.</param>
+        /// <param name="comment">The comment to send the server.</param>
         protected void SendMessageKill(string nickName, string comment)
         {
             WriteMessage(null, "kill", nickName, comment);
         }
 
         /// <summary>
-        /// Sends message to server to perform a Ping request.
+        /// Sends a ping request to the server.
         /// </summary>
-        /// <param name="server">The server.</param>
+        /// <param name="server">The name of the server to which to send the request.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
         protected void SendMessagePing(string server, string targetServer = null)
@@ -450,9 +452,9 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends message to server to perform a Pong request.
+        /// Sends a pong response (to a ping) to the server.
         /// </summary>
-        /// <param name="server">The server.</param>
+        /// <param name="server">The name of the server to which to send the response.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
         protected void SendMessagePong(string server, string targetServer = null)
@@ -461,17 +463,17 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends message to server to perform a Away request with Away Message
+        /// Sends an update to the server indicating that the local user is away.
         /// </summary>
-        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
-        /// for the current server.</param>
+        /// <param name="text">The text of the away message. The away message is sent to any user that tries to contact
+        /// the local user while it is away.</param>
         protected void SendMessageAway(string text = null)
         {
             WriteMessage(null, "away", text);
         }
 
         /// <summary>
-        /// Sends message to server to engage reprocessing of configuration files(s)
+        /// Sends a request to the server telling it to reprocess its configuration settings.
         /// </summary>
         protected void SendMessageRehash()
         {
@@ -479,7 +481,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends message to server to engage shutdown.
+        /// Sends a request to the server telling it to shut down.
         /// </summary>
         protected void SendMessageDie()
         {
@@ -487,7 +489,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends message to server to initiate Restart.
+        /// Sends a message to the server telling it to restart.
         /// </summary>
         protected void SendMessageRestart()
         {
@@ -495,19 +497,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends message to users on server to join the channel.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
-        /// for the current server.</param>
-        /// <param name="channel">The channel.</param>
-        protected void SendMessageSummon(string user, string targetServer = null, string channel = null)
-        {
-            WriteMessage(null, "summon", user, targetServer, channel);
-        }
-
-        /// <summary>
-        /// Sends a message to server to return a list of users and respective information.
+        /// Sends a request to return a list of information about all users currently registered on the server.
         /// </summary>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
@@ -517,28 +507,27 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends a message to the server sending message text parameter 
-        /// to all operators connected to the server and / or all users with user mode 'w'.
+        /// Sends a message to all connected users that have the 'w' mode set.
         /// </summary>
-        /// <param name="text">The text.</param>
-        protected void SendMessageWallpos(string text)
+        /// <param name="text">The text of the message to send.</param>
+        protected void SendMessageWallops(string text)
         {
             WriteMessage(null, "wallops", text);
         }
 
         /// <summary>
-        /// Sends message to server to return a list of information for the respective users specified.
+        /// Sends a request to return the host names of the specified users.
         /// </summary>
-        /// <param name="nickNames">The nick names.</param>
+        /// <param name="nickNames">A collection of the nick names of the users to query.</param>
         protected void SendMessageUserHost(IEnumerable<string> nickNames)
         {
             WriteMessage(null, "userhost", nickNames);
         }
 
         /// <summary>
-        /// Sends query message to server to return those users specified that are currently connected to the server.
+        /// Sends a request to check whether the specified users are currently online.
         /// </summary>
-        /// <param name="nickNames">The nick names.</param>
+        /// <param name="nickNames">A collection of the nick names of the users to query.</param>
         protected void SendMessageIsOn(IEnumerable<string> nickNames)
         {
             WriteMessage(null, "ison", nickNames);

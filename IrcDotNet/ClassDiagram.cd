@@ -17,7 +17,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAEBAAAgAAACIAAEIBAIAABA4AAAAEAAAIAAAAAACQg=</HashCode>
+      <HashCode>AAEBAAAgAAACIAAEIBAIAAAA4AAAAEAAAIAAAAAACQg=</HashCode>
       <FileName>IrcChannelUser.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -81,7 +81,7 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>PkWc0nd2BnPuU1rVeU+AUbPVn+/Sswo46f9ev05z2fE=</HashCode>
+      <HashCode>PkWc0nd2BnPuU1rVeU+AUbPVn+/Sswo56f9ev05z2fE=</HashCode>
       <FileName>IrcClient.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -102,7 +102,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>CAABggEAREADCGwAADUIAAAEQEJAgUAMAAEAAAAADwA=</HashCode>
+      <HashCode>CAABggEAREADCGwAADUIAAAEQEJAgUAMAAEAAAgADwA=</HashCode>
       <FileName>IrcLocalUser.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
