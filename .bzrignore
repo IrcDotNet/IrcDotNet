@@ -4,5 +4,6 @@
 *.user
 bin/
 obj/
+ClientBin/
 Output/
 ./TestResults/

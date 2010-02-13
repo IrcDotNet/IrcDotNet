@@ -8,6 +8,7 @@ using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    // TODO: Handle 383 RPL_YOURESERVICE response (equivalent of 001 RPL_WELCOME for services).
     // Defines all message processors for the client.
     partial class IrcClient
     {
@@ -318,6 +319,9 @@ namespace IrcDotNet
             this.ServerAvailableUserModes = message.Parameters[3];
             Debug.Assert(message.Parameters[4] != null);
             this.ServerAvailableChannelModes = message.Parameters[4];
+
+            // All initial information about client has now been received.
+            OnClientInfoReceived(new EventArgs());
         }
 
         /// <summary>
@@ -353,6 +357,21 @@ namespace IrcDotNet
                 }
                 OnServerSupportedFeaturesReceived(new EventArgs());
             }
+        }
+
+        /// <summary>
+        /// Process 303 responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("303")]
+        protected void ProcessMessageReplyIsOn(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // Set each user listed in reply as online.
+            Debug.Assert(message.Parameters[1] != null);
+            var onlineUsers = message.Parameters[1].Split(' ').Select(n => GetUserFromNickName(n));
+            onlineUsers.ForEach(u => u.IsOnline = true);
         }
 
         /// <summary>

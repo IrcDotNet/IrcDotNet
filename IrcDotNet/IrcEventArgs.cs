@@ -221,6 +221,21 @@ namespace IrcDotNet
         }
     }
 
+    public class IrcRawMessageEventArgs : EventArgs
+    {
+        public IrcRawMessageEventArgs(IrcClient.IrcMessage message)
+            : base()
+        {
+            this.Message = message;
+        }
+
+        public IrcClient.IrcMessage Message
+        {
+            get;
+            private set;
+        }
+    }
+
     public class IrcErrorEventArgs : EventArgs
     {
         public IrcErrorEventArgs(Exception error)
