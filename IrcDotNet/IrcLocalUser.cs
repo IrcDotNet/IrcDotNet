@@ -10,7 +10,8 @@ namespace IrcDotNet
 {
     /// <summary>
     /// Represents the local user of a specific <see cref="IrcClient"/>.
-    /// The local user is the user as which the client has connected and registered.
+    /// The local user is the user as which the client has connected and registered, and may be either a normal user or
+    /// service.
     /// </summary>
     public class IrcLocalUser : IrcUser, IIrcMessageSendHandler, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
@@ -19,15 +20,37 @@ namespace IrcDotNet
         // Internal and exposable collections of current modes of user.
         private HashSet<char> modes;
         private ReadOnlySet<char> modesReadOnly;
+        private string distribution;
+        private string description;
 
-        internal IrcLocalUser(bool isService, string nickName, string userName, string realName, IEnumerable<char> modes = null)
+        internal IrcLocalUser(string nickName, string distribution, string description)
+            : base(true, nickName, null, null)
+        {
+            this.isService = true;
+            this.modes = new HashSet<char>();
+            this.modesReadOnly = new ReadOnlySet<char>(this.modes);
+            this.distribution = distribution;
+            this.description = description;
+        }
+
+        internal IrcLocalUser(string nickName, string userName, string realName, IEnumerable<char> modes = null)
             : base(true, nickName, userName, realName)
         {
-            this.isService = isService;
+            this.isService = false;
             this.modes = new HashSet<char>();
             this.modesReadOnly = new ReadOnlySet<char>(this.modes);
             if (modes != null)
                 this.modes.AddRange(modes);
+        }
+
+        /// <summary>
+        /// Gets whether the local user is a service or normal user.
+        /// </summary>
+        /// <value><see langword="true"/> if the user is a service; <see langword="false"/>, if the user is a normal
+        /// user.</value>
+        public bool IsService
+        {
+            get { return this.isService; }
         }
 
         /// <summary>
@@ -40,13 +63,23 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets whether the local user is a service or normal user.
+        /// Gets the distribution of the service, which determines its visibility to users on specific servers.
         /// </summary>
-        /// <value><see langword="true"/> if the user is a service; <see langword="false"/>, if the user is a normal
-        /// user.</value>
-        public bool IsService
+        /// <value>A wildcard expression for matching against the names of servers on which the service should be
+        /// visible.</value>
+        public string ServiceDistribution
         {
-            get { return this.isService; }
+            get { return this.distribution; }
+        }
+
+        /// <summary>
+        /// Gets the distribution of the service, which determines its visibility to users on specific servers.
+        /// </summary>
+        /// <value>A wildcard expression for matching against the names of servers on which the service should be
+        /// visible.</value>
+        public string ServiceDescription
+        {
+            get { return this.description; }
         }
 
         /// <summary>

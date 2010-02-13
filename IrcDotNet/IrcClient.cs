@@ -15,7 +15,6 @@ using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
-    // TODO: Add Connect methods for registering as service.
     /// <summary>
     /// Provides methods for communicating with an IRC (Internet Relay Chat) server.
     /// Do not inherit unless protocol itself is being extended.
@@ -361,6 +360,10 @@ namespace IrcDotNet
         /// <summary>
         /// Occurs when the client has connected to the server.
         /// </summary>
+        /// <remarks>
+        /// Note that the <see cref="LocalUser"/> object is not set at this point, but is accessible when the
+        /// <see cref="Registered"/> event is raised.
+        /// </remarks>
         public event EventHandler<EventArgs> Connected;
         /// <summary>
         /// Occurs when the client has failed to connect to the server.
@@ -1087,72 +1090,72 @@ namespace IrcDotNet
             return value == '\0' || value == '\r' || value == '\n';
         }
 
-        /// <inheritdoc cref="Connect(string, int, string, string, string, string, ICollection{char})"/>
-        public void Connect(string host, string password,
-            string nickName, string userName, string realName, ICollection<char> userMode = null)
+        /// <inheritdoc cref="Connect(string, int, IrcRegistrationInfo)"/>
+        public void Connect(string host, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
-            Connect(host, defaultPort, password, nickName, userName, realName, userMode);
+            Connect(host, defaultPort, registrationInfo);
         }
 
-        /// <inheritdoc cref="Connect(IPEndPoint, string, string, string, string, ICollection{char})"/>
+        /// <inheritdoc cref="Connect(IPEndPoint, IrcRegistrationInfo)"/>
         /// <param name="host">The name of the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
-        public void Connect(string host, int port, string password,
-            string nickName, string userName, string realName, ICollection<char> userMode = null)
+        public void Connect(string host, int port, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
+            if (registrationInfo == null)
+                throw new ArgumentNullException("registrationInfo");
+
             DisconnectInternal();
-            this.client.BeginConnect(host, port, ConnectCallback,
-                CreateConnectContext(password, nickName, userName, realName, userMode));
+            this.client.BeginConnect(host, port, ConnectCallback, registrationInfo);
             HandleClientConnecting();
         }
 
-        /// <inheritdoc cref="Connect(IPAddress, int, string, string, string, string, ICollection{char})"/>
-        public void Connect(IPAddress address, string password,
-            string nickName, string userName, string realName, ICollection<char> userMode = null)
+        /// <inheritdoc cref="Connect(IPAddress, int, IrcRegistrationInfo)"/>
+        public void Connect(IPAddress address, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
-            Connect(address, defaultPort, password, nickName, userName, realName, userMode);
+            Connect(address, defaultPort, registrationInfo);
         }
 
-        /// <inheritdoc cref="Connect(IPEndPoint, string, string, string, string, ICollection{char})"/>
+        /// <inheritdoc cref="Connect(IPEndPoint, IrcRegistrationInfo)"/>
         /// <param name="address">An IP addresses that designates the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
-        public void Connect(IPAddress address, int port, string password,
-            string nickName, string userName, string realName, ICollection<char> userMode = null)
+        public void Connect(IPAddress address, int port, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
+            if (registrationInfo == null)
+                throw new ArgumentNullException("registrationInfo");
+
             DisconnectInternal();
-            this.client.BeginConnect(address, port, ConnectCallback,
-                CreateConnectContext(password, nickName, userName, realName, userMode));
+            this.client.BeginConnect(address, port, ConnectCallback, registrationInfo);
             HandleClientConnecting();
         }
 
-        /// <inheritdoc cref="Connect(IPAddress[], string, string, string, string, ICollection{char})"/>
-        public void Connect(IPAddress[] addresses, string password,
-            string nickName, string userName, string realName, ICollection<char> userMode = null)
+        /// <inheritdoc cref="Connect(IPAddress[], int, IrcRegistrationInfo)"/>
+        public void Connect(IPAddress[] addresses, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
-            Connect(addresses, defaultPort, password, nickName, userName, realName, userMode);
+            Connect(addresses, defaultPort, registrationInfo);
         }
 
-        /// <inheritdoc cref="Connect(IPEndPoint, string, string, string, string, ICollection{char})"/>
+        /// <inheritdoc cref="Connect(IPEndPoint, IrcRegistrationInfo)"/>
         /// <param name="addresses">A collection of one or more IP addresses that designates the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
-        public void Connect(IPAddress[] addresses, int port, string password,
-            string nickName, string userName, string realName, ICollection<char> userMode = null)
+        public void Connect(IPAddress[] addresses, int port, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
+            if (registrationInfo == null)
+                throw new ArgumentNullException("registrationInfo");
+
             DisconnectInternal();
-            this.client.BeginConnect(addresses, port, ConnectCallback,
-                CreateConnectContext(password, nickName, userName, realName, userMode));
+            this.client.BeginConnect(addresses, port, ConnectCallback, registrationInfo);
             HandleClientConnecting();
         }
 
@@ -1160,65 +1163,19 @@ namespace IrcDotNet
         /// Connects to a server using the specified host and user information.
         /// </summary>
         /// <param name="remoteEP">The network endpoint (IP address and port) of the server to which to connect.</param>
-        /// <param name="password">The password to register with the server.</param>
-        /// <param name="nickName">The nick name to register with the server. This can later be changed.</param>
-        /// <param name="userName">The user name to register with the server.</param>
-        /// <param name="realName">The real name to register with the server.</param>
-        /// <param name="userMode">The initial user mode to register with the server. The value should not contain any
-        /// character except 'w' or 'i'.</param>
+        /// <param name="registrationInfo">The information used for registering the client. The type of the object may
+        /// be either <see cref="IrcUserRegistrationInfo"/> or <see cref="IrcServiceRegistrationInfo"/>.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void Connect(IPEndPoint remoteEP, string password, string nickName,
-            string userName, string realName, ICollection<char> userMode = null)
+        public void Connect(IPEndPoint remoteEP, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
+            if (registrationInfo == null)
+                throw new ArgumentNullException("registrationInfo");
+
             DisconnectInternal();
-            this.client.BeginConnect(remoteEP.Address, remoteEP.Port, ConnectCallback,
-                CreateConnectContext(password, nickName, userName, realName, userMode));
+            this.client.BeginConnect(remoteEP.Address, remoteEP.Port, ConnectCallback, registrationInfo);
             HandleClientConnecting();
-        }
-
-        // Creates connect context for local user.
-        private IrcConnectContext CreateConnectContext(string password, string nickName, string userName,
-            string realName, ICollection<char> userMode)
-        {
-            if (nickName == null)
-                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidNickName, "nickName");
-            if (userName == null)
-                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidNickName, "userName");
-            if (realName == null)
-                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidNickName, "realName");
-
-            return new IrcConnectContext
-                {
-                    Password = password,
-                    NickName = nickName,
-                    IsService = false,
-                    UserName = userName,
-                    RealName = realName,
-                    UserMode = userMode,
-                };
-        }
-
-        // Creates connect context for service.
-        private IrcConnectContext CreateConnectContext(string password, string nickName, string distribution,
-            string description)
-        {
-            if (nickName == null)
-                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidNickName, "nickName");
-            if (distribution == null)
-                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidNickName, "distribution");
-            if (description == null)
-                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidNickName, "description");
-
-            return new IrcConnectContext
-                {
-                    Password = password,
-                    NickName = nickName,
-                    IsService = true,
-                    Distribution = distribution,
-                    Description = description,
-                };
         }
 
         /// <summary>
@@ -1227,8 +1184,8 @@ namespace IrcDotNet
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         /// <remarks>
         /// This method closes the client connection immediately, and does not send a quit message to the server.
-        /// To disconnect from the IRC server gracefully, call <see cref="M:Quit"/> and wait for the connection to be
-        /// closed.
+        /// To disconnect from the IRC server gracefully, call <see cref="Quit(string)"/> and wait for the connection to
+        /// be closed.
         /// </remarks>
         public void Disconnect()
         {
@@ -1271,7 +1228,7 @@ namespace IrcDotNet
                 this.writer = new StreamWriter(this.stream, Encoding.ASCII);
                 this.reader = new StreamReader(this.stream, Encoding.ASCII);
 
-                HandleClientConnected((IrcConnectContext)ar.AsyncState);
+                HandleClientConnected((IrcRegistrationInfo)ar.AsyncState);
                 this.readThread.Start();
                 this.writeThread.Start();
 
@@ -1290,30 +1247,37 @@ namespace IrcDotNet
             this.canDisconnect = true;
         }
 
-        private void HandleClientConnected(IrcConnectContext initState)
+        private void HandleClientConnected(IrcRegistrationInfo regInfo)
         {
             Debug.WriteLine(string.Format("Connected to server at '{0}'.",
                 ((IPEndPoint)this.client.Client.RemoteEndPoint).Address));
 
             try
             {
-                if (initState.Password != null)
-                    SendMessagePassword(initState.Password);
-                if (initState.IsService)
+                if (regInfo.Password != null)
+                    SendMessagePassword(regInfo.Password);
+                if (regInfo is IrcServiceRegistrationInfo)
                 {
-                    // Register as service.
-                    SendMessageService(initState.NickName, initState.Distribution, initState.Description);
+                    // Register client as service.
+                    var serviceRegInfo = (IrcServiceRegistrationInfo)regInfo;
+                    SendMessageService(serviceRegInfo.NickName, serviceRegInfo.Distribution,
+                        serviceRegInfo.Description);
+
+                    this.localUser = new IrcLocalUser(serviceRegInfo.NickName, serviceRegInfo.Distribution,
+                        serviceRegInfo.Description);
                 }
                 else
                 {
-                    // Register as normal user.
-                    SendMessageNick(initState.NickName);
-                    SendMessageUser(initState.UserName, GetNumericUserMode(initState.UserMode), initState.RealName);
+                    // Register client as normal user.
+                    var userRegInfo = (IrcUserRegistrationInfo)regInfo;
+                    SendMessageNick(userRegInfo.NickName);
+                    SendMessageUser(userRegInfo.UserName, GetNumericUserMode(userRegInfo.UserModes),
+                        userRegInfo.RealName);
+
+                    this.localUser = new IrcLocalUser(userRegInfo.NickName, userRegInfo.UserName, userRegInfo.RealName,
+                        userRegInfo.UserModes);
                 }
 
-                // Initialise local user and add it to collection.
-                this.localUser = new IrcLocalUser(initState.IsService, initState.NickName, initState.UserName,
-                    initState.RealName, initState.UserMode);
                 this.users.Add(this.localUser);
             }
             catch (Exception ex)
@@ -1681,14 +1645,14 @@ namespace IrcDotNet
             return user;
         }
 
-        private int GetNumericUserMode(ICollection<char> mode)
+        private int GetNumericUserMode(ICollection<char> modes)
         {
             var value = 0;
-            if (mode == null)
+            if (modes == null)
                 return value;
-            if (mode.Contains('w'))
+            if (modes.Contains('w'))
                 value |= 0x02;
-            if (mode.Contains('i'))
+            if (modes.Contains('i'))
                 value |= 0x04;
             return value;
         }
@@ -1987,22 +1951,6 @@ namespace IrcDotNet
 
                 this.Source = client.GetSourceFromPrefix(prefix);
             }
-        }
-
-        private struct IrcConnectContext
-        {
-            public string Password;
-            public string NickName;
-            public bool IsService;
-
-            // Parameters for normal user.
-            public string UserName;
-            public string RealName;
-            public ICollection<char> UserMode;
-
-            // Parameters for service.
-            public string Distribution;
-            public string Description;
         }
     }
 }
