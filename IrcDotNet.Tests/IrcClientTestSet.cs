@@ -122,8 +122,20 @@ namespace IrcDotNet.Tests
             Debug.WriteLine("Cllient 2 user has nick name '{0}' and user name '{1}'.", nickName2, userName2);
 
             stateManager.SetStates(IrcClientTestState.Client1Initialised, IrcClientTestState.Client2Initialised);
-            client1.Connect(serverHostName, serverPassword, nickName1, userName1, realName);
-            client2.Connect(serverHostName, serverPassword, nickName2, userName2, realName);
+            client1.Connect(serverHostName, new IrcUserRegistrationInfo()
+                {
+                    Password = serverPassword,
+                    NickName = nickName1,
+                    UserName = userName1,
+                    RealName = realName
+                });
+            client2.Connect(serverHostName, new IrcUserRegistrationInfo()
+                {
+                    Password = serverPassword,
+                    NickName = nickName2,
+                    UserName = userName2,
+                    RealName = realName
+                });
         }
 
         [ClassCleanup()]
@@ -856,7 +868,7 @@ namespace IrcDotNet.Tests
         }
     }
 
-    [Flags()]
+    // Defines the set of test states managed by the TestStateManager. Any number of states may be set at any time.
     public enum IrcClientTestState
     {
         None,

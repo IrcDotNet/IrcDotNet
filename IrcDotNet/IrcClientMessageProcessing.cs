@@ -8,7 +8,6 @@ using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
-    // TODO: Handle 383 RPL_YOURESERVICE response (equivalent of 001 RPL_WELCOME for services).
     // Defines all message processors for the client.
     partial class IrcClient
     {
@@ -256,13 +255,14 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 001 responses from the server.
+        /// Process RPL_WELCOME responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("001")]
         protected void ProcessMessageReplyWelcome(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
+
             Debug.Assert(message.Parameters[1] != null);
             this.WelcomeMessage = message.Parameters[1];
 
@@ -277,7 +277,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 002 responses from the server.
+        /// Process RPL_YOURHOST responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("002")]
@@ -290,7 +290,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 003 responses from the server.
+        /// Process RPL_CREATED responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("003")]
@@ -303,7 +303,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 004 responses from the server.
+        /// Process RPL_MYINFO responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("004")]
@@ -325,7 +325,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 005 responses from the server.
+        /// Process RPL_BOUNCE and RPL_ISUPPORT responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("005")]
@@ -360,7 +360,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 303 responses from the server.
+        /// Process RPL_ISON responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("303")]
@@ -375,7 +375,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 301 responses from the server.
+        /// Process RPL_AWAY responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("301")]
@@ -391,7 +391,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 305 responses from the server.
+        /// Process RPL_UNAWAY responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("305")]
@@ -403,7 +403,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 306 responses from the server.
+        /// Process RPL_NOWAWAY responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("306")]
@@ -415,7 +415,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 311 responses from the server.
+        /// Process RPL_WHOISUSER responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("311")]
@@ -435,7 +435,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 312 responses from the server.
+        /// Process RPL_WHOISSERVER responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("312")]
@@ -452,7 +452,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 313 responses from the server.
+        /// Process RPL_WHOISOPERATOR responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("313")]
@@ -466,7 +466,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 317 responses from the server.
+        /// Process RPL_WHOISIDLE responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("317")]
@@ -495,7 +495,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 319 responses from the server.
+        /// Process RPL_WHOISCHANNELS responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("319")]
@@ -521,7 +521,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 314 responses from the server.
+        /// Process RPL_WHOWASUSER responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("314")]
@@ -541,7 +541,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 369 responses from the server.
+        /// Process RPL_ENDOFWHOWAS responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("369")]
@@ -555,7 +555,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 352 responses from the server.
+        /// Process RPL_WHOREPLY responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("352")]
@@ -608,7 +608,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 315 responses from the server.
+        /// Process RPL_ENDOFWHO responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("315")]
@@ -622,7 +622,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 332 responses from the server.
+        /// Process RPL_NAMREPLY responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("332")]
@@ -668,7 +668,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 366 responses from the server.
+        /// Process RPL_ENDOFNAMES responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("366")]
@@ -682,11 +682,24 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 372 responses from the server.
+        /// Process RPL_MOTD responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("372")]
         protected void ProcessMessageReplyMotd(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            Debug.Assert(message.Parameters[1] != null);
+            this.motdBuilder.AppendLine(message.Parameters[1]);
+        }
+
+        /// <summary>
+        /// Process RPL_MOTDSTART responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("375")]
+        protected void ProcessMessageReplyMotdStart(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -696,20 +709,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 375 responses from the server.
-        /// </summary>
-        /// <param name="message">The message received from the server.</param>
-        [MessageProcessor("375")]
-        protected void ProcessMessageReplyMotdStart(IrcMessage message)
-        {
-            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
-
-            Debug.Assert(message.Parameters[1] != null);
-            this.motdBuilder.AppendLine(message.Parameters[1]);
-        }
-
-        /// <summary>
-        /// Process 376 responses from the server.
+        /// Process RPL_ENDOFMOTD responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("376")]
@@ -724,7 +724,23 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process numeric error (range 400 - 599) responses from the server.
+        /// Process RPL_YOURESERVICE responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("383")]
+        protected void ProcessMessageReplyYoureService(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] != null);
+
+            Debug.Assert(message.Parameters[1] != null);
+            this.localUser.NickName = message.Parameters[1].Split(' ')[3];
+
+            this.isRegistered = true;
+            OnRegistered(new EventArgs());
+        }
+
+        /// <summary>
+        /// Process numeric error (from 400 to 599) responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("400-599")]
