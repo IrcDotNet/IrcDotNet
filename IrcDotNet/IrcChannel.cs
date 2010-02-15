@@ -83,7 +83,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets a collection of all <see cref="IrcChannelUser"/>s currently in the channel.
+        /// Gets a collection of all channel users currently in the channel.
         /// </summary>
         /// <value>A collection of all users currently in the channel.</value>
         public IrcChannelUserCollection Users
@@ -232,7 +232,7 @@ namespace IrcDotNet
         /// <summary>
         /// Leaves the channel, giving the specified comment.
         /// </summary>
-        /// <param name="comment">The comment to send the server when leaving the channel, or <see langword="null"/> for
+        /// <param name="comment">The comment to send the server upon leaving the channel, or <see langword="null"/> for
         /// no comment.</param>
         public void Leave(string comment = null)
         {

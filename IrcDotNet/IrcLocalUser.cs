@@ -128,7 +128,7 @@ namespace IrcDotNet
         /// <inheritdoc cref="SendMessage(IEnumerable{string}, string)" select="/summary/node()"/>
         /// A message target may be an <see cref="IrcUser"/>, <see cref="IrcChannel"/>, or <see cref="IrcTargetMask"/>.
         /// </summary>
-        /// <param name="target">A collection of <see cref="IIrcMessageTarget"/>s to which to send the message.</param>
+        /// <param name="targets">A collection of targets to which to send the message.</param>
         public void SendMessage(IEnumerable<IIrcMessageTarget> targets, string text)
         {
             if (targets == null)
@@ -183,7 +183,7 @@ namespace IrcDotNet
         /// <inheritdoc cref="SendNotice(IEnumerable{string}, string)" select="/summary/node()"/>
         /// A message target may be an <see cref="IrcUser"/>, <see cref="IrcChannel"/>, or <see cref="IrcTargetMask"/>.
         /// </summary>
-        /// <param name="target">A collection of <see cref="IIrcMessageTarget"/>s to which to send the notice.</param>
+        /// <param name="targets">A collection of targets to which to send the notice.</param>
         public void SendNotice(IEnumerable<IIrcMessageTarget> targets, string text)
         {
             if (targets == null)

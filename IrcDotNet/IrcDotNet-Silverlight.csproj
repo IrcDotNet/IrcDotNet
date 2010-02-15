@@ -56,13 +56,49 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IIrcFloodPreventer.cs" />
+    <Compile Include="IIrcMessageReceiveHandler.cs" />
+    <Compile Include="IIrcMessageReceiver.cs" />
+    <Compile Include="IIrcMessageSendHandler.cs" />
+    <Compile Include="IIrcMessageSource.cs" />
+    <Compile Include="IIrcMessageTarget.cs" />
+    <Compile Include="IrcChannel.cs" />
+    <Compile Include="IrcChannelCollection.cs" />
+    <Compile Include="IrcChannelUser.cs" />
+    <Compile Include="IrcChannelUserCollection.cs" />
+    <Compile Include="IrcClient.cs" />
+    <Compile Include="IrcClientMessageProcessing.cs" />
+    <Compile Include="IrcClientMessageSending.cs" />
+    <Compile Include="IrcEventArgs.cs" />
+    <Compile Include="IrcLocalUser.cs" />
+    <Compile Include="IrcRegistrationInfo.cs" />
+    <Compile Include="IrcServer.cs" />
+    <Compile Include="IrcStandardFloodPreventer.cs" />
+    <Compile Include="IrcTargetMask.cs" />
+    <Compile Include="IrcUser.cs" />
+    <Compile Include="IrcUserCollection.cs" />
+    <Compile Include="IrcUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs" />
+    <Compile Include="Sockets\NetworkStream.cs" />
+    <Compile Include="Sockets\TcpClient.cs" />
+    <Compile Include="TcpUtilities.cs" />
+    <Compile Include="TextUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IrcDotNet.Common\IrcDotNet.Common-Silverlight.csproj">
       <Project>{A54FBE9A-C68B-4183-AA6E-E9972EF61B2F}</Project>
       <Name>IrcDotNet.Common-Silverlight</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CTCP\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <ProjectExtensions>
