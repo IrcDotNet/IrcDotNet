@@ -28,7 +28,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAIAAAAAgAAAAAAAAAAAAAABAAAAAABAAAAAQ=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAEAABAAAAAABAAAAAQ=</HashCode>
       <FileName>IrcChannelCollection.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -191,7 +191,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="IrcDotNet.IrcServer">
-    <Position X="8" Y="22.75" Width="2" />
+    <Position X="7" Y="23" Width="2" />
     <TypeIdentifier>
       <HashCode>gAAAAIAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
       <FileName>IrcServer.cs</FileName>
@@ -199,7 +199,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="IrcDotNet.IrcTargetMask">
-    <Position X="10.25" Y="22.75" Width="2.25" />
+    <Position X="9.25" Y="23" Width="2.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -229,14 +229,6 @@
   </Class>
   <Class Name="IrcDotNet.IrcUserRegistrationInfo">
     <Position X="3" Y="27.25" Width="2" />
-    <InheritanceLine Type="IrcDotNet.IrcRegistrationInfo" ManuallyRouted="true">
-      <Path>
-        <Point X="1.5" Y="26.747" />
-        <Point X="1.5" Y="26.95" />
-        <Point X="4" Y="26.95" />
-        <Point X="4" Y="27.25" />
-      </Path>
-    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAQAAAAACAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>IrcRegistrationInfo.cs</FileName>
@@ -250,35 +242,35 @@
     </TypeIdentifier>
   </Class>
   <Interface Name="IrcDotNet.IIrcMessageReceiveHandler">
-    <Position X="14.25" Y="27.5" Width="2.25" />
+    <Position X="9" Y="29.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
       <FileName>IIrcMessageReceiveHandler.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcMessageReceiver">
-    <Position X="16.75" Y="27.5" Width="1.75" />
+    <Position X="7" Y="30.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAQAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IIrcMessageReceiver.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcMessageSource">
-    <Position X="8" Y="27.5" Width="1.75" />
+    <Position X="7" Y="27.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IIrcMessageSource.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcMessageTarget">
-    <Position X="10" Y="27.5" Width="1.75" />
+    <Position X="7" Y="29" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IIrcMessageTarget.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcMessageSendHandler">
-    <Position X="12" Y="27.5" Width="2" />
+    <Position X="9" Y="27.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAA=</HashCode>
       <FileName>IIrcMessageSendHandler.cs</FileName>
@@ -292,7 +284,7 @@
     </TypeIdentifier>
   </Interface>
   <Enum Name="IrcDotNet.IrcTargetMaskType">
-    <Position X="10.25" Y="25.25" Width="2.25" />
+    <Position X="9.25" Y="25.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAQAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IrcTargetMask.cs</FileName>

@@ -59,6 +59,7 @@
   <ItemGroup>
     <None Include="CompleteIrcClient.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>

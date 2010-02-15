@@ -13,10 +13,11 @@ namespace IrcDotNet
     /// <summary>
     /// Represents a collection of <see cref="IrcChannelUser"/> objects.
     /// </summary>
+    /// <seealso cref="IrcChannelUser"/>
     public class IrcChannelUserCollection : ReadOnlyObservableCollection<IrcChannelUser>
     {
         private IrcChannel channel;
-
+        
         internal IrcChannelUserCollection(IrcChannel channel, ObservableCollection<IrcChannelUser> list)
             : base(list)
         {
@@ -42,7 +43,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Raises the <see cref="CollectionChanged"/> event.
+        /// Raises the <see cref="ReadOnlyObservableCollection{T}.CollectionChanged"/> event.
         /// </summary>
         /// <param name="e">The <see cref="NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)

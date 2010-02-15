@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InteractiveFictionBot", "Samples\InteractiveFictionBot\InteractiveFictionBot.csproj", "{24292A1F-B302-4090-904D-5881FDD51DA1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkovChainTextBot", "Samples\MarkovChainTextBot\MarkovChainTextBot.csproj", "{24292A1F-B302-4090-904D-5881FDD51DA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
