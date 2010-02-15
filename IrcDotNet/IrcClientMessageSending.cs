@@ -191,7 +191,8 @@ namespace IrcDotNet
             WriteMessage(null, "invite", nickName, channel);
         }
 
-        /// <inheritdoc cref="SendMessageKick(IEnumerable{Tuple{string, string}}, strnig)"/>
+        /// <inheritdoc cref="SendMessageKick(IEnumerable{Tuple{string, string}}, string)"/>
+        /// <param name="channel">The name of the channel from which to kick the users.</param>
         /// <param name="nickNames">A collection of the nick names of the users to kick from the channel.</param>
         protected void SendMessageKick(string channel, IEnumerable<string> nickNames, string comment = null)
         {
@@ -201,7 +202,6 @@ namespace IrcDotNet
         /// <summary>
         /// Sends a request to kick the specifier users from the specified channel.
         /// </summary>
-        /// <param name="channel">The name of the channel from which to kick the users.</param>
         /// <param name="channelsUsers">A collection of 2-tuples of channel names and the nick names of the users to
         /// kick from the channel.</param>
         /// <param name="comment">The comment to send the server, or <see langword="null"/> for none.</param>
@@ -256,8 +256,8 @@ namespace IrcDotNet
         /// <summary>
         /// Sends a request to get statistics about the size of the IRC network.
         /// </summary>
-        /// <param name="serverMask">A wildcard expression for matching against .</param>
-        /// to match the entire network.</param>
+        /// <param name="serverMask">A wildcard expression for matching against the names of servers, or
+        /// <see langword="null"/> to match the entire network.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
         protected void SendMessageLUsers(string serverMask = null, string targetServer = null)
@@ -420,7 +420,7 @@ namespace IrcDotNet
         /// <summary>
         /// Sends a request to perform a WhoWas query on users.
         /// </summary>
-        /// <param name="nickNameMasks">A collection of wildcard expressions for matching against the nick names of
+        /// <param name="nickNames">A collection of wildcard expressions for matching against the nick names of
         /// users.</param>
         /// <param name="entriesCount">The maximum number of (most recent) entries to return.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>

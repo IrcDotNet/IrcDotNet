@@ -322,7 +322,7 @@ namespace IrcDotNet
                     }
                     if (this.disconnectedEvent != null)
                     {
-                        this.disconnectedEvent.Dispose();
+                        this.disconnectedEvent.Close();
                         this.disconnectedEvent = null;
                     }
                     if (this.readThread != null)
@@ -374,7 +374,7 @@ namespace IrcDotNet
         /// </summary>
         public event EventHandler<EventArgs> Disconnected;
         /// <summary>
-        /// Occurs when the client encounters an error.
+        /// Occurs when the client encounters an error during execution.
         /// </summary>
         public event EventHandler<IrcErrorEventArgs> Error;
         /// <summary>
@@ -1227,7 +1227,7 @@ namespace IrcDotNet
                 this.stream = this.client.GetStream();
                 this.writer = new StreamWriter(this.stream, Encoding.ASCII);
                 this.reader = new StreamReader(this.stream, Encoding.ASCII);
-
+                
                 HandleClientConnected((IrcRegistrationInfo)ar.AsyncState);
                 this.readThread.Start();
                 this.writeThread.Start();
@@ -1880,13 +1880,13 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Represents a method that processes <see cref="IrcMessage"/>s.
+        /// Represents a method that processes <see cref="IrcMessage"/> objects.
         /// </summary>
         /// <param name="message">The message that the method should process.</param>
         protected delegate void MessageProcessor(IrcMessage message);
 
         /// <summary>
-        /// Indicates that a method processes <see cref="IrcMessage"/>s for a given command.
+        /// Indicates that a method processes <see cref="IrcMessage"/> objects for a given command.
         /// </summary>
         protected class MessageProcessorAttribute : Attribute
         {
@@ -1918,7 +1918,7 @@ namespace IrcDotNet
         public struct IrcMessage
         {
             /// <summary>
-            /// The source of the message, which is the object represented by <see cref="Prefix"/>.
+            /// The source of the message, which is the object represented by the value of <see cref="Prefix"/>.
             /// </summary>
             public IIrcMessageSource Source;
 

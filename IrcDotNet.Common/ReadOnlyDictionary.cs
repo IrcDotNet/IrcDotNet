@@ -7,15 +7,16 @@ using System.Text;
 
 namespace IrcDotNet.Common.Collections
 {
-#if !SILVERLIGHT
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TKey">The type of the key.</typeparam>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
     [Serializable()]
-#endif
     [DebuggerDisplay("Count = {Count}")]
     public class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>,
-        IEnumerable<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable
-#if !SILVERLIGHT
-        , ISerializable, IDeserializationCallback
-#endif
+        IEnumerable<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable, ISerializable,
+        IDeserializationCallback
     {
         private IDictionary<TKey, TValue> dictionary;
 
@@ -215,8 +216,6 @@ namespace IrcDotNet.Common.Collections
 
         #endregion
 
-#if !SILVERLIGHT
-
         #region ISerializable Members
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -234,7 +233,5 @@ namespace IrcDotNet.Common.Collections
         }
 
         #endregion
-
-#endif
     }
 }

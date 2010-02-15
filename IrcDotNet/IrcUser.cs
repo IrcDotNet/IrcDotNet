@@ -270,10 +270,10 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets a collection of all <see cref="IrcChannelUser"/>s that correspond to the <see cref="IrcUser"/>.
+        /// Gets a collection of all channel users that correspond to the user.
         /// Each <see cref="IrcChannelUser"/> represents a channel of which the user is currently a member.
         /// </summary>
-        /// <returns>A collection of all <see cref="IrcChannelUser"/>s that correspond to the <see cref="IrcUser"/>.
+        /// <returns>A collection of all <see cref="IrcChannelUser"/> object that correspond to the <see cref="IrcUser"/>.
         /// </returns>
         public IEnumerable<IrcChannelUser> GetChannelUsers()
         {

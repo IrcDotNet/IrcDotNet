@@ -187,8 +187,8 @@ namespace IrcDotNet.Tests
         {
             if (client1ErrorEvent != null)
                 client1ErrorEvent.Set();
-
-            Debug.Fail("Protocol error: " + e.Error.Message);
+            
+            Debug.Assert(false, "Protocol error: " + e.Error.Message);
         }
 
         private static void client1_ProtocolError(object sender, EventArgs e)
@@ -646,7 +646,7 @@ namespace IrcDotNet.Tests
         public void PartChannelTest()
         {
             stateManager.HasStates(IrcClientTestState.Client1InChannel);
-            client1.Channels.Part(testChannelName);
+            client1.Channels.Leave(testChannelName);
             Assert.IsTrue(WaitForClientEvent(client1ChannelLeftEvent, 10000), "Client 1 could not part channel.");
             stateManager.UnsetStates(IrcClientTestState.Client1InChannel);
         }

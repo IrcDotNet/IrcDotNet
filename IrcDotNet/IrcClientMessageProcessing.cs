@@ -601,10 +601,10 @@ namespace IrcDotNet
             }
 
             Debug.Assert(message.Parameters[7] != null);
-            var lastParamParts = message.Parameters[7].Split(new char[] { ' ' }, 2);
-            Debug.Assert(lastParamParts.Length == 2);
-            user.HopCount = int.Parse(lastParamParts[0]);
-            user.RealName = lastParamParts[1];
+            var lastParamParts = message.Parameters[7].SplitAtIndex(message.Parameters[7].IndexOf(' '));
+            user.HopCount = int.Parse(lastParamParts.Item1);
+            if (lastParamParts.Item2 != null)
+                user.RealName =lastParamParts.Item2;
         }
 
         /// <summary>

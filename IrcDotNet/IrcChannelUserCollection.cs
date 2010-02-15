@@ -10,6 +10,9 @@ using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    /// <summary>
+    /// Represents a collection of <see cref="IrcChannelUser"/> objects.
+    /// </summary>
     public class IrcChannelUserCollection : ReadOnlyObservableCollection<IrcChannelUser>
     {
         private IrcChannel channel;
@@ -20,16 +23,28 @@ namespace IrcDotNet
             this.channel = channel;
         }
 
+        /// <summary>
+        /// Gets the channel to which the collection of channel users belongs.
+        /// </summary>
+        /// <value>The channel to which the collection of channel users belongs..</value>
         public IrcChannel Channel
         {
             get { return this.channel; }
         }
 
+        /// <summary>
+        /// Gets a collection of all users that correspond to the channel users in the collection.
+        /// </summary>
+        /// <returns>A collection of users.</returns>
         public IEnumerable<IrcUser> GetUsers()
         {
             return this.Items.Select(channelUser => channelUser.User);
         }
 
+        /// <summary>
+        /// Raises the <see cref="CollectionChanged"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             base.OnCollectionChanged(e);
