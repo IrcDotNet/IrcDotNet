@@ -8,10 +8,10 @@ using System.Text;
 namespace IrcDotNet.Common.Collections
 {
     /// <summary>
-    /// 
+    /// Represents a read-only collection of keys and values.
     /// </summary>
-    /// <typeparam name="TKey">The type of the key.</typeparam>
-    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <typeparam name="TKey">The type of the keys in the dictionary.</typeparam>
+    /// <typeparam name="TValue">The type of the values in the dictionary.</typeparam>
     [Serializable()]
     [DebuggerDisplay("Count = {Count}")]
     public class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>,
@@ -20,6 +20,11 @@ namespace IrcDotNet.Common.Collections
     {
         private IDictionary<TKey, TValue> dictionary;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReadOnlyDictionary{TKey, TValue}"/> class.
+        /// </summary>
+        /// <param name="dictionary">The dictionary to wrap.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="dictionary"/> is <see langword="null"/>.</exception>
         public ReadOnlyDictionary(IDictionary<TKey, TValue> dictionary)
         {
             if (dictionary == null)

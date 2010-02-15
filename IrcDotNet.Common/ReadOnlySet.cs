@@ -8,15 +8,20 @@ using System.Text;
 namespace IrcDotNet.Common.Collections
 {
     /// <summary>
-    /// 
+    /// Represents a read-only set of values.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of elements in the set.</typeparam>
     [Serializable()]
     [DebuggerDisplay("Count = {Count}")]
     public class ReadOnlySet<T> : ISet<T>, ISerializable, IDeserializationCallback
     {
         private ISet<T> set;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReadOnlySet{T}"/> class.
+        /// </summary>
+        /// <param name="set">The set to wrap.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="set"/> is <see langword="null"/>.</exception>
         public ReadOnlySet(ISet<T> set)
         {
             if (set == null)

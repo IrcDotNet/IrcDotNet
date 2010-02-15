@@ -17,7 +17,7 @@ namespace IrcDotNet
 
         public static Tuple<string, string> SplitAtIndex(this string value, int index)
         {
-            if (index == -1)
+            if (index < 0)
                 return Tuple.Create(value, (string)null);
             else
                 return Tuple.Create(value.Substring(0, index), value.Substring(index + 1));

@@ -1,0 +1,1 @@
+﻿Implement the CTCP extension to the IRC protocol, as specified at <http://www.irchelp.org/irchelp/rfc/ctcpspec.html>.

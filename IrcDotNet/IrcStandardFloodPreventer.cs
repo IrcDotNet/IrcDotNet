@@ -60,6 +60,7 @@ namespace IrcDotNet
 
         #region IIrcFloodPreventer Members
 
+        /// <inheritdoc/>
         public bool CanSendMessage()
         {
             // Subtract however many counter periods have elapsed since last decrement of counter.
@@ -74,6 +75,7 @@ namespace IrcDotNet
             return true;
         }
 
+        /// <inheritdoc/>
         public void HandleMessageSent()
         {
             this.messageCounter++;
