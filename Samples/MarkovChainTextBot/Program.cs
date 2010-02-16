@@ -7,13 +7,16 @@ using System.Text;
 using System.Threading;
 using IrcDotNet;
 
-namespace InteractiveFictionBot
+namespace MarkovChainTextBox
 {
     internal static class Program
     {
         private static IrcClient client;
+        private static MarkovChain<string> markovChain;
 
         private static bool isRunning;
+
+        #region Assembly Info
 
         public static string AssemblyTitle
         {
@@ -41,6 +44,8 @@ namespace InteractiveFictionBot
             }
         }
 
+        #endregion
+
         public static void Main(string[] args)
         {
             try
@@ -57,8 +62,10 @@ namespace InteractiveFictionBot
                     {
                         NickName = "MarkovBot",
                         UserName = "MarkovBot",
-                        RealName = "Markov Chain Text Bot"}
-                    );
+                        RealName = "Markov Chain Text Bot"
+                    });
+
+                markovChain = new MarkovChain<string>();
 
                 ReadLoop();
             }
@@ -89,6 +96,11 @@ namespace InteractiveFictionBot
         private static void client_LocalUser_JoinedChannel(object sender, IrcChannelEventArgs e)
         {
             client.LocalUser.SendMessage(e.Channel, "This is the Markov Chain Text Box, ready for service.");
+
+            for (int i = 0; i < 40; i++)
+            {
+                //
+            }
         }
 
         private static void ReadLoop()

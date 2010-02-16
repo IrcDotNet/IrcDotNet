@@ -71,8 +71,7 @@ namespace IrcDotNet
             // Update time of last decrement of counter to theoretical time of decrement.
             this.lastCounterDecrementTime = currentTime - (elapsedMilliseconds % this.counterPeriod);
 
-            //return this.messageCounter <= this.maxMessageBurst;
-            return true;
+            return this.messageCounter <= this.maxMessageBurst;
         }
 
         /// <inheritdoc/>
