@@ -174,9 +174,6 @@
   <data name="ErrorMessageTargetMaskTooShort" xml:space="preserve">
     <value>The target mask must be contain at least two characters.</value>
   </data>
-  <data name="ErrorMessageTextCannotContainNewLine" xml:space="preserve">
-    <value>Text sent in a message or notice must not contain a new line.</value>
-  </data>
   <data name="ErrorMessageTooManyModeParameters" xml:space="preserve">
     <value>No more than 3 mode parameters may be sent per message.</value>
   </data>

@@ -74,10 +74,10 @@ namespace IrcDotNet
         /// <summary>
         /// Kicks the user from the channel, giving the specified comment.
         /// </summary>
-        /// <param name="comment">The comment to give regarding the kick, or <see langword="null"/> for none.</param>
+        /// <param name="comment">The comment to give for the kick, or <see langword="null"/> for none.</param>
         public void Kick(string comment = null)
         {
-            this.channel.Client.Kick(new[] { this }, comment);
+            this.channel.Kick(this.user.NickName, comment);
         }
 
         /// <summary>
