@@ -43,7 +43,7 @@ namespace IrcDotNet
             regexHostName = @"(?<host>[^%@]+)";
             regexChannelName = @"(?<channel>[#+!&].+)";
             regexTargetMask = @"(?<targetMask>[$#].+)";
-            regexServerName = @"(?<server>[^%@]+?\..*)";
+            regexServerName = @"(?<server>[^%@]+?\.[^%@]*)";
             regexNickNameId = string.Format(@"{0}(?:(?:!{1})?@{2})?", regexNickName, regexUserName, regexHostName);
             regexUserNameId = string.Format(@"{0}(?:(?:%{1})?@{2}|%{1})", regexUserName, regexHostName,
                 regexServerName);
@@ -1482,7 +1482,7 @@ namespace IrcDotNet
             if (prefix == null)
                 return null;
             Debug.Assert(prefix.Length > 0);
-
+            
             // Check whether prefix represents server or user.
             var prefixMatch = Regex.Match(prefix, regexMessagePrefix);
             var serverName = prefixMatch.Groups["server"].GetValue();
