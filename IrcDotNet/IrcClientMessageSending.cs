@@ -150,7 +150,7 @@ namespace IrcDotNet
         /// <summary>
         /// Sends an update or request for the topic of the specified channel.
         /// </summary>
-        /// <param name="channel">The name of the channel whois topic to change.</param>
+        /// <param name="channel">The name of the channel whose topic to change.</param>
         /// <param name="topic">The new topic to set, or <see langword="null"/> to request the current topic.</param>
         protected void SendMessageTopic(string channel, string topic = null)
         {
