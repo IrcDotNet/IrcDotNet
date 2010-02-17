@@ -662,19 +662,9 @@ namespace IrcDotNet
 
         #region Proxy Methods
 
-        internal void SetNickName(string nickName)
+        internal void SetTopic(string channel, string topic = null)
         {
-            SendMessageNick(nickName);
-        }
-
-        internal void SetAway(string text)
-        {
-            SendMessageAway(text);
-        }
-
-        internal void UnsetAway()
-        {
-            SendMessageAway();
+            SendMessageTopic(channel, topic);
         }
 
         internal void GetChannelModes(IrcChannel channel, string modes = null)
@@ -687,14 +677,19 @@ namespace IrcDotNet
             SendMessageChannelMode(channel.Name, modes, modeParameters);
         }
 
-        internal void GetLocalUserModes(IrcLocalUser user)
+        internal void Invite(IrcChannel channel, string userNickName)
         {
-            SendMessageUserMode(user.NickName);
+            SendMessageInvite(channel.Name, userNickName);
         }
 
-        internal void SetLocalUserModes(IrcLocalUser user, string modes)
+        internal void Kick(IrcChannel channel, IEnumerable<string> usersNickNames, string comment = null)
         {
-            SendMessageUserMode(user.NickName, modes);
+            SendMessageKick(channel.Name, usersNickNames, comment);
+        }
+
+        internal void Kick(IEnumerable<IrcChannelUser> channelUsers, string comment = null)
+        {
+            SendMessageKick(channelUsers.Select(cu => Tuple.Create(cu.Channel.Name, cu.User.NickName)), comment);
         }
 
         internal void Join(IEnumerable<string> channels)
@@ -712,31 +707,10 @@ namespace IrcDotNet
             SendMessagePart(channels, comment);
         }
 
-        internal void SetTopic(string channel, string topic = null)
-        {
-            SendMessageTopic(channel, topic);
-        }
-
-        internal void Invite(IrcChannel channel, IrcUser user)
-        {
-            SendMessageInvite(channel.Name, user.NickName);
-        }
-
-        internal void Kick(IrcChannel channel, IEnumerable<IrcUser> users, string comment = null)
-        {
-            SendMessageKick(channel.Name, users.Select(u => u.NickName), comment);
-        }
-
-        internal void Kick(IEnumerable<IrcChannelUser> channelUsers, string comment = null)
-        {
-            SendMessageKick(channelUsers.Select(cu => Tuple.Create(cu.Channel.Name, cu.User.NickName)), comment);
-        }
-
         internal void SendPrivateMessage(IEnumerable<string> targetsNames, string text)
         {
             var targetsNamesArray = targetsNames.ToArray();
             var targets = targetsNamesArray.Select(n => GetMessageTarget(n)).ToArray();
-            CheckTextValid(text);
             SendMessagePrivateMessage(targetsNamesArray, text);
             this.localUser.HandleMessageSent(targets, text);
         }
@@ -745,15 +719,33 @@ namespace IrcDotNet
         {
             var targetsNamesArray = targetsNames.ToArray();
             var targets = targetsNamesArray.Select(n => GetMessageTarget(n)).ToArray();
-            CheckTextValid(text);
             SendMessageNotice(targetsNamesArray, text);
             this.localUser.HandleNoticeSent(targets, text);
         }
 
-        private void CheckTextValid(string text)
+        internal void SetAway(string text)
         {
-            if (text.Any(c => c == '\r' || c == '\n'))
-                throw new ArgumentException(Properties.Resources.ErrorMessageTextCannotContainNewLine, "text");
+            SendMessageAway(text);
+        }
+
+        internal void UnsetAway()
+        {
+            SendMessageAway();
+        }
+
+        internal void SetNickName(string nickName)
+        {
+            SendMessageNick(nickName);
+        }
+
+        internal void GetLocalUserModes(IrcLocalUser user)
+        {
+            SendMessageUserMode(user.NickName);
+        }
+
+        internal void SetLocalUserModes(IrcLocalUser user, string modes)
+        {
+            SendMessageUserMode(user.NickName, modes);
         }
 
         #endregion

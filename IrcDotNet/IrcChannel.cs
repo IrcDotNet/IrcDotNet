@@ -97,7 +97,7 @@ namespace IrcDotNet
         /// <value>The client to which the channel belongs.</value>
         public IrcClient Client
         {
-            get { return this.client;}
+            get { return this.client; }
             internal set
             {
                 this.client = value;
@@ -157,6 +157,32 @@ namespace IrcDotNet
                 throw new ArgumentNullException("user");
 
             return this.users.SingleOrDefault(cu => cu.User == user);
+        }
+
+        /// <inheritdoc cref="Invite(string)"/>
+        /// <param name="user">The user to invite to the channel</param>
+        public void Invite(IrcUser user)
+        {
+            Invite(user.NickName);
+        }
+
+        /// <summary>
+        /// Invites the the specified user to the channel.
+        /// </summary>
+        /// <param name="userNickName">The nick name of the user to invite.</param>
+        public void Invite(string userNickName)
+        {
+            client.Invite(this, userNickName);
+        }
+
+        /// <summary>
+        /// Kicks the specified user from the channel, giving the specified comment.
+        /// </summary>
+        /// <param name="userNickName">The nick name of the user to kick from the channel.</param>
+        /// <param name="comment">The comment to give for the kick, or <see langword="null"/> for none.</param>
+        public void Kick(string userNickName, string comment = null)
+        {
+            this.client.Kick(this, new[] { userNickName }, comment);
         }
 
         /// <summary>
@@ -418,7 +444,7 @@ namespace IrcDotNet
         {
             return this.name;
         }
-        
+
         #region IIrcMessageTarget Members
 
         string IIrcMessageTarget.Name
@@ -444,7 +470,7 @@ namespace IrcDotNet
 
         #endregion
     }
-    
+
     /// <summary>
     /// Defines the types of channels. Each channel may only be of a single type at any one time.
     /// </summary>
