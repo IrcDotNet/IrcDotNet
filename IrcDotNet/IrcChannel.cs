@@ -160,6 +160,23 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        /// Requests the current topic of the channel.
+        /// </summary>
+        public void GetTopic()
+        {
+            client.SetTopic(this.name);
+        }
+
+        /// <summary>
+        /// Sets the topic of the channel to the specified text.
+        /// </summary>
+        /// <param name="newTopic">The new topic to set.</param>
+        public void SetTopic(string newTopic)
+        {
+            client.SetTopic(this.name, newTopic);
+        }
+
+        /// <summary>
         /// Requests a list of the current modes of the channel, or if <paramref name="modes"/> is specified, the
         /// settings for the specified modes.
         /// </summary>

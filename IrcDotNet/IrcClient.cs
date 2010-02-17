@@ -712,6 +712,11 @@ namespace IrcDotNet
             SendMessagePart(channels, comment);
         }
 
+        internal void SetTopic(string channel, string topic = null)
+        {
+            SendMessageTopic(channel, topic);
+        }
+
         internal void Invite(IrcChannel channel, IrcUser user)
         {
             SendMessageInvite(channel.Name, user.NickName);
