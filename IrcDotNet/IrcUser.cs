@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -9,6 +10,7 @@ namespace IrcDotNet
     /// <summary>
     /// Represents an IRC user that resides on a specific <see cref="IrcClient"/>.
     /// </summary>
+    [DebuggerDisplay("{ToString(),nq}")]
     public class IrcUser : INotifyPropertyChanged, IIrcMessageSource, IIrcMessageTarget
     {
         private bool isOnline;
@@ -290,6 +292,8 @@ namespace IrcDotNet
 
         internal void HandeQuit(string comment)
         {
+            foreach (var cu in GetChannelUsers().ToArray())
+                cu.Channel.HandleUserQuit(cu);
             OnQuit(new IrcCommentEventArgs(comment));
         }
 

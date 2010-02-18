@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using IrcDotNet.Common.Collections;
@@ -13,6 +14,7 @@ namespace IrcDotNet
     /// The local user is the user as which the client has connected and registered, and may be either a normal user or
     /// service.
     /// </summary>
+    [DebuggerDisplay("{ToString(),nq} (local)")]
     public class IrcLocalUser : IrcUser, IIrcMessageSendHandler, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
         // True if local user is service; false, if local user is normal user.

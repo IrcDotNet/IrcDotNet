@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using IrcDotNet.Common.Collections;
@@ -11,6 +12,7 @@ namespace IrcDotNet
     /// <summary>
     /// Represents an IRC user that resides on a specific channel on a specific <see cref="IrcClient"/>.
     /// </summary>
+    [DebuggerDisplay("{ToString(),nq}")]
     public class IrcChannelUser : INotifyPropertyChanged
     {
         // Internal and exposable collections of channel modes currently active on user.
@@ -149,7 +151,7 @@ namespace IrcDotNet
         /// <returns>A string that represents this instance.</returns>
         public override string ToString()
         {
-            return this.channel.Name + "/" + this.user.NickName;
+            return string.Format("{0}/{1}", this.channel.Name, this.user.NickName);
         }
     }
 }

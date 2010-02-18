@@ -19,6 +19,7 @@ namespace IrcDotNet
     /// Provides methods for communicating with an IRC (Internet Relay Chat) server.
     /// Do not inherit unless protocol itself is being extended.
     /// </summary>
+    [DebuggerDisplay("{ToString(),nq}")]
     public partial class IrcClient : IDisposable
     {
         private const int defaultPort = 6667;
@@ -36,6 +37,8 @@ namespace IrcDotNet
         private static readonly string regexMessagePrefix;
         private static readonly string regexMessageTarget;
 
+        private static readonly string isupportPrefix;
+
         static IrcClient()
         {
             regexNickName = @"(?<nick>[^!@]+)";
@@ -50,6 +53,8 @@ namespace IrcDotNet
             regexMessagePrefix = string.Format(@"^(?:{0}|{1})$", regexServerName, regexNickNameId);
             regexMessageTarget = string.Format(@"^(?:{0}|{1}|{2}|{3})$", regexChannelName, regexUserNameId,
                 regexTargetMask, regexNickNameId);
+
+            isupportPrefix = @"\((?<modes>.*)\)(?<prefixes>.*)";
         }
 
         // Internal collection of all known servers.
@@ -58,15 +63,20 @@ namespace IrcDotNet
         private bool isRegistered;
         // Stores information about local user.
         private IrcLocalUser localUser;
-        // Internal and exposable dictionaries of various features supported by server.
+        // Internal and exposable dictionary of various features supported by server.
         private Dictionary<string, string> serverSupportedFeatures;
         private ReadOnlyDictionary<string, string> serverSupportedFeaturesReadOnly;
+        // Internal and exposable collection of channel modes that apply to users in a channel.
+        private Collection<char> channelUserModes;
+        private ReadOnlyCollection<char> channelUserModesReadOnly;
+        // Dictionary of nick name prefixes (keys) and their corresponding channel modes.
+        private Dictionary<char, char> channelUserModesPrefixes;
         // Builds MOTD (message of the day) string as it is received from server.
         private StringBuilder motdBuilder;
-        // Internal and exposable collections of all currently joined channels.
+        // Internal and exposable collection of all currently joined channels.
         private ObservableCollection<IrcChannel> channels;
         private IrcChannelCollection channelsReadOnly;
-        // Internal and exposable collections of all known users.
+        // Internal and exposable collection of all known users.
         private ObservableCollection<IrcUser> users;
         private IrcUserCollection usersReadOnly;
 
@@ -231,6 +241,15 @@ namespace IrcDotNet
         public ReadOnlyDictionary<string, string> ServerSupportedFeatures
         {
             get { return this.serverSupportedFeaturesReadOnly; }
+        }
+
+        /// <summary>
+        /// Gets a collection of channel modes that apply to users in a channel.
+        /// </summary>
+        /// <value>A collection of channel modes that apply to users.</value>
+        public ReadOnlyCollection<char> ChannelUserModes
+        {
+            get { return this.channelUserModesReadOnly; }
         }
 
         /// <summary>
@@ -750,6 +769,457 @@ namespace IrcDotNet
 
         #endregion
 
+        /// <summary>
+        /// Handles the specified parameter of an ISUPPORT message received from the server upon registration.
+        /// </summary>
+        /// <param name="paramName">The name of the parameter.</param>
+        /// <param name="paramValue">The value of the parameter, or <see langword="null"/> if it does not have a value.</param>
+        protected bool HandleISupportParameter(string paramName, string paramValue)
+        {
+            if (paramName == null)
+                throw new ArgumentNullException("paramName");
+            if (paramName.Length == 0)
+                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "paramName");
+
+            switch (paramName.ToLower())
+            {
+                case "prefix":
+                    var prefixValueMatch = Regex.Match(paramValue, isupportPrefix); ;
+                    var prefixes = prefixValueMatch.Groups["prefixes"].GetValue();
+                    var modes = prefixValueMatch.Groups["modes"].GetValue();
+
+                    if (prefixes.Length != modes.Length)
+                        throw new InvalidOperationException(Properties.Resources.ErrorMessageISupportPrefixInvalid);
+                    this.channelUserModes.Clear();
+                    this.channelUserModes.AddRange(modes);
+                    this.channelUserModesPrefixes.Clear();
+                    for (int i = 0; i < prefixes.Length; i++)
+                        this.channelUserModesPrefixes.Add(prefixes[i], modes[i]);
+
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Extracts the the mode and nick name of a user from the specified value.
+        /// </summary>
+        /// <param name="input">The input value, containing a nick name optionally prefixed by a mode character.</param>
+        /// <returns>A 2-tuple of the nick name and user mode.</returns>
+        protected Tuple<string, string> GetUserModeAndNickName(string input)
+        {
+            if (input == null)
+                throw new ArgumentNullException("input");
+            if (input.Length == 0)
+                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "input");
+
+            char mode;
+            if (this.channelUserModesPrefixes.TryGetValue(input[0], out mode))
+                return Tuple.Create(input.Substring(1), mode.ToString());
+            else
+                return Tuple.Create(input, string.Empty);
+        }
+
+        /// <summary>
+        /// Gets a collection of mode characters and mode parameters from the specified mode parameters.
+        /// Combines multiple mode strings into a single mode string.
+        /// </summary>
+        /// <param name="messageParameters">A collection of message parameters, which consists of mode strings and mode
+        /// parameters. A mode string is of the form `( "+" / "-" ) *( mode character )`, and specifies mode changes.
+        /// A mode parameter is arbitrary text associated with a certain mode.</param>
+        /// <returns>A 2-tuple of a single mode string and a collection of mode parameters.
+        /// Each mode parameter corresponds to a single mode character, in the same order.</returns>
+        protected Tuple<string, IEnumerable<string>> GetModeAndParameters(IEnumerable<string> messageParameters)
+        {
+            if (messageParameters == null)
+                throw new ArgumentNullException("messageParameters");
+
+            var modes = new StringBuilder();
+            var modeParameters = new List<string>();
+            foreach (var p in messageParameters)
+            {
+                if (p == null)
+                    break;
+                else if (p.Length == 0)
+                    continue;
+                else if (p[0] == '+' || p[0] == '-')
+                    modes.Append(p);
+                else
+                    modeParameters.Add(p);
+            }
+            return Tuple.Create(modes.ToString(), (IEnumerable<string>)modeParameters.AsReadOnly());
+        }
+
+        /// <summary>
+        /// Gets a list of channel objects from the specified comma-separated list of channel names.
+        /// </summary>
+        /// <param name="namesList">A value that contains a comma-separated list of names of channels.</param>
+        /// <returns>A list of channel objects that corresponds to the given list of channel names.</returns>
+        protected IEnumerable<IrcChannel> GetChannelsFromList(string namesList)
+        {
+            if (namesList == null)
+                throw new ArgumentNullException("namesList");
+
+            return namesList.Split(',').Select(n => GetChannelFromName(n));
+        }
+
+        /// <summary>
+        /// Gets a list of user objedcts from the specified comma-separated list of nick names.
+        /// </summary>
+        /// <param name="nickNamesList">A value that contains a comma-separated list of nick names of users.</param>
+        /// <returns>A list of user objects that corresponds to the given list of nick names.</returns>
+        protected IEnumerable<IrcUser> GetUsersFromList(string nickNamesList)
+        {
+            if (nickNamesList == null)
+                throw new ArgumentNullException("nickNamesList");
+
+            return nickNamesList.Split(',').Select(n => this.users.Single(u => u.NickName == n));
+        }
+
+        /// <summary>
+        /// Determines whether the specified name refers to a channel.
+        /// </summary>
+        /// <param name="name">The name to check.</param>
+        /// <returns><see langword="true"/> if the specified name represents a channel; <see langword="false"/>,
+        /// otherwise.</returns>
+        protected bool IsChannelName(string name)
+        {
+            if (name == null)
+                throw new ArgumentNullException("name");
+
+            return Regex.IsMatch(name, regexChannelName);
+        }
+
+        /// <summary>
+        /// Gets the type of the channel from the specified character.
+        /// </summary>
+        /// <param name="type">A character that represents the type of the channel.
+        /// The character may be one of the following:
+        /// <list type="bullet">
+        ///     <listheader>
+        ///         <term>Character</term>
+        ///         <description>Channel type</description>
+        ///     </listheader>
+        ///     <item>
+        ///         <term>=</term>
+        ///         <description>Public channel</description>
+        ///     </item>
+        ///     <item>
+        ///         <term>*</term>
+        ///         <description>Private channel</description>
+        ///     </item>
+        ///     <item>
+        ///         <term>@</term>
+        ///         <description>Secret channel</description>
+        ///     </item>
+        /// </list></param>
+        /// <returns>The channel type that corresponds to the specified character.</returns>
+        /// <exception cref="ArgumentException"><paramref name="type"/> does not correspond to any known channel type.
+        /// </exception>
+        protected IrcChannelType GetChannelType(char type)
+        {
+            switch (type)
+            {
+                case '=':
+                    return IrcChannelType.Public;
+                case '*':
+                    return IrcChannelType.Private;
+                case '@':
+                    return IrcChannelType.Secret;
+                default:
+                    throw new ArgumentException(string.Format(
+                        Properties.Resources.ErrorMessageInvalidChannelType, type), "type");
+            }
+        }
+
+        /// <summary>
+        /// Gets the target of a message from the specified name.
+        /// A message target may be an <see cref="IrcUser"/>, <see cref="IrcChannel"/>, or <see cref="IrcTargetMask"/>.
+        /// </summary>
+        /// <param name="targetName">The name of the target.</param>
+        /// <returns>The target object that corresponds to the given name.</returns>
+        /// <exception cref="ArgumentException"><paramref name="targetName"/> does not represent a valid message target.
+        /// </exception>
+        protected IIrcMessageTarget GetMessageTarget(string targetName)
+        {
+            if (targetName == null)
+                throw new ArgumentNullException("targetName");
+            if (targetName.Length == 0)
+                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "targetName");
+
+            // Check whether target name represents channel, user, or target mask.
+            var targetNameMatch = Regex.Match(targetName, regexMessageTarget);
+            var channelName = targetNameMatch.Groups["channel"].GetValue();
+            var nickName = targetNameMatch.Groups["nick"].GetValue();
+            var userName = targetNameMatch.Groups["user"].GetValue();
+            var hostName = targetNameMatch.Groups["host"].GetValue();
+            var serverName = targetNameMatch.Groups["server"].GetValue();
+            var targetMask = targetNameMatch.Groups["targetMask"].GetValue();
+            if (channelName != null)
+            {
+                return GetChannelFromName(channelName);
+            }
+            else if (nickName != null)
+            {
+                // Find user by nick name. If no user exists in list, create it and set its properties.
+                bool createdNew;
+                var user = GetUserFromNickName(nickName, true, out createdNew);
+                if (createdNew)
+                {
+                    user.UserName = userName;
+                    user.HostName = hostName;
+                }
+                return user;
+            }
+            else if (userName != null)
+            {
+                // Find user by user  name. If no user exists in list, create it and set its properties.
+                bool createdNew;
+                var user = GetUserFromNickName(nickName, true, out createdNew);
+                if (createdNew)
+                {
+                    user.HostName = hostName;
+                }
+                return user;
+            }
+            else if (targetMask != null)
+            {
+                return new IrcTargetMask(targetMask);
+            }
+            else
+            {
+                throw new ArgumentException(string.Format(
+                    Properties.Resources.ErrorMessageInvalidSource, targetName), "targetName");
+            }
+        }
+
+        /// <summary>
+        /// Gets the source of a message from the specified prefix.
+        /// A message source may be a <see cref="IrcUser"/> or <see cref="IrcServer"/>.
+        /// </summary>
+        /// <param name="prefix">The raw prefix of the message.</param>
+        /// <returns>The message source that corresponds to the specified prefix. The object is an instance of
+        /// <see cref="IrcUser"/> or <see cref="IrcServer"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="prefix"/> does not represent a valid message source.
+        /// </exception>
+        protected IIrcMessageSource GetSourceFromPrefix(string prefix)
+        {
+            if (prefix == null)
+                return null;
+            if (prefix.Length == 0)
+                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "prefix");
+
+            // Check whether prefix represents server or user.
+            var prefixMatch = Regex.Match(prefix, regexMessagePrefix);
+            var serverName = prefixMatch.Groups["server"].GetValue();
+            var nickName = prefixMatch.Groups["nick"].GetValue();
+            var userName = prefixMatch.Groups["user"].GetValue();
+            var hostName = prefixMatch.Groups["host"].GetValue();
+            if (serverName != null)
+            {
+                return GetServerFromHostName(serverName);
+            }
+            else if (nickName != null)
+            {
+                // Find user by nick name. If no user exists in list, create it and set its properties.
+                bool createdNew;
+                var user = GetUserFromNickName(nickName, true, out createdNew);
+                if (createdNew)
+                {
+                    user.UserName = userName;
+                    user.HostName = hostName;
+                }
+                return user;
+            }
+            else
+            {
+                throw new ArgumentException(string.Format(
+                    Properties.Resources.ErrorMessageInvalidSource, prefix), "prefix");
+            }
+        }
+
+        /// <inheritdoc cref="GetServerFromHostName(string, out bool)"/>
+        protected IrcServer GetServerFromHostName(string hostName)
+        {
+            bool createdNew;
+            return GetServerFromHostName(hostName, out createdNew);
+        }
+
+        /// <summary>
+        /// Gets the server with the specified host name, creating it if necessary.
+        /// </summary>
+        /// <param name="hostName">The host name of the server.</param>
+        /// <param name="createdNew"><see langword="true"/> if the server object was created during the call;
+        /// <see langword="false"/>, otherwise.</param>
+        /// <returns>The server object that corresponds to the specified host name.</returns>
+        protected IrcServer GetServerFromHostName(string hostName, out bool createdNew)
+        {
+            if (hostName == null)
+                throw new ArgumentNullException("hostName");
+            if (hostName.Length == 0)
+                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "hostName");
+
+            // Search for server  with given name in list of known servers. If it does not exist, add it.
+            var server = this.servers.SingleOrDefault(s => s.HostName == hostName);
+            if (server == null)
+            {
+                server = new IrcServer(hostName);
+                this.servers.Add(server);
+                createdNew = true;
+            }
+            else
+            {
+                createdNew = false;
+            }
+            return server;
+        }
+
+        /// <inheritdoc cref="GetChannelFromName(string, out bool)"/>
+        protected IrcChannel GetChannelFromName(string channelName)
+        {
+            bool createdNew;
+            return GetChannelFromName(channelName, out createdNew);
+        }
+
+        /// <summary>
+        /// Gets the channel with the specified name, creating it if necessary.
+        /// </summary>
+        /// <param name="channelName">The name of the channel.</param>
+        /// <param name="createdNew"><see langword="true"/> if the channel object was created during the call;
+        /// <see langword="false"/>, otherwise.</param>
+        /// <returns>The channel object that corresponds to the specified name.</returns>
+        protected IrcChannel GetChannelFromName(string channelName, out bool createdNew)
+        {
+            if (channelName == null)
+                throw new ArgumentNullException("channelName");
+            if (channelName.Length == 0)
+                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "channelName");
+
+            // Search for channel with given name in list of known channel. If it does not exist, add it.
+            var channel = this.channels.SingleOrDefault(c => c.Name == channelName);
+            if (channel == null)
+            {
+                channel = new IrcChannel(channelName);
+                this.channels.Add(channel);
+                createdNew = true;
+            }
+            else
+            {
+                createdNew = false;
+            }
+            return channel;
+        }
+
+        /// <inheritdoc cref="GetUserFromNickName(string, bool, out bool)"/>
+        protected IrcUser GetUserFromNickName(string nickName, bool isOnline = true)
+        {
+            bool createdNew;
+            return GetUserFromNickName(nickName, isOnline, out createdNew);
+        }
+
+        /// <summary>
+        /// Gets the user with the specified nick name, creating it if necessary.
+        /// </summary>
+        /// <param name="nickName">The nick name of the user.</param>
+        /// <param name="isOnline"><see langword="true"/> if the user is currently online;
+        /// <see langword="false"/>, if the user is currently offline.
+        /// The <see cref="IrcUser.IsOnline"/> property of the user object is set to this value.</param>
+        /// <param name="createdNew"><see langword="true"/> if the user object was created during the call;
+        /// <see langword="false"/>, otherwise.</param>
+        /// <returns>The user object that corresponds to the specified nick name.</returns>
+        protected IrcUser GetUserFromNickName(string nickName, bool isOnline, out bool createdNew)
+        {
+            if (nickName == null)
+                throw new ArgumentNullException("nickName");
+            if (nickName.Length == 0)
+                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "nickName");
+
+            // Search for user with given nick name in list of known users. If it does not exist, add it.
+            var user = this.users.SingleOrDefault(u => u.NickName == nickName);
+            if (user == null)
+            {
+                user = new IrcUser();
+                user.NickName = nickName;
+                this.users.Add(user);
+                createdNew = true;
+            }
+            else
+            {
+                createdNew = false;
+            }
+            user.IsOnline = isOnline;
+            return user;
+        }
+
+        /// <inheritdoc cref="GetUserFromUserName(string, out bool)"/>
+        protected IrcUser GetUserFromUserName(string userName)
+        {
+            bool createdNew;
+            return GetUserFromUserName(userName, out createdNew);
+        }
+
+        /// <summary>
+        /// Gets the user with the specified user name, creating it if necessary.
+        /// </summary>
+        /// <param name="userName">The user name of the user.</param>
+        /// <param name="createdNew"><see langword="true"/> if the user object was created during the call;
+        /// <see langword="false"/>, otherwise.</param>
+        /// <returns>The user object that corresponds to the specified user name.</returns>
+        protected IrcUser GetUserFromUserName(string userName, out bool createdNew)
+        {
+            if (userName == null)
+                throw new ArgumentNullException("userName");
+            if (userName.Length == 0)
+                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "userName");
+
+            // Search for user with given nick name in list of known users. If it does not exist, add it.
+            var user = this.users.SingleOrDefault(u => u.UserName == userName);
+            if (user == null)
+            {
+                user = new IrcUser();
+                user.UserName = userName;
+                this.users.Add(user);
+                createdNew = true;
+            }
+            else
+            {
+                createdNew = false;
+            }
+            return user;
+        }
+
+        private int GetNumericUserMode(ICollection<char> modes)
+        {
+            var value = 0;
+            if (modes == null)
+                return value;
+            if (modes.Contains('w'))
+                value |= 0x02;
+            if (modes.Contains('i'))
+                value |= 0x04;
+            return value;
+        }
+
+        private void ResetState()
+        {
+            this.servers = new Collection<IrcServer>();
+            this.isRegistered = false;
+            this.localUser = null;
+            this.serverSupportedFeatures = new Dictionary<string, string>();
+            this.serverSupportedFeaturesReadOnly = new ReadOnlyDictionary<string, string>(this.serverSupportedFeatures);
+            this.channelUserModes = new Collection<char>() {
+                'o', 'v' };
+            this.channelUserModesReadOnly = new ReadOnlyCollection<char>(this.channelUserModes);
+            this.channelUserModesPrefixes = new Dictionary<char, char>() {
+                { '@', 'o' }, { '+', 'v' } };
+            this.motdBuilder = new StringBuilder();
+            this.channels = new ObservableCollection<IrcChannel>();
+            this.channelsReadOnly = new IrcChannelCollection(this, this.channels);
+            this.users = new ObservableCollection<IrcUser>();
+            this.usersReadOnly = new IrcUserCollection(this, this.users);
+        }
+
         private void InitialiseMessageProcessors()
         {
             // Find all methods in class that are marked by one or more instances of MessageProcessrAttribute.
@@ -1224,7 +1694,7 @@ namespace IrcDotNet
                 this.stream = this.client.GetStream();
                 this.writer = new StreamWriter(this.stream, Encoding.ASCII);
                 this.reader = new StreamReader(this.stream, Encoding.ASCII);
-                
+
                 HandleClientConnected((IrcRegistrationInfo)ar.AsyncState);
                 this.readThread.Start();
                 this.writeThread.Start();
@@ -1290,382 +1760,6 @@ namespace IrcDotNet
 
             this.disconnectedEvent.Set();
             ResetState();
-        }
-
-        /// <summary>
-        /// Extracts the nick name and user mode from the specified value.
-        /// </summary>
-        /// <param name="input">The input value, containing a nick name prefixed by a user mode.</param>
-        /// <returns>A 2-tuple of the nick name and user mode.</returns>
-        protected Tuple<string, string> ExtractUserMode(string input)
-        {
-            switch (input[0])
-            {
-                case '@':
-                    return Tuple.Create(input.Substring(1), "o");
-                case '+':
-                    return Tuple.Create(input.Substring(1), "v");
-                default:
-                    return Tuple.Create(input, string.Empty);
-            }
-        }
-
-        /// <summary>
-        /// Gets a collection of mode characters and mode parameters from the specified mode parameters.
-        /// Combines multiple mode strings into a single mode string.
-        /// </summary>
-        /// <param name="messageParameters">A collection of message parameters, which consists of mode strings and mode
-        /// parameters. A mode string is of the form `( "+" / "-" ) *( mode character )`, and specifies mode changes.
-        /// A mode parameter is arbitrary text associated with a certain mode.</param>
-        /// <returns>A 2-tuple of a single mode string and a collection of mode parameters.
-        /// Each mode parameter corresponds to a single mode character, in the same order.</returns>
-        protected Tuple<string, IEnumerable<string>> GetModeAndParameters(IEnumerable<string> messageParameters)
-        {
-            var modes = new StringBuilder();
-            var modeParameters = new List<string>();
-            foreach (var p in messageParameters)
-            {
-                if (p == null)
-                    break;
-                else if (p.Length == 0)
-                    continue;
-                else if (p[0] == '+' || p[0] == '-')
-                    modes.Append(p);
-                else
-                    modeParameters.Add(p);
-            }
-            return Tuple.Create(modes.ToString(), (IEnumerable<string>)modeParameters.AsReadOnly());
-        }
-
-        /// <summary>
-        /// Gets a list of channel objects from the specified comma-separated list of channel names.
-        /// </summary>
-        /// <param name="namesList">A value that contains a comma-separated list of names of channels.</param>
-        /// <returns>A list of channel objects that corresponds to the given list of channel names.</returns>
-        protected IEnumerable<IrcChannel> GetChannelsFromList(string namesList)
-        {
-            return namesList.Split(',').Select(n => GetChannelFromName(n));
-        }
-
-        /// <summary>
-        /// Gets a list of user objedcts from the specified comma-separated list of nick names.
-        /// </summary>
-        /// <param name="nickNamesList">A value that contains a comma-separated list of nick names of users.</param>
-        /// <returns>A list of user objects that corresponds to the given list of nick names.</returns>
-        protected IEnumerable<IrcUser> GetUsersFromList(string nickNamesList)
-        {
-            return nickNamesList.Split(',').Select(n => this.users.Single(u => u.NickName == n));
-        }
-
-        /// <summary>
-        /// Determines whether the specified name refers to a channel.
-        /// </summary>
-        /// <param name="name">The name to check.</param>
-        /// <returns><see langword="true"/> if the specified name represents a channel; <see langword="false"/>,
-        /// otherwise.</returns>
-        protected bool IsChannelName(string name)
-        {
-            return Regex.IsMatch(name, regexChannelName);
-        }
-
-        /// <summary>
-        /// Gets the type of the channel from the specified character.
-        /// </summary>
-        /// <param name="type">A character that represents the type of the channel.
-        /// The character may be one of the following:
-        /// <list type="bullet">
-        ///     <listheader>
-        ///         <term>Character</term>
-        ///         <description>Channel type</description>
-        ///     </listheader>
-        ///     <item>
-        ///         <term>=</term>
-        ///         <description>Public channel</description>
-        ///     </item>
-        ///     <item>
-        ///         <term>*</term>
-        ///         <description>Private channel</description>
-        ///     </item>
-        ///     <item>
-        ///         <term>@</term>
-        ///         <description>Secret channel</description>
-        ///     </item>
-        /// </list></param>
-        /// <returns>The channel type that corresponds to the specified character.</returns>
-        /// <exception cref="ArgumentException"><paramref name="type"/> does not correspond to any known channel type.
-        /// </exception>
-        protected IrcChannelType GetChannelType(char type)
-        {
-            switch (type)
-            {
-                case '=':
-                    return IrcChannelType.Public;
-                case '*':
-                    return IrcChannelType.Private;
-                case '@':
-                    return IrcChannelType.Secret;
-                default:
-                    throw new ArgumentException(string.Format(
-                        Properties.Resources.ErrorMessageInvalidChannelType, type), "type");
-            }
-        }
-
-        /// <summary>
-        /// Gets the target of a message from the specified name.
-        /// A message target may be an <see cref="IrcUser"/>, <see cref="IrcChannel"/>, or <see cref="IrcTargetMask"/>.
-        /// </summary>
-        /// <param name="targetName">The name of the target.</param>
-        /// <returns>The target object that corresponds to the given name.</returns>
-        /// <exception cref="ArgumentException"><paramref name="targetName"/> does not represent a valid message target.
-        /// </exception>
-        protected IIrcMessageTarget GetMessageTarget(string targetName)
-        {
-            Debug.Assert(targetName.Length > 0);
-
-            // Check whether target name represents channel, user, or target mask.
-            var targetNameMatch = Regex.Match(targetName, regexMessageTarget);
-            var channelName = targetNameMatch.Groups["channel"].GetValue();
-            var nickName = targetNameMatch.Groups["nick"].GetValue();
-            var userName = targetNameMatch.Groups["user"].GetValue();
-            var hostName = targetNameMatch.Groups["host"].GetValue();
-            var serverName = targetNameMatch.Groups["server"].GetValue();
-            var targetMask = targetNameMatch.Groups["targetMask"].GetValue();
-            if (channelName != null)
-            {
-                return GetChannelFromName(channelName);
-            }
-            else if (nickName != null)
-            {
-                // Find user by nick name. If no user exists in list, create it and set its properties.
-                bool createdNew;
-                var user = GetUserFromNickName(nickName, true, out createdNew);
-                if (createdNew)
-                {
-                    user.UserName = userName;
-                    user.HostName = hostName;
-                }
-                return user;
-            }
-            else if (userName != null)
-            {
-                // Find user by user  name. If no user exists in list, create it and set its properties.
-                bool createdNew;
-                var user = GetUserFromNickName(nickName, true, out createdNew);
-                if (createdNew)
-                {
-                    user.HostName = hostName;
-                }
-                return user;
-            }
-            else if (targetMask != null)
-            {
-                return new IrcTargetMask(targetMask);
-            }
-            else
-            {
-                throw new ArgumentException(string.Format(
-                    Properties.Resources.ErrorMessageInvalidSource, targetName), "targetName");
-            }
-        }
-
-        /// <summary>
-        /// Gets the source of a message from the specified prefix.
-        /// A message source may be a <see cref="IrcUser"/> or <see cref="IrcServer"/>.
-        /// </summary>
-        /// <param name="prefix">The raw prefix of the message.</param>
-        /// <returns>The message source that corresponds to the specified prefix. The object is an instance of
-        /// <see cref="IrcUser"/> or <see cref="IrcServer"/>.</returns>
-        /// <exception cref="ArgumentException"><paramref name="prefix"/> does not represent a valid message source.
-        /// </exception>
-        protected IIrcMessageSource GetSourceFromPrefix(string prefix)
-        {
-            if (prefix == null)
-                return null;
-            Debug.Assert(prefix.Length > 0);
-            
-            // Check whether prefix represents server or user.
-            var prefixMatch = Regex.Match(prefix, regexMessagePrefix);
-            var serverName = prefixMatch.Groups["server"].GetValue();
-            var nickName = prefixMatch.Groups["nick"].GetValue();
-            var userName = prefixMatch.Groups["user"].GetValue();
-            var hostName = prefixMatch.Groups["host"].GetValue();
-            if (serverName != null)
-            {
-                return GetServerFromHostName(serverName);
-            }
-            else if (nickName != null)
-            {
-                // Find user by nick name. If no user exists in list, create it and set its properties.
-                bool createdNew;
-                var user = GetUserFromNickName(nickName, true, out createdNew);
-                if (createdNew)
-                {
-                    user.UserName = userName;
-                    user.HostName = hostName;
-                }
-                return user;
-            }
-            else
-            {
-                throw new ArgumentException(string.Format(
-                    Properties.Resources.ErrorMessageInvalidSource, prefix), "prefix");
-            }
-        }
-
-        /// <inheritdoc cref="GetServerFromHostName(string, out bool)"/>
-        protected IrcServer GetServerFromHostName(string hostName)
-        {
-            bool createdNew;
-            return GetServerFromHostName(hostName, out createdNew);
-        }
-
-        /// <summary>
-        /// Gets the server with the specified host name, creating it if necessary.
-        /// </summary>
-        /// <param name="hostName">The host name of the server.</param>
-        /// <param name="createdNew"><see langword="true"/> if the server object was created during the call;
-        /// <see langword="false"/>, otherwise.</param>
-        /// <returns>The server object that corresponds to the specified host name.</returns>
-        protected IrcServer GetServerFromHostName(string hostName, out bool createdNew)
-        {
-            // Search for server  with given name in list of known servers. If it does not exist, add it.
-            var server = this.servers.SingleOrDefault(s => s.HostName == hostName);
-            if (server == null)
-            {
-                server = new IrcServer(hostName);
-                this.servers.Add(server);
-                createdNew = true;
-            }
-            else
-            {
-                createdNew = false;
-            }
-            return server;
-        }
-
-        /// <inheritdoc cref="GetChannelFromName(string, out bool)"/>
-        protected IrcChannel GetChannelFromName(string channelName)
-        {
-            bool createdNew;
-            return GetChannelFromName(channelName, out createdNew);
-        }
-
-        /// <summary>
-        /// Gets the channel with the specified name, creating it if necessary.
-        /// </summary>
-        /// <param name="channelName">The name of the channel.</param>
-        /// <param name="createdNew"><see langword="true"/> if the channel object was created during the call;
-        /// <see langword="false"/>, otherwise.</param>
-        /// <returns>The channel object that corresponds to the specified name.</returns>
-        protected IrcChannel GetChannelFromName(string channelName, out bool createdNew)
-        {
-            // Search for channel with given name in list of known channel. If it does not exist, add it.
-            var channel = this.channels.SingleOrDefault(c => c.Name == channelName);
-            if (channel == null)
-            {
-                channel = new IrcChannel(channelName);
-                this.channels.Add(channel);
-                createdNew = true;
-            }
-            else
-            {
-                createdNew = false;
-            }
-            return channel;
-        }
-
-        /// <inheritdoc cref="GetUserFromNickName(string, bool, out bool)"/>
-        protected IrcUser GetUserFromNickName(string nickName, bool isOnline = true)
-        {
-            bool createdNew;
-            return GetUserFromNickName(nickName, isOnline, out createdNew);
-        }
-
-        /// <summary>
-        /// Gets the user with the specified nick name, creating it if necessary.
-        /// </summary>
-        /// <param name="nickName">The nick name of the user.</param>
-        /// <param name="isOnline"><see langword="true"/> if the user is currently online;
-        /// <see langword="false"/>, if the user is currently offline.
-        /// The <see cref="IrcUser.IsOnline"/> property of the user object is set to this value.</param>
-        /// <param name="createdNew"><see langword="true"/> if the user object was created during the call;
-        /// <see langword="false"/>, otherwise.</param>
-        /// <returns>The user object that corresponds to the specified nick name.</returns>
-        protected IrcUser GetUserFromNickName(string nickName, bool isOnline, out bool createdNew)
-        {
-            // Search for user with given nick name in list of known users. If it does not exist, add it.
-            var user = this.users.SingleOrDefault(u => u.NickName == nickName);
-            if (user == null)
-            {
-                user = new IrcUser();
-                user.NickName = nickName;
-                this.users.Add(user);
-                createdNew = true;
-            }
-            else
-            {
-                createdNew = false;
-            }
-            user.IsOnline = isOnline;
-            return user;
-        }
-
-        /// <inheritdoc cref="GetUserFromUserName(string, out bool)"/>
-        protected IrcUser GetUserFromUserName(string userName)
-        {
-            bool createdNew;
-            return GetUserFromUserName(userName, out createdNew);
-        }
-
-        /// <summary>
-        /// Gets the user with the specified user name, creating it if necessary.
-        /// </summary>
-        /// <param name="userName">The user name of the user.</param>
-        /// <param name="createdNew"><see langword="true"/> if the user object was created during the call;
-        /// <see langword="false"/>, otherwise.</param>
-        /// <returns>The user object that corresponds to the specified user name.</returns>
-        protected IrcUser GetUserFromUserName(string userName, out bool createdNew)
-        {
-            // Search for user with given nick name in list of known users. If it does not exist, add it.
-            var user = this.users.SingleOrDefault(u => u.UserName == userName);
-            if (user == null)
-            {
-                user = new IrcUser();
-                user.UserName = userName;
-                this.users.Add(user);
-                createdNew = true;
-            }
-            else
-            {
-                createdNew = false;
-            }
-            return user;
-        }
-
-        private int GetNumericUserMode(ICollection<char> modes)
-        {
-            var value = 0;
-            if (modes == null)
-                return value;
-            if (modes.Contains('w'))
-                value |= 0x02;
-            if (modes.Contains('i'))
-                value |= 0x04;
-            return value;
-        }
-
-        private void ResetState()
-        {
-            this.servers = new Collection<IrcServer>();
-            this.isRegistered = false;
-            this.localUser = null;
-            this.serverSupportedFeatures = new Dictionary<string, string>();
-            this.serverSupportedFeaturesReadOnly = new ReadOnlyDictionary<string, string>(this.serverSupportedFeatures);
-            this.motdBuilder = new StringBuilder();
-            this.channels = new ObservableCollection<IrcChannel>();
-            this.channelsReadOnly = new IrcChannelCollection(this, this.channels);
-            this.users = new ObservableCollection<IrcUser>();
-            this.usersReadOnly = new IrcUserCollection(this, this.users);
         }
 
         /// <summary>
@@ -1877,41 +1971,30 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        /// /// Returns a string representation of this instance.
+        /// </summary>
+        /// <returns>A string that represents this instance.</returns>
+        public override string ToString()
+        {
+            if (this.client.Connected)
+                return string.Format("{0}@{1}", this.localUser.UserName,
+                    this.ServerName ?? this.client.Client.RemoteEndPoint.ToString());
+            else
+                return "(Not connected)";
+        }
+
+        /// <summary>
         /// Represents a method that processes <see cref="IrcMessage"/> objects.
         /// </summary>
         /// <param name="message">The message that the method should process.</param>
         protected delegate void MessageProcessor(IrcMessage message);
 
         /// <summary>
-        /// Indicates that a method processes <see cref="IrcMessage"/> objects for a given command.
-        /// </summary>
-        protected class MessageProcessorAttribute : Attribute
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="MessageProcessorAttribute"/> class.
-            /// </summary>
-            /// <param name="command">The name of the command for which messages are processed.</param>
-            public MessageProcessorAttribute(string command)
-            {
-                this.Command = command;
-            }
-
-            /// <summary>
-            /// Gets the name of the command for which messages are processed.
-            /// </summary>
-            /// <value>The command name.</value>
-            public string Command
-            {
-                get;
-                private set;
-            }
-        }
-
-        /// <summary>
         /// Represents a message that is sent/received by the client/server. A message contains a prefix (representing
         /// the source), a command name (a word or three-digit number), and an arbitrary number of parameters (up to a
         /// maximum of 15).
         /// </summary>
+        [DebuggerDisplay("{ToString(),nq}")]
         public struct IrcMessage
         {
             /// <summary>
@@ -1947,6 +2030,36 @@ namespace IrcDotNet
                 this.Parameters = parameters;
 
                 this.Source = client.GetSourceFromPrefix(prefix);
+            }
+
+            public override string ToString()
+            {
+                return string.Format("{0} ({1} parameters)", this.Command, this.Parameters.Count);
+            }
+        }
+
+        /// <summary>
+        /// Indicates that a method processes <see cref="IrcMessage"/> objects for a given command.
+        /// </summary>
+        protected class MessageProcessorAttribute : Attribute
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MessageProcessorAttribute"/> class.
+            /// </summary>
+            /// <param name="command">The name of the command for which messages are processed.</param>
+            public MessageProcessorAttribute(string command)
+            {
+                this.Command = command;
+            }
+
+            /// <summary>
+            /// Gets the name of the command for which messages are processed.
+            /// </summary>
+            /// <value>The command name.</value>
+            public string Command
+            {
+                get;
+                private set;
             }
         }
     }

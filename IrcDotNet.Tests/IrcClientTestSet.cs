@@ -24,7 +24,7 @@ namespace IrcDotNet.Tests
         private const string testMessage1 = "This is the first test message.";
         private const string testMessage2 = "This is the second test message.";
         private const string spamMessage = "This message is part of an attempt to spam the channel and get booted from the server";
-
+        
         // Threading events used to signify when client raises event.
 #pragma warning disable 0649
         private static AutoResetEvent client1ConnectedEvent;
