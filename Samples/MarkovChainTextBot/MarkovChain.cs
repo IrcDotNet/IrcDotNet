@@ -7,6 +7,7 @@ using System.Text;
 
 namespace MarkovChainTextBox
 {
+    // Represents a Markov chain of arbitrary length.
     [DebuggerDisplay("{this.nodes.Count} nodes")]
     public class MarkovChain<T>
     {

@@ -227,7 +227,7 @@ namespace IrcDotNet
             var server = message.Parameters[0];
             var target = message.Parameters[1];
             OnPingReceived(new IrcPingOrPongReceivedEventArgs(server));
-            SendMessagePong(this.localUser.NickName, target);
+            SendMessagePong(server, target);
         }
 
         /// <summary>
@@ -352,8 +352,12 @@ namespace IrcDotNet
                 {
                     if (message.Parameters[i + 1] == null)
                         break;
-                    var tokenParts = message.Parameters[i].Split('=');
-                    this.serverSupportedFeatures.Add(tokenParts[0], tokenParts.Length == 1 ? null : tokenParts[1]);
+
+                    var paramParts = message.Parameters[i].Split('=');
+                    var paramName = paramParts[0];
+                    var paramValue = paramParts.Length == 1 ? null : paramParts[1];
+                    HandleISupportParameter(paramName, paramValue);
+                    this.serverSupportedFeatures.Add(paramName, paramValue);
                 }
                 OnServerSupportedFeaturesReceived(new EventArgs());
             }
@@ -513,7 +517,7 @@ namespace IrcDotNet
                     return;
 
                 // Find user by nick name and add it to collection of channel users.
-                var channelNameAndUserMode = ExtractUserMode(channelId);
+                var channelNameAndUserMode = GetUserModeAndNickName(channelId);
                 var channel = GetChannelFromName(channelNameAndUserMode.Item1);
                 if (channel.GetChannelUser(user) == null)
                     channel.HandleUserJoined(new IrcChannelUser(user, channelNameAndUserMode.Item2));
@@ -577,13 +581,13 @@ namespace IrcDotNet
             user.ServerName = message.Parameters[4];
 
             Debug.Assert(message.Parameters[6] != null);
-            var userFlags = message.Parameters[6];
-            Debug.Assert(userFlags.Length > 0);
-            if (userFlags.Contains('H'))
+            var userModeFlags = message.Parameters[6];
+            Debug.Assert(userModeFlags.Length > 0);
+            if (userModeFlags.Contains('H'))
                 user.IsAway = false;
-            else if (userFlags.Contains('G'))
+            else if (userModeFlags.Contains('G'))
                 user.IsAway = true;
-            user.IsOperator = userFlags.Contains('*');
+            user.IsOperator = userModeFlags.Contains('*');
             if (channel != null)
             {
                 // Add user to channel if it does not already exist in it.
@@ -594,10 +598,15 @@ namespace IrcDotNet
                     channel.HandleUserJoined(channelUser);
                 }
 
-                if (userFlags.Contains('@'))
-                    channelUser.HandleModeChanged(true, 'o');
-                if (userFlags.Contains('+'))
-                    channelUser.HandleModeChanged(false, 'v');
+                // Set modes on user corresponding to given mode flags (prefix characters).
+                foreach(var c in userModeFlags)
+                {
+                    char mode;
+                    if (this.channelUserModesPrefixes.TryGetValue(c, out mode))
+                        channelUser.HandleModeChanged(true, mode);
+                    else
+                        break;
+                }
             }
 
             Debug.Assert(message.Parameters[7] != null);
@@ -660,9 +669,9 @@ namespace IrcDotNet
                         return;
 
                     // Find user by nick name and add it to collection of channel users.
-                    var userNickNameAndMode = ExtractUserMode(userId);
+                    var userNickNameAndMode = GetUserModeAndNickName(userId);
                     var user = GetUserFromNickName(userNickNameAndMode.Item1);
-                    channel.HandleUserInitialPresence(new IrcChannelUser(user, userNickNameAndMode.Item2));
+                    channel.HandleUserNameReply(new IrcChannelUser(user, userNickNameAndMode.Item2));
                 }
             }
         }

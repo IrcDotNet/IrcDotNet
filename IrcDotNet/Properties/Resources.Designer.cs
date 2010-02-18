@@ -187,6 +187,15 @@ namespace IrcDotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The ISUPPORT message sent by the server contains an invalid PREFIX parameter..
+        /// </summary>
+        internal static string ErrorMessageISupportPrefixInvalid {
+            get {
+                return ResourceManager.GetString("ErrorMessageISupportPrefixInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The length of the line must not exceed 510 characters..
         /// </summary>
         internal static string ErrorMessageLineTooLong {
@@ -246,6 +255,15 @@ namespace IrcDotNet.Properties {
         internal static string ErrorMessageTooManyParams {
             get {
                 return ResourceManager.GetString("ErrorMessageTooManyParams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value cannot be an empty string.
+        /// </summary>
+        internal static string ErrorMessageValueCannotBeEmptyString {
+            get {
+                return ResourceManager.GetString("ErrorMessageValueCannotBeEmptyString", resourceCulture);
             }
         }
     }

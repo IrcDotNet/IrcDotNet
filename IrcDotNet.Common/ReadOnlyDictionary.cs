@@ -57,12 +57,12 @@ namespace IrcDotNet.Common.Collections
             }
         }
 
-        public void Add(TKey key, TValue value)
+        void IDictionary<TKey, TValue>.Add(TKey key, TValue value)
         {
             throw new NotSupportedException();
         }
 
-        public bool Remove(TKey key)
+        bool IDictionary<TKey, TValue>.Remove(TKey key)
         {
             throw new NotSupportedException();
         }
@@ -91,17 +91,17 @@ namespace IrcDotNet.Common.Collections
             get { return true; }
         }
 
-        public void Add(KeyValuePair<TKey, TValue> item)
+        void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
         {
             throw new NotSupportedException();
         }
 
-        public bool Remove(KeyValuePair<TKey, TValue> item)
+        bool  ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
         {
             throw new NotSupportedException();
         }
 
-        public void Clear()
+        void  ICollection<KeyValuePair<TKey, TValue>>.Clear()
         {
             throw new NotSupportedException();
         }
