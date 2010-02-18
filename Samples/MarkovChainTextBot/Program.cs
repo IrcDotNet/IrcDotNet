@@ -171,8 +171,9 @@ namespace MarkovChainTextBox
             var client = new IrcClient();
             var serverAddress = parameters[0];
             client.FloodPreventer = new IrcStandardFloodPreventer(4, 2000);
+            client.Connected += client_Connected;
             client.Registered += client_Registered;
-
+            
             using (var connectedEvent = new ManualResetEventSlim(false))
             {
                 client.Connected += (sender2, e2) => connectedEvent.Set();
@@ -261,6 +262,20 @@ namespace MarkovChainTextBox
             Console.ForegroundColor = prevForegroundColor;
         }
 
+        private static bool ReadChatCommand(IrcClient client, IIrcMessageTarget target, string line)
+        {
+            // Check if line is chat command; if so, process it.
+            if (line.Length > 1 && line.StartsWith("."))
+            {
+                var parts = line.Substring(1).Split(' ');
+                var command = parts[0];
+                var parameters = parts.Skip(1).ToArray();
+                ReadChatCommand(client, target, command, parameters);
+                return true;
+            }
+            return false;
+        }
+
         private static void ReadChatCommand(IrcClient client, IIrcMessageTarget target, string command,
             string[] parameters)
         {
@@ -337,16 +352,44 @@ namespace MarkovChainTextBox
                 Regex.IsMatch(c.ServerName, serverNameMask, RegexOptions.IgnoreCase));
         }
 
+        private static void client_Connected(object sender, EventArgs e)
+        {
+            //
+        }
+
         private static void client_Registered(object sender, EventArgs e)
         {
             var client = (IrcClient)sender;
+            client.LocalUser.MessageReceived += client_LocalUser_MessageReceived;
             client.LocalUser.JoinedChannel += client_LocalUser_JoinedChannel;
+            client.LocalUser.LeftChannel += client_LocalUser_LeftChannel;
+        }
+
+        private static void client_LocalUser_MessageReceived(object sender, IrcMessageEventArgs e)
+        {
+            var localUser = (IrcLocalUser)sender;
+            var client = localUser.Client;
+
+            if (e.Source is IrcUser)
+            {
+                var sourceUser = (IrcUser)e.Source;
+
+                // If message is chat command, process it.
+                if (ReadChatCommand(client, sourceUser, e.Text))
+                    return;
+            }
         }
 
         private static void client_LocalUser_JoinedChannel(object sender, IrcChannelEventArgs e)
         {
             e.Channel.MessageReceived += client_Channel_MessageReceived;
             e.Channel.NoticeReceived += client_Channel_NoticeReceived;
+        }
+
+        private static void client_LocalUser_LeftChannel(object sender, IrcChannelEventArgs e)
+        {
+            e.Channel.MessageReceived -= client_Channel_MessageReceived;
+            e.Channel.NoticeReceived -= client_Channel_NoticeReceived;
         }
 
         private static void client_Channel_NoticeReceived(object sender, IrcMessageEventArgs e)
@@ -361,14 +404,9 @@ namespace MarkovChainTextBox
 
             if (e.Source is IrcUser)
             {
-                // Check if message is chat command, and if so, process it.
-                if (e.Text.Length > 1 && e.Text.StartsWith("."))
-                {
-                    var parts = e.Text.Substring(1).Split(' ');
-                    var command = parts[0];
-                    var parameters = parts.Skip(1).ToArray();
-                    ReadChatCommand(client, channel, command, parameters);
-                }
+                // If message is chat command, process it.
+                if (ReadChatCommand(client, channel, e.Text))
+                    return;
 
                 // Train Markov generator from received message, assuming it is composed of one or more coherent
                 // sentences, which themselves are composed of words.
