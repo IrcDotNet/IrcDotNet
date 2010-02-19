@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using IrcDotNet.Common.Collections;
@@ -11,10 +12,9 @@ namespace IrcDotNet
     /// <summary>
     /// Represents an IRC channel that resides on a specific <see cref="IrcClient"/>.
     /// </summary>
+    [DebuggerDisplay("{ToString(),nq}")]
     public class IrcChannel : INotifyPropertyChanged, IIrcMessageTarget, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
-        private readonly char[] channelUserModes = new char[] { 'o', 'v' };
-
         private string name;
         private IrcChannelType type;
         private HashSet<char> modes;
@@ -97,7 +97,7 @@ namespace IrcDotNet
         /// <value>The client to which the channel belongs.</value>
         public IrcClient Client
         {
-            get { return this.client;}
+            get { return this.client; }
             internal set
             {
                 this.client = value;
@@ -157,6 +157,32 @@ namespace IrcDotNet
                 throw new ArgumentNullException("user");
 
             return this.users.SingleOrDefault(cu => cu.User == user);
+        }
+
+        /// <inheritdoc cref="Invite(string)"/>
+        /// <param name="user">The user to invite to the channel</param>
+        public void Invite(IrcUser user)
+        {
+            Invite(user.NickName);
+        }
+
+        /// <summary>
+        /// Invites the the specified user to the channel.
+        /// </summary>
+        /// <param name="userNickName">The nick name of the user to invite.</param>
+        public void Invite(string userNickName)
+        {
+            client.Invite(this, userNickName);
+        }
+
+        /// <summary>
+        /// Kicks the specified user from the channel, giving the specified comment.
+        /// </summary>
+        /// <param name="userNickName">The nick name of the user to kick from the channel.</param>
+        /// <param name="comment">The comment to give for the kick, or <see langword="null"/> for none.</param>
+        public void Kick(string userNickName, string comment = null)
+        {
+            this.client.Kick(this, new[] { userNickName }, comment);
         }
 
         /// <summary>
@@ -256,8 +282,13 @@ namespace IrcDotNet
             this.client.Leave(new[] { this.name }, comment);
         }
 
-        internal void HandleUserInitialPresence(IrcChannelUser channelUser)
+        internal void HandleUserNameReply(IrcChannelUser channelUser)
         {
+            if (this.users.Contains(channelUser))
+            {
+                Debug.Fail("User already in channel.");
+                return;
+            }
             this.users.Add(channelUser);
         }
 
@@ -268,13 +299,19 @@ namespace IrcDotNet
 
         internal void HandleModesChanged(string newModes, IEnumerable<string> newModeParameters)
         {
-            this.modes.UpdateModes(newModes, newModeParameters, channelUserModes, (add, mode, modeParameter) =>
-                this.users.Single(cu => cu.User.NickName == modeParameter).HandleModeChanged(add, mode));
+            this.modes.UpdateModes(newModes, newModeParameters, this.client.ChannelUserModes,
+                (add, mode, modeParameter) => this.users.Single(
+                    cu => cu.User.NickName == modeParameter).HandleModeChanged(add, mode));
             OnModesChanged(new EventArgs());
         }
 
         internal void HandleUserJoined(IrcChannelUser channelUser)
         {
+            if (this.users.Contains(channelUser))
+            {
+                Debug.Fail("User already in channel.");
+                return;
+            }
             this.users.Add(channelUser);
             OnUserJoined(new IrcChannelUserEventArgs(channelUser, null));
         }
@@ -287,7 +324,7 @@ namespace IrcDotNet
         internal void HandleUserLeft(IrcChannelUser channelUser, string comment)
         {
             OnUserLeft(new IrcChannelUserEventArgs(channelUser, comment));
-            this.users.Remove(channelUser); ;
+            this.users.Remove(channelUser);
         }
 
         internal void HandleUserKicked(IrcUser user, string comment)
@@ -298,6 +335,11 @@ namespace IrcDotNet
         internal void HandleUserKicked(IrcChannelUser channelUser, string comment)
         {
             OnUserKicked(new IrcChannelUserEventArgs(channelUser, comment));
+            this.users.Remove(channelUser);
+        }
+
+        internal void HandleUserQuit(IrcChannelUser channelUser)
+        {
             this.users.Remove(channelUser);
         }
 
@@ -418,7 +460,7 @@ namespace IrcDotNet
         {
             return this.name;
         }
-        
+
         #region IIrcMessageTarget Members
 
         string IIrcMessageTarget.Name
@@ -444,7 +486,7 @@ namespace IrcDotNet
 
         #endregion
     }
-    
+
     /// <summary>
     /// Defines the types of channels. Each channel may only be of a single type at any one time.
     /// </summary>

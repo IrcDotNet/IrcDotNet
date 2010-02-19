@@ -32,27 +32,27 @@ namespace IrcDotNet.Common.Collections
 
         #region ISet<T> Members
 
-        public bool Add(T item)
+        bool ISet<T>.Add(T item)
         {
             throw new NotSupportedException();
         }
 
-        public void ExceptWith(IEnumerable<T> other)
+        void ISet<T>.ExceptWith(IEnumerable<T> other)
         {
             throw new NotSupportedException();
         }
 
-        public void SymmetricExceptWith(IEnumerable<T> other)
+        void ISet<T>.SymmetricExceptWith(IEnumerable<T> other)
         {
             throw new NotSupportedException();
         }
 
-        public void IntersectWith(IEnumerable<T> other)
+        void ISet<T>.IntersectWith(IEnumerable<T> other)
         {
             throw new NotSupportedException();
         }
 
-        public void UnionWith(IEnumerable<T> other)
+        void ISet<T>.UnionWith(IEnumerable<T> other)
         {
             throw new NotSupportedException();
         }
@@ -106,12 +106,12 @@ namespace IrcDotNet.Common.Collections
             throw new NotSupportedException();
         }
 
-        public bool Remove(T item)
+        bool ICollection<T>.Remove(T item)
         {
             throw new NotSupportedException();
         }
 
-        public void Clear()
+        void ICollection<T>.Clear()
         {
             throw new NotSupportedException();
         }

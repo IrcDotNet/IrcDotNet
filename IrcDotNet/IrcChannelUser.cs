@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using IrcDotNet.Common.Collections;
@@ -11,6 +12,7 @@ namespace IrcDotNet
     /// <summary>
     /// Represents an IRC user that resides on a specific channel on a specific <see cref="IrcClient"/>.
     /// </summary>
+    [DebuggerDisplay("{ToString(),nq}")]
     public class IrcChannelUser : INotifyPropertyChanged
     {
         // Internal and exposable collections of channel modes currently active on user.
@@ -74,10 +76,10 @@ namespace IrcDotNet
         /// <summary>
         /// Kicks the user from the channel, giving the specified comment.
         /// </summary>
-        /// <param name="comment">The comment to give regarding the kick, or <see langword="null"/> for none.</param>
+        /// <param name="comment">The comment to give for the kick, or <see langword="null"/> for none.</param>
         public void Kick(string comment = null)
         {
-            this.channel.Client.Kick(new[] { this }, comment);
+            this.channel.Kick(this.user.NickName, comment);
         }
 
         /// <summary>
@@ -149,7 +151,7 @@ namespace IrcDotNet
         /// <returns>A string that represents this instance.</returns>
         public override string ToString()
         {
-            return this.channel.Name + "/" + this.user.NickName;
+            return string.Format("{0}/{1}", this.channel.Name, this.user.NickName);
         }
     }
 }
