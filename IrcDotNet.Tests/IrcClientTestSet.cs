@@ -23,7 +23,8 @@ namespace IrcDotNet.Tests
         private const string quitMessage = "Client 2 quitting test.";
         private const string testMessage1 = "This is the first test message.";
         private const string testMessage2 = "This is the second test message.";
-
+        private const string spamMessage = "This message is part of an attempt to spam the channel and get booted from the server";
+        
         // Threading events used to signify when client raises event.
 #pragma warning disable 0649
         private static AutoResetEvent client1ConnectedEvent;
@@ -751,8 +752,29 @@ namespace IrcDotNet.Tests
         [TestMethod()]
         public void ChannelFloodPreventionTest()
         {
-            // The FreeNode server now primarily uses message throttling rather than disconnecting a client for
-            // "excess flood". For this reason, flood prevention is not really testable in the current situation.
+            stateManager.HasStates(IrcClientTestState.Client1InChannel);
+
+            // Attempt to rapidly send many messages to channel.
+            const int messageCount = 10;
+            for (int i = 1; i <= messageCount; i++)
+            {
+                client1.LocalUser.SendMessage(testChannelName, spamMessage);
+            }
+
+            // Check that all sent messages are eventually received.
+            var messageWaitPeriod = ((IrcStandardFloodPreventer)client1.FloodPreventer).CounterPeriod * 2;
+            for (int i = 1; i <= messageCount; i++)
+            {
+                Assert.IsTrue(WaitForClientEvent(client2ChannelMessageReceivedEvent, messageWaitPeriod),
+                    "Client 1 channel did not receive message {0} of {1} for flood prevention test",
+                    i, messageCount);
+            }
+
+            // If user does not get booted from server for "excess flood", then flood prevention is working correctly.
+            Assert.IsTrue(client1.IsConnected,
+                "Client 1 is no longer connected to the server after attempting to flood the test channel.");
+            Assert.IsTrue(client1.Channels.Any(c => c.Name == testChannelName),
+                "Client 1 is no longer a member of the test channel after trying to flood it.");
         }
 
         [TestMethod()]
