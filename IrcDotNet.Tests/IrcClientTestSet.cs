@@ -19,12 +19,16 @@ namespace IrcDotNet.Tests
         private const string serverPassword = null;
         private const string realName = "IRC.NET Test Bot";
 
-        // Data used for testing.
+        // Information for sending messages, to be used in tests.
         private const string quitMessage = "Client 2 quitting test.";
         private const string testMessage1 = "This is the first test message.";
         private const string testMessage2 = "This is the second test message.";
         private const string spamMessage = "This message is part of an attempt to spam the channel and get booted from the server";
-        
+
+        // Information received from server, to be used in tests.
+        private static IList<IrcChannelInfo> client1ListedChannels;
+        private static string client1UserQuitComment;
+
         // Threading events used to signify when client raises event.
 #pragma warning disable 0649
         private static AutoResetEvent client1ConnectedEvent;
@@ -44,6 +48,7 @@ namespace IrcDotNet.Tests
         private static AutoResetEvent client1WhoReplyReceived;
         private static AutoResetEvent client1WhoIsReplyReceived;
         private static AutoResetEvent client1WhoWasReplyReceived;
+        private static AutoResetEvent client1ChannelListReceived;
         private static AutoResetEvent client1UserQuitEvent;
         private static AutoResetEvent client1ChannelUsersListReceivedEvent;
         private static AutoResetEvent client1ChannelModeChangedEvent;
@@ -68,9 +73,6 @@ namespace IrcDotNet.Tests
         private static AutoResetEvent client2ChannelMessageReceivedEvent;
         private static AutoResetEvent client2ChannelNoticeReceivedEvent;
 #pragma warning restore 0649
-
-        // Data received from tests.
-        private static string client1UserQuitComment;
 
         // Primary and secondary client, with associated user information.
         private static IrcClient client1, client2;
@@ -100,6 +102,7 @@ namespace IrcDotNet.Tests
             client1.WhoReplyReceived += client1_WhoReplyReceived;
             client1.WhoIsReplyReceived += client1_WhoIsReplyReceived;
             client1.WhoWasReplyReceived += client1_WhoWasReplyReceived;
+            client1.ChannelListReceived += client1_ChannelListReceived;
 
             client2 = new IrcClient();
 #if DEBUG
@@ -235,6 +238,14 @@ namespace IrcDotNet.Tests
         {
             if (client1WhoWasReplyReceived != null)
                 client1WhoWasReplyReceived.Set();
+        }
+
+        private static void client1_ChannelListReceived(object sender, IrcChannelListReceivedEventArgs e)
+        {
+            client1ListedChannels = e.Channels;
+
+            if (client1ChannelListReceived != null)
+                client1ChannelListReceived.Set();
         }
 
         private static void client1_LocalUser_ModesChanged(object sender, EventArgs e)
@@ -791,6 +802,25 @@ namespace IrcDotNet.Tests
             Assert.IsFalse(client1.Channels.Contains(channel),
                 "Client 1 collection of channels still contains channel from which local user kicked.");
             stateManager.UnsetStates(IrcClientTestState.Client1InChannel);
+        }
+
+        [TestMethod()]
+        public void ListChannelsTest()
+        {
+            stateManager.HasStates(IrcClientTestState.Client1InChannel);
+            stateManager.HasStates(IrcClientTestState.Client2InChannel);
+
+            client1.ListChannels(testChannelName);
+            Assert.IsTrue(WaitForClientEvent(client1ChannelListReceived, 10000),
+                "Client 1 did not receive channel list from server.");
+
+            Assert.IsTrue(client1ListedChannels.Count == 1,
+                "Client 1 received an unexpected number of listed channels.");
+            var channel = client1.Channels.Single(c => c.Name == testChannelName);
+            var channelInfo1 = client1ListedChannels[0];
+            Assert.AreEqual(channel.Name, channelInfo1.Name);
+            Assert.AreEqual(channel.Topic ?? string.Empty, channelInfo1.Topic);
+            Assert.AreEqual(channel.Users.Count, channelInfo1.VisibleUsersCount);
         }
 
         [TestMethod()]

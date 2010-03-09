@@ -16,8 +16,8 @@ using IrcDotNet.Common.Collections;
 namespace IrcDotNet
 {
     /// <summary>
-    /// Provides methods for communicating with an IRC (Internet Relay Chat) server.
-    /// Do not inherit unless protocol itself is being extended.
+    /// Provides methods for communicating with a server using the IRC (Internet Relay Chat) protocol.
+    /// Do not inherit unless the protocol itself is being extended.
     /// </summary>
     [DebuggerDisplay("{ToString(),nq}")]
     public partial class IrcClient : IDisposable
@@ -79,6 +79,8 @@ namespace IrcDotNet
         // Internal and exposable collection of all known users.
         private ObservableCollection<IrcUser> users;
         private IrcUserCollection usersReadOnly;
+        // List of information about channels returned by server in response to last LIST message.
+        private List<IrcChannelInfo> listedChannels;
 
         private TcpClient client;
         private AutoResetEvent disconnectedEvent;
@@ -459,6 +461,10 @@ namespace IrcDotNet
         /// Occurs when a reply to a Who Was query has been received from the server.
         /// </summary>
         public event EventHandler<IrcUserEventArgs> WhoWasReplyReceived;
+        /// <summary>
+        /// Occurs when a list of channels has been received from the server in response to a query.
+        /// </summary>
+        public event EventHandler<IrcChannelListReceivedEventArgs> ChannelListReceived;
 
         /// <summary>
         /// Sends a Who query to the server targeting the specified channel or user masks.
@@ -532,6 +538,29 @@ namespace IrcDotNet
                 throw new ArgumentNullException("nickNames");
 
             SendMessageWhoWas(nickNames, entriesCount);
+        }
+
+        /// <inheritdoc cref="SendMessageList(IEnumerable{string})"/>
+        public void ListChannels(params string[] channelNames)
+        {
+            CheckDisposed();
+
+            if (channelNames == null)
+                throw new ArgumentNullException("channelNames");
+
+            SendMessageList((IEnumerable<string>)channelNames);
+        }
+
+        /// <summary>
+        /// Requests a list of information about the specified (or all) channels on the network.
+        /// </summary>
+        /// <param name="channelNames">The names of the channels to list, or <see langword="null"/> to list all channels
+        /// on the network.</param>
+        public void ListChannels(IEnumerable<string> channelNames = null)
+        {
+            CheckDisposed();
+
+            SendMessageList(channelNames);
         }
 
         /// <summary>
@@ -1218,6 +1247,7 @@ namespace IrcDotNet
             this.channelsReadOnly = new IrcChannelCollection(this, this.channels);
             this.users = new ObservableCollection<IrcUser>();
             this.usersReadOnly = new IrcUserCollection(this, this.users);
+            this.listedChannels = new List<IrcChannelInfo>();
         }
 
         private void InitialiseMessageProcessors()
@@ -1966,6 +1996,18 @@ namespace IrcDotNet
         protected virtual void OnWhoWasReplyReceived(IrcUserEventArgs e)
         {
             var handler = this.WhoWasReplyReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="ChannelListReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcChannelListReceivedEventArgs"/> instance containing the event data.
+        /// </param>
+        protected virtual void OnChannelListReceived(IrcChannelListReceivedEventArgs e)
+        {
+            var handler = this.ChannelListReceived;
             if (handler != null)
                 handler(this, e);
         }

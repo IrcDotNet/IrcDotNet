@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="IrcDotNet.IrcChannel" BaseTypeListCollapsed="true">
-    <Position X="4.5" Y="1.25" Width="3.25" />
+    <Position X="11.25" Y="1.25" Width="3.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>KIwQEyEAQACJCEAEIBQIEAwAwEEFIkAkAQGCBSAAAwQ=</HashCode>
+      <HashCode>KIwQMyEAQIALCEAEoBQIGI0AwUEFIkAEAQGCBSCBAwQ=</HashCode>
       <FileName>IrcChannel.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="IrcDotNet.IrcChannelUser" BaseTypeListCollapsed="true">
-    <Position X="11.5" Y="1.25" Width="3" />
+    <Position X="18.25" Y="1.25" Width="3" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -23,7 +23,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="IrcDotNet.IrcChannelCollection">
-    <Position X="4.5" Y="11" Width="3.25" />
+    <Position X="11.25" Y="13" Width="3.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -33,7 +33,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="IrcDotNet.IrcUserCollection">
-    <Position X="8" Y="18.75" Width="3.25" />
+    <Position X="14.75" Y="19.5" Width="3.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -43,7 +43,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="IrcDotNet.IrcUser" BaseTypeListCollapsed="true">
-    <Position X="8" Y="1.25" Width="3.25" />
+    <Position X="14.75" Y="1.25" Width="3.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -152,25 +152,25 @@
           <NewMemberFileName>IrcClient.cs</NewMemberFileName>
         </TypeIdentifier>
       </Delegate>
-      <Class Name="IrcDotNet.IrcClient.MessageProcessorAttribute" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>IrcClient.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
       <Struct Name="IrcDotNet.IrcClient.IrcMessage" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>IrcClient.cs</NewMemberFileName>
         </TypeIdentifier>
       </Struct>
+      <Class Name="IrcDotNet.IrcClient.MessageProcessorAttribute" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>IrcClient.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>PkWc0nd3DnPuU1rV+U+AUbPVn+/acwo56f9ev0572fE=</HashCode>
+      <HashCode>PkWc0nd3DnPuU1rV+U+IWfPVn+/acwo56f9ev0572fE=</HashCode>
       <FileName>IrcClient.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="IrcDotNet.IrcChannelUserCollection">
-    <Position X="11.5" Y="6.25" Width="3" />
+    <Position X="18.25" Y="6.25" Width="3" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -180,18 +180,18 @@
     </TypeIdentifier>
   </Class>
   <Class Name="IrcDotNet.IrcLocalUser">
-    <Position X="8" Y="9.5" Width="3.25" />
+    <Position X="14.75" Y="9.5" Width="3.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>CAgBggEAREADCGwAIDUMAAAEQEJAgUAMAAEAAAgADwA=</HashCode>
+      <HashCode>CAgBggEAREADCGwAIDUMAIAEQUJAgUAMAAEAAAiBDwA=</HashCode>
       <FileName>IrcLocalUser.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="IrcDotNet.IrcServer">
-    <Position X="7" Y="23" Width="2" />
+    <Position X="21.5" Y="1.25" Width="2" />
     <TypeIdentifier>
       <HashCode>gAAAAIAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
       <FileName>IrcServer.cs</FileName>
@@ -199,7 +199,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="IrcDotNet.IrcTargetMask">
-    <Position X="9.25" Y="23" Width="2.25" />
+    <Position X="23.75" Y="1.25" Width="2.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -210,7 +210,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="IrcDotNet.IrcStandardFloodPreventer">
-    <Position X="2.5" Y="30" Width="2.25" />
+    <Position X="3.75" Y="8" Width="2.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -221,70 +221,77 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="IrcDotNet.IrcServiceRegistrationInfo">
-    <Position X="0.5" Y="27.25" Width="2" />
+    <Position X="3.75" Y="3.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IrcRegistrationInfo.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="IrcDotNet.IrcUserRegistrationInfo">
-    <Position X="3" Y="27.25" Width="2" />
+    <Position X="6" Y="3.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAQAAAAACAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>IrcRegistrationInfo.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="IrcDotNet.IrcRegistrationInfo">
-    <Position X="0.5" Y="25" Width="2" />
+    <Position X="3.75" Y="1.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAECAAAAAAAAAAA=</HashCode>
       <FileName>IrcRegistrationInfo.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Struct Name="IrcDotNet.IrcChannelInfo">
+    <Position X="3.75" Y="11" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAIAAAAAACAAAAA=</HashCode>
+      <FileName>IrcChannelInfo.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
   <Interface Name="IrcDotNet.IIrcMessageReceiveHandler">
-    <Position X="9" Y="29.25" Width="2.25" />
+    <Position X="8.75" Y="5.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
       <FileName>IIrcMessageReceiveHandler.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcMessageReceiver">
-    <Position X="7" Y="30.25" Width="1.75" />
+    <Position X="8.75" Y="7.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAQAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IIrcMessageReceiver.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcMessageSource">
-    <Position X="7" Y="27.75" Width="1.75" />
+    <Position X="8.75" Y="1.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IIrcMessageSource.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcMessageTarget">
-    <Position X="7" Y="29" Width="1.75" />
+    <Position X="8.75" Y="2.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IIrcMessageTarget.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcMessageSendHandler">
-    <Position X="9" Y="27.75" Width="2.25" />
+    <Position X="8.75" Y="4.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAA=</HashCode>
       <FileName>IIrcMessageSendHandler.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcFloodPreventer">
-    <Position X="0.5" Y="30" Width="1.75" />
+    <Position X="3.75" Y="6.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAACAA=</HashCode>
       <FileName>IIrcFloodPreventer.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="IrcDotNet.IrcTargetMaskType">
-    <Position X="9.25" Y="25.5" Width="2.25" />
+    <Position X="23.75" Y="3.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAQAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IrcTargetMask.cs</FileName>

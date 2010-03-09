@@ -131,6 +131,10 @@ namespace IrcDotNet
         /// </summary>
         public event EventHandler<IrcChannelUserEventArgs> UserKicked;
         /// <summary>
+        /// Occurs when the channel has received a message, before the <see cref="MessageReceived"/> event.
+        /// </summary>
+        public event EventHandler<IrcPreviewMessageEventArgs> PreviewMessageReceived;
+        /// <summary>
         /// Occurs when the channel has received a message.
         /// </summary>
         public event EventHandler<IrcMessageEventArgs> MessageReceived;
@@ -138,6 +142,10 @@ namespace IrcDotNet
         /// Occurs when the channel has received a notice.
         /// </summary>
         public event EventHandler<IrcMessageEventArgs> NoticeReceived;
+        /// <summary>
+        /// Occurs when the channel has received a notice, before the <see cref="NoticeReceived"/> event.
+        /// </summary>
+        public event EventHandler<IrcPreviewMessageEventArgs> PreviewNoticeReceived;
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
@@ -431,12 +439,34 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        /// Raises the <see cref="PreviewMessageReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcPreviewMessageEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnPreviewMessageReceived(IrcPreviewMessageEventArgs e)
+        {
+            var handler = this.PreviewMessageReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
         /// Raises the <see cref="NoticeReceived"/> event.
         /// </summary>
         /// <param name="e">The <see cref="IrcMessageEventArgs"/> instance containing the event data.</param>
         protected virtual void OnNoticeReceived(IrcMessageEventArgs e)
         {
             var handler = this.NoticeReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="PreviewNoticeReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcPreviewMessageEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnPreviewNoticeReceived(IrcPreviewMessageEventArgs e)
+        {
+            var handler = this.PreviewNoticeReceived;
             if (handler != null)
                 handler(this, e);
         }

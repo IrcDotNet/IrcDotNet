@@ -7,6 +7,60 @@ using System.Text;
 namespace IrcDotNet
 {
     /// <summary>
+    /// Provides data for the <see cref="IrcClient.ChannelListReceived"/> event.
+    /// </summary>
+    public class IrcChannelListReceivedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IrcChannelListReceivedEventArgs"/> class.
+        /// </summary>
+        /// <param name="channels">A list of information about the channels returned by the server.</param>
+        public IrcChannelListReceivedEventArgs(IList<IrcChannelInfo> channels)
+            : base()
+        {
+            if (channels == null)
+                throw new ArgumentNullException("channels");
+
+            this.Channels = channels;
+        }
+
+        /// <summary>
+        /// Gets the list of information about the channels returned by the server.
+        /// </summary>
+        /// <value>The list of channels.</value>
+        public IList<IrcChannelInfo> Channels
+        {
+            get;
+            private set; 
+        }
+    }
+
+    /// <summary>
+    /// <inheritdoc select="/summary/node()"/>
+    /// Gives the option to handle the preview event and thus stop the normal event from being raised.
+    /// </summary>
+    public class IrcPreviewMessageEventArgs : IrcMessageEventArgs
+    {
+        /// <inheritdoc/>
+        public IrcPreviewMessageEventArgs(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
+            : base(source, targets, text)
+        {
+            this.Handled = false;
+        }
+
+        /// <summary>
+        /// Gets or sets whether the event has been handled. If it is handled, the corresponding normal (non-preview)
+        /// event is not raised.
+        /// </summary>
+        /// <value><see langword="true"/> if the event has been handled; otherwise, <see langword="false"/>.</value>
+        public bool Handled
+        {
+            get;
+            set;
+        }
+    }
+
+    /// <summary>
     /// Provides data for events that are raised when a message or notice is sent or received.
     /// </summary>
     public class IrcMessageEventArgs : EventArgs
@@ -190,7 +244,7 @@ namespace IrcDotNet
         {
             this.Comment = comment;
         }
-        
+
         /// <summary>
         /// Gets the comment that the event specified.
         /// </summary>

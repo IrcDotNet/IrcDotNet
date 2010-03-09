@@ -599,7 +599,7 @@ namespace IrcDotNet
                 }
 
                 // Set modes on user corresponding to given mode flags (prefix characters).
-                foreach(var c in userModeFlags)
+                foreach (var c in userModeFlags)
                 {
                     char mode;
                     if (this.channelUserModesPrefixes.TryGetValue(c, out mode))
@@ -613,7 +613,7 @@ namespace IrcDotNet
             var lastParamParts = message.Parameters[7].SplitAtIndex(message.Parameters[7].IndexOf(' '));
             user.HopCount = int.Parse(lastParamParts.Item1);
             if (lastParamParts.Item2 != null)
-                user.RealName =lastParamParts.Item2;
+                user.RealName = lastParamParts.Item2;
         }
 
         /// <summary>
@@ -631,7 +631,54 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process RPL_NAMREPLY responses from the server.
+        /// Process RPL_LIST responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("322")]
+        protected void ProcessMessageReplyList(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var channelName = message.Parameters[1];
+            Debug.Assert(message.Parameters[2] != null);
+            var visibleUsersCount = int.Parse(message.Parameters[2]);
+            Debug.Assert(message.Parameters[3] != null);
+            var topic = message.Parameters[3];
+            
+            // Add information about channel to list.
+            this.listedChannels.Add(new IrcChannelInfo(channelName, visibleUsersCount, topic));
+        }
+
+        /// <summary>
+        /// Process RPL_LISTEND responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("323")]
+        protected void ProcessMessageReplyListEnd(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            OnChannelListReceived(new IrcChannelListReceivedEventArgs(this.listedChannels));
+            this.listedChannels = new List<IrcChannelInfo>();
+        }
+
+        /// <summary>
+        /// Process RPL_NOTOPIC responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("331")]
+        protected void ProcessMessageReplyNoTopic(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var channel = GetChannelFromName(message.Parameters[1]);
+            channel.Topic = null;
+        }
+
+        /// <summary>
+        /// Process RPL_TOPIC responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("332")]
@@ -646,7 +693,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process 353 responses from the server.
+        /// Process RPL_NAMREPLY responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("353")]

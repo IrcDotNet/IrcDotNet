@@ -173,7 +173,7 @@ namespace MarkovChainTextBox
             client.FloodPreventer = new IrcStandardFloodPreventer(4, 2000);
             client.Connected += client_Connected;
             client.Registered += client_Registered;
-            
+
             using (var connectedEvent = new ManualResetEventSlim(false))
             {
                 client.Connected += (sender2, e2) => connectedEvent.Set();
@@ -318,8 +318,13 @@ namespace MarkovChainTextBox
         private static void SendRandomMessage(IrcClient client, IIrcMessageTarget target, string textPrefix,
             int numSentences = -1)
         {
-            var textBuilder = new StringBuilder();
+            if (markovChain.Nodes.Count == 0)
+            {
+                client.LocalUser.SendNotice(target, "Bot has not yet been trained.");
+                return;
+            }
 
+            var textBuilder = new StringBuilder();
             if (textPrefix != null)
                 textBuilder.Append(textPrefix);
 
