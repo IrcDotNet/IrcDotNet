@@ -72,6 +72,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ReflectionUtilities.cs" />
     <Compile Include="TextUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -89,9 +90,6 @@
       <Project>{9138300E-94C6-4F79-999F-6830FA76488E}</Project>
       <Name>IrcDotNet.Common</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="CTCP\Todo.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

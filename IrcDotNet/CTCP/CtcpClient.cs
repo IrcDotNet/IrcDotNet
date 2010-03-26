@@ -24,8 +24,6 @@ namespace IrcDotNet.CTCP
             
             this.ircClient.Connected += ircClient_Connected;
             this.ircClient.Disconnected += ircClient_Disconnected;
-            this.ircClient.LocalUser.JoinedChannel += ircClient_LocalUser_JoinedChannel;
-            this.ircClient.LocalUser.LeftChannel += ircClient_LocalUser_LeftChannel;
         }
 
         /// <summary>
@@ -39,32 +37,22 @@ namespace IrcDotNet.CTCP
 
         private void ircClient_Connected(object sender, EventArgs e)
         {
-            // TODO
+            this.ircClient.LocalUser.PreviewMessageReceived += ircClient_LocalUser_PreviewMessageReceived;
+            this.ircClient.LocalUser.PreviewNoticeReceived += ircClient_LocalUser_PreviewNoticeReceived;
         }
 
         private void ircClient_Disconnected(object sender, EventArgs e)
         {
-            // TODO
+            this.ircClient.LocalUser.PreviewMessageReceived -= ircClient_LocalUser_PreviewMessageReceived;
+            this.ircClient.LocalUser.PreviewNoticeReceived -= ircClient_LocalUser_PreviewNoticeReceived;
         }
 
-        private void ircClient_LocalUser_JoinedChannel(object sender, IrcChannelEventArgs e)
-        {
-            e.Channel.PreviewMessageReceived += client_Channel_PreviewMessageReceived;
-            e.Channel.PreviewNoticeReceived += client_Channel_PreviewNoticeReceived;
-        }
-
-        private void ircClient_LocalUser_LeftChannel(object sender, IrcChannelEventArgs e)
-        {
-            e.Channel.PreviewMessageReceived -= client_Channel_PreviewMessageReceived;
-            e.Channel.PreviewNoticeReceived -= client_Channel_PreviewNoticeReceived;
-        }
-
-        private void client_Channel_PreviewMessageReceived(object sender, IrcPreviewMessageEventArgs e)
+        private void ircClient_LocalUser_PreviewMessageReceived(object sender, IrcPreviewMessageEventArgs e)
         {
             // TODO
         }
 
-        private void client_Channel_PreviewNoticeReceived(object sender, IrcPreviewMessageEventArgs e)
+        private void ircClient_LocalUser_PreviewNoticeReceived(object sender, IrcPreviewMessageEventArgs e)
         {
             // TODO
         }
