@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -1252,42 +1251,32 @@ namespace IrcDotNet
 
         private void InitialiseMessageProcessors()
         {
-            // Find all methods in class that are marked by one or more instances of MessageProcessrAttribute.
-            // Add  each pair of command & processor  to dictionary (with at least one command per processor).
-            var messageProcessorsMethods = this.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
-            foreach (var methodInfo in messageProcessorsMethods)
-            {
-                var messageProcessorAttributes = (MessageProcessorAttribute[])methodInfo.GetCustomAttributes(
-                    typeof(MessageProcessorAttribute), true);
-                if (messageProcessorAttributes.Length > 0)
+            this.GetMethodAttributes<MessageProcessorAttribute, MessageProcessor>().ForEach(item =>
                 {
-                    var methodDelegate = (MessageProcessor)Delegate.CreateDelegate(typeof(MessageProcessor), this,
-                        methodInfo);
-                    foreach (var attribute in messageProcessorAttributes)
+                    var attribute = item.Item1;
+                    var methodDelegate = item.Item2;
+
+                    var commandRangeParts = attribute.Command.Split('-');
+                    if (commandRangeParts.Length == 2)
                     {
-                        var commandRangeParts = attribute.Command.Split('-');
-                        if (commandRangeParts.Length == 2)
-                        {
-                            // Numeric command range was specified.
-                            var commandRangeStart = int.Parse(commandRangeParts[0]);
-                            var commandRangeEnd = int.Parse(commandRangeParts[1]);
-                            for (int code = commandRangeStart; code <= commandRangeEnd; code++)
-                                this.numMessageProcessors.Add(code, methodDelegate);
-                        }
-                        else
-                        {
-                            // Single command was specified. Check whether it is numeric or alphabetic.
-                            int commandCode;
-                            if (int.TryParse(attribute.Command, out commandCode))
-                                // Numeric
-                                this.numMessageProcessors.Add(commandCode, methodDelegate);
-                            else
-                                // Alphabetic
-                                this.messageProcessors.Add(attribute.Command, methodDelegate);
-                        }
+                        // Numeric command range was specified.
+                        var commandRangeStart = int.Parse(commandRangeParts[0]);
+                        var commandRangeEnd = int.Parse(commandRangeParts[1]);
+                        for (int code = commandRangeStart; code <= commandRangeEnd; code++)
+                            this.numMessageProcessors.Add(code, methodDelegate);
                     }
-                }
-            }
+                    else
+                    {
+                        // Single command was specified. Check whether it is numeric or alphabetic.
+                        int commandCode;
+                        if (int.TryParse(attribute.Command, out commandCode))
+                            // Numeric
+                            this.numMessageProcessors.Add(commandCode, methodDelegate);
+                        else
+                            // Alphabetic
+                            this.messageProcessors.Add(attribute.Command, methodDelegate);
+                    }
+                });
         }
 
         private void ReadLoop()
