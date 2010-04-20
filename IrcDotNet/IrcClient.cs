@@ -18,10 +18,11 @@ namespace IrcDotNet
     /// Provides methods for communicating with a server using the IRC (Internet Relay Chat) protocol.
     /// Do not inherit unless the protocol itself is being extended.
     /// </summary>
-    [DebuggerDisplay("{ToString(),nq}")]
+    [DebuggerDisplay("{ToString(), nq}")]
     public partial class IrcClient : IDisposable
     {
         private const int defaultPort = 6667;
+
         private const int maxParamsCount = 15;
 
         // Regular expressions used for extracting information from protocol messages.
@@ -58,28 +59,52 @@ namespace IrcDotNet
 
         // Internal collection of all known servers.
         private Collection<IrcServer> servers;
+
         // True if connection has been registered with server;
         private bool isRegistered;
+
         // Stores information about local user.
         private IrcLocalUser localUser;
+
         // Internal and exposable dictionary of various features supported by server.
         private Dictionary<string, string> serverSupportedFeatures;
         private ReadOnlyDictionary<string, string> serverSupportedFeaturesReadOnly;
+
         // Internal and exposable collection of channel modes that apply to users in a channel.
         private Collection<char> channelUserModes;
         private ReadOnlyCollection<char> channelUserModesReadOnly;
+
         // Dictionary of nick name prefixes (keys) and their corresponding channel modes.
         private Dictionary<char, char> channelUserModesPrefixes;
+
         // Builds MOTD (message of the day) string as it is received from server.
         private StringBuilder motdBuilder;
+
         // Internal and exposable collection of all currently joined channels.
         private ObservableCollection<IrcChannel> channels;
         private IrcChannelCollection channelsReadOnly;
+
         // Internal and exposable collection of all known users.
         private ObservableCollection<IrcUser> users;
         private IrcUserCollection usersReadOnly;
+
         // List of information about channels returned by server in response to last LIST message.
         private List<IrcChannelInfo> listedChannels;
+
+        // Dictionary of message processor routines, keyed by their command names.
+        private Dictionary<string, MessageProcessor> messageProcessors;
+
+        // Dictionary of message processor routines, keyed by their numeric codes (000 to 999).
+        private Dictionary<int, MessageProcessor> numMessageProcessors;
+
+        // Queue of messages to be sent by write loop when appropiate.
+        private Queue<string> messageSendQueue;
+
+        // Prevents client from flooding server with messages by limiting send rate.
+        private IIrcFloodPreventer floodPreventer;
+
+        // True if client can currently be disconnected.
+        private bool canDisconnect;
 
         private TcpClient client;
         private AutoResetEvent disconnectedEvent;
@@ -88,16 +113,6 @@ namespace IrcDotNet
         private NetworkStream stream;
         private StreamWriter writer;
         private StreamReader reader;
-        // True if client can currently be disconnected.
-        private bool canDisconnect;
-        // Dictionary of message processor routines, keyed by their command names.
-        private Dictionary<string, MessageProcessor> messageProcessors;
-        // Array of message processor routines, keyed by their numeric codes (000 to 999).
-        private Dictionary<int, MessageProcessor> numMessageProcessors;
-        // Queue of messages to be sent by write loop when appropiate.
-        private Queue<string> messageSendQueue;
-        // Prevents client from flooding server with messages by limiting send rate.
-        private IIrcFloodPreventer floodPreventer;
 
         private bool isDisposed = false;
 
@@ -385,38 +400,47 @@ namespace IrcDotNet
         /// <see cref="Registered"/> event is raised.
         /// </remarks>
         public event EventHandler<EventArgs> Connected;
+
         /// <summary>
         /// Occurs when the client has failed to connect to the server.
         /// </summary>
         public event EventHandler<IrcErrorEventArgs> ConnectFailed;
+
         /// <summary>
         /// Occurs when the client has disconnected from the server.
         /// </summary>
         public event EventHandler<EventArgs> Disconnected;
+
         /// <summary>
         /// Occurs when the client encounters an error during execution.
         /// </summary>
         public event EventHandler<IrcErrorEventArgs> Error;
+
         /// <summary>
         /// Occurs when a raw message has been sent to the server.
         /// </summary>
         public event EventHandler<IrcRawMessageEventArgs> RawMessageSent;
+
         /// <summary>
         /// Occurs when a raw message has been received from the server.
         /// </summary>
         public event EventHandler<IrcRawMessageEventArgs> RawMessageReceived;
+
         /// <summary>
         /// Occurs when a protocol (numeric) error is received from the server.
         /// </summary>
         public event EventHandler<IrcProtocolErrorEventArgs> ProtocolError;
+
         /// <summary>
         /// Occurs when an error message (ERROR command) is received from the server.
         /// </summary>
         public event EventHandler<IrcErrorMessageEventArgs> ErrorMessageReceived;
+
         /// <summary>
         /// Occurs when the connection has been registered.
         /// </summary>
         public event EventHandler<EventArgs> Registered;
+
         /// <summary>
         /// Occurs when the client information has been received from the server, following registration.
         /// </summary>
@@ -426,40 +450,49 @@ namespace IrcDotNet
         /// <see cref="ServerAvailableUserModes"/>, and <see cref="ServerAvailableChannelModes"/>.
         /// </remarks>
         public event EventHandler<EventArgs> ClientInfoReceived;
+
         /// <summary>
         /// Occurs when a bounce message is received from the server, telling the client to connect to a new server.
         /// </summary>
         public event EventHandler<IrcServerInfoEventArgs> ServerBounce;
+
         /// <summary>
         /// Occurs when a list of features supported by the server (ISUPPORT) has been received.
         /// This event may be raised more than once after registration, depending on the size of the list received.
         /// </summary>
         public event EventHandler<EventArgs> ServerSupportedFeaturesReceived;
+
         /// <summary>
         /// Occurs when a ping query is received from the server.
         /// The client automatically replies to pings from the server; this event is only a notification.
         /// </summary>
         public event EventHandler<IrcPingOrPongReceivedEventArgs> PingReceived;
+
         /// <summary>
         /// Occurs when a pong reply is received from the server.
         /// </summary>
         public event EventHandler<IrcPingOrPongReceivedEventArgs> PongReceived;
+
         /// <summary>
         /// Occurs when the Message of the Day (MOTD) has been received from the server.
         /// </summary>
         public event EventHandler<EventArgs> MotdReceived;
+
         /// <summary>
         /// Occurs when a reply to a Who query has been received from the server.
         /// </summary>
         public event EventHandler<IrcNameEventArgs> WhoReplyReceived;
+
         /// <summary>
         /// Occurs when a reply to a Who Is query has been received from the server.
         /// </summary>
         public event EventHandler<IrcUserEventArgs> WhoIsReplyReceived;
+
         /// <summary>
         /// Occurs when a reply to a Who Was query has been received from the server.
         /// </summary>
         public event EventHandler<IrcUserEventArgs> WhoWasReplyReceived;
+
         /// <summary>
         /// Occurs when a list of channels has been received from the server in response to a query.
         /// </summary>
@@ -1265,7 +1298,7 @@ namespace IrcDotNet
                         for (int code = commandRangeStart; code <= commandRangeEnd; code++)
                             this.numMessageProcessors.Add(code, methodDelegate);
                     }
-                    else
+                    else if (commandRangeParts.Length == 1)
                     {
                         // Single command was specified. Check whether it is numeric or alphabetic.
                         int commandCode;
@@ -1275,6 +1308,11 @@ namespace IrcDotNet
                         else
                             // Alphabetic
                             this.messageProcessors.Add(attribute.Command, methodDelegate);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException(string.Format(
+                            Properties.Resources.ErrorMessageInvalidCommandDefinition, attribute.Command));
                     }
                 });
         }
@@ -1421,15 +1459,15 @@ namespace IrcDotNet
             OnRawMessageReceived(new IrcRawMessageEventArgs(message));
 
             // Try to find corresponding message processor for command of given message.
-            MessageProcessor msgProc;
+            MessageProcessor messageProcessor;
             int commandCode;
-            if (this.messageProcessors.TryGetValue(message.Command, out msgProc) ||
+            if (this.messageProcessors.TryGetValue(message.Command, out messageProcessor) ||
                 (int.TryParse(message.Command, out commandCode) &&
-                this.numMessageProcessors.TryGetValue(commandCode, out msgProc)))
+                this.numMessageProcessors.TryGetValue(commandCode, out messageProcessor)))
             {
                 try
                 {
-                    msgProc(message);
+                    messageProcessor(message);
                 }
 #if !DEBUG
                 catch (Exception ex)
@@ -1444,7 +1482,7 @@ namespace IrcDotNet
             else
             {
                 // Unknown command.
-                Debug.WriteLine(string.Format("Unknown message command '{0}'.", message.Command));
+                Debug.WriteLine(string.Format("Unknown IRC message command '{0}'.", message.Command));
             }
         }
 
@@ -1711,9 +1749,9 @@ namespace IrcDotNet
             {
                 this.client.EndConnect(ar);
                 this.stream = this.client.GetStream();
-                this.writer = new StreamWriter(this.stream, Encoding.ASCII);
-                this.reader = new StreamReader(this.stream, Encoding.ASCII);
-
+                this.writer = new StreamWriter(this.stream, Encoding.Default);
+                this.reader = new StreamReader(this.stream, Encoding.Default);
+                
                 HandleClientConnected((IrcRegistrationInfo)ar.AsyncState);
                 this.readThread.Start();
                 this.writeThread.Start();
@@ -2002,7 +2040,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// /// Returns a string representation of this instance.
+        /// Returns a string representation of this instance.
         /// </summary>
         /// <returns>A string that represents this instance.</returns>
         public override string ToString()
@@ -2017,15 +2055,15 @@ namespace IrcDotNet
         /// <summary>
         /// Represents a method that processes <see cref="IrcMessage"/> objects.
         /// </summary>
-        /// <param name="message">The message that the method should process.</param>
+        /// <param name="message">The message to be processed.</param>
         protected delegate void MessageProcessor(IrcMessage message);
 
         /// <summary>
-        /// Represents a message that is sent/received by the client/server. A message contains a prefix (representing
-        /// the source), a command name (a word or three-digit number), and an arbitrary number of parameters (up to a
-        /// maximum of 15).
+        /// Represents a message that is sent/received by the client/server using the IRC protocol.
+        /// A message contains a prefix (representing the source), a command name (a word or three-digit number),
+        /// and an arbitrary number of parameters (up to a maximum of 15).
         /// </summary>
-        [DebuggerDisplay("{ToString(),nq}")]
+        [DebuggerDisplay("{ToString(), nq}")]
         public struct IrcMessage
         {
             /// <summary>
@@ -2037,10 +2075,12 @@ namespace IrcDotNet
             /// The message prefix.
             /// </summary>
             public string Prefix;
+
             /// <summary>
             /// The name of the command.
             /// </summary>
             public string Command;
+
             /// <summary>
             /// A list of the parameters to the message.
             /// </summary>
@@ -2066,31 +2106,6 @@ namespace IrcDotNet
             public override string ToString()
             {
                 return string.Format("{0} ({1} parameters)", this.Command, this.Parameters.Count);
-            }
-        }
-
-        /// <summary>
-        /// Indicates that a method processes <see cref="IrcMessage"/> objects for a given command.
-        /// </summary>
-        protected class MessageProcessorAttribute : Attribute
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="MessageProcessorAttribute"/> class.
-            /// </summary>
-            /// <param name="command">The name of the command for which messages are processed.</param>
-            public MessageProcessorAttribute(string command)
-            {
-                this.Command = command;
-            }
-
-            /// <summary>
-            /// Gets the name of the command for which messages are processed.
-            /// </summary>
-            /// <value>The command name.</value>
-            public string Command
-            {
-                get;
-                private set;
             }
         }
     }

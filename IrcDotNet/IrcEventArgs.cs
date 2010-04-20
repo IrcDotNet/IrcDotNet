@@ -31,7 +31,7 @@ namespace IrcDotNet
         public IList<IrcChannelInfo> Channels
         {
             get;
-            private set; 
+            private set;
         }
     }
 
@@ -84,6 +84,17 @@ namespace IrcDotNet
             this.Source = source;
             this.Targets = new ReadOnlyCollection<IIrcMessageTarget>(targets);
             this.Text = text;
+        }
+
+        /// <summary>
+        /// Gets the text of the message in the specified encoding.
+        /// </summary>
+        /// <param name="encoding">The encoding in which to get the message text, or <see langword="null"/> to use the
+        /// default encoding.</param>
+        /// <returns>The text of the message.</returns>
+        public string GetText(Encoding encoding = null)
+        {
+            return this.Text.ChangeEncoding(Encoding.Default, encoding);
         }
 
         /// <summary>

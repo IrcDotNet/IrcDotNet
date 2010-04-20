@@ -22,5 +22,12 @@ namespace IrcDotNet
             else
                 return Tuple.Create(value.Substring(0, index), value.Substring(index + 1));
         }
+
+        internal static string ChangeEncoding(this string value, Encoding currentEncoding, Encoding newEncoding)
+        {
+            if (newEncoding == null)
+                return value;
+            return newEncoding.GetString(currentEncoding.GetBytes(value));
+        }
     }
 }

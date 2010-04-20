@@ -186,4 +186,7 @@
   <data name="ErrorMessageValueCannotBeEmptyString" xml:space="preserve">
     <value>The value cannot be an empty string</value>
   </data>
+  <data name="ErrorMessageInvalidCommandDefinition" xml:space="preserve">
+    <value>The command definition '{0}' is invalid.</value>
+  </data>
 </root>

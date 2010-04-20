@@ -14,10 +14,12 @@ namespace IrcDotNet
         /// The name of the channel.
         /// </summary>
         public string Name;
+
         /// <summary>
         /// The number of visible users in the channel.
         /// </summary>
         public int VisibleUsersCount;
+
         /// <summary>
         /// The current topic of the channel.
         /// </summary>
