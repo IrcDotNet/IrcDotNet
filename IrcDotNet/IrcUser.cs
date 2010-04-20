@@ -14,16 +14,27 @@ namespace IrcDotNet
     public class IrcUser : INotifyPropertyChanged, IIrcMessageSource, IIrcMessageTarget
     {
         private bool isOnline;
+
         private string nickName;
+
         private string userName;
+
         private string realName;
+
         private string hostName;
+
         private string serverName;
+
         private string serverInfo;
+
         private bool isOperator;
+
         private bool isAway;
+
         private string awayMessage;
+
         private TimeSpan idleDuration;
+
         private int hopCount;
 
         private IrcClient client;
@@ -240,14 +251,17 @@ namespace IrcDotNet
         /// Occurs when the nick name of the user has changed.
         /// </summary>
         public event EventHandler<EventArgs> NickNameChanged;
+
         /// <summary>
         /// Occurs when the user has been seen as away or here.
         /// </summary>
         public event EventHandler<EventArgs> IsAwayChanged;
+
         /// <summary>
         /// Occurs when the user has quit the network. This may not always be sent.
         /// </summary>
         public event EventHandler<IrcCommentEventArgs> Quit;
+
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>

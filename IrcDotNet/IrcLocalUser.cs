@@ -19,10 +19,13 @@ namespace IrcDotNet
     {
         // True if local user is service; false, if local user is normal user.
         private bool isService;
+
         // Internal and exposable collections of current modes of user.
         private HashSet<char> modes;
         private ReadOnlySet<char> modesReadOnly;
+
         private string distribution;
+
         private string description;
 
         internal IrcLocalUser(string nickName, string distribution, string description)
@@ -88,34 +91,42 @@ namespace IrcDotNet
         /// Occurs when the modes of the local user have changed.
         /// </summary>
         public event EventHandler<EventArgs> ModesChanged;
+
         /// <summary>
         /// Occurs when the local user has joined a channel.
         /// </summary>
         public event EventHandler<IrcChannelEventArgs> JoinedChannel;
+
         /// <summary>
         /// Occurs when the local user has left a channel.
         /// </summary>
         public event EventHandler<IrcChannelEventArgs> LeftChannel;
+
         /// <summary>
         /// Occurs when the local user has sent a message.
         /// </summary>
         public event EventHandler<IrcMessageEventArgs> MessageSent;
+
         /// <summary>
         /// Occurs when the local user has received a message.
         /// </summary>
         public event EventHandler<IrcMessageEventArgs> MessageReceived;
+
         /// <summary>
         /// Occurs when the local user has received a message, before the <see cref="MessageReceived"/> event.
         /// </summary>
         public event EventHandler<IrcPreviewMessageEventArgs> PreviewMessageReceived;
+
         /// <summary>
         /// Occurs when the local user has sent a notice.
         /// </summary>
         public event EventHandler<IrcMessageEventArgs> NoticeSent;
+
         /// <summary>
         /// Occurs when the local user has received a notice.
         /// </summary>
         public event EventHandler<IrcMessageEventArgs> NoticeReceived;
+
         /// <summary>
         /// Occurs when the local user has received a notice, before the <see cref="NoticeReceived"/> event.
         /// </summary>
@@ -166,14 +177,17 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="targets">A collection of the names of targets to which to send the message.</param>
         /// <param name="text">The ASCII-encoded text of the message to send.</param>
-        public void SendMessage(IEnumerable<string> targets, string text)
+        /// <param name="encoding">The encoding in which to send the value of <paramref name="text"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>. -or-
+        /// <paramref name="text"/> is <see langword="null"/>.</exception>
+        public void SendMessage(IEnumerable<string> targets, string text, Encoding encoding = null)
         {
             if (targets == null)
                 throw new ArgumentNullException("targets");
             if (text == null)
                 throw new ArgumentNullException("text");
 
-            this.Client.SendPrivateMessage(targets, text);
+            this.Client.SendPrivateMessage(targets, text.ChangeEncoding(Encoding.Default, encoding));
         }
 
         /// <inheritdoc cref="SendNotice(IEnumerable{IIrcMessageTarget}, string)"/>
@@ -221,20 +235,24 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="targets">A collection of the names of targets to which to send the notice.</param>
         /// <param name="text">The ASCII-encoded text of the notice to send.</param>
-        public void SendNotice(IEnumerable<string> targets, string text)
+        /// <param name="encoding">The encoding in which to send the value of <paramref name="text"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>. -or-
+        /// <paramref name="text"/> is <see langword="null"/>.</exception>
+        public void SendNotice(IEnumerable<string> targets, string text, Encoding encoding = null)
         {
             if (targets == null)
                 throw new ArgumentNullException("targets");
             if (text == null)
                 throw new ArgumentNullException("text");
 
-            this.Client.SendNotice(targets, text);
+            this.Client.SendNotice(targets, text.ChangeEncoding(Encoding.Default, encoding));
         }
 
         /// <summary>
         /// Sets the nick name of the local user to the specified text.
         /// </summary>
         /// <param name="nickName">The new nick name of the local user.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="nickName"/> is <see langword="null"/>.</exception>
         public void SetNickName(string nickName)
         {
             if (nickName == null)
@@ -247,6 +265,7 @@ namespace IrcDotNet
         /// Sets the local user as away, giving the specified message.
         /// </summary>
         /// <param name="text">The text of the response sent to a user when they try to message you while away.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
         public void SetAway(string text)
         {
             if (text == null)
@@ -345,12 +364,18 @@ namespace IrcDotNet
 
         internal void HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            OnMessageReceived(new IrcMessageEventArgs(source, targets, text));
+            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text);
+            OnPreviewMessageReceived(previewEventArgs);
+            if (!previewEventArgs.Handled)
+                OnMessageReceived(new IrcMessageEventArgs(source, targets, text));
         }
 
         internal void HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            OnNoticeReceived(new IrcMessageEventArgs(source, targets, text));
+            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text);
+            OnPreviewNoticeReceived(previewEventArgs);
+            if (!previewEventArgs.Handled)
+                OnNoticeReceived(new IrcMessageEventArgs(source, targets, text));
         }
 
         /// <summary>

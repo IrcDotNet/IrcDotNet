@@ -8,7 +8,7 @@ namespace IrcDotNet.Common.Collections
     /// <summary>
     /// Contains common utilities for functionality relating to collections.
     /// </summary>
-    public static class CollectionUtilities
+    public static class CollectionsUtilities
     {
         /// <summary>
         /// Adds the specified items to the collection.

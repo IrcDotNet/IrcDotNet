@@ -68,6 +68,7 @@ namespace IrcDotNet
         /// Occurs when the channel modes of the user have changed.
         /// </summary>
         public event EventHandler<EventArgs> ModesChanged;
+
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>

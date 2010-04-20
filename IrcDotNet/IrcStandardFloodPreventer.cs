@@ -19,6 +19,7 @@ namespace IrcDotNet
 
         // Number of messages sent within current burst.
         private int messageCounter;
+
         // Absolute time of last counter decrement, in milliseconds.
         private long lastCounterDecrementTime;
 

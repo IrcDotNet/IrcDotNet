@@ -11,6 +11,7 @@ namespace IrcDotNet
     public class IrcTargetMask : IIrcMessageTarget
     {
         private IrcTargetMaskType type;
+
         private string mask;
 
         /// <summary>

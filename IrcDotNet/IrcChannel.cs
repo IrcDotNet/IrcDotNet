@@ -16,10 +16,14 @@ namespace IrcDotNet
     public class IrcChannel : INotifyPropertyChanged, IIrcMessageTarget, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
         private string name;
+
         private IrcChannelType type;
+
+        private string topic;
+
         private HashSet<char> modes;
         private ReadOnlySet<char> modesReadOnly;
-        private string topic;
+
         private ObservableCollection<IrcChannelUser> users;
         private IrcChannelUserCollection usersReadOnly;
 
@@ -59,15 +63,6 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets a read-only collection of the modes the channel currently has.
-        /// </summary>
-        /// <value>The current modes of the channel.</value>
-        public ReadOnlySet<char> Modes
-        {
-            get { return modesReadOnly; }
-        }
-
-        /// <summary>
         /// Gets the current topic of the channel.
         /// </summary>
         /// <value>The current topic of the channel.</value>
@@ -80,6 +75,15 @@ namespace IrcDotNet
                 OnTopicChanged(new EventArgs());
                 OnPropertyChanged(new PropertyChangedEventArgs("Topic"));
             }
+        }
+
+        /// <summary>
+        /// Gets a read-only collection of the modes the channel currently has.
+        /// </summary>
+        /// <value>The current modes of the channel.</value>
+        public ReadOnlySet<char> Modes
+        {
+            get { return modesReadOnly; }
         }
 
         /// <summary>
@@ -110,42 +114,52 @@ namespace IrcDotNet
         /// The list of users is sent initially upon joining the channel, or on the request of the client.
         /// </summary>
         public event EventHandler<EventArgs> UsersListReceived;
+
         /// <summary>
         /// Occurs when any of the modes of the channel have changed.
         /// </summary>
         public event EventHandler<EventArgs> ModesChanged;
+
         /// <summary>
         /// Occurs when the topic of the channel has changed.
         /// </summary>
         public event EventHandler<EventArgs> TopicChanged;
+
         /// <summary>
         /// Occurs when a user has joined the channel.
         /// </summary>
         public event EventHandler<IrcChannelUserEventArgs> UserJoined;
+
         /// <summary>
         /// Occurs when a user has left the channel.
         /// </summary>
         public event EventHandler<IrcChannelUserEventArgs> UserLeft;
+
         /// <summary>
         /// Occurs when a user is kicked from the channel.
         /// </summary>
         public event EventHandler<IrcChannelUserEventArgs> UserKicked;
+
         /// <summary>
         /// Occurs when the channel has received a message, before the <see cref="MessageReceived"/> event.
         /// </summary>
         public event EventHandler<IrcPreviewMessageEventArgs> PreviewMessageReceived;
+
         /// <summary>
         /// Occurs when the channel has received a message.
         /// </summary>
         public event EventHandler<IrcMessageEventArgs> MessageReceived;
+
         /// <summary>
         /// Occurs when the channel has received a notice.
         /// </summary>
         public event EventHandler<IrcMessageEventArgs> NoticeReceived;
+
         /// <summary>
         /// Occurs when the channel has received a notice, before the <see cref="NoticeReceived"/> event.
         /// </summary>
         public event EventHandler<IrcPreviewMessageEventArgs> PreviewNoticeReceived;
+
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
@@ -353,12 +367,18 @@ namespace IrcDotNet
 
         internal void HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            OnMessageReceived(new IrcMessageEventArgs(source, targets, text));
+            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text);
+            OnPreviewMessageReceived(previewEventArgs);
+            if (!previewEventArgs.Handled)
+                OnMessageReceived(new IrcMessageEventArgs(source, targets, text));
         }
 
         internal void HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            OnNoticeReceived(new IrcMessageEventArgs(source, targets, text));
+            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text);
+            OnPreviewNoticeReceived(previewEventArgs);
+            if (!previewEventArgs.Handled)
+                OnNoticeReceived(new IrcMessageEventArgs(source, targets, text));
         }
 
         /// <summary>
