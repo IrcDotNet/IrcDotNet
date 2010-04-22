@@ -144,9 +144,9 @@ namespace IrcDotNet
             SendMessage(new[] { target }, text);
         }
 
-        /// <inheritdoc cref="SendMessage(IEnumerable{string}, string)"/>
+        /// <inheritdoc cref="SendMessage(IEnumerable{string}, string, Encoding)"/>
         /// <summary>
-        /// <inheritdoc cref="SendMessage(IEnumerable{string}, string)" select="/summary/node()"/>
+        /// <inheritdoc cref="SendMessage(IEnumerable{string}, string, Encoding)" select="/summary/node()"/>
         /// A message target may be an <see cref="IrcUser"/>, <see cref="IrcChannel"/>, or <see cref="IrcTargetMask"/>.
         /// </summary>
         /// <param name="targets">A collection of targets to which to send the message.</param>
@@ -160,7 +160,7 @@ namespace IrcDotNet
             SendMessage(targets.Select(t => t.Name), text);
         }
 
-        /// <inheritdoc cref="SendMessage(IEnumerable{string}, string)"/>
+        /// <inheritdoc cref="SendMessage(IEnumerable{string}, string, Encoding)"/>
         /// <param name="target">The name of the target to which to send the message.</param>
         public void SendMessage(string target, string text)
         {
@@ -202,9 +202,9 @@ namespace IrcDotNet
             SendNotice(new[] { target }, text);
         }
 
-        /// <inheritdoc cref="SendNotice(IEnumerable{string}, string)"/>
+        /// <inheritdoc cref="SendNotice(IEnumerable{string}, string, Encoding)"/>
         /// <summary>
-        /// <inheritdoc cref="SendNotice(IEnumerable{string}, string)" select="/summary/node()"/>
+        /// <inheritdoc cref="SendNotice(IEnumerable{string}, string, Encoding)" select="/summary/node()"/>
         /// A message target may be an <see cref="IrcUser"/>, <see cref="IrcChannel"/>, or <see cref="IrcTargetMask"/>.
         /// </summary>
         /// <param name="targets">A collection of targets to which to send the notice.</param>
@@ -218,7 +218,7 @@ namespace IrcDotNet
             SendNotice(targets.Select(t => t.Name), text);
         }
 
-        /// <inheritdoc cref="SendNotice(IEnumerable{string}, string)"/>
+        /// <inheritdoc cref="SendNotice(IEnumerable{string}, string, Encoding)"/>
         /// <param name="target">The name of the target to which to send the notice.</param>
         public void SendNotice(string target, string text)
         {

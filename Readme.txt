@@ -12,6 +12,9 @@ Non-RFC Features
  * Parsing of ISUPPORT parameters (draft specification at
    <http://www.irc.org/tech_docs/draft-brocklesby-irc-isupport-03.txt>).
    Interpretation of such parameters is left to the user.
+ 
+ * CTCP (Client-To-Client Protocol) support (specification at
+   <http://www.irchelp.org/irchelp/rfc/ctcpspec.html>).
 
 Feedback
 ========

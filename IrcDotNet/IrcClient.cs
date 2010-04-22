@@ -572,7 +572,7 @@ namespace IrcDotNet
             SendMessageWhoWas(nickNames, entriesCount);
         }
 
-        /// <inheritdoc cref="SendMessageList(IEnumerable{string})"/>
+        /// <inheritdoc cref="ListChannels(IEnumerable{string})"/>
         public void ListChannels(params string[] channelNames)
         {
             CheckDisposed();
@@ -1351,7 +1351,7 @@ namespace IrcDotNet
                     // Each parameter is separated by a single space, except the last one, which may contain spaces if it is prefixed by a colon.
                     var parameters = new string[maxParamsCount];
                     int paramStartIndex, paramEndIndex = -1;
-                    int lineColonIndex = line.LastIndexOf(':');
+                    int lineColonIndex = line.IndexOf(':');
                     if (lineColonIndex == -1)
                         lineColonIndex = line.Length;
                     for (int i = 0; i < parameters.Length; i++)
