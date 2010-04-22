@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<OrderedTest name="completeircclient" storage="c:\users\alex\documents\visual studio 2010\projects\irc.net\devel\ircdotnet.tests\completeircclient.orderedtest" id="1e5f385c-9e50-435e-8944-b2823ddca2ed" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+<OrderedTest name="completeircclient" storage="c:\users\alex\documents\visual studio 2010\projects\irc.net\devel\ircdotnet.tests\CompleteIrcClient.orderedtest" id="1e5f385c-9e50-435e-8944-b2823ddca2ed" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
   <Execution id="666a1c12-4fa5-4ea5-8a9b-f8dbcf83fa2d" />
   <TestLinks>
     <TestLink id="497fd5c1-1c86-5d74-077a-1a64aadb48ea" name="ConnectTest" storage="bin\debug\ircdotnet.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />

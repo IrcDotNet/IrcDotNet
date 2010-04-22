@@ -8,7 +8,7 @@ namespace IrcDotNet
     /// <summary>
     /// Indicates that a method processes messages for a given command.
     /// </summary>
-    internal class MessageProcessorAttribute : Attribute
+    public class MessageProcessorAttribute : Attribute
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MessageProcessorAttribute"/> class.
