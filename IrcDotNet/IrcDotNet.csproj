@@ -42,9 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CTCP\CtcpClient.cs" />
-    <Compile Include="CTCP\CtcpClientMessageProcessing.cs" />
-    <Compile Include="CTCP\CtcpClientMessageSending.cs" />
+    <Compile Include="CollectionUtilities.cs" />
+    <Compile Include="Ctcp\CtcpClient.cs" />
+    <Compile Include="Ctcp\CtcpClientMessageProcessing.cs" />
+    <Compile Include="Ctcp\CtcpClientMessageSending.cs" />
+    <Compile Include="Ctcp\CtcpEventArgs.cs" />
     <Compile Include="IrcChannelInfo.cs" />
     <Compile Include="IrcRegistrationInfo.cs" />
     <Compile Include="IrcStandardFloodPreventer.cs" />

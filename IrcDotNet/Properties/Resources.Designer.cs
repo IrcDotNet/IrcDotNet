@@ -79,7 +79,7 @@ namespace IrcDotNet.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The message command name &apos;{0}&apos; is invalid..
+        ///   Looks up a localized string similar to The message command &apos;{0}&apos; is invalid..
         /// </summary>
         internal static string ErrorMessageInvalidCommand {
             get {
@@ -142,6 +142,15 @@ namespace IrcDotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The quoted character &apos;{0}&apos; was not recognised..
+        /// </summary>
+        internal static string ErrorMessageInvalidQuotedChar {
+            get {
+                return ResourceManager.GetString("ErrorMessageInvalidQuotedChar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified real name is invalid..
         /// </summary>
         internal static string ErrorMessageInvalidRealName {
@@ -156,6 +165,15 @@ namespace IrcDotNet.Properties {
         internal static string ErrorMessageInvalidSource {
             get {
                 return ResourceManager.GetString("ErrorMessageInvalidSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The message tag &apos;{0}&apos; is invalid..
+        /// </summary>
+        internal static string ErrorMessageInvalidTag {
+            get {
+                return ResourceManager.GetString("ErrorMessageInvalidTag", resourceCulture);
             }
         }
         
