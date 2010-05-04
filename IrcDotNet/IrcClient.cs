@@ -131,7 +131,7 @@ namespace IrcDotNet
             this.numMessageProcessors = new Dictionary<int, MessageProcessor>(1000);
             this.messageSendQueue = new Queue<string>();
             this.floodPreventer = null;
-
+            
             InitialiseMessageProcessors();
             ResetState();
         }
@@ -1486,19 +1486,22 @@ namespace IrcDotNet
             }
         }
 
-        /// <inheritdoc cref="WriteMessage(string, string, IEnumerable{string})"/>
-        protected void WriteMessage(string prefix, string command, params string[] parameters)
+        /// <inheritdoc cref="WriteMessage(string, string, string[])"/>
+        protected void WriteMessage(string prefix, string command, IEnumerable<string> parameters)
         {
-            WriteMessage(new IrcMessage(this, null, command, parameters));
+            WriteMessage(prefix, command, parameters.ToArray());
         }
 
         /// <inheritdoc cref="WriteMessage(IrcMessage)"/>
-        /// <param name="prefix">The message prefix, which represents the source of the message.</param>
+        /// <param name="prefix">The message prefix that represents the source of the message.</param>
         /// <param name="command">The name of the command.</param>
         /// <param name="parameters">A collection of the parameters to the command.</param>
-        protected void WriteMessage(string prefix, string command, IEnumerable<string> parameters)
+        protected void WriteMessage(string prefix, string command, params string[] parameters)
         {
-            WriteMessage(new IrcMessage(this, null, command, parameters.ToArray()));
+            var message = new IrcMessage(this, prefix, command, parameters.ToArray());
+            if (message.Source == null)
+                message.Source = this.localUser;
+            WriteMessage(message);
         }
 
         /// <inheritdoc cref="WriteMessage(string)"/>
@@ -1508,39 +1511,40 @@ namespace IrcDotNet
         /// <param name="message">The message to write.</param>
         /// <exception cref="ArgumentException">
         /// <paramref name="message"/> contains more than 15 many parameters. -or-
-        /// The value of <see cref="IrcMessage.Prefix"/> of <paramref name="message"/> is invalid. -or-
         /// The value of <see cref="IrcMessage.Command"/> of <paramref name="message"/> is invalid. -or-
         /// The value of one of the items of <see cref="IrcMessage.Parameters"/> of <paramref name="message"/> is
         /// invalid.
         /// </exception>
         protected void WriteMessage(IrcMessage message)
         {
+            if (message.Command == null)
+                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidCommand, "message");
             if (message.Parameters.Count > maxParamsCount)
                 throw new ArgumentException(Properties.Resources.ErrorMessageTooManyParams, "parameters");
 
-            var line = new StringBuilder();
+            var lineBuilder = new StringBuilder();
 
             // Append prefix to line, if specified.
             if (message.Prefix != null)
-                line.Append(":" + CheckPrefix(message.Prefix) + " ");
+                lineBuilder.Append(":" + CheckPrefix(message.Prefix) + " ");
 
             // Append command name to line.
-            line.Append(CheckCommand(message.Command).ToUpper());
+            lineBuilder.Append(CheckCommand(message.Command).ToUpper());
 
             // Append each parameter to line, adding a ':' before the last parameter.
             for (int i = 0; i < message.Parameters.Count - 1; i++)
             {
                 if (message.Parameters[i] != null)
-                    line.Append(" " + CheckMiddleParameter(message.Parameters[i].ToString()));
+                    lineBuilder.Append(" " + CheckMiddleParameter(message.Parameters[i].ToString()));
             }
             if (message.Parameters.Count > 0)
             {
                 var lastParameter = message.Parameters[message.Parameters.Count - 1];
                 if (lastParameter != null)
-                    line.Append(" :" + CheckTrailingParameter(lastParameter));
+                    lineBuilder.Append(" :" + CheckTrailingParameter(lastParameter));
             }
 
-            WriteMessage(line.ToString());
+            WriteMessage(lineBuilder.ToString());
             OnRawMessageSent(new IrcRawMessageEventArgs(message));
         }
 
@@ -1559,6 +1563,7 @@ namespace IrcDotNet
         {
             CheckDisposed();
 
+            Debug.Assert(line != null);
             if (line.Length > 510)
                 throw new ArgumentException(Properties.Resources.ErrorMessageLineTooLong, "line");
 
@@ -1876,7 +1881,7 @@ namespace IrcDotNet
         /// <summary>
         /// Raises the <see cref="RawMessageSent"/> event.
         /// </summary>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="IrcRawMessageEventArgs"/> instance containing the event data.</param>
         protected virtual void OnRawMessageSent(IrcRawMessageEventArgs e)
         {
             var handler = this.RawMessageSent;
@@ -1887,7 +1892,7 @@ namespace IrcDotNet
         /// <summary>
         /// Raises the <see cref="RawMessageReceived"/> event.
         /// </summary>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="IrcRawMessageEventArgs"/> instance containing the event data.</param>
         protected virtual void OnRawMessageReceived(IrcRawMessageEventArgs e)
         {
             var handler = this.RawMessageReceived;
@@ -2087,12 +2092,12 @@ namespace IrcDotNet
             public IList<string> Parameters;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="IrcMessage"/> struct.
+            /// Initializes a new instance of the <see cref="IrcMessage"/> structure.
             /// </summary>
-            /// <param name="client">A client object that has sent/will received the message.</param>
-            /// <param name="prefix">The message prefix, which represents the source of the message.</param>
-            /// <param name="command">The command name; either a word or 3-digit number.</param>
-            /// <param name="parameters">A lisit of the parameters to the message, containing a maximum of 15 items.
+            /// <param name="client">A client object that has sent/will receive the message.</param>
+            /// <param name="prefix">The message prefix that represents the source of the message.</param>
+            /// <param name="command">The command name; either an alphabetic word or 3-digit number.</param>
+            /// <param name="parameters">A list of the parameters to the message. Can contain a maximum of 15 items.
             /// </param>
             public IrcMessage(IrcClient client, string prefix, string command, IList<string> parameters)
             {

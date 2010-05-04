@@ -423,14 +423,15 @@ namespace IrcDotNet
     }
 
     /// <summary>
-    /// Provides data for the <see cref="IrcClient.RawMessageReceived"/> event.
+    /// Provides data for the <see cref="IrcClient.RawMessageSent"/> and
+    /// <see cref="IrcClient.RawMessageReceived"/> events.
     /// </summary>
     public class IrcRawMessageEventArgs : EventArgs
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcRawMessageEventArgs"/> class.
         /// </summary>
-        /// <param name="message">The message.</param>
+        /// <param name="message">The message that was sent/received.</param>
         public IrcRawMessageEventArgs(IrcClient.IrcMessage message)
             : base()
         {
@@ -438,9 +439,9 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets the message received from the server.
+        /// Gets the message that was sent/received by the client.
         /// </summary>
-        /// <value>The message received from the server.</value>
+        /// <value>The message that was sent/received by the client.</value>
         public IrcClient.IrcMessage Message
         {
             get;

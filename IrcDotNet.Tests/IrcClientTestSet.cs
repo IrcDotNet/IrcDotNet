@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using IrcDotNet.Common.Collections;
-using IrcDotNet.CTCP;
+using IrcDotNet.Ctcp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace IrcDotNet.Tests
@@ -15,12 +15,13 @@ namespace IrcDotNet.Tests
     [TestClass()]
     public class IrcClientTestSet
     {
-        // Test parameters specific to IRC network.
+        // Test parameters for IRC connections.
         private const string serverHostName = "irc.freenode.net";
         private const string serverPassword = null;
         private const string realName = "IRC.NET Test Bot";
 
-        // Information for sending messages, to be used in tests.
+        // Information used for sending messages, to be used in tests.
+        private const string clientVersionInfo = "IRC.NET Test Bot";
         private const string quitMessage = "Client 2 quitting test.";
         private const string testMessage1 = "This is the first test message.";
         private const string testMessage2 = "This is the second test message.";
@@ -30,8 +31,12 @@ namespace IrcDotNet.Tests
         private static IList<IrcChannelInfo> client1ListedChannels;
         private static string client1UserQuitComment;
 
+        private static TimeSpan client2PingTime;
+        private static string client2ReceivedVersionInfo;
+
         // Threading events used to signify when client raises event.
 #pragma warning disable 0649
+
         private static AutoResetEvent client1ConnectedEvent;
         private static AutoResetEvent client1DisconnectedEvent;
         private static AutoResetEvent client1ErrorEvent;
@@ -73,6 +78,13 @@ namespace IrcDotNet.Tests
         private static AutoResetEvent client2ChannelLeftEvent;
         private static AutoResetEvent client2ChannelMessageReceivedEvent;
         private static AutoResetEvent client2ChannelNoticeReceivedEvent;
+
+        private static AutoResetEvent ctcpClient1PingResponseReceived;
+        private static AutoResetEvent ctcpClient1VersionResponseReceived;
+
+        private static AutoResetEvent ctcpClient2PingResponseReceived;
+        private static AutoResetEvent ctcpClient2VersionResponseReceived;
+
 #pragma warning restore 0649
 
         // Primary and secondary client, with associated user information.
@@ -118,9 +130,16 @@ namespace IrcDotNet.Tests
             ircClient2.ProtocolError += client2_ProtocolError;
             ircClient2.Registered += client2_Registered;
 
-            // Create CTCP clients.
+            // Create CTCP clients over IRC clients.
             ctcpClient1 = new CtcpClient(ircClient1);
+            ctcpClient1.ClientVersion = clientVersionInfo;
+            ctcpClient1.PingResponseReceived += ctcpClient1_PingResponseReceived;
+            ctcpClient1.VersionResponseReceived += ctcpClient1_VersionResponseReceived;
+
             ctcpClient2 = new CtcpClient(ircClient2);
+            ctcpClient2.ClientVersion = clientVersionInfo;
+            ctcpClient2.PingResponseReceived += ctcpClient2_PingResponseReceived;
+            ctcpClient2.VersionResponseReceived += ctcpClient2_VersionResponseReceived;
 
             // Initialise wait handles for all events.
             GetAllWaitHandlesFields().ForEach(fieldInfo => fieldInfo.SetValue(null, new AutoResetEvent(false)));
@@ -174,7 +193,7 @@ namespace IrcDotNet.Tests
                 .Where(fieldInfo => typeof(EventWaitHandle).IsAssignableFrom(fieldInfo.FieldType));
         }
 
-        #region Client 1 Event Handlers
+        #region IRC Client 1 Event Handlers
 
         private static void client1_Connected(object sender, EventArgs e)
         {
@@ -388,7 +407,7 @@ namespace IrcDotNet.Tests
 
         #endregion
 
-        #region Client 2 Event Handlers
+        #region IRC Client 2 Event Handlers
 
         private static void client2_Connected(object sender, EventArgs e)
         {
@@ -498,6 +517,44 @@ namespace IrcDotNet.Tests
         {
             if (client2ChannelNoticeReceivedEvent != null)
                 client2ChannelNoticeReceivedEvent.Set();
+        }
+
+        #endregion
+
+        #region CTCP Client 1 Event Handlers
+
+        private static void ctcpClient1_PingResponseReceived(object sender, CtcpPingResponseReceivedEventArgs e)
+        {
+            if (e.User.NickName == ircClient2.LocalUser.NickName)
+                client2PingTime = e.PingTime;
+
+            if (ctcpClient1PingResponseReceived != null)
+                ctcpClient1PingResponseReceived.Set();
+        }
+
+        private static void ctcpClient1_VersionResponseReceived(object sender, CtcpVersionResponseReceivedEventArgs e)
+        {
+            if (e.User.NickName == ircClient2.LocalUser.NickName)
+                client2ReceivedVersionInfo = e.VersionInfo;
+
+            if (ctcpClient1VersionResponseReceived != null)
+                ctcpClient1VersionResponseReceived.Set();
+        }
+
+        #endregion
+
+        #region CTCP Client 2 Event Handlers
+
+        private static void ctcpClient2_PingResponseReceived(object sender, CtcpPingResponseReceivedEventArgs e)
+        {
+            if (ctcpClient2PingResponseReceived != null)
+                ctcpClient2PingResponseReceived.Set();
+        }
+
+        private static void ctcpClient2_VersionResponseReceived(object sender, CtcpVersionResponseReceivedEventArgs e)
+        {
+            if (ctcpClient2VersionResponseReceived != null)
+                ctcpClient2VersionResponseReceived.Set();
         }
 
         #endregion
@@ -892,6 +949,26 @@ namespace IrcDotNet.Tests
             Assert.AreEqual(realName, whoWasUser.RealName);
             Assert.IsTrue(whoWasUser.HostName != null && whoWasUser.HostName.Length > 1);
             Assert.AreEqual(ircClient2.ServerName, whoWasUser.ServerName);
+        }
+
+        [TestMethod()]
+        public void CtcpPingTest()
+        {
+            stateManager.HasStates(IrcClientTestState.Client1Registered);
+            ctcpClient1.Ping(ircClient2.LocalUser);
+            const int pingTimeoutMilliseconds = 10000;
+            Assert.IsTrue(WaitForClientEvent(ctcpClient1PingResponseReceived, pingTimeoutMilliseconds));
+            Assert.IsTrue(client2PingTime.TotalMilliseconds > 0d &&
+                client2PingTime.TotalMilliseconds < pingTimeoutMilliseconds);
+        }
+
+        [TestMethod()]
+        public void CtcpVersionTest()
+        {
+            stateManager.HasStates(IrcClientTestState.Client1Registered);
+            ctcpClient1.GetVersion(ircClient2.LocalUser);
+            Assert.IsTrue(WaitForClientEvent(ctcpClient1VersionResponseReceived, 10000));
+            Assert.AreEqual(clientVersionInfo, client2ReceivedVersionInfo);
         }
 
         private bool WaitForClientEvent(WaitHandle eventHandle, int millisecondsTimeout = Timeout.Infinite)
