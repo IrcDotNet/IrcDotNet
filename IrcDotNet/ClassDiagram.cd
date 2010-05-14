@@ -227,6 +227,14 @@
   </Class>
   <Class Name="IrcDotNet.IrcUserRegistrationInfo">
     <Position X="6" Y="3.5" Width="2" />
+    <InheritanceLine Type="IrcDotNet.IrcRegistrationInfo" ManuallyRouted="true">
+      <Path>
+        <Point X="4.75" Y="2.997" />
+        <Point X="4.75" Y="3.325" />
+        <Point X="7" Y="3.325" />
+        <Point X="7" Y="3.5" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAQAAAAACAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>IrcRegistrationInfo.cs</FileName>
@@ -239,28 +247,6 @@
       <FileName>IrcRegistrationInfo.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="IrcDotNet.CTCP.CtcpClient">
-    <Position X="0.5" Y="27.25" Width="3.25" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
-    <NestedTypes>
-      <Delegate Name="IrcDotNet.CTCP.CtcpClient.MessageProcessor" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>CTCP\CtcpClient.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Delegate>
-      <Struct Name="IrcDotNet.CTCP.CtcpClient.CtcpMessage" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>CTCP\CtcpClient.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Struct>
-    </NestedTypes>
-    <TypeIdentifier>
-      <HashCode>AAAIAAAAAACAQUAFAIAAAABAAAAAAAAAAAAAAAACCAA=</HashCode>
-      <FileName>CTCP\CtcpClient.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="IrcDotNet.IrcUtilities">
     <Position X="26.75" Y="1.25" Width="3.25" />
     <TypeIdentifier>
@@ -271,7 +257,7 @@
   <Class Name="IrcDotNet.TextUtilities">
     <Position X="26.75" Y="2.75" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAIgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAIgAAAAAAAAABAAAAgBAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>TextUtilities.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -280,6 +266,28 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ReflectionUtilities.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IrcDotNet.Ctcp.CtcpClient">
+    <Position X="0.5" Y="27" Width="3.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Delegate Name="IrcDotNet.Ctcp.CtcpClient.MessageProcessor" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Ctcp\CtcpClient.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Struct Name="IrcDotNet.Ctcp.CtcpClient.CtcpMessage" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Ctcp\CtcpClient.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAUIASAICAGBQUAFIcACAQBIACgMAAAAQgEAiACSmAA=</HashCode>
+      <FileName>Ctcp\CtcpClient.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Struct Name="IrcDotNet.IrcChannelInfo">
