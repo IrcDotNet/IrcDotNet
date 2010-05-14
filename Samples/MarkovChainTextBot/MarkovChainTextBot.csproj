@@ -35,9 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IrcDotNet, Version=0.1.0.42456, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\IrcDotNet\bin\DotNet\Debug\IrcDotNet.dll</HintPath>
+    <Reference Include="IrcDotNet">
+      <HintPath>..\..\IrcDotNet\bin\Release\IrcDotNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
