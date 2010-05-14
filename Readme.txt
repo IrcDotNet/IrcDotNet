@@ -23,9 +23,9 @@ If you experience any issues with IRC.NET, need help understanding its usage,
 or you wish to submit any comments/suggestions, please contact us using one of
 the following methods.
 
- * Ask a question through our web support interface at 
+ * Ask a question through our web support interface at
    <https://answers.launchpad.net/ircdotnet/>.
-
+ 
  * Report a bug at <https://bugs.launchpad.net/ircdotnet/+filebug>.
-
- * Talk to us on IRC at <irc://freenode.net/#ircdotnet>.
+ 
+ * Talk to us on IRC at <irc://freenode.net/##ircdotnet>.
