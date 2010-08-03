@@ -10,9 +10,26 @@ namespace IrcDotNet.Ctcp
     partial class CtcpClient
     {
         /// <summary>
+        /// Process ACTION messages from a user.
+        /// </summary>
+        /// <param name="message">The message received from the user.</param>
+        [MessageProcessor("action")]
+        protected void ProcessMessageAction(CtcpMessage message)
+        {
+            Debug.Assert(message.Data != null);
+
+            if (!message.IsResponse)
+            {
+                var text = message.Data;
+
+                OnActionReceived(new CtcpMessageEventArgs(message.Source, message.Targets, text));
+            }
+        }
+
+        /// <summary>
         /// Process PING messages from a user.
         /// </summary>
-        /// <param name="message">The message received from the server.</param>
+        /// <param name="message">The message received from the user.</param>
         [MessageProcessor("ping")]
         protected void ProcessMessagePing(CtcpMessage message)
         {
@@ -22,21 +39,20 @@ namespace IrcDotNet.Ctcp
             {
                 // Calculate time elapsed since the ping request was sent.
                 var sendTime = new DateTime(long.Parse(message.Data));
-                var receiveTime = DateTime.Now;
-                var pingTime = receiveTime - sendTime;
+                var pingTime = DateTime.Now - sendTime;
 
                 OnPingResponseReceived(new CtcpPingResponseReceivedEventArgs(message.Source, pingTime));
             }
             else
             {
-                SendMessagePing(message.Source, message.Data, true);
+                SendMessagePing(new [] { message.Source }, message.Data, true);
             }
         }
 
         /// <summary>
         /// Process VERSION messages from a user.
         /// </summary>
-        /// <param name="message">The message received from the server.</param>
+        /// <param name="message">The message received from the user.</param>
         [MessageProcessor("version")]
         protected void ProcessMessageVersion(CtcpMessage message)
         {
@@ -50,7 +66,7 @@ namespace IrcDotNet.Ctcp
             {
                 if (this.ClientVersion != null)
                 {
-                    SendMessageVersion(message.Source, this.ClientVersion);
+                    SendMessageVersion(new[] { message.Source }, this.ClientVersion);
                 }
             }
         }
