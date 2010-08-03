@@ -607,7 +607,7 @@ namespace IrcDotNet.Tests
             stateManager.UnsetStates(IrcClientTestState.Client2Connected);
         }
 
-        [TestMethod(),]
+        [TestMethod()]
         public void RegisterTest()
         {
             stateManager.HasStates(IrcClientTestState.Client1Connected);
