@@ -1,10 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
 namespace IrcDotNet.Ctcp
 {
+/// <summary>
+    /// Provides data for events that are raised when a CTCP message or notice is sent or received.
+    /// </summary>
+    public class CtcpMessageEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CtcpMessageEventArgs"/> class.
+        /// </summary>
+        /// <param name="source">The source of the message.</param>
+        /// <param name="targets">A list of the targets of the message.</param>
+        /// <param name="text">The text of the mesage.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
+        public CtcpMessageEventArgs(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
+            : base()
+        {
+            if (targets == null)
+                throw new ArgumentNullException("target");
+            if (text == null)
+                throw new ArgumentNullException("text");
+
+            this.Source = source;
+            this.Targets = new ReadOnlyCollection<IIrcMessageTarget>(targets);
+            this.Text = text;
+        }
+
+        /// <summary>
+        /// Gets the source of the message.
+        /// </summary>
+        /// <value>The source of the message.</value>
+        public IIrcMessageSource Source
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets a list of the targets of the message.
+        /// </summary>
+        /// <value>The targets of the message.</value>
+        public IList<IIrcMessageTarget> Targets
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the text of the message.
+        /// </summary>
+        /// <value>The text of the message.</value>
+        public string Text
+        {
+            get;
+            private set;
+        }
+    }
+
     /// <summary>
     /// Provides data for the <see cref="CtcpClient.VersionResponseReceived"/> event.
     /// </summary>
