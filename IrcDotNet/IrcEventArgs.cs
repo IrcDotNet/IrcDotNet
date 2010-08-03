@@ -61,7 +61,7 @@ namespace IrcDotNet
     }
 
     /// <summary>
-    /// Provides data for events that are raised when a message or notice is sent or received.
+    /// Provides data for events that are raised when an IRC message or notice is sent or received.
     /// </summary>
     public class IrcMessageEventArgs : EventArgs
     {
@@ -70,7 +70,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="source">The source of the message.</param>
         /// <param name="targets">A list of the targets of the message.</param>
-        /// <param name="text">The text of the mesage</param>
+        /// <param name="text">The text of the mesage.</param>
         /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
         public IrcMessageEventArgs(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)

@@ -9,25 +9,37 @@ namespace IrcDotNet.Ctcp
     partial class CtcpClient
     {
         /// <summary>
-        /// Sends a ping reuqest or response to the specified target.
+        /// Sends an ACTION command to the specified target.
         /// </summary>
-        /// <param name="target">The target of the message.</param>
+        /// <param name="targets">A list of the targets of the message.</param>
+        /// <param name="info">The message text.</param>
+        protected void SendMessageAction(IList<IIrcMessageTarget> targets, string text)
+        {
+            WriteMessage(targets, "action", text);
+
+            OnActionSent(new CtcpMessageEventArgs(this.ircClient.LocalUser, targets, text));
+        }
+
+        /// <summary>
+        /// Sends a ping request or response to the specified target.
+        /// </summary>
+        /// <param name="targets">A list of the targets of the message.</param>
         /// <param name="info">The information to send.</param>
         /// <param name="isResponse"><see langword="true"/> if the message is a response; <see langword="false"/>,
         /// otherwise.</param>
-        protected void SendMessagePing(IIrcMessageTarget target, string info, bool isResponse)
+        protected void SendMessagePing(IList<IIrcMessageTarget> targets, string info, bool isResponse)
         {
-            WriteMessage(target, "ping", info, isResponse);
+            WriteMessage(targets, "ping", info, isResponse);
         }
 
         /// <summary>
         /// Sends a request or response for information about the version of the client.
         /// </summary>
-        /// <param name="target">The target of the message.</param>
+        /// <param name="targets">A list of the targets of the message.</param>
         /// <param name="info">The information to send.</param>
-        protected void SendMessageVersion(IIrcMessageTarget target, string info = null)
+        protected void SendMessageVersion(IList<IIrcMessageTarget> targets, string info = null)
         {
-            WriteMessage(target, "version", info, info != null);
+            WriteMessage(targets, "version", info, info != null);
         }
     }
 }
