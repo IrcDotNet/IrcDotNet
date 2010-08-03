@@ -136,7 +136,7 @@ namespace IrcDotNet
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcChannelUserEventArgs"/> class.
         /// </summary>
-        /// <param name="channelUser">The channel user that the event concerns</param>
+        /// <param name="channelUser">The channel user that the event concerns.</param>
         public IrcChannelUserEventArgs(IrcChannelUser channelUser, string comment)
             : base(comment)
         {
