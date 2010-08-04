@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Security;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace IrcDotNet
@@ -52,7 +55,7 @@ namespace IrcDotNet
         /// Gets or sets whether the event has been handled. If it is handled, the corresponding normal (non-preview)
         /// event is not raised.
         /// </summary>
-        /// <value><see langword="true"/> if the event has been handled; otherwise, <see langword="false"/>.</value>
+        /// <value><see langword="true"/> if the event has been handled; <see langword="false"/>, otherwise.</value>
         public bool Handled
         {
             get;
@@ -446,6 +449,67 @@ namespace IrcDotNet
         {
             get;
             private set;
+        }
+    }
+
+    /// <summary>
+    /// Provides data for the <see cref="IrcClient.ValidateSslCertificate"/> event.
+    /// </summary>
+    public class IrcValidateSslCertificateEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IrcValidateSslCertificateEventArgs"/> class.
+        /// </summary>
+        /// <param name="certificate">The certificate used to authenticate the remote party.</param>
+        /// <param name="chain">The chain of certificate authorities.</param>
+        /// <param name="sslPolicyErrors">The errors associated with the remote certificate.</param>
+        public IrcValidateSslCertificateEventArgs(X509Certificate certificate, X509Chain chain,
+            SslPolicyErrors sslPolicyErrors)
+            : base()
+        {
+            this.Certificate = certificate;
+            this.Chain = chain;
+            this.SslPolicyErrors = sslPolicyErrors;
+        }
+
+        /// <summary>
+        /// Gets the certificate used to authenticate the remote party..
+        /// </summary>
+        /// <value>The certificate.</value>
+        public X509Certificate Certificate
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the chain of certificate authorities associated with the remote certificate.
+        /// </summary>
+        /// <value>The chain.</value>
+        public X509Chain Chain
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the errors associated with the remote certificate.
+        /// </summary>
+        /// <value>The SSL policy errors.</value>
+        public SslPolicyErrors SslPolicyErrors
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets or sets whether the ceritifcate given by the server is valid.
+        /// </summary>
+        /// <value><see langword="true"/> if the certificate is valid; <see langword="false"/>, otherwise.</value>
+        public bool IsValid
+        {
+            get;
+            set;
         }
     }
 

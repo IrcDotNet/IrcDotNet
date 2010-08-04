@@ -195,4 +195,7 @@
   <data name="ErrorMessageInvalidTag" xml:space="preserve">
     <value>The message tag '{0}' is invalid.</value>
   </data>
+  <data name="ErrorMessageInvalidUrlScheme" xml:space="preserve">
+    <value>The URL scheme '{0}' is not valid.</value>
+  </data>
 </root>

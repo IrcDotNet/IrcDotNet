@@ -6,14 +6,19 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    using Common.Collections;
+
     /// <summary>
     /// Provides methods for communicating with a server using the IRC (Internet Relay Chat) protocol.
     /// Do not inherit unless the protocol itself is being extended.
@@ -111,6 +116,7 @@ namespace IrcDotNet
         private Thread readThread;
         private Thread writeThread;
         private NetworkStream stream;
+        private Stream dataStream;
         private StreamWriter writer;
         private StreamReader reader;
 
@@ -131,7 +137,7 @@ namespace IrcDotNet
             this.numMessageProcessors = new Dictionary<int, MessageProcessor>(1000);
             this.messageSendQueue = new Queue<string>();
             this.floodPreventer = null;
-            
+
             InitialiseMessageProcessors();
             ResetState();
         }
@@ -377,6 +383,11 @@ namespace IrcDotNet
                         this.stream.Close();
                         this.stream = null;
                     }
+                    if (this.dataStream != null)
+                    {
+                        this.dataStream.Close();
+                        this.dataStream = null;
+                    }
                     if (this.writer != null)
                     {
                         this.writer.Close();
@@ -415,6 +426,12 @@ namespace IrcDotNet
         /// Occurs when the client encounters an error during execution.
         /// </summary>
         public event EventHandler<IrcErrorEventArgs> Error;
+
+        /// <summary>
+        /// Occurs when the SSL certificate received from the server should be validated.
+        /// The certificate is automatically validated if this event is not handled.
+        /// </summary>
+        public event EventHandler<IrcValidateSslCertificateEventArgs> ValidateSslCertificate;
 
         /// <summary>
         /// Occurs when a raw message has been sent to the server.
@@ -695,9 +712,9 @@ namespace IrcDotNet
 
         /// <inheritdoc cref="Quit(string)"/>
         /// <summary>
-        /// Quits the server, giving the specified comment. Waits the specified time before forcefully disconnecting.
+        /// Quits the server, giving the specified comment. Waits the specified time before forcibly disconnecting.
         /// </summary>
-        /// <param name="timeout">The number of milliseconds to wait before forcefully disconnecting.</param>
+        /// <param name="timeout">The number of milliseconds to wait before forcibly disconnecting.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void Quit(int timeout, string comment = null)
         {
@@ -834,7 +851,8 @@ namespace IrcDotNet
         /// Handles the specified parameter of an ISUPPORT message received from the server upon registration.
         /// </summary>
         /// <param name="paramName">The name of the parameter.</param>
-        /// <param name="paramValue">The value of the parameter, or <see langword="null"/> if it does not have a value.</param>
+        /// <param name="paramValue">The value of the parameter, or <see langword="null"/> if it does not have a value.
+        /// </param>
         protected bool HandleISupportParameter(string paramName, string paramValue)
         {
             if (paramName == null)
@@ -850,7 +868,7 @@ namespace IrcDotNet
                     var modes = prefixValueMatch.Groups["modes"].GetValue();
 
                     if (prefixes.Length != modes.Length)
-                        throw new InvalidOperationException(Properties.Resources.ErrorMessageISupportPrefixInvalid);
+                        throw new ProtocolViolationException(Properties.Resources.ErrorMessageISupportPrefixInvalid);
                     this.channelUserModes.Clear();
                     this.channelUserModes.AddRange(modes);
                     this.channelUserModesPrefixes.Clear();
@@ -1311,7 +1329,7 @@ namespace IrcDotNet
                     }
                     else
                     {
-                        throw new InvalidOperationException(string.Format(
+                        throw new ProtocolViolationException(string.Format(
                             Properties.Resources.ErrorMessageInvalidCommandDefinition, attribute.Command));
                     }
                 });
@@ -1619,18 +1637,39 @@ namespace IrcDotNet
             return value == '\0' || value == '\r' || value == '\n';
         }
 
-        /// <inheritdoc cref="Connect(string, int, IrcRegistrationInfo)"/>
-        public void Connect(string host, IrcRegistrationInfo registrationInfo)
+        /// <inheritdoc cref="Connect(string, int, bool, IrcRegistrationInfo)"/>
+        /// <summary>
+        /// Connects to a server using the specified URL and user information.
+        /// </summary>
+        public void Connect(Uri url, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
-            Connect(host, defaultPort, registrationInfo);
+            // Check URL scheme and decide whether to use SSL.
+            bool useSsl;
+            if (url.Scheme == "irc")
+                useSsl = false;
+            else if (url.Scheme == "ircs")
+                useSsl = true;
+            else
+                throw new ArgumentException(string.Format(Properties.Resources.ErrorMessageInvalidUrlScheme,
+                    url.Scheme), "url");
+
+            Connect(url.Host, url.Port == -1 ? defaultPort : url.Port, useSsl, registrationInfo);
         }
 
-        /// <inheritdoc cref="Connect(IPEndPoint, IrcRegistrationInfo)"/>
+        /// <inheritdoc cref="Connect(string, int, bool, IrcRegistrationInfo)"/>
+        public void Connect(string host, bool useSsl, IrcRegistrationInfo registrationInfo)
+        {
+            CheckDisposed();
+
+            Connect(host, defaultPort, useSsl, registrationInfo);
+        }
+
+        /// <inheritdoc cref="Connect(IPEndPoint, bool, IrcRegistrationInfo)"/>
         /// <param name="host">The name of the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
-        public void Connect(string host, int port, IrcRegistrationInfo registrationInfo)
+        public void Connect(string host, int port, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
@@ -1638,22 +1677,23 @@ namespace IrcDotNet
                 throw new ArgumentNullException("registrationInfo");
 
             DisconnectInternal();
-            this.client.BeginConnect(host, port, ConnectCallback, registrationInfo);
+            this.client.BeginConnect(host, port, ConnectCallback,
+                Tuple.Create(useSsl, registrationInfo));
             HandleClientConnecting();
         }
 
-        /// <inheritdoc cref="Connect(IPAddress, int, IrcRegistrationInfo)"/>
-        public void Connect(IPAddress address, IrcRegistrationInfo registrationInfo)
+        /// <inheritdoc cref="Connect(IPAddress, int, bool, IrcRegistrationInfo)"/>
+        public void Connect(IPAddress address, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
-            Connect(address, defaultPort, registrationInfo);
+            Connect(address, defaultPort, useSsl, registrationInfo);
         }
 
-        /// <inheritdoc cref="Connect(IPEndPoint, IrcRegistrationInfo)"/>
+        /// <inheritdoc cref="Connect(IPEndPoint, bool, IrcRegistrationInfo)"/>
         /// <param name="address">An IP addresses that designates the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
-        public void Connect(IPAddress address, int port, IrcRegistrationInfo registrationInfo)
+        public void Connect(IPAddress address, int port, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
@@ -1661,22 +1701,23 @@ namespace IrcDotNet
                 throw new ArgumentNullException("registrationInfo");
 
             DisconnectInternal();
-            this.client.BeginConnect(address, port, ConnectCallback, registrationInfo);
+            this.client.BeginConnect(address, port, ConnectCallback,
+                Tuple.Create(useSsl, registrationInfo));
             HandleClientConnecting();
         }
 
-        /// <inheritdoc cref="Connect(IPAddress[], int, IrcRegistrationInfo)"/>
-        public void Connect(IPAddress[] addresses, IrcRegistrationInfo registrationInfo)
+        /// <inheritdoc cref="Connect(IPAddress[], int, bool, IrcRegistrationInfo)"/>
+        public void Connect(IPAddress[] addresses, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
-            Connect(addresses, defaultPort, registrationInfo);
+            Connect(addresses, defaultPort, useSsl, registrationInfo);
         }
 
-        /// <inheritdoc cref="Connect(IPEndPoint, IrcRegistrationInfo)"/>
+        /// <inheritdoc cref="Connect(IPEndPoint, bool, IrcRegistrationInfo)"/>
         /// <param name="addresses">A collection of one or more IP addresses that designates the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
-        public void Connect(IPAddress[] addresses, int port, IrcRegistrationInfo registrationInfo)
+        public void Connect(IPAddress[] addresses, int port, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
@@ -1684,7 +1725,8 @@ namespace IrcDotNet
                 throw new ArgumentNullException("registrationInfo");
 
             DisconnectInternal();
-            this.client.BeginConnect(addresses, port, ConnectCallback, registrationInfo);
+            this.client.BeginConnect(addresses, port, ConnectCallback,
+                Tuple.Create(useSsl, registrationInfo));
             HandleClientConnecting();
         }
 
@@ -1692,10 +1734,12 @@ namespace IrcDotNet
         /// Connects to a server using the specified host and user information.
         /// </summary>
         /// <param name="remoteEP">The network endpoint (IP address and port) of the server to which to connect.</param>
+        /// <param name="useSsl"><see langword="true"/> to connect to the server via SSL; <see langword="false"/>,
+        /// otherwise</param>
         /// <param name="registrationInfo">The information used for registering the client. The type of the object may
         /// be either <see cref="IrcUserRegistrationInfo"/> or <see cref="IrcServiceRegistrationInfo"/>.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void Connect(IPEndPoint remoteEP, IrcRegistrationInfo registrationInfo)
+        public void Connect(IPEndPoint remoteEP, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
@@ -1703,18 +1747,19 @@ namespace IrcDotNet
                 throw new ArgumentNullException("registrationInfo");
 
             DisconnectInternal();
-            this.client.BeginConnect(remoteEP.Address, remoteEP.Port, ConnectCallback, registrationInfo);
+            this.client.BeginConnect(remoteEP.Address, remoteEP.Port, ConnectCallback,
+                Tuple.Create(useSsl, registrationInfo));
             HandleClientConnecting();
         }
 
         /// <summary>
-        /// Disconnects immediately from the server. A quit message is sent if the connection is still active.
+        /// Disconnects immediately from the server.
         /// </summary>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         /// <remarks>
-        /// This method closes the client connection immediately, and does not send a quit message to the server.
-        /// To disconnect from the IRC server gracefully, call <see cref="Quit(string)"/> and wait for the connection to
-        /// be closed.
+        /// This method closes the client connection immediately and forcibly, and does not send a quit message to the
+        /// server. To disconnect from the IRC server gracefully, call <see cref="Quit(string)"/> and wait for the
+        /// connection to be closed.
         /// </remarks>
         public void Disconnect()
         {
@@ -1723,7 +1768,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Disconnects from the server, regardless of whether the client object has already been disposed.
+        /// Disconnects from the server. Does nothing if client object has already been disposed.
         /// </summary>
         protected void DisconnectInternal()
         {
@@ -1752,12 +1797,15 @@ namespace IrcDotNet
         {
             try
             {
+                var state = (Tuple<bool, IrcRegistrationInfo>)ar.AsyncState;
                 this.client.EndConnect(ar);
+
                 this.stream = this.client.GetStream();
-                this.writer = new StreamWriter(this.stream, Encoding.Default);
-                this.reader = new StreamReader(this.stream, Encoding.Default);
-                
-                HandleClientConnected((IrcRegistrationInfo)ar.AsyncState);
+                this.dataStream = GetDataStream(state.Item1);
+                this.writer = new StreamWriter(this.dataStream, Encoding.Default);
+                this.reader = new StreamReader(this.dataStream, Encoding.Default);
+
+                HandleClientConnected(state.Item2);
                 this.readThread.Start();
                 this.writeThread.Start();
 
@@ -1767,6 +1815,32 @@ namespace IrcDotNet
             {
                 OnConnectFailed(new IrcErrorEventArgs(ex));
             }
+        }
+
+        private Stream GetDataStream(bool useSsl)
+        {
+            if (useSsl)
+            {
+                var sslStream = new SslStream(this.stream, true,
+                    new RemoteCertificateValidationCallback(SslUserCertificateValidationCallback));
+                sslStream.AuthenticateAsClient(null);
+                Debug.Assert(sslStream.IsAuthenticated);
+                return sslStream;
+            }
+            else
+            {
+                return this.stream;
+            }
+        }
+
+        private bool SslUserCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain,
+            SslPolicyErrors sslPolicyErrors)
+        {
+            // Raise an event to decide whether the certificate is valid.
+            var eventArgs = new IrcValidateSslCertificateEventArgs(certificate, chain, sslPolicyErrors);
+            eventArgs.IsValid = true;
+            OnValidateSslCertificate(eventArgs);
+            return eventArgs.IsValid;
         }
 
         private void HandleClientConnecting()
@@ -1877,7 +1951,19 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
-
+        
+        /// <summary>
+        /// Raises the <see cref="ValidateSslCertificate"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcValidateSslCertificateEventArgs"/> instance containing the event data.
+        /// </param>
+        protected virtual void OnValidateSslCertificate(IrcValidateSslCertificateEventArgs e)
+        {
+            var handler = this.ValidateSslCertificate;
+            if (handler != null)
+                handler(this, e);
+        }
+        
         /// <summary>
         /// Raises the <see cref="RawMessageSent"/> event.
         /// </summary>
@@ -2108,6 +2194,10 @@ namespace IrcDotNet
                 this.Source = client.GetSourceFromPrefix(prefix);
             }
 
+            /// <summary>
+            /// Returns a string representation of this instance.
+            /// </summary>
+            /// <returns>A string that represents this instance.</returns>
             public override string ToString()
             {
                 return string.Format("{0} ({1} parameters)", this.Command, this.Parameters.Count);

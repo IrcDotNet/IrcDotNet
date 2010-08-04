@@ -9,6 +9,8 @@ using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    using Common.Collections;
+
     /// <summary>
     /// Represents a collection of <see cref="IrcUser"/> objects.
     /// </summary>
