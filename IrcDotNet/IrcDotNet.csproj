@@ -48,6 +48,7 @@
     <Compile Include="Ctcp\CtcpClientMessageSending.cs" />
     <Compile Include="Ctcp\CtcpEventArgs.cs" />
     <Compile Include="IrcChannelInfo.cs" />
+    <Compile Include="IrcNetworkInformation.cs" />
     <Compile Include="IrcRegistrationInfo.cs" />
     <Compile Include="IrcStandardFloodPreventer.cs" />
     <Compile Include="IIrcFloodPreventer.cs" />
