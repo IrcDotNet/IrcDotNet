@@ -343,6 +343,7 @@ namespace IrcDotNet
                 var textParts = message.Parameters[0].Split(' ', ',');
                 var serverAddress = textParts[2];
                 var serverPort = int.Parse(textParts[6]);
+
                 OnServerBounce(new IrcServerInfoEventArgs(serverAddress, serverPort));
             }
             else
@@ -360,8 +361,97 @@ namespace IrcDotNet
                     HandleISupportParameter(paramName, paramValue);
                     this.serverSupportedFeatures.Add(paramName, paramValue);
                 }
+
                 OnServerSupportedFeaturesReceived(new EventArgs());
             }
+        }
+
+        /// <summary>
+        /// Process RPL_LUSERCLIENT responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("251")]
+        protected void ProcessMessageLUserClient(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // Extract network information from text.
+            Debug.Assert(message.Parameters[1] != null);
+            var infoParts = message.Parameters[1].Split(' ');
+            Debug.Assert(infoParts.Length == 10);
+            this.networkInformation.VisibleUsersCount = int.Parse(infoParts[2]);
+            this.networkInformation.InvisibleUsersCount = int.Parse(infoParts[5]);
+            this.networkInformation.ServersCount = int.Parse(infoParts[8]);
+
+            OnNetworkInformationReceived(new EventArgs());
+        }
+
+        /// <summary>
+        /// Process RPL_LUSEROP responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("252")]
+        protected void ProcessMessageLUserOp(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // Extract network information from text.
+            Debug.Assert(message.Parameters[1] != null);
+            this.networkInformation.OperatorsCount = int.Parse(message.Parameters[1]);
+
+            OnNetworkInformationReceived(new EventArgs());
+        }
+
+        /// <summary>
+        /// Process RPL_LUSERUNKNOWN responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("253")]
+        protected void ProcessMessageLUserUnknown(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // Extract network information from text.
+            Debug.Assert(message.Parameters[1] != null);
+            this.networkInformation.UnknownConnectionsCount = int.Parse(message.Parameters[1]);
+
+            OnNetworkInformationReceived(new EventArgs());
+        }
+
+        /// <summary>
+        /// Process RPL_LUSERCHANNELS responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+
+        [MessageProcessor("254")]
+        protected void ProcessMessageLUserChannels(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // Extract network information from text.
+            Debug.Assert(message.Parameters[1] != null);
+            this.networkInformation.ChannelsCount = int.Parse(message.Parameters[1]);
+
+            OnNetworkInformationReceived(new EventArgs());
+        }
+
+        /// <summary>
+        /// Process RPL_LUSERME responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("255")]
+        protected void ProcessMessageLUserMe(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // Extract network information from text.
+            Debug.Assert(message.Parameters[1] != null);
+            var infoParts = message.Parameters[1].Split(' ');
+            Debug.Assert(infoParts.Length == 7);
+            this.networkInformation.ServerClientsCount = int.Parse(infoParts[2]);
+            this.networkInformation.ServerServersCount = int.Parse(infoParts[5]);
+
+            OnNetworkInformationReceived(new EventArgs());
         }
 
         /// <summary>
@@ -776,7 +866,6 @@ namespace IrcDotNet
 
             Debug.Assert(message.Parameters[1] != null);
             this.motdBuilder.AppendLine(message.Parameters[1]);
-            this.MessageOfTheDay = this.motdBuilder.ToString();
             OnMotdReceived(new EventArgs());
         }
 

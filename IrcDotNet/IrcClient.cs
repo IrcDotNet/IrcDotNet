@@ -85,6 +85,9 @@ namespace IrcDotNet
         // Builds MOTD (message of the day) string as it is received from server.
         private StringBuilder motdBuilder;
 
+        // Information about the IRC network given by the server.
+        private IrcNetworkInformation networkInformation;
+
         // Internal and exposable collection of all currently joined channels.
         private ObservableCollection<IrcChannel> channels;
         private IrcChannelCollection channelsReadOnly;
@@ -281,8 +284,16 @@ namespace IrcDotNet
         /// <value>The Message of the Day sent by the server.</value>
         public string MessageOfTheDay
         {
-            get;
-            private set;
+            get { return this.motdBuilder.ToString(); }
+        }
+
+        /// <summary>
+        /// This value is set after successful registration of the connection.
+        /// </summary>
+        /// <value>The Message of the Day sent by the server.</value>
+        public IrcNetworkInformation? NetworkInformation
+        {
+            get { return this.networkInformation; }
         }
 
         /// <summary>
@@ -494,6 +505,11 @@ namespace IrcDotNet
         /// Occurs when the Message of the Day (MOTD) has been received from the server.
         /// </summary>
         public event EventHandler<EventArgs> MotdReceived;
+
+        /// <summary>
+        /// Occurs when information about the IRC network has been received from the server.
+        /// </summary>
+        public event EventHandler<EventArgs> NetworkInformationReceived;
 
         /// <summary>
         /// Occurs when a reply to a Who query has been received from the server.
@@ -1293,6 +1309,7 @@ namespace IrcDotNet
             this.channelUserModesPrefixes = new Dictionary<char, char>() {
                 { '@', 'o' }, { '+', 'v' } };
             this.motdBuilder = new StringBuilder();
+            this.networkInformation = new IrcNetworkInformation();
             this.channels = new ObservableCollection<IrcChannel>();
             this.channelsReadOnly = new IrcChannelCollection(this, this.channels);
             this.users = new ObservableCollection<IrcUser>();
@@ -1951,7 +1968,7 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
-        
+
         /// <summary>
         /// Raises the <see cref="ValidateSslCertificate"/> event.
         /// </summary>
@@ -1963,7 +1980,7 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
-        
+
         /// <summary>
         /// Raises the <see cref="RawMessageSent"/> event.
         /// </summary>
@@ -2081,6 +2098,17 @@ namespace IrcDotNet
         protected virtual void OnMotdReceived(EventArgs e)
         {
             var handler = this.MotdReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="NetworkInformationReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        protected virtual void OnNetworkInformationReceived(EventArgs e)
+        {
+            var handler = this.NetworkInformationReceived;
             if (handler != null)
                 handler(this, e);
         }
