@@ -5,10 +5,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    using Common.Collections;
+
     /// <summary>
     /// Represents an IRC user that resides on a specific channel on a specific <see cref="IrcClient"/>.
     /// </summary>

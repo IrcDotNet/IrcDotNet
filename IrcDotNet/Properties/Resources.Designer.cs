@@ -196,6 +196,15 @@ namespace IrcDotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The URL scheme &apos;{0}&apos; is not valid..
+        /// </summary>
+        internal static string ErrorMessageInvalidUrlScheme {
+            get {
+                return ResourceManager.GetString("ErrorMessageInvalidUrlScheme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified user mode is invalid..
         /// </summary>
         internal static string ErrorMessageInvalidUserMode {

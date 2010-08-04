@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using IrcDotNet.Common.Collections;
@@ -20,7 +21,7 @@ namespace IrcDotNet
         {
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
-                throw new InvalidOperationException(string.Format(
+                throw new ProtocolViolationException(string.Format(
                     Properties.Resources.ErrorMessageSourceNotUser, message.Source.Name));
 
             // Local or remote user has changed nick name.
@@ -37,7 +38,7 @@ namespace IrcDotNet
         {
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
-                throw new InvalidOperationException(string.Format(
+                throw new ProtocolViolationException(string.Format(
                     Properties.Resources.ErrorMessageSourceNotUser, message.Source.Name));
 
             // Remote user has quit server.
@@ -55,7 +56,7 @@ namespace IrcDotNet
         {
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
-                throw new InvalidOperationException(string.Format(
+                throw new ProtocolViolationException(string.Format(
                     Properties.Resources.ErrorMessageSourceNotUser, message.Source.Name));
 
             // Local or remote user has joined one or more channels.
@@ -76,7 +77,7 @@ namespace IrcDotNet
         {
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
-                throw new InvalidOperationException(string.Format(
+                throw new ProtocolViolationException(string.Format(
                     Properties.Resources.ErrorMessageSourceNotUser, message.Source.Name));
 
             // Local or remote user has left one or more channels.
@@ -114,7 +115,7 @@ namespace IrcDotNet
             }
             else
             {
-                throw new InvalidOperationException(string.Format(Properties.Resources.ErrorMessageCannotSetUserMode,
+                throw new ProtocolViolationException(string.Format(Properties.Resources.ErrorMessageCannotSetUserMode,
                     message.Parameters[0]));
             }
         }
