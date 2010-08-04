@@ -152,14 +152,14 @@ namespace IrcDotNet.Tests
             Debug.WriteLine("Cllient 2 user has nick name '{0}' and user name '{1}'.", nickName2, userName2);
 
             stateManager.SetStates(IrcClientTestState.Client1Initialised, IrcClientTestState.Client2Initialised);
-            ircClient1.Connect(serverHostName, new IrcUserRegistrationInfo()
+            ircClient1.Connect(serverHostName, false, new IrcUserRegistrationInfo()
                 {
                     Password = serverPassword,
                     NickName = nickName1,
                     UserName = userName1,
                     RealName = realName
                 });
-            ircClient2.Connect(serverHostName, new IrcUserRegistrationInfo()
+            ircClient2.Connect(serverHostName, false, new IrcUserRegistrationInfo()
                 {
                     Password = serverPassword,
                     NickName = nickName2,

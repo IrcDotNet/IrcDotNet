@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet.Ctcp
 {
+    using Common.Collections;
+
     /// <summary>
     /// Provides methods for communicating with a server using CTCP (Client to Client Protocol), which operates over a
     /// connection to an IRC server.
@@ -391,6 +392,10 @@ namespace IrcDotNet.Ctcp
                 this.IsResponse = isResponse;
             }
 
+            /// <summary>
+            /// Returns a string representation of this instance.
+            /// </summary>
+            /// <returns>A string that represents this instance.</returns>
             public override string ToString()
             {
                 return string.Format("{0} {1}", this.Tag, this.Data);
