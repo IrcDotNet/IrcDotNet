@@ -27,25 +27,23 @@ namespace IrcDotNet.Ctcp
         }
 
         /// <summary>
-        /// Process PING messages from a user.
+        /// Process TIME messages from a user.
         /// </summary>
         /// <param name="message">The message received from the user.</param>
-        [MessageProcessor("ping")]
-        protected void ProcessMessagePing(CtcpMessage message)
+        [MessageProcessor("time")]
+        protected void ProcessMessageTime(CtcpMessage message)
         {
             Debug.Assert(message.Data != null);
 
             if (message.IsResponse)
             {
-                // Calculate time elapsed since the ping request was sent.
-                var sendTime = new DateTime(long.Parse(message.Data));
-                var pingTime = DateTime.Now - sendTime;
+                var dateTime = message.Data;
 
-                OnPingResponseReceived(new CtcpPingResponseReceivedEventArgs(message.Source, pingTime));
+                OnTimeResponseReceived(new CtcpTimeResponseReceivedEventArgs(message.Source, dateTime));
             }
             else
             {
-                SendMessagePing(new [] { message.Source }, message.Data, true);
+                SendMessageTime(new[] { message.Source }, DateTime.Now.ToString(), true);
             }
         }
 
@@ -66,8 +64,31 @@ namespace IrcDotNet.Ctcp
             {
                 if (this.ClientVersion != null)
                 {
-                    SendMessageVersion(new[] { message.Source }, this.ClientVersion);
+                    SendMessageVersion(new[] { message.Source }, this.ClientVersion, true);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Process PING messages from a user.
+        /// </summary>
+        /// <param name="message">The message received from the user.</param>
+        [MessageProcessor("ping")]
+        protected void ProcessMessagePing(CtcpMessage message)
+        {
+            Debug.Assert(message.Data != null);
+
+            if (message.IsResponse)
+            {
+                // Calculate time elapsed since the ping request was sent.
+                var sendTime = new DateTime(long.Parse(message.Data));
+                var pingTime = DateTime.Now - sendTime;
+
+                OnPingResponseReceived(new CtcpPingResponseReceivedEventArgs(message.Source, pingTime));
+            }
+            else
+            {
+                SendMessagePing(new[] { message.Source }, message.Data, true);
             }
         }
     }

@@ -87,14 +87,19 @@ namespace IrcDotNet.Ctcp
         public event EventHandler<CtcpMessageEventArgs> ActionReceived;
 
         /// <summary>
-        /// Occurs when a ping response has been received from a user.
+        /// Occurs when a response to a date/time request has been received from a user.
         /// </summary>
-        public event EventHandler<CtcpPingResponseReceivedEventArgs> PingResponseReceived;
-
+        public event EventHandler<CtcpTimeResponseReceivedEventArgs> TimeResponseReceived;
+            
         /// <summary>
         /// Occurs when a response to a version request has been received from a user.
         /// </summary>
         public event EventHandler<CtcpVersionResponseReceivedEventArgs> VersionResponseReceived;
+
+        /// <summary>
+        /// Occurs when a ping response has been received from a user.
+        /// </summary>
+        public event EventHandler<CtcpPingResponseReceivedEventArgs> PingResponseReceived;
 
         /// <summary>
         /// Occurs when a raw message has been sent to a user.
@@ -111,22 +116,42 @@ namespace IrcDotNet.Ctcp
         /// </summary>
         public event EventHandler<IrcErrorEventArgs> Error;
 
+        /// <inheritdoc cref="SendAction(IList{IIrcMessageTarget}, string)"/>
         /// <summary>
-        /// Pings the specified user.
+        /// Sends an action message to the specified list of users.
         /// </summary>
         /// <param name="user">The user to which to send the request.</param>
-        public void Ping(IIrcMessageTarget user)
+        public void SendAction(IIrcMessageTarget user, string text)
         {
-            Ping(new[] { user });
+            SendMessageAction(new[] { user }, text);
         }
 
         /// <summary>
-        /// Pings the specified list of users.
+        /// Sends an action message to the specified list of users.
         /// </summary>
         /// <param name="users">A list of users to which to send the request.</param>
-        public void Ping(IList<IIrcMessageTarget> users)
+        /// <param name="text">The text of the message.</param>
+        public void SendAction(IList<IIrcMessageTarget> users, string text)
         {
-            SendMessagePing(users, DateTime.Now.Ticks.ToString(), false);
+            SendMessageAction(users, text);
+        }
+
+        /// <summary>
+        /// Gets the local date/time of the specified user.
+        /// </summary>
+        /// <param name="user">The user to which to send the request.</param>
+        public void GetTime(IIrcMessageTarget user)
+        {
+            GetTime(new[] { user });
+        }
+
+        /// <summary>
+        /// Gets the local date/time of the specified list of users.
+        /// </summary>
+        /// <param name="users">A list of users to which to send the request.</param>
+        public void GetTime(IList<IIrcMessageTarget> users)
+        {
+            SendMessageTime(users, null, false);
         }
 
         /// <summary>
@@ -144,7 +169,25 @@ namespace IrcDotNet.Ctcp
         /// <param name="users">A list of users to which to send the request.</param>
         public void GetVersion(IList<IIrcMessageTarget> users)
         {
-            SendMessageVersion(users);
+            SendMessageVersion(users, null, false);
+        }
+
+        /// <summary>
+        /// Pings the specified user.
+        /// </summary>
+        /// <param name="user">The user to which to send the request.</param>
+        public void Ping(IIrcMessageTarget user)
+        {
+            Ping(new[] { user });
+        }
+
+        /// <summary>
+        /// Pings the specified list of users.
+        /// </summary>
+        /// <param name="users">A list of users to which to send the request.</param>
+        public void Ping(IList<IIrcMessageTarget> users)
+        {
+            SendMessagePing(users, DateTime.Now.Ticks.ToString(), false);
         }
 
         private void ircClient_Connected(object sender, EventArgs e)
@@ -307,7 +350,7 @@ namespace IrcDotNet.Ctcp
         {
             return value.Dequote(ctcpQuotingEscapeChar, ctcpDequotedChars);
         }
-
+        
         /// <summary>
         /// Raises the <see cref="ActionSent"/> event.
         /// </summary>
@@ -331,13 +374,13 @@ namespace IrcDotNet.Ctcp
         }
 
         /// <summary>
-        /// Raises the <see cref="PingResponseReceived"/> event.
+        /// Raises the <see cref="TimeResponseReceived"/> event.
         /// </summary>
-        /// <param name="e">The <see cref="CtcpPingResponseReceivedEventArgs"/> instance containing the event data.
+        /// <param name="e">The <see cref="CtcpTimeResponseReceivedEventArgs"/> instance containing the event data.
         /// </param>
-        protected virtual void OnPingResponseReceived(CtcpPingResponseReceivedEventArgs e)
+        protected virtual void OnTimeResponseReceived(CtcpTimeResponseReceivedEventArgs e)
         {
-            var handler = this.PingResponseReceived;
+            var handler = this.TimeResponseReceived;
             if (handler != null)
                 handler(this, e);
         }
@@ -350,6 +393,18 @@ namespace IrcDotNet.Ctcp
         protected virtual void OnVersionResponseReceived(CtcpVersionResponseReceivedEventArgs e)
         {
             var handler = this.VersionResponseReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+        
+        /// <summary>
+        /// Raises the <see cref="PingResponseReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="CtcpPingResponseReceivedEventArgs"/> instance containing the event data.
+        /// </param>
+        protected virtual void OnPingResponseReceived(CtcpPingResponseReceivedEventArgs e)
+        {
+            var handler = this.PingResponseReceived;
             if (handler != null)
                 handler(this, e);
         }
