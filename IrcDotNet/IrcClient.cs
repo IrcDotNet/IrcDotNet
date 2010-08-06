@@ -10,10 +10,11 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    using Common.Collections;
+
     /// <summary>
     /// Provides methods for communicating with a server using the IRC (Internet Relay Chat) protocol.
     /// Do not inherit unless the protocol itself is being extended.

@@ -4,47 +4,40 @@ Building Documentation
 The following prerequisites are required to build the documentation for the
 library.
 
- * mdoc
+ * Microsoft Sandcastle 2.6
    
-   This is included in the standard Mono installation or can be downloaded
-   separately from <http://www.mono-project.com/Mdoc>. Building has been tested
-   using the version included in the Mono 2.6.1 package.
+   A documentation compiler for .NET assemblies.
+   Download from <http://sandcastle.codeplex.com/releases>.
  
- * PowerShell 2.0
+ * Sandcastle Help File Builder 1.9.1
    
-   This is included by default with all Windows 7 installations, but may be
-   downloaded and installed for previous versions of Windows as part of the
-   Windows Management Framework, available from
-   <http://support.microsoft.com/kb/968929>.
+   A user interface and project management system for Sandcastle documentation.
+   Download from <http://shfb.codeplex.com/releases>.
 
-Once these tools are installed, the Build.ps1 file may need to be edited. The
-mdocPath variable gives the path to the mdoc executable, and should be set to
-the appropiate path (the Mono bin directory if using the version installed with
-Mono).
+Once these tools are installed, open the appropiate .shfbproj file in the
+Documentation directory and run build. This action generates the user-readable
+documentation for the library (Release build by default).
 
-Finally, the documentation can be built by running the Build.ps1 script with
-PowerShell. The script uses the mdoc tool to generate the documentation in
-various formats, as described in the Build Output section.
-
-Build Output
-============
+Output
+======
 
 Upon a successful build, the 'output' directory is created, containing the
-following sub-directories.
+following relevant files.
 
- * mdoc
+ * IRC.NET.chm
    
-   Contains the documentation in the Mono documentation (mdoc) XML format. The
-   format is specified at
-   <http://www.go-mono.org/docs/index.aspx?link=man:mdoc%285%29>.
+   The Microsoft Compiled HTML Help file containing the full documentation.
+   This file can be viewed using the Microsoft HTML Help v1 viewer, included
+   with all recent versions of Windows.
  
- * msxdoc
+ * IRC.NET.mshc
    
-   Contains the documentation in the Microsoft XML documentation format. The
-   format is specified at
-   <http://msdn.microsoft.com/en-us/library/b2s063f7.aspx>.
- 
- * html
+   The Microsoft Help Container file containing the full documentation.
+   This file provides content to be viewed in Microsoft Help Viewer 1.0,
+   included with Visual Studio 2010.
    
-   Contains the documentation in HTML format. This is the primary human-readable
-   form of documentation.
+   To install the help content run the Install_IRC.NET.bat script.
+   To remove the help content run the Remove_IRC.NET.bat script.
+   
+   See <http://msdn.microsoft.com/en-us/library/dd776252.aspx> for more
+   information on Microsoft Help Viewer 1.0.
