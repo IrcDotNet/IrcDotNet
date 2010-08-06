@@ -62,6 +62,32 @@ namespace IrcDotNet.Ctcp
             private set;
         }
     }
+    
+    /// <summary>
+    /// Provides data for the <see cref="CtcpClient.TimeResponseReceived"/> event.
+    /// </summary>
+    public class CtcpTimeResponseReceivedEventArgs : CtcpResponseReceivedEventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CtcpTimeResponseReceivedEventArgs"/> class.
+        /// </summary>
+        /// <param name="versionInfo">The information about the client version.</param>
+        public CtcpTimeResponseReceivedEventArgs(IrcUser user, string dateTime)
+            : base(user)
+        {
+            this.DateTime = dateTime;
+        }
+
+        /// <summary>
+        /// Gets the local/date time given by the user.
+        /// </summary>
+        /// <value>The ping time.</value>
+        public string DateTime
+        {
+            get;
+            private set;
+        }
+    }
 
     /// <summary>
     /// Provides data for the <see cref="CtcpClient.VersionResponseReceived"/> event.

@@ -9,7 +9,7 @@ namespace IrcDotNet.Ctcp
     partial class CtcpClient
     {
         /// <summary>
-        /// Sends an ACTION command to the specified target.
+        /// Sends an action message to the specified target.
         /// </summary>
         /// <param name="targets">A list of the targets of the message.</param>
         /// <param name="info">The message text.</param>
@@ -18,6 +18,30 @@ namespace IrcDotNet.Ctcp
             WriteMessage(targets, "action", text);
 
             OnActionSent(new CtcpMessageEventArgs(this.ircClient.LocalUser, targets, text));
+        }
+
+        /// <summary>
+        /// Sends a request for the local date/time to the specified target.
+        /// </summary>
+        /// <param name="targets">A list of the targets of the message.</param>
+        /// <param name="info">The information to send.</param>
+        /// <param name="isResponse"><see langword="true"/> if the message is a response; <see langword="false"/>,
+        /// otherwise.</param>
+        protected void SendMessageTime(IList<IIrcMessageTarget> targets, string info, bool isResponse)
+        {
+            WriteMessage(targets, "time", info, isResponse);
+        }
+
+        /// <summary>
+        /// Sends a request or response for information about the version of the client.
+        /// </summary>
+        /// <param name="targets">A list of the targets of the message.</param>
+        /// <param name="info">The information to send.</param>
+        /// <param name="isResponse"><see langword="true"/> if the message is a response; <see langword="false"/>,
+        /// otherwise.</param>
+        protected void SendMessageVersion(IList<IIrcMessageTarget> targets, string info, bool isResponse)
+        {
+            WriteMessage(targets, "version", info, isResponse);
         }
 
         /// <summary>
@@ -30,16 +54,6 @@ namespace IrcDotNet.Ctcp
         protected void SendMessagePing(IList<IIrcMessageTarget> targets, string info, bool isResponse)
         {
             WriteMessage(targets, "ping", info, isResponse);
-        }
-
-        /// <summary>
-        /// Sends a request or response for information about the version of the client.
-        /// </summary>
-        /// <param name="targets">A list of the targets of the message.</param>
-        /// <param name="info">The information to send.</param>
-        protected void SendMessageVersion(IList<IIrcMessageTarget> targets, string info = null)
-        {
-            WriteMessage(targets, "version", info, info != null);
         }
     }
 }
