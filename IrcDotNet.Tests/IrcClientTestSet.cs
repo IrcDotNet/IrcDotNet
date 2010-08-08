@@ -47,7 +47,9 @@ namespace IrcDotNet.Tests
         private static AutoResetEvent client1ErrorEvent;
         private static AutoResetEvent client1RegisteredEvent;
         private static AutoResetEvent client1MotdReceivedEvent;
-        private static AutoResetEvent client1VersionInfoReceivedEvent;
+        private static AutoResetEvent client1NetworkInfoReceivedEvent;
+        private static AutoResetEvent client1ServerVersionInfoReceivedEvent;
+        private static AutoResetEvent client1ServerTimeReceivedEvent;
         private static AutoResetEvent client1LocalUserNickNameChangedEvent;
         private static AutoResetEvent client1LocalUserModeChangedEvent;
         private static AutoResetEvent client1LocalUserIsAwayChangedEvent;
@@ -124,7 +126,9 @@ namespace IrcDotNet.Tests
             ircClient1.ProtocolError += ircClient1_ProtocolError;
             ircClient1.Registered += ircClient1_Registered;
             ircClient1.MotdReceived += ircClient1_MotdReceived;
+            ircClient1.NetworkInformationReceived += ircClient1_NetworkInformationReceived;
             ircClient1.ServerVersionInfoReceived += ircClient1_ServerVersionInfoReceived;
+            ircClient1.ServerTimeReceived += ircClient1_ServerTimeReceived;
             ircClient1.WhoReplyReceived += ircClient1_WhoReplyReceived;
             ircClient1.WhoIsReplyReceived += ircClient1_WhoIsReplyReceived;
             ircClient1.WhoWasReplyReceived += ircClient1_WhoWasReplyReceived;
@@ -238,7 +242,7 @@ namespace IrcDotNet.Tests
 
         private static void ircClient1_ProtocolError(object sender, EventArgs e)
         {
-            //
+            // Ignore.
         }
 
         private static void ircClient1_Registered(object sender, EventArgs e)
@@ -263,10 +267,22 @@ namespace IrcDotNet.Tests
                 client1MotdReceivedEvent.Set();
         }
 
+        private static void ircClient1_NetworkInformationReceived(object sender, EventArgs e)
+        {
+            if (client1NetworkInfoReceivedEvent != null)
+                client1NetworkInfoReceivedEvent.Set();
+        }
+
         private static void ircClient1_ServerVersionInfoReceived(object sender, IrcServerVersionInfoEventArgs e)
         {
-            if (client1VersionInfoReceivedEvent != null)
-                client1VersionInfoReceivedEvent.Set();
+            if (client1ServerVersionInfoReceivedEvent != null)
+                client1ServerVersionInfoReceivedEvent.Set();
+        }
+
+        private static void ircClient1_ServerTimeReceived(object sender, IrcServerTimeEventArgs e)
+        {
+            if (client1ServerTimeReceivedEvent != null)
+                client1ServerTimeReceivedEvent.Set();
         }
 
         private static void ircClient1_WhoReplyReceived(object sender, EventArgs e)
@@ -458,7 +474,7 @@ namespace IrcDotNet.Tests
 
         private static void ircClient2_ProtocolError(object sender, IrcProtocolErrorEventArgs e)
         {
-            //
+            // Ignore.
         }
 
         private static void ircClient2_Registered(object sender, EventArgs e)
@@ -686,6 +702,17 @@ namespace IrcDotNet.Tests
             stateManager.HasStates(IrcClientTestState.Client1Registered);
             Assert.IsTrue(WaitForClientEvent(client1MotdReceivedEvent, 10000),
                 "Client 1 did not receive MOTD from server.");
+            Assert.IsTrue(ircClient1.MessageOfTheDay.Length > 0,
+                "MOTD received from server is empty.");
+        }
+
+        [TestMethod()]
+        public void NetworkInfoTest()
+        {
+            stateManager.HasStates(IrcClientTestState.Client1Registered);
+            ircClient1.GetNetworkInfo();
+            Assert.IsTrue(WaitForClientEvent(client1NetworkInfoReceivedEvent, 10000),
+                "Client 1 did not receive network information from server.");
         }
 
         [TestMethod()]
@@ -693,8 +720,17 @@ namespace IrcDotNet.Tests
         {
             stateManager.HasStates(IrcClientTestState.Client1Registered);
             ircClient1.GetServerVersion();
-            Assert.IsTrue(WaitForClientEvent(client1VersionInfoReceivedEvent, 10000),
+            Assert.IsTrue(WaitForClientEvent(client1ServerVersionInfoReceivedEvent, 10000),
                 "Client 1 did not receive version information from server.");
+        }
+
+        [TestMethod()]
+        public void ServerTimeTest()
+        {
+            stateManager.HasStates(IrcClientTestState.Client1Registered);
+            ircClient1.GetServerTime();
+            Assert.IsTrue(WaitForClientEvent(client1ServerTimeReceivedEvent, 10000),
+                "Client 1 did not receive date/time info from server.");
         }
 
         [TestMethod()]

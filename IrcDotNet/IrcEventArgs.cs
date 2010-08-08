@@ -55,7 +55,7 @@ namespace IrcDotNet
             if (debugLevel == null)
                 throw new ArgumentNullException("debugLevel");
             if (serverName == null)
-                throw new ArgumentNullException("server");
+                throw new ArgumentNullException("serverName");
             if (comments == null)
                 throw new ArgumentNullException("comments");
 
@@ -100,6 +100,49 @@ namespace IrcDotNet
         /// </summary>
         /// <value>The comments about the server.</value>
         public string Comments
+        {
+            get;
+            private set;
+        }
+    }
+
+    /// <summary>
+    /// Provides data for the <see cref="IrcClient.ServerTimeReceived"/> event.
+    /// </summary>
+    public class IrcServerTimeEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IrcServerTimeEventArgs"/> class.
+        /// </summary>
+        /// <param name="serverName">The name of the server.</param>
+        /// <param name="dateTime">The local date/time received from the server.</param>
+        public IrcServerTimeEventArgs(string serverName, string dateTime)
+            : base()
+        {
+            if (serverName == null)
+                throw new ArgumentNullException("serverName");
+            if (dateTime == null)
+                throw new ArgumentNullException("dateTime");
+
+            this.ServerName = serverName;
+            this.DateTime = dateTime;
+        }
+
+        /// <summary>
+        /// Gets the name of the server to which the version information applies.
+        /// </summary>
+        /// <value>The name of the server.</value>
+        public string ServerName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the local date/time for the server.
+        /// </summary>
+        /// <value>The local date/time for the server.</value>
+        public string DateTime
         {
             get;
             private set;
