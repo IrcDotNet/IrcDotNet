@@ -33,8 +33,6 @@ namespace IrcDotNet.Ctcp
         [MessageProcessor("time")]
         protected void ProcessMessageTime(CtcpMessage message)
         {
-            Debug.Assert(message.Data != null);
-
             if (message.IsResponse)
             {
                 var dateTime = message.Data;
@@ -43,7 +41,9 @@ namespace IrcDotNet.Ctcp
             }
             else
             {
-                SendMessageTime(new[] { message.Source }, DateTime.Now.ToString(), true);
+                var localDateTime = DateTimeOffset.Now.ToString("o");
+                
+                SendMessageTime(new[] { message.Source }, localDateTime, true);
             }
         }
 
