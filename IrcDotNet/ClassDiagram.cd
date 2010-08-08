@@ -162,7 +162,7 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>PkXc0nd3DnPuU3rV+U+IWfPVn+/acw456f9ev0572fE=</HashCode>
+      <HashCode>PkXc0nd3DnPuU/rV+U/IWfPVn+/acw456f9ev0572fE=</HashCode>
       <FileName>IrcClient.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -278,7 +278,7 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAUIASAICAGBQUAFIcACAQBIACgMAAAAQgEAiACSmAA=</HashCode>
+      <HashCode>AQUIAWQICwGRQUAFYdACARBIACgMAAAQQgEAiACSmEA=</HashCode>
       <FileName>Ctcp\CtcpClient.cs</FileName>
     </TypeIdentifier>
   </Class>

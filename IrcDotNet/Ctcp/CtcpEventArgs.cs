@@ -19,7 +19,7 @@ namespace IrcDotNet.Ctcp
         /// <param name="text">The text of the mesage.</param>
         /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
-        public CtcpMessageEventArgs(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
+        public CtcpMessageEventArgs(IrcUser source, IList<IIrcMessageTarget> targets, string text)
             : base()
         {
             if (targets == null)
@@ -36,7 +36,7 @@ namespace IrcDotNet.Ctcp
         /// Gets the source of the message.
         /// </summary>
         /// <value>The source of the message.</value>
-        public IIrcMessageSource Source
+        public IrcUser Source
         {
             get;
             private set;
@@ -71,7 +71,7 @@ namespace IrcDotNet.Ctcp
         /// <summary>
         /// Initializes a new instance of the <see cref="CtcpTimeResponseReceivedEventArgs"/> class.
         /// </summary>
-        /// <param name="versionInfo">The information about the client version.</param>
+        /// <param name="dateTime">The local date/time received from the user.</param>
         public CtcpTimeResponseReceivedEventArgs(IrcUser user, string dateTime)
             : base(user)
         {

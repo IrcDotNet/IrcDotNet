@@ -11,6 +11,26 @@ namespace IrcDotNet.Common.Collections
     public static class CollectionsUtilities
     {
         /// <summary>
+        /// Sets the value for the specified key in a dictionary.
+        /// If the given key already exists, overwrite its value; otherwise, add a new key/value pair.
+        /// </summary>
+        /// <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
+        /// <typeparam name="TValue">The type of values in the dictionary..</typeparam>
+        /// <param name="dictionary">The dictionary in which to set the value.</param>
+        /// <param name="key">The object to use as the key of the element to add/update.</param>
+        /// <param name="value">The object to use as the value of the element to add/update.</param>
+        public static void Set<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        {
+            if (dictionary == null)
+                throw new ArgumentNullException("collection");
+
+            if (dictionary.ContainsKey(key))
+                dictionary[key] = value;
+            else
+                dictionary.Add(key, value);
+        }
+
+        /// <summary>
         /// Adds the specified items to the collection.
         /// </summary>
         /// <typeparam name="T">The type of the items in the collection.</typeparam>

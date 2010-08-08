@@ -5,10 +5,11 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    using Common.Collections;
+
     /// <summary>
     /// Represents a collection of <see cref="IrcUser"/> objects.
     /// </summary>
