@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -278,30 +279,7 @@ namespace IrcDotNet
         /// <summary>
         /// Sends a request to query stastics for the server.
         /// </summary>
-        /// <param name="query">The query to send the server. The syntax for this value is dependent on the
-        /// implementation of the server, but should support the following query characters:
-        /// <list type="bullet">
-        ///   <listheader>
-        ///     <term>Character</term>
-        ///     <description>Query</description>
-        ///   </listheader>
-        ///   <item>
-        ///     <term>l</term>
-        ///     <description>A list of connections of the server and information about them.</description>
-        ///   </item>
-        ///   <item>
-        ///     <term>m</term>
-        ///     <description>The usage count for each of the commands supported by the server.</description>
-        ///   </item>
-        ///   <item>
-        ///     <term>o</term>
-        ///     <description>A list of all server operators.</description>
-        ///   </item>
-        ///   <item>
-        ///     <term>u</term>
-        ///     <description>The duration for which the server has been running since its last start.</description>
-        ///   </item>
-        /// </list></param>
+        /// <param name="query">The query to send the server.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
         protected void SendMessageStats(string query = null, string targetServer = null)

@@ -82,7 +82,7 @@ namespace IrcDotNet
         private StringBuilder motdBuilder;
 
         // Information about the IRC network given by the server.
-        private IrcNetworkInformation networkInformation;
+        private IrcNetworkInfo networkInformation;
 
         // Internal and exposable collection of all currently joined channels.
         private ObservableCollection<IrcChannel> channels;
@@ -135,7 +135,7 @@ namespace IrcDotNet
             this.numMessageProcessors = new Dictionary<int, MessageProcessor>(1000);
             this.messageSendQueue = new Queue<string>();
             this.floodPreventer = null;
-            
+
             InitialiseMessageProcessors();
             ResetState();
         }
@@ -287,7 +287,7 @@ namespace IrcDotNet
         /// This value is set after successful registration of the connection.
         /// </summary>
         /// <value>The Message of the Day sent by the server.</value>
-        public IrcNetworkInformation? NetworkInformation
+        public IrcNetworkInfo? NetworkInformation
         {
             get { return this.networkInformation; }
         }
@@ -495,6 +495,11 @@ namespace IrcDotNet
         /// Occurs when information about the IRC network has been received from the server.
         /// </summary>
         public event EventHandler<EventArgs> NetworkInformationReceived;
+        
+        /// <summary>
+        /// Occurs when information about a specific server on the IRC network has been received from the server.
+        /// </summary>
+        public event EventHandler<IrcServerVersionInfoEventArgs> ServerVersionInfoReceived;
 
         /// <summary>
         /// Occurs when a reply to a Who query has been received from the server.
@@ -659,7 +664,31 @@ namespace IrcDotNet
         /// <summary>
         /// Requests the statistics of the specified server.
         /// </summary>
-        /// <param name="query">The query that indicates to the server what statistics to return.</param>
+        /// <param name="query">The query that indicates to the server what statistics to return.
+        /// The syntax for this value is dependent on the implementation of the server, but should support the following
+        /// query characters:
+        /// <list type="bullet">
+        ///   <listheader>
+        ///     <term>Character</term>
+        ///     <description>Query</description>
+        ///   </listheader>
+        ///   <item>
+        ///     <term>l</term>
+        ///     <description>A list of connections of the server and information about them.</description>
+        ///   </item>
+        ///   <item>
+        ///     <term>m</term>
+        ///     <description>The usage count for each of the commands supported by the server.</description>
+        ///   </item>
+        ///   <item>
+        ///     <term>o</term>
+        ///     <description>A list of all server operators.</description>
+        ///   </item>
+        ///   <item>
+        ///     <term>u</term>
+        ///     <description>The duration for which the server has been running since its last start.</description>
+        ///   </item>
+        /// </list></param>
         /// <param name="serverName">The name of the server whose statistics to request.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void GetServerStats(string query = null, string serverName = null)
@@ -1293,7 +1322,7 @@ namespace IrcDotNet
             this.channelUserModesPrefixes = new Dictionary<char, char>() {
                 { '@', 'o' }, { '+', 'v' } };
             this.motdBuilder = new StringBuilder();
-            this.networkInformation = new IrcNetworkInformation();
+            this.networkInformation = new IrcNetworkInfo();
             this.channels = new ObservableCollection<IrcChannel>();
             this.channelsReadOnly = new IrcChannelCollection(this, this.channels);
             this.users = new ObservableCollection<IrcUser>();
@@ -1364,28 +1393,28 @@ namespace IrcDotNet
 
                     // Extract command from message.
                     command = line.Substring(0, line.IndexOf(' '));
-                    line = line.Substring(command.Length + 1);
+                    var paramsLine = line.Substring(command.Length + 1);
 
                     // Extract parameters from message.
                     // Each parameter is separated by a single space, except the last one, which may contain spaces if it is prefixed by a colon.
                     var parameters = new string[maxParamsCount];
                     int paramStartIndex, paramEndIndex = -1;
-                    int lineColonIndex = line.IndexOf(':');
-                    if (lineColonIndex == -1)
-                        lineColonIndex = line.Length;
+                    int lineColonIndex = paramsLine.IndexOf(" :");
+                    if (lineColonIndex == -1 && !paramsLine.StartsWith(":"))
+                        lineColonIndex = paramsLine.Length;
                     for (int i = 0; i < parameters.Length; i++)
                     {
                         paramStartIndex = paramEndIndex + 1;
-                        paramEndIndex = line.IndexOf(' ', paramStartIndex);
+                        paramEndIndex = paramsLine.IndexOf(' ', paramStartIndex);
                         if (paramEndIndex == -1)
-                            paramEndIndex = line.Length;
+                            paramEndIndex = paramsLine.Length;
                         if (paramEndIndex > lineColonIndex)
                         {
                             paramStartIndex++;
-                            paramEndIndex = line.Length;
+                            paramEndIndex = paramsLine.Length;
                         }
-                        parameters[i] = line.Substring(paramStartIndex, paramEndIndex - paramStartIndex);
-                        if (paramEndIndex == line.Length)
+                        parameters[i] = paramsLine.Substring(paramStartIndex, paramEndIndex - paramStartIndex);
+                        if (paramEndIndex == paramsLine.Length)
                             break;
                     }
 
@@ -1775,7 +1804,7 @@ namespace IrcDotNet
                 this.stream = this.client.GetStream();
                 this.writer = new StreamWriter(this.stream, Encoding.Default);
                 this.reader = new StreamReader(this.stream, Encoding.Default);
-                
+
                 HandleClientConnected((IrcRegistrationInfo)ar.AsyncState);
                 this.readThread.Start();
                 this.writeThread.Start();
@@ -2017,7 +2046,7 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
-        
+
         /// <summary>
         /// Raises the <see cref="NetworkInformationReceived"/> event.
         /// </summary>
@@ -2029,6 +2058,17 @@ namespace IrcDotNet
                 handler(this, e);
         }
         
+        /// <summary>
+        /// Raises the <see cref="ServerVersionInfoReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcServerVersionInfoEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnServerVersionInfoReceived(IrcServerVersionInfoEventArgs e)
+        {
+            var handler = this.ServerVersionInfoReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
         /// <summary>
         /// Raises the <see cref="WhoReplyReceived"/> event.
         /// </summary>

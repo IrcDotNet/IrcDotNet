@@ -8,7 +8,7 @@ namespace IrcDotNet
     /// <summary>
     /// Stores information about a specific IRC network.
     /// </summary>
-    public struct IrcNetworkInformation
+    public struct IrcNetworkInfo
     {
         public int? VisibleUsersCount;
         public int? InvisibleUsersCount;
