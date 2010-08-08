@@ -79,9 +79,9 @@ namespace IrcDotNet.Ctcp
         }
 
         /// <summary>
-        /// Gets the local/date time given by the user.
+        /// Gets the local date/time for the user.
         /// </summary>
-        /// <value>The ping time.</value>
+        /// <value>The local date/time for the user.</value>
         public string DateTime
         {
             get;
