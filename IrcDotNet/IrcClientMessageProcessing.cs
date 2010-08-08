@@ -895,7 +895,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("383")]
-        protected void ProcessMessageReplyYoureService(IrcMessage message)
+        protected void ProcessMessageReplyYouAreService(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
 
@@ -904,6 +904,23 @@ namespace IrcDotNet
 
             this.isRegistered = true;
             OnRegistered(new EventArgs());
+        }
+
+        /// <summary>
+        /// Process RPL_TIME responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("391")]
+        protected void ProcessMessageReplyTime(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] != null);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var server = message.Parameters[1];
+            Debug.Assert(message.Parameters[2] != null);
+            var dateTime = message.Parameters[2];
+
+            OnServerTimeReceived(new IrcServerTimeEventArgs(server, dateTime));
         }
 
         /// <summary>
