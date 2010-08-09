@@ -1695,7 +1695,7 @@ namespace IrcDotNet
 
             DisconnectInternal();
             this.client.BeginConnect(host, port, ConnectCallback,
-                Tuple.Create(useSsl, registrationInfo));
+                Tuple.Create(useSsl, host, registrationInfo));
             HandleClientConnecting();
         }
 
@@ -1719,7 +1719,7 @@ namespace IrcDotNet
 
             DisconnectInternal();
             this.client.BeginConnect(address, port, ConnectCallback,
-                Tuple.Create(useSsl, registrationInfo));
+                Tuple.Create(useSsl, string.Empty, registrationInfo));
             HandleClientConnecting();
         }
 
@@ -1743,7 +1743,7 @@ namespace IrcDotNet
 
             DisconnectInternal();
             this.client.BeginConnect(addresses, port, ConnectCallback,
-                Tuple.Create(useSsl, registrationInfo));
+                Tuple.Create(useSsl, string.Empty, registrationInfo));
             HandleClientConnecting();
         }
 
@@ -1765,7 +1765,7 @@ namespace IrcDotNet
 
             DisconnectInternal();
             this.client.BeginConnect(remoteEP.Address, remoteEP.Port, ConnectCallback,
-                Tuple.Create(useSsl, registrationInfo));
+                Tuple.Create(useSsl, string.Empty, registrationInfo));
             HandleClientConnecting();
         }
 
@@ -1814,15 +1814,16 @@ namespace IrcDotNet
         {
             try
             {
-                var state = (Tuple<bool, IrcRegistrationInfo>)ar.AsyncState;
+                var state = (Tuple<bool, string, IrcRegistrationInfo>)ar.AsyncState;
                 this.client.EndConnect(ar);
 
+                // Set up network I/O objects.
                 this.stream = this.client.GetStream();
-                this.dataStream = GetDataStream(state.Item1);
+                this.dataStream = GetDataStream(state.Item1, state.Item2);
                 this.writer = new StreamWriter(this.dataStream, Encoding.Default);
                 this.reader = new StreamReader(this.dataStream, Encoding.Default);
 
-                HandleClientConnected(state.Item2);
+                HandleClientConnected(state.Item3);
                 this.readThread.Start();
                 this.writeThread.Start();
 
@@ -1834,18 +1835,20 @@ namespace IrcDotNet
             }
         }
 
-        private Stream GetDataStream(bool useSsl)
+        private Stream GetDataStream(bool useSsl, string targetHost)
         {
             if (useSsl)
             {
+                // Create SSL stream over network stream, to use for data transmission.
                 var sslStream = new SslStream(this.stream, true,
                     new RemoteCertificateValidationCallback(SslUserCertificateValidationCallback));
-                sslStream.AuthenticateAsClient(null);
+                sslStream.AuthenticateAsClient(targetHost);
                 Debug.Assert(sslStream.IsAuthenticated);
                 return sslStream;
             }
             else
             {
+                // Use network stream directly for data transmission.
                 return this.stream;
             }
         }
