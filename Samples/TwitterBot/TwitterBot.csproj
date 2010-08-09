@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{24292A1F-B302-4090-904D-5881FDD51DA1}</ProjectGuid>
+    <ProjectGuid>{B2FF7BA7-8B67-4949-BB09-F34D0E85413E}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MarkovChainTextBox</RootNamespace>
-    <AssemblyName>MarkovChainTextBox</AssemblyName>
+    <RootNamespace>TwitterBot</RootNamespace>
+    <AssemblyName>TwitterBot</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -35,11 +35,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>MarkovChainTextBox.Program</StartupObject>
+    <StartupObject>TwitterBot.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="IrcDotNet">
-      <HintPath>..\..\IrcDotNet\bin\Release\IrcDotNet.dll</HintPath>
+      <HintPath>..\IrcDotNet\bin\Release\IrcDotNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,18 +48,22 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TweetSharp">
+      <HintPath>..\References\TweetSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="TweetSharp.Twitter">
+      <HintPath>..\References\TweetSharp.Twitter.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MarkovChain.cs" />
-    <Compile Include="MarkovChainNode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <Content Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Readme.txt" />
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
