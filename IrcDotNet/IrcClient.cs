@@ -86,7 +86,7 @@ namespace IrcDotNet
         private StringBuilder motdBuilder;
 
         // Information about the IRC network given by the server.
-        private IrcNetworkInformation networkInformation;
+        private IrcNetworkInfo networkInformation;
 
         // Internal and exposable collection of all currently joined channels.
         private ObservableCollection<IrcChannel> channels;
@@ -288,10 +288,11 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        /// Gets information about the IRC network that is given by the server.
         /// This value is set after successful registration of the connection.
         /// </summary>
         /// <value>The Message of the Day sent by the server.</value>
-        public IrcNetworkInformation? NetworkInformation
+        public IrcNetworkInfo? NetworkInformation
         {
             get { return this.networkInformation; }
         }
@@ -510,6 +511,16 @@ namespace IrcDotNet
         /// Occurs when information about the IRC network has been received from the server.
         /// </summary>
         public event EventHandler<EventArgs> NetworkInformationReceived;
+        
+        /// <summary>
+        /// Occurs when information about a specific server on the IRC network has been received from the server.
+        /// </summary>
+        public event EventHandler<IrcServerVersionInfoEventArgs> ServerVersionInfoReceived;
+
+        /// <summary>
+        /// Occurs when the local date/time of a specific server has been received from the server.
+        /// </summary>
+        public event EventHandler<IrcServerTimeEventArgs> ServerTimeReceived;
 
         /// <summary>
         /// Occurs when a reply to a Who query has been received from the server.
@@ -530,6 +541,151 @@ namespace IrcDotNet
         /// Occurs when a list of channels has been received from the server in response to a query.
         /// </summary>
         public event EventHandler<IrcChannelListReceivedEventArgs> ChannelListReceived;
+
+        /// <inheritdoc cref="ListChannels(IEnumerable{string})"/>
+        public void ListChannels(params string[] channelNames)
+        {
+            CheckDisposed();
+
+            if (channelNames == null)
+                throw new ArgumentNullException("channelNames");
+
+            SendMessageList((IEnumerable<string>)channelNames);
+        }
+
+        /// <summary>
+        /// Requests a list of information about the specified (or all) channels on the network.
+        /// </summary>
+        /// <param name="channelNames">The names of the channels to list, or <see langword="null"/> to list all channels
+        /// on the network.</param>
+        public void ListChannels(IEnumerable<string> channelNames = null)
+        {
+            CheckDisposed();
+
+            SendMessageList(channelNames);
+        }
+
+        /// <summary>
+        /// Requests the Message of the Day (MOTD) from the specified server.
+        /// </summary>
+        /// <param name="serverName">The name of the server from which to request the MOTD, or <see langword="null"/>
+        /// for the current server.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        public void GetMessageOfTheDay(string serverName = null)
+        {
+            CheckDisposed();
+
+            SendMessageMotd(serverName);
+        }
+
+        /// <summary>
+        /// Requests statistics about the connected IRC network.
+        /// If <paramref name="serverMask"/> is specified, then the server only returns information about the part of
+        /// the network formed by the servers whose names match the mask; otherwise, the information concerns the whole
+        /// network
+        /// </summary>
+        /// <param name="serverMask">A wildcard expression for matching against server names, or <see langword="null"/>
+        /// to match the entire network.</param>
+        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
+        /// for the current server.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        public void GetNetworkInfo(string serverMask = null, string targetServer = null)
+        {
+            CheckDisposed();
+
+            SendMessageLUsers(serverMask, targetServer);
+        }
+
+        /// <summary>
+        /// Requests the version of the specified server.
+        /// </summary>
+        /// <param name="serverName">The name of the server whose version to request.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        public void GetServerVersion(string serverName = null)
+        {
+            CheckDisposed();
+
+            SendMessageVersion(serverName);
+        }
+
+        /// <summary>
+        /// Requests statistics about the specified server.
+        /// </summary>
+        /// <param name="query">The query that indicates to the server what statistics to return.
+        /// The syntax for this value is dependent on the implementation of the server, but should support the following
+        /// query characters:
+        /// <list type="bullet">
+        ///   <listheader>
+        ///     <term>Character</term>
+        ///     <description>Query</description>
+        ///   </listheader>
+        ///   <item>
+        ///     <term>l</term>
+        ///     <description>A list of connections of the server and information about them.</description>
+        ///   </item>
+        ///   <item>
+        ///     <term>m</term>
+        ///     <description>The usage count for each of the commands supported by the server.</description>
+        ///   </item>
+        ///   <item>
+        ///     <term>o</term>
+        ///     <description>A list of all server operators.</description>
+        ///   </item>
+        ///   <item>
+        ///     <term>u</term>
+        ///     <description>The duration for which the server has been running since its last start.</description>
+        ///   </item>
+        /// </list></param>
+        /// <param name="serverName">The name of the server whose statistics to request.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        public void GetServerInfo(string query = null, string serverName = null)
+        {
+            CheckDisposed();
+
+            SendMessageStats(query, serverName);
+        }
+
+        /// <summary>
+        /// Requests a list of all servers known by the target server.
+        /// If <paramref name="serverMask"/> is specified, then the server only returns information about the part of
+        /// the network formed by the servers whose names match the mask; otherwise, the information concerns the whole
+        /// network.
+        /// </summary>
+        /// <param name="serverMask">A wildcard expression for matching against server names, or <see langword="null"/>
+        /// to match the entire network.</param>
+        /// <param name="targetServer">The name of the server to which to forward the request, or <see langword="null"/>
+        /// for the current server.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        public void GetServerLinks(string serverMask = null, string targetServer = null)
+        {
+            CheckDisposed();
+
+            SendMessageStats(targetServer, serverMask);
+        }
+
+        /// <summary>
+        /// Requests the local time on the specified server.
+        /// </summary>
+        /// <param name="serverName">The name of the server whose local time to request.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        public void GetServerTime(string serverName = null)
+        {
+            CheckDisposed();
+
+            SendMessageTime(serverName);
+        }
+
+        /// <summary>
+        /// Sends a ping to the specified server.
+        /// </summary>
+        /// <param name="serverName">The name of the server to ping.</param>
+        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        public void Ping(string serverName = null)
+        {
+            CheckDisposed();
+
+            SendMessagePing(this.localUser.NickName, serverName);
+        }
 
         /// <summary>
         /// Sends a Who query to the server targeting the specified channel or user masks.
@@ -603,127 +759,6 @@ namespace IrcDotNet
                 throw new ArgumentNullException("nickNames");
 
             SendMessageWhoWas(nickNames, entriesCount);
-        }
-
-        /// <inheritdoc cref="ListChannels(IEnumerable{string})"/>
-        public void ListChannels(params string[] channelNames)
-        {
-            CheckDisposed();
-
-            if (channelNames == null)
-                throw new ArgumentNullException("channelNames");
-
-            SendMessageList((IEnumerable<string>)channelNames);
-        }
-
-        /// <summary>
-        /// Requests a list of information about the specified (or all) channels on the network.
-        /// </summary>
-        /// <param name="channelNames">The names of the channels to list, or <see langword="null"/> to list all channels
-        /// on the network.</param>
-        public void ListChannels(IEnumerable<string> channelNames = null)
-        {
-            CheckDisposed();
-
-            SendMessageList(channelNames);
-        }
-
-        /// <summary>
-        /// Requests the Message of the Day (MOTD) from the specified server.
-        /// </summary>
-        /// <param name="serverName">The name of the server from which to request the MOTD, or <see langword="null"/>
-        /// for the current server.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void GetMessageOfTheDay(string serverName = null)
-        {
-            CheckDisposed();
-
-            SendMessageMotd(serverName);
-        }
-
-        /// <summary>
-        /// Requests statistics about the size of the network.
-        /// If <paramref name="serverMask"/> is specified, then the server only returns information about the part of
-        /// the network formed by the servers whose names match the mask; otherwise, the information concerns the whole
-        /// network
-        /// </summary>
-        /// <param name="serverMask">A wildcard expression for matching against server names, or <see langword="null"/>
-        /// to match the entire network.</param>
-        /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
-        /// for the current server.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void GetNetworkStatistics(string serverMask = null, string targetServer = null)
-        {
-            CheckDisposed();
-
-            SendMessageLUsers(serverMask, targetServer);
-        }
-
-        /// <summary>
-        /// Requests the version of the specified server.
-        /// </summary>
-        /// <param name="serverName">The name of the server whose version to request.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void GetServerVersion(string serverName = null)
-        {
-            CheckDisposed();
-
-            SendMessageVersion(serverName);
-        }
-
-        /// <summary>
-        /// Requests the statistics of the specified server.
-        /// </summary>
-        /// <param name="query">The query that indicates to the server what statistics to return.</param>
-        /// <param name="serverName">The name of the server whose statistics to request.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void GetServerStats(string query = null, string serverName = null)
-        {
-            CheckDisposed();
-
-            SendMessageStats(query, serverName);
-        }
-
-        /// <summary>
-        /// Requests a list of all servers known by the target server.
-        /// If <paramref name="serverMask"/> is specified, then the server only returns information about the part of
-        /// the network formed by the servers whose names match the mask; otherwise, the information concerns the whole
-        /// network.
-        /// </summary>
-        /// <param name="serverMask">A wildcard expression for matching against server names, or <see langword="null"/>
-        /// to match the entire network.</param>
-        /// <param name="targetServer">The name of the server to which to forward the request, or <see langword="null"/>
-        /// for the current server.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void GetServerLinks(string serverMask = null, string targetServer = null)
-        {
-            CheckDisposed();
-
-            SendMessageStats(targetServer, serverMask);
-        }
-
-        /// <summary>
-        /// Requests the local time on the specified server.
-        /// </summary>
-        /// <param name="serverName">The name of the server whose local time to request.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void GetServerTime(string serverName = null)
-        {
-            CheckDisposed();
-
-            SendMessageTime(serverName);
-        }
-
-        /// <summary>
-        /// Sends a ping to the specified server.
-        /// </summary>
-        /// <param name="serverName">The name of the server to ping.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void Ping(string serverName = null)
-        {
-            CheckDisposed();
-
-            SendMessagePing(this.localUser.NickName, serverName);
         }
 
         /// <inheritdoc cref="Quit(string)"/>
@@ -1309,7 +1344,7 @@ namespace IrcDotNet
             this.channelUserModesPrefixes = new Dictionary<char, char>() {
                 { '@', 'o' }, { '+', 'v' } };
             this.motdBuilder = new StringBuilder();
-            this.networkInformation = new IrcNetworkInformation();
+            this.networkInformation = new IrcNetworkInfo();
             this.channels = new ObservableCollection<IrcChannel>();
             this.channelsReadOnly = new IrcChannelCollection(this, this.channels);
             this.users = new ObservableCollection<IrcUser>();
@@ -1380,28 +1415,28 @@ namespace IrcDotNet
 
                     // Extract command from message.
                     command = line.Substring(0, line.IndexOf(' '));
-                    line = line.Substring(command.Length + 1);
+                    var paramsLine = line.Substring(command.Length + 1);
 
                     // Extract parameters from message.
                     // Each parameter is separated by a single space, except the last one, which may contain spaces if it is prefixed by a colon.
                     var parameters = new string[maxParamsCount];
                     int paramStartIndex, paramEndIndex = -1;
-                    int lineColonIndex = line.IndexOf(':');
-                    if (lineColonIndex == -1)
-                        lineColonIndex = line.Length;
+                    int lineColonIndex = paramsLine.IndexOf(" :");
+                    if (lineColonIndex == -1 && !paramsLine.StartsWith(":"))
+                        lineColonIndex = paramsLine.Length;
                     for (int i = 0; i < parameters.Length; i++)
                     {
                         paramStartIndex = paramEndIndex + 1;
-                        paramEndIndex = line.IndexOf(' ', paramStartIndex);
+                        paramEndIndex = paramsLine.IndexOf(' ', paramStartIndex);
                         if (paramEndIndex == -1)
-                            paramEndIndex = line.Length;
+                            paramEndIndex = paramsLine.Length;
                         if (paramEndIndex > lineColonIndex)
                         {
                             paramStartIndex++;
-                            paramEndIndex = line.Length;
+                            paramEndIndex = paramsLine.Length;
                         }
-                        parameters[i] = line.Substring(paramStartIndex, paramEndIndex - paramStartIndex);
-                        if (paramEndIndex == line.Length)
+                        parameters[i] = paramsLine.Substring(paramStartIndex, paramEndIndex - paramStartIndex);
+                        if (paramEndIndex == paramsLine.Length)
                             break;
                     }
 
@@ -2112,6 +2147,28 @@ namespace IrcDotNet
         protected virtual void OnNetworkInformationReceived(EventArgs e)
         {
             var handler = this.NetworkInformationReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+        
+        /// <summary>
+        /// Raises the <see cref="ServerVersionInfoReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcServerVersionInfoEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnServerVersionInfoReceived(IrcServerVersionInfoEventArgs e)
+        {
+            var handler = this.ServerVersionInfoReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="ServerTimeReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcServerTimeEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnServerTimeReceived(IrcServerTimeEventArgs e)
+        {
+            var handler = this.ServerTimeReceived;
             if (handler != null)
                 handler(this, e);
         }

@@ -39,6 +39,120 @@ namespace IrcDotNet
     }
 
     /// <summary>
+    /// Provides data for the <see cref="IrcClient.ServerVersionInfoReceived"/> event.
+    /// </summary>
+    public class IrcServerVersionInfoEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IrcServerVersionInfoEventArgs"/> class.
+        /// </summary>
+        /// <param name="version">The version of the server.</param>
+        /// <param name="debugLevel">The debug level of the server.</param>
+        /// <param name="serverName">The name of the server.</param>
+        /// <param name="comments">The comments about the server.</param>
+        public IrcServerVersionInfoEventArgs(string version, string debugLevel, string serverName, string comments)
+            : base()
+        {
+            if (version == null)
+                throw new ArgumentNullException("version");
+            if (debugLevel == null)
+                throw new ArgumentNullException("debugLevel");
+            if (serverName == null)
+                throw new ArgumentNullException("serverName");
+            if (comments == null)
+                throw new ArgumentNullException("comments");
+
+            this.Version = version;
+            this.DebugLevel = debugLevel;
+            this.ServerName = serverName;
+            this.Comments = comments;
+        }
+
+        /// <summary>
+        /// Gets the version of the server.
+        /// </summary>
+        /// <value>The version of the server.</value>
+        public string Version
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the debug level of the server.
+        /// </summary>
+        /// <value>The debug level of the server.</value>
+        public string DebugLevel
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the name of the server to which the version information applies.
+        /// </summary>
+        /// <value>The name of the server.</value>
+        public string ServerName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the comments about the server.
+        /// </summary>
+        /// <value>The comments about the server.</value>
+        public string Comments
+        {
+            get;
+            private set;
+        }
+    }
+
+    /// <summary>
+    /// Provides data for the <see cref="IrcClient.ServerTimeReceived"/> event.
+    /// </summary>
+    public class IrcServerTimeEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IrcServerTimeEventArgs"/> class.
+        /// </summary>
+        /// <param name="serverName">The name of the server.</param>
+        /// <param name="dateTime">The local date/time received from the server.</param>
+        public IrcServerTimeEventArgs(string serverName, string dateTime)
+            : base()
+        {
+            if (serverName == null)
+                throw new ArgumentNullException("serverName");
+            if (dateTime == null)
+                throw new ArgumentNullException("dateTime");
+
+            this.ServerName = serverName;
+            this.DateTime = dateTime;
+        }
+
+        /// <summary>
+        /// Gets the name of the server to which the version information applies.
+        /// </summary>
+        /// <value>The name of the server.</value>
+        public string ServerName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the local date/time for the server.
+        /// </summary>
+        /// <value>The local date/time for the server.</value>
+        public string DateTime
+        {
+            get;
+            private set;
+        }
+    }
+
+    /// <summary>
     /// <inheritdoc select="/summary/node()"/>
     /// Gives the option to handle the preview event and thus stop the normal event from being raised.
     /// </summary>
@@ -64,7 +178,7 @@ namespace IrcDotNet
     }
 
     /// <summary>
-    /// Provides data for events that are raised when a message or notice is sent or received.
+    /// Provides data for events that are raised when an IRC message or notice is sent or received.
     /// </summary>
     public class IrcMessageEventArgs : EventArgs
     {
@@ -73,7 +187,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="source">The source of the message.</param>
         /// <param name="targets">A list of the targets of the message.</param>
-        /// <param name="text">The text of the mesage</param>
+        /// <param name="text">The text of the mesage.</param>
         /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
         public IrcMessageEventArgs(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)

@@ -59,6 +59,7 @@
       <Method Name="ProcessMessageError" Hidden="true" />
       <Method Name="ProcessMessageJoin" Hidden="true" />
       <Method Name="ProcessMessageKick" Hidden="true" />
+      <Method Name="ProcessMessageLUserClient" Hidden="true" />
       <Method Name="ProcessMessageMode" Hidden="true" />
       <Method Name="ProcessMessageNick" Hidden="true" />
       <Method Name="ProcessMessageNotice" Hidden="true" />
@@ -75,7 +76,6 @@
       <Method Name="ProcessMessageReplyEndOfWho" Hidden="true" />
       <Method Name="ProcessMessageReplyEndOfWhoIs" Hidden="true" />
       <Method Name="ProcessMessageReplyEndOfWhoWas" Hidden="true" />
-      <Method Name="ProcessMessageReplyIsOn" Hidden="true" />
       <Method Name="ProcessMessageReplyMotd" Hidden="true" />
       <Method Name="ProcessMessageReplyMotdEnd" Hidden="true" />
       <Method Name="ProcessMessageReplyMotdStart" Hidden="true" />
@@ -162,7 +162,7 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>PkWc0nd3DnPuU1rV+U+IWfPVn+/acwo56f9ev0572fE=</HashCode>
+      <HashCode>PkXc0nd3DnPuU/rV+U/IWfPVn+/acw456f9ev0572fE=</HashCode>
       <FileName>IrcClient.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -346,5 +346,4 @@
       <FileName>IrcTargetMask.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Font Name="Segoe UI" Size="9" />
-</ClassDiagram>
+  <Font Name="Segoe UI" Size="9" /></ClassDiagram>

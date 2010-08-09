@@ -6,9 +6,9 @@ using System.Text;
 namespace IrcDotNet
 {
     /// <summary>
-    /// Stores information received from a server about its IRC network.
+    /// Stores information about a specific IRC network.
     /// </summary>
-    public struct IrcNetworkInformation
+    public struct IrcNetworkInfo
     {
         public int? VisibleUsersCount;
         public int? InvisibleUsersCount;

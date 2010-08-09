@@ -88,6 +88,21 @@ namespace IrcDotNet.Ctcp
         public event EventHandler<CtcpVersionResponseReceivedEventArgs> VersionResponseReceived;
 
         /// <summary>
+        /// Occurs when a response to a date/time request has been received from a user.
+        /// </summary>
+        public event EventHandler<CtcpTimeResponseReceivedEventArgs> TimeResponseReceived;
+
+        /// <summary>
+        /// Occurs when an action has been sent to a user.
+        /// </summary>
+        public event EventHandler<CtcpMessageEventArgs> ActionSent;
+
+        /// <summary>
+        /// Occurs when an action has been received from a user.
+        /// </summary>
+        public event EventHandler<CtcpMessageEventArgs> ActionReceived;
+
+        /// <summary>
         /// Occurs when a raw message has been sent to a user.
         /// </summary>
         public event EventHandler<CtcpRawMessageEventArgs> RawMessageSent;
@@ -102,22 +117,81 @@ namespace IrcDotNet.Ctcp
         /// </summary>
         public event EventHandler<IrcErrorEventArgs> Error;
 
+        /// <inheritdoc cref="Ping(IList{IIrcMessageTarget})"/>
         /// <summary>
         /// Pings the specified user.
         /// </summary>
         /// <param name="user">The user to which to send the request.</param>
-        public void Ping(IrcUser user)
+        public void Ping(IIrcMessageTarget user)
         {
-            SendMessagePing(user, DateTime.Now.Ticks.ToString(), false);
+            Ping(new[] { user });
         }
 
+        /// <summary>
+        /// Pings the specified list of users.
+        /// </summary>
+        /// <param name="users">A list of users to which to send the request.</param>
+        public void Ping(IList<IIrcMessageTarget> users)
+        {
+            SendMessagePing(users, DateTime.Now.Ticks.ToString(), false);
+        }
+
+        /// <inheritdoc cref="GetVersion(IList{IIrcMessageTarget})"/>
         /// <summary>
         /// Gets the client version of the specified user.
         /// </summary>
         /// <param name="user">The user to which to send the request.</param>
-        public void GetVersion(IrcUser user)
+        public void GetVersion(IIrcMessageTarget user)
         {
-            SendMessageVersion(user);
+            GetVersion(new[] { user });
+        }
+
+        /// <summary>
+        /// Gets the client version of the specified list of users.
+        /// </summary>
+        /// <param name="users">A list of users to which to send the request.</param>
+        public void GetVersion(IList<IIrcMessageTarget> users)
+        {
+            SendMessageVersion(users, null, false);
+        }
+
+        /// <inheritdoc cref="GetTime(IList{IIrcMessageTarget})"/>
+        /// <summary>
+        /// Gets the local date/time of the specified user.
+        /// </summary>
+        /// <param name="user">The user to which to send the request.</param>
+        public void GetTime(IIrcMessageTarget user)
+        {
+            GetTime(new[] { user });
+        }
+
+        /// <summary>
+        /// Gets the local date/time of the specified list of users.
+        /// </summary>
+        /// <param name="users">A list of users to which to send the request.</param>
+        public void GetTime(IList<IIrcMessageTarget> users)
+        {
+            SendMessageTime(users, null, false);
+        }
+
+        /// <inheritdoc cref="SendAction(IList{IIrcMessageTarget}, string)"/>
+        /// <summary>
+        /// Sends an action message to the specified list of users.
+        /// </summary>
+        /// <param name="user">The user to which to send the request.</param>
+        public void SendAction(IIrcMessageTarget user, string text)
+        {
+            SendMessageAction(new[] { user }, text);
+        }
+
+        /// <summary>
+        /// Sends an action message to the specified list of users.
+        /// </summary>
+        /// <param name="users">A list of users to which to send the request.</param>
+        /// <param name="text">The text of the message.</param>
+        public void SendAction(IList<IIrcMessageTarget> users, string text)
+        {
+            SendMessageAction(users, text);
         }
 
         private void ircClient_Connected(object sender, EventArgs e)
@@ -162,27 +236,31 @@ namespace IrcDotNet.Ctcp
             if (previewMessageEventArgs.Text.First() == taggedDataDelimeterChar &&
                 previewMessageEventArgs.Text.Last() == taggedDataDelimeterChar)
             {
-                var message = new CtcpMessage();
-                message.Source = (IrcUser)previewMessageEventArgs.Source;
-                message.IsResponse = isNotice;
-
-                // Parse tagged data into message.
-                var dequotedText = LowLevelDequote(CtcpDequote(previewMessageEventArgs.Text.Substring(
-                    1, previewMessageEventArgs.Text.Length - 2)));
-                var firstSpaceIndex = dequotedText.IndexOf(' ');
-                if (firstSpaceIndex == -1)
+                if (previewMessageEventArgs.Source is IrcUser)
                 {
-                    message.Tag = dequotedText;
-                    message.Data = null;
-                }
-                else
-                {
-                    message.Tag = dequotedText.Substring(0, firstSpaceIndex);
-                    message.Data = dequotedText.Substring(firstSpaceIndex + 1).TrimStart(':');
-                }
+                    var message = new CtcpMessage();
+                    message.Source = (IrcUser)previewMessageEventArgs.Source;
+                    message.Targets = previewMessageEventArgs.Targets;
+                    message.IsResponse = isNotice;
 
-                ReadMessage(message);
-                previewMessageEventArgs.Handled = true;
+                    // Parse tagged data into message.
+                    var dequotedText = LowLevelDequote(CtcpDequote(previewMessageEventArgs.Text.Substring(
+                        1, previewMessageEventArgs.Text.Length - 2)));
+                    var firstSpaceIndex = dequotedText.IndexOf(' ');
+                    if (firstSpaceIndex == -1)
+                    {
+                        message.Tag = dequotedText;
+                        message.Data = null;
+                    }
+                    else
+                    {
+                        message.Tag = dequotedText.Substring(0, firstSpaceIndex);
+                        message.Data = dequotedText.Substring(firstSpaceIndex + 1).TrimStart(':');
+                    }
+
+                    ReadMessage(message);
+                    previewMessageEventArgs.Handled = true;
+                }
             }
         }
 
@@ -215,49 +293,50 @@ namespace IrcDotNet.Ctcp
             }
         }
 
-        /// <inheritdoc cref="WriteMessage(IIrcMessageTarget, CtcpMessage)"/>
+        /// <inheritdoc cref="WriteMessage(IList{IIrcMessageTarget}, CtcpMessage)"/>
         /// <param name="tag">The tag of the message.</param>
         /// <param name="data">The data contained by the message.</param>
-        /// <param name="isResponse"><see langword="true"/> if the message is a response to another message; 
+        /// <param name="isResponse"><see langword="true"/> if the message is a response to another message;
         /// <see langword="false"/>, otherwise.</param>
-        protected void WriteMessage(IIrcMessageTarget target, string tag, string data = null, bool isResponse = false)
+        protected void WriteMessage(IList<IIrcMessageTarget> targets, string tag, string data = null,
+            bool isResponse = false)
         {
-            WriteMessage(target, new CtcpMessage(this.ircClient.LocalUser, tag, data, isResponse));
+            WriteMessage(targets, new CtcpMessage(this.ircClient.LocalUser, targets, tag, data, isResponse));
         }
 
-        /// <inheritdoc cref="WriteMessage(IIrcMessageTarget, string, bool)"/>
+        /// <inheritdoc cref="WriteMessage(IList{IIrcMessageTarget}, string, bool)"/>
         /// <param name="message">The message to write.</param>
         /// <exception cref="ArgumentException">
         /// <paramref name="message"/> contains more than 15 many parameters. -or-
         /// The value of <see cref="CtcpMessage.Tag"/> of <paramref name="message"/> is invalid.
         /// </exception>
-        protected void WriteMessage(IIrcMessageTarget target, CtcpMessage message)
+        protected void WriteMessage(IList<IIrcMessageTarget> targets, CtcpMessage message)
         {
             if (message.Tag == null)
                 throw new ArgumentException(Properties.Resources.ErrorMessageInvalidTag, "message");
 
             var tag = message.Tag.ToUpper();
             var taggedData = message.Data == null ? tag : tag + " :" + message.Data;
-            WriteMessage(target, taggedData, message.IsResponse);
+            WriteMessage(targets, taggedData, message.IsResponse);
             OnRawMessageSent(new CtcpRawMessageEventArgs(message));
         }
 
         /// <summary>
         /// Writes the specified message to a target.
         /// </summary>
-        /// <param name="target">The target to which to write the message.</param>
+        /// <param name="targets">A list of the targets to which to write the message.</param>
         /// <param name="taggedData">The tagged data to write.</param>
         /// <param name="isResponse"><see langword="true"/> if the message is a response to another message;
         /// <see langword="false"/>, otherwise.</param>
-        private void WriteMessage(IIrcMessageTarget target, string taggedData, bool isResponse)
+        private void WriteMessage(IList<IIrcMessageTarget> targets, string taggedData, bool isResponse)
         {
             Debug.Assert(taggedData != null);
             var text = taggedDataDelimeterChar + LowLevelQuote(CtcpQuote(taggedData)) + taggedDataDelimeterChar;
 
             if (isResponse)
-                this.ircClient.LocalUser.SendNotice(target, text);
+                this.ircClient.LocalUser.SendNotice(targets, text);
             else
-                this.ircClient.LocalUser.SendMessage(target, text);
+                this.ircClient.LocalUser.SendMessage(targets, text);
         }
 
         private string LowLevelQuote(string value)
@@ -281,27 +360,63 @@ namespace IrcDotNet.Ctcp
         }
 
         /// <summary>
-        /// Raises the <see cref="PingResponseReceived"/> event.
+        /// Raises the <see cref="ActionSent"/> event.
         /// </summary>
-        /// <param name="e">The <see cref="CtcpPingResponseReceivedEventArgs"/> instance containing the event data.</param>
-        protected virtual void OnPingResponseReceived(CtcpPingResponseReceivedEventArgs e)
+        /// <param name="e">The <see cref="CtcpMessageEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnActionSent(CtcpMessageEventArgs e)
         {
-            var handler = this.PingResponseReceived;
+            var handler = this.ActionSent;
             if (handler != null)
                 handler(this, e);
         }
-        
+
+        /// <summary>
+        /// Raises the <see cref="ActionReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="CtcpMessageEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnActionReceived(CtcpMessageEventArgs e)
+        {
+            var handler = this.ActionReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="TimeResponseReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="CtcpTimeResponseReceivedEventArgs"/> instance containing the event data.
+        /// </param>
+        protected virtual void OnTimeResponseReceived(CtcpTimeResponseReceivedEventArgs e)
+        {
+            var handler = this.TimeResponseReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
         /// <summary>
         /// Raises the <see cref="VersionResponseReceived"/> event.
         /// </summary>
-        /// <param name="e">The <see cref="CtcpVersionResponseReceivedEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="CtcpVersionResponseReceivedEventArgs"/> instance containing the event data.
+        /// </param>
         protected virtual void OnVersionResponseReceived(CtcpVersionResponseReceivedEventArgs e)
         {
             var handler = this.VersionResponseReceived;
             if (handler != null)
                 handler(this, e);
         }
-        
+
+        /// <summary>
+        /// Raises the <see cref="PingResponseReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="CtcpPingResponseReceivedEventArgs"/> instance containing the event data.
+        /// </param>
+        protected virtual void OnPingResponseReceived(CtcpPingResponseReceivedEventArgs e)
+        {
+            var handler = this.PingResponseReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
         /// <summary>
         /// Raises the <see cref="RawMessageSent"/> event.
         /// </summary>
@@ -362,6 +477,11 @@ namespace IrcDotNet.Ctcp
             public IrcUser Source;
 
             /// <summary>
+            /// A list of users to which to send the message. 
+            /// </summary>
+            public IList<IIrcMessageTarget> Targets;
+
+            /// <summary>
             /// The tag of the message, that specifies the kind of data it contains or the type of the request.
             /// </summary>
             public string Tag;
@@ -372,7 +492,8 @@ namespace IrcDotNet.Ctcp
             public string Data;
 
             /// <summary>
-            /// Whether the message is a response to another message.
+            /// <see langword="true"/> if this message is a response to another message; <see langword="false"/>,
+            /// otherwise.
             /// </summary>
             public bool IsResponse;
 
@@ -380,13 +501,16 @@ namespace IrcDotNet.Ctcp
             /// Initializes a new instance of the <see cref="CtcpMessage"/> structure.
             /// </summary>
             /// <param name="source">The source of the message.</param>
+            /// <param name="targets">A list of the targets of the message.</param>
             /// <param name="tag">The tag of the message.</param>
             /// <param name="data">The data contained by the message, or <see langword="null"/> for no data.</param>
             /// <param name="isResponse"><see langword="true"/> if the message is a response to another message; 
             /// <see langword="false"/>, otherwise.</param>
-            public CtcpMessage(IrcUser source, string tag, string data, bool isResponse)
+            public CtcpMessage(IrcUser source, IList<IIrcMessageTarget> targets, string tag, string data,
+                bool isResponse)
             {
                 this.Source = source;
+                this.Targets = targets;
                 this.Tag = tag;
                 this.Data = data;
                 this.IsResponse = isResponse;

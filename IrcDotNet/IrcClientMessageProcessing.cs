@@ -5,10 +5,11 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using IrcDotNet.Common.Collections;
 
 namespace IrcDotNet
 {
+    using Common.Collections;
+
     // Defines all message processors for the client.
     partial class IrcClient
     {
@@ -359,7 +360,7 @@ namespace IrcDotNet
                     var paramName = paramParts[0];
                     var paramValue = paramParts.Length == 1 ? null : paramParts[1];
                     HandleISupportParameter(paramName, paramValue);
-                    this.serverSupportedFeatures.Add(paramName, paramValue);
+                    this.serverSupportedFeatures.Set(paramName, paramValue);
                 }
 
                 OnServerSupportedFeaturesReceived(new EventArgs());
@@ -422,7 +423,6 @@ namespace IrcDotNet
         /// Process RPL_LUSERCHANNELS responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
-
         [MessageProcessor("254")]
         protected void ProcessMessageLUserChannels(IrcMessage message)
         {
@@ -784,7 +784,29 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process RPL_NAMREPLY responses from the server.
+        /// Process RPL_VERSION responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("351")]
+        protected void ProcessMessageReplyVersion(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var versionInfo = message.Parameters[1];
+            var versionSplitIndex = versionInfo.LastIndexOf('.');
+            var version = versionInfo.Substring(0, versionSplitIndex);
+            var debugLevel = versionInfo.Substring(versionSplitIndex + 1);
+            Debug.Assert(message.Parameters[2] != null);
+            var server = message.Parameters[2];
+            Debug.Assert(message.Parameters[3] != null);
+            var comments = message.Parameters[3];
+
+            OnServerVersionInfoReceived(new IrcServerVersionInfoEventArgs(version, debugLevel, server, comments));
+        }
+
+        /// <summary>
+        /// Process RPL_NAMEREPLY responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("353")]
@@ -874,7 +896,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("383")]
-        protected void ProcessMessageReplyYoureService(IrcMessage message)
+        protected void ProcessMessageReplyYouAreService(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
 
@@ -883,6 +905,23 @@ namespace IrcDotNet
 
             this.isRegistered = true;
             OnRegistered(new EventArgs());
+        }
+
+        /// <summary>
+        /// Process RPL_TIME responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("391")]
+        protected void ProcessMessageReplyTime(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] != null);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var server = message.Parameters[1];
+            Debug.Assert(message.Parameters[2] != null);
+            var dateTime = message.Parameters[2];
+
+            OnServerTimeReceived(new IrcServerTimeEventArgs(server, dateTime));
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -9,25 +10,51 @@ namespace IrcDotNet.Ctcp
     partial class CtcpClient
     {
         /// <summary>
-        /// Sends a ping reuqest or response to the specified target.
+        /// Sends an action message to the specified target.
         /// </summary>
-        /// <param name="target">The target of the message.</param>
+        /// <param name="targets">A list of the targets of the message.</param>
+        /// <param name="info">The message text.</param>
+        protected void SendMessageAction(IList<IIrcMessageTarget> targets, string text)
+        {
+            WriteMessage(targets, "action", text);
+
+            OnActionSent(new CtcpMessageEventArgs(this.ircClient.LocalUser, targets, text));
+        }
+
+        /// <summary>
+        /// Sends a request for the local date/time to the specified target.
+        /// </summary>
+        /// <param name="targets">A list of the targets of the message.</param>
         /// <param name="info">The information to send.</param>
         /// <param name="isResponse"><see langword="true"/> if the message is a response; <see langword="false"/>,
         /// otherwise.</param>
-        protected void SendMessagePing(IIrcMessageTarget target, string info, bool isResponse)
+        protected void SendMessageTime(IList<IIrcMessageTarget> targets, string info, bool isResponse)
         {
-            WriteMessage(target, "ping", info, isResponse);
+            WriteMessage(targets, "time", info, isResponse);
         }
 
         /// <summary>
         /// Sends a request or response for information about the version of the client.
         /// </summary>
-        /// <param name="target">The target of the message.</param>
+        /// <param name="targets">A list of the targets of the message.</param>
         /// <param name="info">The information to send.</param>
-        protected void SendMessageVersion(IIrcMessageTarget target, string info = null)
+        /// <param name="isResponse"><see langword="true"/> if the message is a response; <see langword="false"/>,
+        /// otherwise.</param>
+        protected void SendMessageVersion(IList<IIrcMessageTarget> targets, string info, bool isResponse)
         {
-            WriteMessage(target, "version", info, info != null);
+            WriteMessage(targets, "version", info, isResponse);
+        }
+
+        /// <summary>
+        /// Sends a ping request or response to the specified target.
+        /// </summary>
+        /// <param name="targets">A list of the targets of the message.</param>
+        /// <param name="info">The information to send.</param>
+        /// <param name="isResponse"><see langword="true"/> if the message is a response; <see langword="false"/>,
+        /// otherwise.</param>
+        protected void SendMessagePing(IList<IIrcMessageTarget> targets, string info, bool isResponse)
+        {
+            WriteMessage(targets, "ping", info, isResponse);
         }
     }
 }
