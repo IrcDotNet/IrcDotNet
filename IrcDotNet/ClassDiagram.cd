@@ -92,7 +92,6 @@
       <Method Name="ProcessMessageReplyWhoIsUser" Hidden="true" />
       <Method Name="ProcessMessageReplyWhoReply" Hidden="true" />
       <Method Name="ProcessMessageReplyWhoWasUser" Hidden="true" />
-      <Method Name="ProcessMessageReplyYoureService" Hidden="true" />
       <Method Name="ProcessMessageReplyYourHost" Hidden="true" />
       <Method Name="ProcessMessageTopic" Hidden="true" />
       <Method Name="SendMessageAdmin" Hidden="true" />
@@ -162,7 +161,7 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>PkXc0nd3DnPuU/rV+U/IWfPVn+/acw456f9ev0572fE=</HashCode>
+      <HashCode>Pkfc0nd3LnPuU/rV+U/IW/PVn+/aMw456f9ev0572/M=</HashCode>
       <FileName>IrcClient.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -208,7 +207,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="IrcDotNet.IrcStandardFloodPreventer">
-    <Position X="3.75" Y="8" Width="2.25" />
+    <Position X="3.75" Y="11.25" Width="2.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -227,14 +226,6 @@
   </Class>
   <Class Name="IrcDotNet.IrcUserRegistrationInfo">
     <Position X="6" Y="3.5" Width="2" />
-    <InheritanceLine Type="IrcDotNet.IrcRegistrationInfo" ManuallyRouted="true">
-      <Path>
-        <Point X="4.75" Y="2.997" />
-        <Point X="4.75" Y="3.325" />
-        <Point X="7" Y="3.325" />
-        <Point X="7" Y="3.5" />
-      </Path>
-    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAQAAAAACAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>IrcRegistrationInfo.cs</FileName>
@@ -269,7 +260,13 @@
     </TypeIdentifier>
   </Class>
   <Class Name="IrcDotNet.Ctcp.CtcpClient">
-    <Position X="0.5" Y="27" Width="3.25" />
+    <Position X="0.5" Y="30.75" Width="3.25" />
+    <Members>
+      <Method Name="ircClient_Connected" Hidden="true" />
+      <Method Name="ircClient_Disconnected" Hidden="true" />
+      <Method Name="ircClient_LocalUser_PreviewMessageReceived" Hidden="true" />
+      <Method Name="ircClient_LocalUser_PreviewNoticeReceived" Hidden="true" />
+    </Members>
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
@@ -286,15 +283,22 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAUIASAICAGBQUAFIcACAQBIACgMAAAAQgEAiACSmAA=</HashCode>
+      <HashCode>AQUIAWQICwGRQUAFYdACARBIACgMAAAQQgEAiACSmEA=</HashCode>
       <FileName>Ctcp\CtcpClient.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Struct Name="IrcDotNet.IrcChannelInfo">
-    <Position X="3.75" Y="11" Width="1.75" />
+    <Position X="6.25" Y="6.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAIAAAAAACAAAAA=</HashCode>
       <FileName>IrcChannelInfo.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="IrcDotNet.IrcNetworkInfo">
+    <Position X="3.75" Y="6.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAgEIAAAACAYBAAAAAAAAAAA=</HashCode>
+      <FileName>IrcNetworkInfo.cs</FileName>
     </TypeIdentifier>
   </Struct>
   <Interface Name="IrcDotNet.IIrcMessageReceiveHandler">
@@ -333,7 +337,7 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="IrcDotNet.IIrcFloodPreventer">
-    <Position X="3.75" Y="6.25" Width="1.75" />
+    <Position X="3.75" Y="9.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAACAA=</HashCode>
       <FileName>IIrcFloodPreventer.cs</FileName>
@@ -346,4 +350,5 @@
       <FileName>IrcTargetMask.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Font Name="Segoe UI" Size="9" /></ClassDiagram>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
