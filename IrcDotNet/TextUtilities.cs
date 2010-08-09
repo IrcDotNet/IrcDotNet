@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 
 namespace IrcDotNet
 {
+    using Common.Collections;
+
     internal static class TextUtilities
     {
         public static string GetValue(this Group match)
