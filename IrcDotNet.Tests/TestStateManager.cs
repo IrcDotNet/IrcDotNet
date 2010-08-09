@@ -6,11 +6,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using IrcDotNet.Common.Collections;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace IrcDotNet.Tests
 {
+    using Common.Collections;
+
     public class TestStateManager<TState> where TState : struct
     {
         private HashSet<TState> currentStates;

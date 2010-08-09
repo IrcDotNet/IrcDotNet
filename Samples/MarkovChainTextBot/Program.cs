@@ -265,7 +265,7 @@ namespace MarkovChainTextBox
         private static bool ReadChatCommand(IrcClient client, IIrcMessageTarget target, string line)
         {
             // Check if line is chat command; if so, process it.
-            if (line.Length > 1 && line.StartsWith("."))
+            if (line.Length > 1 && line.StartsWith("!"))
             {
                 var parts = line.Substring(1).Split(' ');
                 var command = parts[0];
@@ -288,7 +288,7 @@ namespace MarkovChainTextBox
                         break;
                     default:
                         client.LocalUser.SendNotice(target, string.Format(
-                            "Command '{0}' command not recognised.", command));
+                            "Command '{0}' not recognised.", command));
                         break;
                 }
             }

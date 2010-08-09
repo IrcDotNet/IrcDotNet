@@ -10,33 +10,47 @@ namespace IrcDotNet.Ctcp
     partial class CtcpClient
     {
         /// <summary>
-        /// Process PING messages from a user.
+        /// Process ACTION messages from a user.
         /// </summary>
-        /// <param name="message">The message received from the server.</param>
-        [MessageProcessor("ping")]
-        protected void ProcessMessagePing(CtcpMessage message)
+        /// <param name="message">The message received from the user.</param>
+        [MessageProcessor("action")]
+        protected void ProcessMessageAction(CtcpMessage message)
         {
             Debug.Assert(message.Data != null);
 
+            if (!message.IsResponse)
+            {
+                var text = message.Data;
+
+                OnActionReceived(new CtcpMessageEventArgs(message.Source, message.Targets, text));
+            }
+        }
+
+        /// <summary>
+        /// Process TIME messages from a user.
+        /// </summary>
+        /// <param name="message">The message received from the user.</param>
+        [MessageProcessor("time")]
+        protected void ProcessMessageTime(CtcpMessage message)
+        {
             if (message.IsResponse)
             {
-                // Calculate time elapsed since the ping request was sent.
-                var sendTime = new DateTime(long.Parse(message.Data));
-                var receiveTime = DateTime.Now;
-                var pingTime = receiveTime - sendTime;
+                var dateTime = message.Data;
 
-                OnPingResponseReceived(new CtcpPingResponseReceivedEventArgs(message.Source, pingTime));
+                OnTimeResponseReceived(new CtcpTimeResponseReceivedEventArgs(message.Source, dateTime));
             }
             else
             {
-                SendMessagePing(message.Source, message.Data, true);
+                var localDateTime = DateTimeOffset.Now.ToString("o");
+                
+                SendMessageTime(new[] { message.Source }, localDateTime, true);
             }
         }
 
         /// <summary>
         /// Process VERSION messages from a user.
         /// </summary>
-        /// <param name="message">The message received from the server.</param>
+        /// <param name="message">The message received from the user.</param>
         [MessageProcessor("version")]
         protected void ProcessMessageVersion(CtcpMessage message)
         {
@@ -50,8 +64,31 @@ namespace IrcDotNet.Ctcp
             {
                 if (this.ClientVersion != null)
                 {
-                    SendMessageVersion(message.Source, this.ClientVersion);
+                    SendMessageVersion(new[] { message.Source }, this.ClientVersion, true);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Process PING messages from a user.
+        /// </summary>
+        /// <param name="message">The message received from the user.</param>
+        [MessageProcessor("ping")]
+        protected void ProcessMessagePing(CtcpMessage message)
+        {
+            Debug.Assert(message.Data != null);
+
+            if (message.IsResponse)
+            {
+                // Calculate time elapsed since the ping request was sent.
+                var sendTime = new DateTime(long.Parse(message.Data));
+                var pingTime = DateTime.Now - sendTime;
+
+                OnPingResponseReceived(new CtcpPingResponseReceivedEventArgs(message.Source, pingTime));
+            }
+            else
+            {
+                SendMessagePing(new[] { message.Source }, message.Data, true);
             }
         }
     }

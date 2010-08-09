@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("IRC.NET")]
-[assembly: AssemblyDescription("Library for communicating via the Internet Relay Chat protocol, using the .NET Framework 3.5.")]
+[assembly: AssemblyDescription("A library for communicating via the Internet Relay Chat (IRC) protocol, using the .NET Framework 4.0.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("IRC.NET")]
