@@ -3,15 +3,18 @@ Overview
 ========
 
 This sample makes use of a well-known mathematical model called the Markov chain
-<http://en.wikipedia.org/wiki/Markov_chain> to implement an IRC bot that performs Markov text generation.
-The bot can on request generate pseudo-random sentences that are intended to be vaguely gramatically correct, based on
-the text of messages it has received over time. The more the bot has trained using human messages sent on IRC, the
-better it typically becomes at generating meaningful sentences of its own.
+<http://en.wikipedia.org/wiki/Markov_chain> to implement an IRC bot that
+performs Markov text generation. The bot can on request generate pseudo-random
+sentences that are intended to be vaguely gramatically correct, based on the
+text of messages it has received over time. The more the bot has trained using
+human messages sent on IRC, the better it typically becomes at generating
+meaningful sentences of its own.
 
-The bot is capable of connecting to multiple servers and multiple channels on each server, from which it constantly
-monitors messages sent in the channel to build up the Markov chain and thus train the Markov text generator. Users can
-command the bot to generate random sentences (based off training data, but typically not identical to any), and write
-them to the channel.
+The bot is capable of connecting to multiple servers and multiple channels on
+each server, from which it constantly monitors messages sent in the channel to
+build up the Markov chain and thus train the Markov text generator. Users can
+command the bot to generate random sentences (based off training data, but
+typically not identical to any), and write them to the channel.
 
 Command-Line Commands
 =====================
@@ -76,14 +79,17 @@ These commands may be sent by a user to a channel of which the bot is a member.
 Talk
 ----
 
-This command tells the bot to generate a random message, composed of one or more sentences, and send it to the channel.
+This command tells the bot to generate a random message, composed of one or more
+sentences, and send it to the channel.
 
 Syntax:
 
   .talk [ <number of sentences> [ <highlight nick name> ] ]
 
-If <number of sentences> is not specified, then the number is chosen randomly between 1 and 3.
-If <highlight nick name> is specified, the message sent by the bot is prefixed with the given nick name.
+If <number of sentences> is not specified, then the number is chosen randomly
+between 1 and 3.
+If <highlight nick name> is specified, the message sent by the bot is prefixed
+with the given nick name.
 
 Examples:
 

@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using IrcDotNet;
-using System.Text.RegularExpressions;
 
 namespace MarkovChainTextBox
 {
@@ -177,7 +177,7 @@ namespace MarkovChainTextBox
             using (var connectedEvent = new ManualResetEventSlim(false))
             {
                 client.Connected += (sender2, e2) => connectedEvent.Set();
-                client.Connect(serverAddress, new IrcUserRegistrationInfo()
+                client.Connect(serverAddress, false, new IrcUserRegistrationInfo()
                     {
                         NickName = "MarkovBot",
                         UserName = "MarkovBot",

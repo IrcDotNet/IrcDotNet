@@ -1,0 +1,1528 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TweetSharp</name>
+    </assembly>
+    <members>
+        <member name="T:TweetSharp.TweetSharpException">
+            <summary>
+            An exception raised when TweetSharp encounters an error.
+            </summary>
+        </member>
+        <member name="M:TweetSharp.TweetSharpException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TweetSharp.TweetSharpException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:TweetSharp.TweetSharpException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TweetSharp.TweetSharpException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="innerException">The inner exception.</param>
+        </member>
+        <member name="T:TweetSharp.Core.Extensions.OAuthExtensions">
+            <summary>
+            Extension methods for working with OAuth data
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Core.Extensions.OAuthExtensions.ToRequestValue(Hammock.Authentication.OAuth.OAuthSignatureMethod)">
+            <summary>
+            Converts an <see cref="T:Hammock.Authentication.OAuth.OAuthSignatureMethod"/> into a value 
+            to be passed to the server as part of the request to indicate the 
+            signature method used
+            </summary>
+            <param name="signatureMethod">the <see cref="T:Hammock.Authentication.OAuth.OAuthSignatureMethod"/> to convert</param>
+            <returns>A <see cref="T:System.String"/> value in the expected format</returns>
+        </member>
+        <member name="M:TweetSharp.Core.Extensions.OAuthExtensions.HashWith(System.String,System.Security.Cryptography.HashAlgorithm)">
+            <summary>
+            Hashes a string using the provided <see cref="T:System.Security.Cryptography.HashAlgorithm"/>
+            </summary>
+            <param name="input">the string to hash</param>
+            <param name="algorithm">the algorithm with which to perform the hash</param>
+            <returns>A Base-64 encoded representation of the hash</returns>
+        </member>
+        <member name="T:TweetSharp.Core.Extensions.RegexExtensions">
+            <summary>
+            Extension methods or performing regular expression operations on a string
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Core.Extensions.RegexExtensions.Matches(System.String,System.String)">
+            <summary>
+            Returns true if the input string matches the provided
+             <see cref="T:System.Text.RegularExpressions.Regex">regular expression</see> pattern.
+            </summary>
+            <param name="input">string to attempt to match</param>
+            <param name="pattern">pattern to match</param>
+            <returns>true if the input string matches the pattern; otherwise false.</returns>
+        </member>
+        <member name="T:TweetSharp.Model.OAuthToken">
+            <summary>
+            A data class representing either a request or an access token returned during an OAuth session.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.OAuthToken.Token">
+            <summary>
+            Gets or sets the token.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.OAuthToken.TokenSecret">
+            <summary>
+            Gets or sets the token secret.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.OAuthToken.CallbackConfirmed">
+            <summary>
+            Gets or sets a value indicating whether the callback was confirmed.
+            This value is only populated if request token authorization was requested with a callback.
+            </summary>
+            <value><c>true</c> if the callback was confirmed; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:TweetSharp.Model.OAuthToken.UserId">
+            <summary>
+            Gets or sets the user ID.
+            This value is only populated if client authentication was used.
+            </summary>
+            <value>The user ID.</value>
+        </member>
+        <member name="P:TweetSharp.Model.OAuthToken.ScreenName">
+            <summary>
+            Gets or sets the user screen name.
+            This value is only populated if client authentication was used.
+            </summary>
+            <value>The user screen name.</value>
+        </member>
+        <member name="T:TweetSharp.Fluent.AuthenticationMode">
+            <summary>
+            Authentication mode to use
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Fluent.AuthenticationMode.None">
+            <summary>
+            Use no authentication
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Fluent.AuthenticationMode.Basic">
+            <summary>
+            Use Basic Auth
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Fluent.AuthenticationMode.OAuth">
+            <summary>
+            Use the OAuth Protocol
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Fluent.AuthenticationMode.Facebook">
+            <summary>
+            Use Facebook authentication
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Fluent.AuthenticationMode.MySpace">
+            <summary>
+            Use MySpace authentication
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Fluent.IAuthenticator">
+            <summary>
+            Describes an authentication scheme
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Model.IModel">
+            <summary>
+            Interface for classes that are part of the data model. 
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.IModel.RawSource">
+            <summary>
+            The source content used to deserialize the model entity instance.
+            Can be XML or JSON, depending on the endpoint used.
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Extensions.TimeExtensions">
+            <summary>
+            Extension methods working with <see cref="T:System.TimeSpan"/> and <see cref="T:System.DateTime"/> values
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.ToWord(System.Int32)">
+            <summary>
+            Converts the numeric value into an english word 
+            </summary>
+            <param name="value">the number to convert to english text</param>
+            <returns>The number as english text.</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.ToRelativeTime(System.DateTime)">
+            <summary>
+            Converts a <see cref="T:System.DateTime"/> value into an english string describing its
+            relationship to the current time (eg "5 minutes ago")
+            </summary>
+            <param name="time">A time in the past</param>
+            <returns>A <see cref="T:System.String"/> describing how long ago it was</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.ToRelativeTime(System.DateTime,System.Boolean)">
+            <summary>
+            Converts a <see cref="T:System.DateTime"/> value into an english string describing its
+            relationship to the current time, optionally converting numbers to words (eg "five minutes ago")
+            </summary>
+            <param name="time">A time in the past</param>
+            <param name="numbersAsWords">true if the numbers should be converted to english words; otherwise false</param>
+            <returns>A <see cref="T:System.String"/> describing how long ago it was</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Passed(System.DateTime)">
+            <summary>
+            Gets a <see cref="T:System.TimeSpan"/> struct defining how much time has between the provided time and now
+            </summary>
+            <param name="time">a time in the past</param>
+            <returns>a <see cref="T:System.TimeSpan"/> struct defining how much time has between the provided time and now</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Ticks(System.Int64)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of ticks
+            </summary>
+            <param name="value">the length of the desired <see cref="T:System.TimeSpan"/> in ticks</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Years(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of years
+            </summary>
+            <param name="value">the length of the desired <see cref="T:System.TimeSpan"/> in years</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Months(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of months
+            </summary>
+            <param name="value">the length of the desired <see cref="T:System.TimeSpan"/> in months</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Weeks(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of weeks
+            </summary>
+            <param name="value">the length of the desired <see cref="T:System.TimeSpan"/> in weeks</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Days(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of days
+            </summary>
+            <param name="days">the length of the desired <see cref="T:System.TimeSpan"/> in days</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Day(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of days
+            </summary>
+            <param name="days">the length of the desired <see cref="T:System.TimeSpan"/> in months</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Hours(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of hours
+            </summary>
+            <param name="hours">the length of the desired <see cref="T:System.TimeSpan"/> in hours</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Hour(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of hours
+            </summary>
+            <param name="hours">the length of the desired <see cref="T:System.TimeSpan"/> in hours</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Minutes(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of minutes
+            </summary>
+            <param name="minutes">the length of the desired <see cref="T:System.TimeSpan"/> in minutes</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Minute(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of minutes
+            </summary>
+            <param name="minutes">the length of the desired <see cref="T:System.TimeSpan"/> in minutes</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Second(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of seconds
+            </summary>
+            <param name="seconds">the length of the desired <see cref="T:System.TimeSpan"/> in seconds</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Seconds(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of seconds
+            </summary>
+            <param name="seconds">the length of the desired <see cref="T:System.TimeSpan"/> in seconds</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Millisecond(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of milliseconds
+            </summary>
+            <param name="milliseconds">the length of the desired <see cref="T:System.TimeSpan"/> in milliseconds</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Milliseconds(System.Int32)">
+            <summary>
+            Converts the provided value unto a <see cref="T:System.TimeSpan"/> of the specified number of milliseconds
+            </summary>
+            <param name="milliseconds">the length of the desired <see cref="T:System.TimeSpan"/> in milliseconds</param>
+            <returns>A <see cref="T:System.TimeSpan"/> of the specified length</returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.Ago(System.TimeSpan)">
+            <summary>
+            Given a <see cref="T:System.TimeSpan"/>, returns a <see cref="T:System.DateTime"/> in the past 
+            equivalent to the provided TimeSpan subtracted from the current time. (Eg. 3.Minutes().Ago())
+            </summary>
+            <param name="value">the timespan to subtract from the current time</param>
+            <returns>
+            the <see cref="T:System.DateTime"/> in the past. 
+            </returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.FromNow(System.TimeSpan)">
+            <summary>
+            Given a <see cref="T:System.TimeSpan"/>, returns a <see cref="T:System.DateTime"/> in the future
+            equivalent to the provided TimeSpan added to the current time. (Eg. 3.Minutes().FromNow())
+            </summary>
+            <param name="value">the timespan to add to the current time</param>
+            <returns>
+            the <see cref="T:System.DateTime"/> in the future
+            </returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.FromUnixTime(System.Int64)">
+            <summary>
+            Converts a value representing Unix Time (elapsed seconds since 1/1/1970) to a <see cref="T:System.DateTime"/>
+            </summary>
+            <param name="seconds">The number of elapsed seconds since the Unix Epoch time (00:00:00) 1/1/1970)</param>
+            <returns>The corresponding <see cref="T:System.DateTime"/></returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.TimeExtensions.ToUnixTime(System.DateTime)">
+            <summary>
+            Converts a <see cref="T:System.DateTime"/> to a value representing Unix Time (elapsed seconds since 1/1/1970) 
+            </summary>
+            <param name="dateTime">The <see cref="T:System.DateTime"/> to convert</param>
+            <returns>The number of elapsed seconds since the Unix Epoch time (00:00:00) 1/1/1970)</returns>
+        </member>
+        <member name="T:TweetSharp.Model.PropertyChangedBase">
+            <summary>
+             abstract base class with helper methods for classes that implement <see cref="T:System.ComponentModel.INotifyPropertyChanged"/>
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Model.PropertyChangedBase.OnPropertyChanged(System.String)">
+            <summary>
+            Fires the <see cref="E:TweetSharp.Model.PropertyChangedBase.PropertyChanged"/> event
+            </summary>
+            <param name="propertyName"></param>
+        </member>
+        <member name="E:TweetSharp.Model.PropertyChangedBase.PropertyChanged">
+            <summary>
+             Implementation of <see cref="E:System.ComponentModel.INotifyPropertyChanged.PropertyChanged"/>
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Model.IModelSerializer">
+            <summary>
+            Defines the contract for a serializer for model classes.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.IModelSerializer.Settings">
+            <summary>
+            Gets the JSON.NET serializer settings.
+            </summary>
+            <value>The settings.</value>
+        </member>
+        <member name="T:TweetSharp.IFacebook">
+            <summary>
+            Interface for the Facebook external service
+            </summary>
+        </member>
+        <member name="T:TweetSharp.IExternalService">
+            <summary>
+            Interface describing en external 3rd party service
+            </summary>
+        </member>
+        <member name="M:TweetSharp.IFacebook.PostStatusToFacebook(System.String,TweetSharp.Model.FacebookAuthentication)">
+            <summary>
+            Performs a Facebook status update
+            </summary>
+            <param name="status">The text of the update</param>
+            <param name="auth">A <see cref="T:TweetSharp.Model.FacebookAuthentication"/> object with appropriate credentials</param>
+            <returns>true if the update succeeds; otherwise false</returns>
+        </member>
+        <member name="T:TweetSharp.Core.WebFormat">
+            <summary> 
+             Available data format for REST queries
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Core.WebFormat.Xml">
+            <summary>
+            The eXtensible Markup Language
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Core.WebFormat.Json">
+            <summary>
+            JavaScript Object Notation
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Core.WebFormat.Rss">
+            <summary>
+            Really Simple Syndication
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Core.WebFormat.Atom">
+            <summary>
+            Atom syndication format
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Core.WebFormat.None">
+            <summary>
+            No specific format specified
+            </summary>
+        </member>
+        <member name="T:TweetSharp.IMySpace">
+            <summary>
+            Interface for the MySpace external service
+            </summary>
+        </member>
+        <member name="M:TweetSharp.IMySpace.PostStatusToMySpace(System.String,TweetSharp.Model.MySpaceAuthentication)">
+            <summary>
+            Performs a MySpace status update
+            </summary>
+            <param name="status">The text of the update</param>
+            <param name="auth">A <see cref="T:TweetSharp.Model.MySpaceAuthentication"/> object with appropriate credentials</param>
+            <returns>true if the update succeeds; otherwise false</returns>
+        </member>
+        <member name="T:TweetSharp.Fluent.FluentBaseBasicAuth">
+            <summary>
+             Stores HTTP Basic authentication details for a query.
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Fluent.IFluentBaseBasicAuth">
+            <summary>
+            Defines HTTP Basic authentication details for a query.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentBaseBasicAuth.Username">
+            <summary>
+            Gets the username.
+            </summary>
+            <value>The username.</value> 
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentBaseBasicAuth.Password">
+            <summary>
+            Gets the password.
+            </summary>
+            <value>The password.</value>
+        </member>
+        <member name="T:TweetSharp.Model.IExternalAuthenticationDetails">
+            <summary>
+            Interface for authentication details used when dealing with 3rd party services
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBaseBasicAuth.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TweetSharp.Fluent.FluentBaseBasicAuth"/> class.
+            </summary>
+            <param name="username">The username.</param>
+            <param name="password">The password.</param>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBaseBasicAuth.Username">
+            <summary>
+            Gets the username.
+            </summary>
+            <value>The username.</value>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBaseBasicAuth.Password">
+            <summary>
+            Gets the password.
+            </summary>
+            <value>The password.</value>
+        </member>
+        <member name="T:TweetSharp.Fluent.FluentBase`1">
+            <summary>
+            Abstract base class for a fluent interface.
+            </summary>
+            <typeparam name="TResult">The <see cref="T:TweetSharp.Model.TweetSharpResult"/> derived type of result this fluent interface returns</typeparam>
+        </member>
+        <member name="T:TweetSharp.Fluent.IFluentBase`1">
+            <summary>
+            Generic interface for the fluent interface root nodes. 
+            </summary>
+            <typeparam name="T">The expected result type.  Must be derived from <see cref="T:TweetSharp.Model.TweetSharpResult"/></typeparam>
+        </member>
+        <member name="T:TweetSharp.Fluent.IRequestPattern`1">
+            <summary>
+            Interface describing the request pattern
+            </summary>
+            <typeparam name="T">The expected return type of the request</typeparam>
+        </member>
+        <member name="M:TweetSharp.Fluent.IRequestPattern`1.Request">
+            <summary>
+            Begins a synchronous request to the service API
+            </summary>
+            <returns>The result of the request</returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.IRequestPattern`1.BeginRequest">
+            <summary>
+            Begins an asynchronous (background) request to the service API
+            </summary>
+            <returns>the <see cref="T:System.IAsyncResult"/> handle for the background operation</returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.IRequestPattern`1.BeginRequest(System.Object)">
+            <summary>
+            Begins an asynchronous (background) request to the service API
+            </summary>
+            <returns>the <see cref="T:System.IAsyncResult"/> handle for the background operation</returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.IRequestPattern`1.EndRequest(System.IAsyncResult)">
+            <summary>
+            Completes an asynchronous operation, returning the result of the query
+            </summary>
+            <param name="asyncResult">The <see cref="T:System.IAsyncResult"/> handle returned from the 
+            <see cref="M:TweetSharp.Fluent.IRequestPattern`1.BeginRequest"/> method that started the background operation</param>
+            <returns>The result of the query</returns>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentBase`1.Result">
+            <summary>
+            Result object describing the results of the query after it has been executed
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Fluent.FluentBase`1._recurringTask">
+            <summary>
+            Gets or sets the recurring task details
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Fluent.FluentBase`1._firstTry">
+            <summary>
+            gets or sets a value indicating whether or not the is the first attempt at a retryable task
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Fluent.FluentBase`1._remainingRetries">
+            <summary>
+            gets or sets the number of remaining retries for a retryable task
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Fluent.FluentBase`1._previousResult">
+            <summary>
+            gets or sets the result of that last attempt at a retryable task
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Fluent.FluentBase`1._staticClientInfo">
+            <summary>
+            Gets or sets the client info associated with queries generated by the fluent interface
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Fluent.FluentBase`1._requestClientInfo">
+            <summary>
+            Gets or sets the client info associated with the current request
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Fluent.FluentBase`1._clientInfoLock">
+            <summary>
+            Multithreaded protection for the <see cref="F:TweetSharp.Fluent.FluentBase`1._staticClientInfo"/> field
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.BuildResult(Hammock.RestResponseBase)">
+            <summary>
+            Creates the result object
+            </summary>
+            <param name="response">The <see cref="T:Hammock.RestResponseBase"/> object describing the results of the query</param>
+            <returns>The result of the query</returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.AsUrl(System.Boolean)">
+            <summary>
+            Gets the URL that was/will be used to perform the current query
+            </summary>
+            <param name="ignoreTransparentProxy">if true, the underlying service API url is returned, otherwise the transparent proxy is returned</param>
+            <returns>The URL for the query</returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.AsUrl">
+            <summary>
+            Gets the URL that was/will be used to perform the current query
+            </summary>
+            <returns>The URL for the query</returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.Request">
+            <summary>
+            Performs the request
+            </summary>
+            <returns>The result of the request</returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.BeginRequest">
+            <summary>
+            Starts the request asynchronously 
+            </summary>
+            <returns>The <see cref="T:System.IAsyncResult"/> handle for the request</returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.BeginRequest(System.Object)">
+            <summary>
+            Starts the request asynchronously 
+            </summary>
+            <returns>The <see cref="T:System.IAsyncResult"/> handle for the request</returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.EndRequest(System.IAsyncResult)">
+            <summary>
+            Completes the asynchronous request
+            </summary>
+            <param name="asyncResult">The <see cref="T:System.IAsyncResult"/>handle returned from <see cref="M:TweetSharp.Fluent.FluentBase`1.BeginRequest"/></param>
+            <returns></returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.BuildQuery(System.Boolean,System.String,System.String,System.String)">
+            <summary>
+            Formulates the query url
+            </summary>
+            <returns>the url for this query</returns>
+        </member>
+        <member name="F:TweetSharp.Fluent.FluentBase`1.Client">
+            <summary>
+            Internal <see cref="T:Hammock.RestClient"/> used to execute the query.
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.#ctor">
+            <summary>
+            Constructs a new instance of this class
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.ToString">
+            <summary>
+            Returns the human-readable query to Yammer representing the current expression.
+            If you are storing URLs for sending later, you can use <code>AsUrl()</code> to return
+            a URL-encoded string instead.
+            </summary>
+            <returns>A URL-decoded string representing this expression's query to Yammer</returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.BuildOAuthQuery">
+            <summary>
+            Formulates the OAuth handshake query
+            </summary>
+            <returns>the url for the query</returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.BuildOAuthParameters(TweetSharp.Fluent.IFluentBaseOAuth,System.String)">
+            <summary>
+            Formulates the oauth parameters
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.EnsureDefaultCache">
+            <summary>
+            Sets up the default caching location
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.Cancel">
+            <summary>
+            Cancels the recurring or streaming request, stopping all further occurences.
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.SetClientInfo(TweetSharp.IClientInfo)">
+            <summary>
+            Sets the client info.
+            </summary>
+            <param name="clientInfo">The client info.</param>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.RequestDeleteAsync(Hammock.Web.WebQuery,System.Object)">
+            <summary>
+            Requests a DELETE resource asynchronously
+            </summary>
+            <param name="query">the <see cref="T:Hammock.Web.WebQuery"/>to request</param>
+            <param name="userState">A user provided state object</param>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.ValidateUpdateText">
+            <summary>
+            Abstract method. When overriden in a derived class, performs validation on the update text
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.GetCredentialsFromOAuthAuthenticator">
+            <summary>
+            Builds an <see cref="T:Hammock.Authentication.IWebCredentials"/> instance from OAuth data in a query.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TweetSharp.Fluent.FluentBase`1.SetRequestMeta(Hammock.RestRequest)">
+            <summary>
+            Sets query metadata based on an internally created REST request.
+            </summary>
+            <param name="request">The request.</param>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.UrlOAuthAuthority">
+            <summary>
+            Gets the OAuth authority url
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.InternalCallback">
+            <summary>
+            Gets the internal callback method associated with this query
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.CacheKey">
+            <summary>
+            Returns the key prepended to the URL when caching queries.
+            If using basic authentication, this will be the authenticated user's username.
+            If using OAuth, this will be the authenticated token.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.AuthenticationPair">
+            <summary>
+            Gets the authentication username and password or key an secret used for the query
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.Authentication">
+            <summary>
+            Gets or sets the authentication.
+            </summary>
+            <value>The authentication.</value>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.Method">
+            <summary>
+            Gets or sets the method.
+            </summary>
+            <value>The method.</value>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.Format">
+            <summary>
+            Gets or sets the format.
+            </summary>
+            <value>The format.</value>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.Configuration">
+            <summary>
+            Gets or sets the configuration details for the query
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.RepeatInterval">
+            <summary>
+            Gets or sets the amount of time after which the query should be repeated
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.RepeatTimes">
+            <summary>
+            Gets or sets the number of times the query should be repeated
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.RateLimitingRule">
+            <summary>
+            Gets or sets the <see cref="T:Hammock.Tasks.IRateLimitingRule`1"/> describing how the recurring 
+            query should be rate limited.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.RecurringTask">
+            <summary>
+            Gets or sets the recurring task 
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.HasAuth">
+            <summary>
+            Gets a value indicating whether this instance has authentication data present.
+            </summary>
+            <value><c>true</c> if this instance has authentication data; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.ClientInfo">
+            <summary>
+            Gets or sets information about the requesting client
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.IsOAuthProcessCall">
+            <summary>
+            Gets a value indicating if the query is part of the OAuth setup process
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBase`1.Result">
+            <summary>
+            Gets or sets the result of the query
+            </summary>
+        </member>
+        <member name="T:TweetSharp.IClientInfo">
+            <summary>
+            Interface to an object describing your client
+            </summary>
+        </member>
+        <member name="P:TweetSharp.IClientInfo.ClientName">
+            <summary>
+            This is the name of your client application.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.IClientInfo.ClientVersion">
+            <summary>
+            This is the version of your application. This is meta-data only,
+            and not used for client processing.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.IClientInfo.ClientUrl">
+            <summary>
+            This is the URL of your application. This is meta-data only,
+            and not used for client processing. 
+            </summary>
+        </member>
+        <member name="P:TweetSharp.IClientInfo.ConsumerKey">
+            <summary>
+            If your client is using OAuth authentication, this value should be set
+            to the value of your consumer key. This avoids having to provide the key
+            in every query.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.IClientInfo.ConsumerSecret">
+            <summary>
+            If your client is using OAuth authentication, this value should be set
+            to the value of your consumer secret. This avoids having to provide the secret
+            in every query.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.IClientInfo.TransparentProxy">
+            <summary>
+            Since you are communicating from the client-side, this value should point to a 
+            proxy that is configured to work transparently (API methods are identical other
+            than the domain), allow cross-domain access, and understand TweetSharp custom 
+            headers.
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Fluent.IClientWebQueryInfo">
+            <summary>
+            Contract describing the client used to make web queries.
+            This contract defines meta-data about the consuming application, such 
+            as its name, build version, homepage, and Twitter OAuth tokens.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IClientWebQueryInfo.ClientName">
+            <summary>
+            Gets or sets the name of the client.
+            </summary>
+            <value>The name of the client.</value>
+        </member>
+        <member name="P:TweetSharp.Fluent.IClientWebQueryInfo.ClientVersion">
+            <summary>
+            Gets or sets the client version.
+            </summary>
+            <value>The client version.</value>
+        </member>
+        <member name="P:TweetSharp.Fluent.IClientWebQueryInfo.ClientUrl">
+            <summary>
+            Gets or sets the client URL.
+            </summary>
+            <value>The client URL.</value>
+        </member>
+        <member name="P:TweetSharp.Fluent.IClientWebQueryInfo.ConsumerKey">
+            <summary>
+            Gets or sets the OAuth consumer key.
+            </summary>
+            <value>The consumer key.</value>
+        </member>
+        <member name="P:TweetSharp.Fluent.IClientWebQueryInfo.ConsumerSecret">
+            <summary>
+            Gets or sets the OAuth consumer secret.
+            </summary>
+            <value>The consumer secret.</value>
+        </member>
+        <member name="T:TweetSharp.Fluent.ClientWebQueryInfo">
+            <summary>
+            Data structure describing the client used to make web queries.
+            This class holds meta-data about the consuming application, such 
+            as its name, build version, homepage, and Twitter OAuth tokens.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.ClientWebQueryInfo.ClientName">
+            <summary>
+            Gets or sets the name of the client. 
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.ClientWebQueryInfo.ClientVersion">
+            <summary>
+            Gets or sets the version of the client
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.ClientWebQueryInfo.ClientUrl">
+            <summary>
+            Gets or sets the homepage url for the client
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.ClientWebQueryInfo.ConsumerKey">
+            <summary>
+            Gets or sets the OAuth Consumer key for the client.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.ClientWebQueryInfo.ConsumerSecret">
+            <summary>
+            Gets or sets the OAuth Consumer secret for the client
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Fluent.IFluentConfiguration">
+            <summary>
+            Common configuration options for a fluent interface to a web service.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentConfiguration.MockGraph">
+            <summary>
+            Gets or sets a graph of mock objects to use in a mock query
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentConfiguration.MockStatusCode">
+            <summary>
+            Gets or sets the HTTP status code to return in a mock query.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentConfiguration.CacheStrategy">
+            <summary>
+            Gets or sets the <see cref="T:Hammock.Caching.ICache">cache strategy</see> for the query
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentConfiguration.CacheAbsoluteExpiration">
+            <summary>
+            Gets or sets the date and time the cache results should expire
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentConfiguration.CacheSlidingExpiration">
+            <summary>
+            Gets or sets the amount of time to cache the query results for
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentConfiguration.Proxy">
+            <summary>
+            Gets or sets the address of the proxy server to use for the query
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentConfiguration.TransparentProxy">
+            <summary>
+            Gets or sets the address of a transparent proxy to use for the query
+            The transparent proxy must implement the same endpoints as the service.
+            Example: 'http://api.twitter.com/v1/statuses/hometimeline.json' becomes
+            'http://transparentproxy.example.com/statuses/hometimeline.json' when
+            the query is submitted.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentConfiguration.RetryPolicy">
+            <summary>
+            Gets or sets the <see cref="T:Hammock.Retries.RetryPolicy">Retry Policy</see> detailing 
+            when failed queries should be retried
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentConfiguration.MaxRetries">
+            <summary>
+            Gets or sets the number of times a failing query should be retried. Use
+            in conjunction with <see cref="P:TweetSharp.Fluent.IFluentConfiguration.RetryPolicy"/>
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentConfiguration.RequestTimeout">
+            <summary>
+            Gets or sets the amount of time to wait before aborting a query.
+            If unspecified, the system default is used. 
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentConfiguration.CompressHttpRequests">
+            <summary>
+            Gets or sets a value indicating whether the client should request 
+            compressed data from the server. 
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Fluent.Base.IFluentNode">
+            <summary>
+            Represents a node in a fluent interface call tree
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Fluent.IFluentAuthentication">
+            <summary>
+            Interface for authentication details
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentAuthentication.Authenticator">
+            <summary>
+            Gets or sets the <see cref="T:TweetSharp.Fluent.IAuthenticator">Authenticator</see> for the resource.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentAuthentication.Mode">
+            <summary>
+            Gets or sets the <see cref="T:TweetSharp.Fluent.AuthenticationMode"/> for the resource.
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Model.Converters.TweetSharpConverterBase">
+            <summary>
+            Acts as a base for custom JSON conversion.
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Model.Converters.TweetSharpConverterBase.IsNullable(System.Type)">
+            <summary>
+            Determines whether the specified type is nullable.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>
+            	<c>true</c> if the specified t is nullable; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:TweetSharp.Model.Converters.TweetSharpConverterBase.IsNullableType(System.Type)">
+            <summary>
+            Determines whether [is nullable type] [the specified t].
+            </summary>
+            <param name="type">The t.</param>
+            <returns>
+            	<c>true</c> if [is nullable type] [the specified t]; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="T:TweetSharp.Model.ExternalService">
+            <summary>
+            Enumeration of supported external services that have their own authentication schemes
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Model.ExternalService.None">
+            <summary>
+            No external service
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Model.ExternalService.Facebook">
+            <summary>
+            Facebook.com
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Model.ExternalService.MySpace">
+            <summary>
+            MySpace.com
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Model.FacebookAuthentication">
+            <summary>
+            Authentication details for the Facebook API
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.FacebookAuthentication.ApplicationApiKey">
+            <summary>
+            Gets or sets the application's API key.  This is provided to 
+            you by Facebook when you register your app
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.FacebookAuthentication.SessionKey">
+            <summary>
+            Gets or sets the user's Session key.  This must be a persistent 
+            session id with permission to post status updates
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.FacebookAuthentication.SessionSecret">
+            <summary>
+            Gets or sets the secret assoociated with the <see cref="P:TweetSharp.Model.FacebookAuthentication.SessionKey"/>
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Model.MySpaceAuthentication">
+            <summary>
+            Authentication details for the MySpace API
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.MySpaceAuthentication.ConsumerKey">
+            <summary>
+            OAuth Consumer key provided for your application by MySpace
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.MySpaceAuthentication.ConsumerSecret">
+            <summary>
+            OAuth consumer secret provided for your application by MySpace
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.MySpaceAuthentication.AccessToken">
+            <summary>
+            The user's access token.  Must have permission to post status updates 
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.MySpaceAuthentication.TokenSecret">
+            <summary>
+            The secret associated with <see cref="P:TweetSharp.Model.MySpaceAuthentication.AccessToken"/>
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.MySpaceAuthentication.UserId">
+            <summary>
+            The MySpace id of the user you want to post status updates for
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Model.TweetSharpResult">
+            <summary>
+            Base class for objects describing the results of a query to a supported service
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.RequestDate">
+            <summary>
+            Gets or sets the date and time that the request was made
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.RequestUri">
+            <summary>
+            Gets or sets the Uri used in the query request
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.RequestHttpMethod">
+            <summary>
+            Gets or sets the Http method used for the request
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.RequestKeptAlive">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.ResponseDate">
+            <summary>
+            Gets or sets the date and time the query response was received
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.WebResponse">
+            <summary>
+            Gets or sets the underlying <see cref="T:System.Net.WebResponse">WebResponse</see> object
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.Response">
+            <summary>
+            Gets or sets the response body 
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.ResponseType">
+            <summary>
+            Gets or sets the content type of the response
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.ResponseHttpStatusCode">
+            <summary>
+            Gets or sets the Http Status code returned from the server
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.ResponseHttpStatusDescription">
+            <summary>
+            Gets or sets the description associated with <see cref="P:TweetSharp.Model.TweetSharpResult.ResponseHttpStatusCode"/>
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.ResponseLength">
+            <summary>
+            Gets or sets the length of the response in bytes
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.ResponseUri">
+            <summary>
+            Gets or sets the Uri of the response
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.IsMock">
+            <summary>
+            Gets or sets a value indicating whether or not the query was fulfilled with mock data
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.Exception">
+            <summary>
+            Gets or sets any <see cref="T:System.Net.WebException">exception</see> that was caught during the query 
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.WasRateLimited">
+            <summary>
+            Gets or sets a value indicating whether or not the recurring query was skipped due to rate limiting rules
+            </summary>
+            <value>
+            	<c>true</c> if this query was skipped for rate limiting purposes; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.IsServiceError">
+            <summary>
+            Gets or sets a value indicating that the query failed due to an error in the target REST service
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.IsFromCache">
+            <summary>
+            Gets a value indicating whether this result was served from a cache.
+            </summary>
+            <value>
+            	<c>true</c> if this result is from a cache; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.IsNetworkError">
+            <summary>
+            Gets a value indicating whether the query failed due to a network error
+            </summary>
+            <value>
+            	<c>true</c> if the query failed because of a network problem; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.TimedOut">
+            <summary>
+            Gets a value indicating whether the query timed out waiting for a response
+            </summary>
+            <value>
+            	<c>true</c> if the query failed due to timeout; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.ExceptionStatus">
+            <summary>
+            Gets a value indicating the nature of the <see cref="P:TweetSharp.Model.TweetSharpResult.Exception">WebException</see> that occured
+            </summary>
+            <value>
+                <c>WebExceptionStatus.Success</c> if the query succeeded; otherwise a <see cref="T:System.Net.WebExceptionStatus">WebExceptionStatus</see> enumeration value
+            </value>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpResult.Retries">
+            <summary>
+            Gets or sets a value indicating how many retries occured to get the current result
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Model.TweetSharpSerializer`1">
+            <summary>
+            Handles internal deserialization of incoming models.
+            This class is only public as a workaround for issues with MEF when loading
+            assemblies with public key encryption and strong naming.
+            </summary>
+            <typeparam name="T">The type of model serializer used</typeparam>
+        </member>
+        <member name="M:TweetSharp.Model.TweetSharpSerializer`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TweetSharp.Model.TweetSharpSerializer`1"/> class.
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Model.TweetSharpSerializer`1.Deserialize(System.String,System.Type)">
+            <summary>
+            Deserializes the specified content.
+            </summary>
+            <param name="content">The content.</param>
+            <param name="type">The type.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TweetSharp.Model.TweetSharpSerializer`1.Deserialize``1(System.String)">
+            <summary>
+            Deserializes the specified content.
+            </summary>
+            <typeparam name="TContent">The type to deserialize.</typeparam>
+            <param name="content">The content.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TweetSharp.Model.TweetSharpSerializer`1.Serialize(System.Object,System.Type)">
+            <summary>
+            Serializes the specified object instance.
+            </summary>
+            <param name="instance">The instance.</param>
+            <param name="type">The type.</param>
+            <returns></returns>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpSerializer`1.ContentType">
+            <summary>
+            Gets the type of the content.
+            </summary>
+            <value>The type of the content.</value>
+        </member>
+        <member name="P:TweetSharp.Model.TweetSharpSerializer`1.ContentEncoding">
+            <summary>
+            Gets the content encoding.
+            </summary>
+            <value>The content encoding.</value>
+        </member>
+        <member name="T:TweetSharp.Service.ServiceBase`3">
+            <summary>
+            Abstract base implementation for a flattened, non-fluent representation of a TweetSharp supported service
+            </summary>
+            <typeparam name="TFluent">Type of fluent interface this is the flattened representation of. Must be derived from type <see cref="T:TweetSharp.Fluent.IFluentBase`1"/></typeparam>
+            <typeparam name="TResult">Type of result object returned from the fluent interface methods. Must be derived from type <see cref="T:TweetSharp.Model.TweetSharpResult"/></typeparam>
+            <typeparam name="TNode">The base type of fluent nodes for this service type.  Must be derived from type <see cref="T:TweetSharp.Fluent.Base.IFluentNode"/></typeparam>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.GetAuthenticatedQuery">
+            <summary>
+            Gets the fluent query 
+            </summary>
+            <returns>The <see cref="T:TweetSharp.Fluent.IFluentBase`1"/> query</returns>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.Execute``1(`0,System.Action{`1})">
+            <summary>
+            Executes the fluent query and returns the result
+            </summary>
+            <typeparam name="T">The return type of the query</typeparam>
+            <param name="query">The <see cref="T:TweetSharp.Fluent.IFluentBase`1"/> to execute</param>
+            <param name="post">A callback method to invoke upon query completion</param>
+            <returns>A <see cref="T:TweetSharp.Model.TweetSharpResult"/> with the result of the query</returns>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.Execute(`0,System.Action{`1})">
+            <summary>
+            Executes the query
+            </summary>
+            <param name="query">The query to execute</param>
+            <param name="post">Callback method to invoke after the query</param>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.WithTweetSharp``1(System.Func{`0,`2})">
+            <summary>
+            Executes a query with TweetSharp
+            </summary>
+            <typeparam name="T">the response type</typeparam>
+            <param name="executor">The fluent tree describing the query</param>
+            <returns>The query response</returns>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.WithTweetSharp``1(System.Func{`0,`0})">
+            <summary>
+            Executes a query with TweetSharp
+            </summary>
+            <typeparam name="T">the response type</typeparam>
+            <param name="executor">The fluent tree describing the query</param>
+            <returns>The query response</returns>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.WithTweetSharp(System.Func{`0,`0})">
+            <summary>
+            Executes a query with TweetSharp
+            </summary>
+            <param name="executor">The fluent tree describing the query</param>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.WithTweetSharp(System.Func{`0,`2},System.Action{`1})">
+            <summary>
+            Executes a query with TweetSharp
+            </summary>
+            <param name="executor">The fluent tree describing the query</param>
+            <param name="post">A callback method to be invoked after the query completes</param>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.WithTweetSharp(System.Func{`0,`0},System.Action{`1})">
+            <summary>
+            Executes a query with TweetSharp
+            </summary>
+            <param name="executor">The fluent tree describing the query</param>
+            <param name="post">A callback method to be invoked after the query completes</param>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.WithTweetSharp``1(System.Func{`0,`2},System.Action{`1})">
+            <summary>
+            Executes a query with TweetSharp
+            </summary>
+            <param name="executor">The fluent tree describing the query</param>
+            <param name="post">A callback method to be invoked after the query completes</param>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.ExecuteAsync(`0,System.Action{`1})">
+            <summary>
+            Asynchronously executes the query
+            </summary>
+            <param name="query">The query to execute</param>
+            <param name="post">Callback method to invoke when execution is complete</param>
+            <returns>An <see cref="T:System.IAsyncResult"/> handle for this method</returns>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.WithTweetSharpAsync(System.Func{`0,`2})">
+            <summary>
+            Executes a query with TweetSharp asynchronously
+            </summary>
+            <param name="executor">The fluent tree describing the query</param>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.PrepareQuery``1(`0,System.Func{`0,`2})">
+            <summary>
+            Prepares the query for submission
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.HandleResponse``1(`0,`1)">
+            <summary>
+            Handles the response
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Service.ServiceBase`3.HandleResponse(`0,`1)">
+            <summary>
+            Handles the response
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Extensions.NumericExtensions">
+            <summary>
+            Extension methods for dealing with numbers
+            </summary>
+        </member>
+        <member name="M:TweetSharp.Extensions.NumericExtensions.Percent(System.Double)">
+            <summary>
+            Returns the number as a percentage value 
+            </summary>
+            <param name="d">the number to convert to a percentage value</param>
+            <returns></returns>
+        </member>
+        <member name="M:TweetSharp.Extensions.NumericExtensions.Percent(System.Int32)">
+            <summary>
+            Returns the number as a percentage value 
+            </summary>
+            <param name="i">the number to convert to a percentage value</param>
+            <returns></returns>
+        </member>
+        <member name="T:TweetSharp.Fluent.FluentBaseOAuth">
+            <summary>
+            Stores OAuth authentication details for a query.
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Fluent.IFluentBaseOAuth">
+            <summary>
+            Defines OAuth authentication details for a query.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentBaseOAuth.Action">
+            <summary>
+            Gets or sets the action name for the OAuth transaction.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentBaseOAuth.ConsumerKey">
+            <summary>
+            Gets or sets the ConsumerKey for the OAuth transaction.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentBaseOAuth.ConsumerSecret">
+            <summary>
+            Gets or sets the ConsumerSecret for the OAuth transaction.
+            </summary> 
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentBaseOAuth.Token">
+            <summary>
+            Gets or sets the Token (Access token for protected resources, Request token during OAuth negotiation).
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentBaseOAuth.TokenSecret">
+            Gets or sets the Token (Access token for protected resources, Request token during OAuth negotiation).
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentBaseOAuth.Callback">
+            <summary>
+            Gets or sets the callback URL that users will be redirected to once the oauth operations on the provider's web.
+            site have been completed.  
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentBaseOAuth.Verifier">
+            <summary>
+            Gets or sets the verification code provided to the user on the provider's website after the application.
+            is authorized
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentBaseOAuth.ClientUsername">
+            <summary>
+            Gets or Sets the client user name - used for xAuth (browerless OAuth).
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.IFluentBaseOAuth.ClientPassword">
+            <summary>
+            Gets or sets the client password - used for xAuth (browserless OAuth).
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBaseOAuth.Action">
+            <summary>
+            Gets or sets the action name for the OAuth transaction.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBaseOAuth.ConsumerKey">
+            <summary>
+            Gets or sets the ConsumerKey for the OAuth transaction.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBaseOAuth.ConsumerSecret">
+            <summary>
+            Gets or sets the ConsumerSecret for the OAuth transaction.
+            </summary> 
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBaseOAuth.Token">
+            <summary>
+            Gets or sets the Token (Access token for protected resources, Request token during OAuth negotiation).
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBaseOAuth.TokenSecret">
+            Gets or sets the Token (Access token for protected resources, Request token during OAuth negotiation).
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBaseOAuth.Callback">
+            <summary>
+            Gets or sets the callback URL that users will be redirected to once the oauth operations on the provider's web.
+            site have been completed.  
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBaseOAuth.Verifier">
+            <summary>
+            Gets or sets the verification code provided to the user on the provider's website after the application.
+            is authorized
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBaseOAuth.ClientUsername">
+            <summary>
+            Gets or Sets the client user name - used for xAuth (browerless OAuth).
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Fluent.FluentBaseOAuth.ClientPassword">
+            <summary>
+            Gets or sets the client password - used for xAuth (browserless OAuth).
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Model.ITweetable">
+            <summary>
+            Represents a social micro-update.
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.ITweetable.Id">
+            <summary>
+            Gets the unique Id number for the update
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.ITweetable.Text">
+            <summary>
+            Gets the text of the update
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.ITweetable.CreatedDate">
+            <summary>
+            Gets the <see cref="T:System.DateTime"/> that the status was posted to the web
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Model.WhereOnEarthLocation">
+            <summary>
+            Represents a location in the Yahoo! WOE specification.
+            </summary>
+            <seealso>"http://developer.yahoo.com/geo/geoplanet/"</seealso>
+        </member>
+        <member name="P:TweetSharp.Model.WhereOnEarthLocation.WoeId">
+            <summary>
+             The ID of this WhereOnEarth location
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.WhereOnEarthLocation.Url">
+            <summary>
+            Gets or sets the lookup URL for this WhereOnEarth location
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.WhereOnEarthLocation.PlaceType">
+            <summary>
+             Gets or sets the <see cref="T:TweetSharp.Model.WhereOnEarthPlaceType"/> for this location
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.WhereOnEarthLocation.Name">
+            <summary>
+             Gets or sets the name of this location
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.WhereOnEarthLocation.CountryCode">
+            <summary>
+             Gets or sets the ISO Country code associated with this location
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.WhereOnEarthLocation.Country">
+            <summary>
+             Gets or sets the country name for this location
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.WhereOnEarthLocation.RawSource">
+            <summary>
+            The source content used to deserialize the model entity instance.
+            Can be XML or JSON, depending on the endpoint used.
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Model.WhereOnEarthPlaceType">
+            <summary>
+            Represents a place type for a <see cref="T:TweetSharp.Model.WhereOnEarthLocation"/> in the Yahoo! WOE specification.
+            </summary>
+            <seealso>http://developer.yahoo.com/geo/geoplanet/"</seealso>
+        </member>
+        <member name="P:TweetSharp.Model.WhereOnEarthPlaceType.Code">
+            <summary>
+             Gets or sets the WhereOnEarth code
+            </summary>
+        </member>
+        <member name="P:TweetSharp.Model.WhereOnEarthPlaceType.Name">
+            <summary>
+             Gets or sets the name of the place described by this instance
+            </summary>
+        </member>
+        <member name="T:TweetSharp.Service.ServiceCacheMode">
+            <summary>
+            Possible caching strategies.
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Service.ServiceCacheMode.None">
+            <summary>
+            The cache is not used.
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Service.ServiceCacheMode.AbsoluteExpiration">
+            <summary>
+            The cache uses an absolute expiration.
+            </summary>
+        </member>
+        <member name="F:TweetSharp.Service.ServiceCacheMode.SlidingExpiration">
+            <summary>
+            The cache uses a sliding expiration.
+            This means after a specified timespan is reached without
+            cache activity for a key, it is invalidated.
+            </summary>
+        </member>
+    </members>
+</doc>
