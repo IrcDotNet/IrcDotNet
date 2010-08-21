@@ -52,7 +52,7 @@ namespace IrcDotNet.Ctcp
             this.messageProcessors = new Dictionary<string, MessageProcessor>(
                 StringComparer.InvariantCultureIgnoreCase);
 
-            InitialiseMessageProcessors();
+            InitializeMessageProcessors();
 
             this.ircClient.Connected += ircClient_Connected;
             this.ircClient.Disconnected += ircClient_Disconnected;
@@ -216,7 +216,7 @@ namespace IrcDotNet.Ctcp
             ReadMessage(e, true);
         }
 
-        private void InitialiseMessageProcessors()
+        private void InitializeMessageProcessors()
         {
             this.GetMethodAttributes<MessageProcessorAttribute, MessageProcessor>().ForEach(item =>
                 {
