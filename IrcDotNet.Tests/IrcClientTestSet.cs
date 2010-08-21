@@ -160,7 +160,7 @@ namespace IrcDotNet.Tests
             ctcpClient2.TimeResponseReceived += ctcpClient2_TimeResponseReceived;
             ctcpClient2.ActionReceived += ctcpClient2_ActionReceived;
 
-            // Initialise wait handles for all events.
+            // Initialize wait handles for all events.
             GetAllWaitHandlesFields().ForEach(fieldInfo => fieldInfo.SetValue(null, new AutoResetEvent(false)));
 
             // Nick name length limit on irc.freenode.net is 16 chars.
@@ -170,7 +170,7 @@ namespace IrcDotNet.Tests
             Debug.WriteLine("Cllient 1 user has nick name '{0}' and user name '{1}'.", nickName1, userName1);
             Debug.WriteLine("Cllient 2 user has nick name '{0}' and user name '{1}'.", nickName2, userName2);
 
-            stateManager.SetStates(IrcClientTestState.Client1Initialised, IrcClientTestState.Client2Initialised);
+            stateManager.SetStates(IrcClientTestState.Client1Initialized, IrcClientTestState.Client2Initialized);
             ircClient1.Connect(serverHostName, false, new IrcUserRegistrationInfo()
                 {
                     Password = serverPassword,
@@ -646,12 +646,12 @@ namespace IrcDotNet.Tests
         [TestMethod()]
         public void ConnectTest()
         {
-            stateManager.HasStates(IrcClientTestState.Client1Initialised);
+            stateManager.HasStates(IrcClientTestState.Client1Initialized);
             Assert.IsTrue(WaitForClientEvent(client1ConnectedEvent, 5000), "Client 1 connection to server timed out.");
             Assert.IsTrue(ircClient1.IsConnected, "Client 1 failed to connect to server.");
             stateManager.SetStates(IrcClientTestState.Client1Connected);
 
-            stateManager.HasStates(IrcClientTestState.Client2Initialised);
+            stateManager.HasStates(IrcClientTestState.Client2Initialized);
             Assert.IsTrue(WaitForClientEvent(client2ConnectedEvent, 5000), "Client 2 connection to server timed out.");
             Assert.IsTrue(ircClient2.IsConnected, "Client 2 failed to connect to server.");
             stateManager.SetStates(IrcClientTestState.Client2Connected);
@@ -822,7 +822,8 @@ namespace IrcDotNet.Tests
             stateManager.HasStates(IrcClientTestState.Client1InChannel);
             client1ChannelLeftEvent.Reset();
             ircClient1.Channels.Leave(new[] { testChannelName }, testComment1);
-            Assert.IsTrue(WaitForClientEvent(client1ChannelLeftEvent, 10000), "Client 1 could not part channel.");
+            Assert.IsTrue(WaitForClientEvent(client1ChannelLeftEvent, 10000), "Client 1 could not leave channel.");
+            // Ignore channel leve comment, since it is not handled if client has not been connected long enough.
             stateManager.UnsetStates(IrcClientTestState.Client1InChannel);
         }
 
@@ -868,7 +869,7 @@ namespace IrcDotNet.Tests
             var channel = ircClient1.Channels.Single(c => c.Name == testChannelName);
 
             Assert.IsTrue(WaitForClientEvent(client1ChannelModeChangedEvent, 10000),
-                "Client 1 channel mode was not initialised.");
+                "Client 1 channel mode was not initialized.");
             Assert.IsTrue(channel.Modes.Contains('n'),
                 "Client 1 channel does not initially have mode 'n'.");
 
@@ -1126,8 +1127,8 @@ namespace IrcDotNet.Tests
     public enum IrcClientTestState
     {
         None,
-        Client1Initialised,
-        Client2Initialised,
+        Client1Initialized,
+        Client2Initialized,
         Client1Connected,
         Client2Connected,
         Client1Registered,

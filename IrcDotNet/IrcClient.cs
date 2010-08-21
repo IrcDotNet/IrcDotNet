@@ -126,7 +126,7 @@ namespace IrcDotNet
         private bool isDisposed = false;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="IrcClient"/> class.
+        /// Initialiszs a new instance of the <see cref="IrcClient"/> class.
         /// </summary>
         public IrcClient()
         {
@@ -141,7 +141,7 @@ namespace IrcDotNet
             this.messageSendQueue = new Queue<string>();
             this.floodPreventer = null;
 
-            InitialiseMessageProcessors();
+            InitializeMessageProcessors();
             ResetState();
         }
 
@@ -1352,7 +1352,7 @@ namespace IrcDotNet
             this.listedChannels = new List<IrcChannelInfo>();
         }
 
-        private void InitialiseMessageProcessors()
+        private void InitializeMessageProcessors()
         {
             this.GetMethodAttributes<MessageProcessorAttribute, MessageProcessor>().ForEach(item =>
                 {
@@ -1601,7 +1601,7 @@ namespace IrcDotNet
             // Append command name to line.
             lineBuilder.Append(CheckCommand(message.Command).ToUpper());
 
-            // Append each parameter to line, adding a ':' before the last parameter.
+            // Append each parameter to line, adding ':' character before last parameter.
             for (int i = 0; i < message.Parameters.Count - 1; i++)
             {
                 if (message.Parameters[i] != null)
@@ -1664,7 +1664,7 @@ namespace IrcDotNet
 
         private string CheckMiddleParameter(string value)
         {
-            if (value.Length == 0 || value.Any(c => IsInvalidMessageChar(c)) || value[0] == ':')
+            if (value.Length == 0 || value.Any(c => IsInvalidMessageChar(c) || c == ' ') || value[0] == ':')
             {
                 throw new ArgumentException(string.Format(
                     Properties.Resources.ErrorMessageInvalidMiddleParameter, value), "value");
