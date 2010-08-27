@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using IrcDotNet;
 using IrcDotNet.Samples.Common;
 
 namespace MarkovChainTextBox
 {
-    public class MarkovChainTextBot : IrcBot
+    public class MarkovChainTextBot : BasicIrcBot
     {
         private const string quitMessage = "Andrey Markov, 1856 - 1922";
 
@@ -38,6 +38,19 @@ namespace MarkovChainTextBox
             this.numTrainingWordsReceived = 0;
         }
 
+        public override IrcRegistrationInfo RegistrationInfo
+        {
+            get
+            {
+                return new IrcUserRegistrationInfo()
+                    {
+                        NickName = "MarkovBot",
+                        UserName = "MarkovBot",
+                        RealName = "Markov Chain Text Bot"
+                    };
+            }
+        }
+
         public override string QuitMessage
         {
             get { return quitMessage; }
@@ -55,7 +68,7 @@ namespace MarkovChainTextBox
 
         protected override void OnClientRegistered(IrcClient client)
         {
-            Console.Beep();
+            //
         }
 
         protected override void OnLocalUserJoinedChannel(IrcLocalUser localUser, IrcChannelEventArgs e)
@@ -78,6 +91,16 @@ namespace MarkovChainTextBox
             //
         }
 
+        protected override void OnChannelUserJoined(IrcChannel channel, IrcChannelUserEventArgs e)
+        {
+            //
+        }
+
+        protected override void OnChannelUserLeft(IrcChannel channel, IrcChannelUserEventArgs e)
+        {
+            //
+        }
+
         protected override void OnChannelNoticeReceived(IrcChannel channel, IrcMessageEventArgs e)
         {
             //
@@ -89,7 +112,7 @@ namespace MarkovChainTextBox
 
             if (e.Source is IrcUser)
             {
-                // Train Markov generator from received message.
+                // Train Markov generator from received message text.
                 // Assume it is composed of one or more coherent sentences that are themselves are composed of words.
                 var sentences = e.Text.Split(sentenceSeparators);
                 foreach (var s in sentences)
@@ -117,6 +140,8 @@ namespace MarkovChainTextBox
 
         protected override void InitializeChatCommandProcessors()
         {
+            base.InitializeChatCommandProcessors();
+
             this.ChatCommandProcessors.Add("talk", ProcessChatCommandTalk);
             this.ChatCommandProcessors.Add("stats", ProcessChatCommandStats);
         }
@@ -126,7 +151,7 @@ namespace MarkovChainTextBox
         private void ProcessChatCommandTalk(IrcClient client, IIrcMessageSource source,
             IList<IIrcMessageTarget> targets, string command, IList<string> parameters)
         {
-            // Send random message (generated from Markov chain).
+            // Send reply containing random message text (generated from Markov chain).
             int numSentences = -1;
             if (parameters.Count >= 1)
                 numSentences = int.Parse(parameters[0]);
@@ -140,7 +165,7 @@ namespace MarkovChainTextBox
         private void ProcessChatCommandStats(IrcClient client, IIrcMessageSource source,
             IList<IIrcMessageTarget> targets, string command, IList<string> parameters)
         {
-            // Reply with bot statistics.
+            // Send reply with bot statistics.
             var replyTargets = GetDefaultReplyTarget(client, source, targets);
 
             client.LocalUser.SendNotice(replyTargets, "Bot launch time: {0:f} ({1:g} ago)",
@@ -188,86 +213,18 @@ namespace MarkovChainTextBox
                 words = this.markovChain.GenerateSequence().ToArray();
             }
             while (words.Length < 3 && trials++ < 10);
+
             return string.Join(" ", words) + ". ";
         }
 
         protected override void InitializeCommandProcessors()
         {
-            this.CommandProcessors.Add("exit", ProcessCommandExit);
-            this.CommandProcessors.Add("connect", ProcessCommandConnect);
-            this.CommandProcessors.Add("c", ProcessCommandConnect);
-            this.CommandProcessors.Add("disconnect", ProcessCommandDisconnect);
-            this.CommandProcessors.Add("d", ProcessCommandDisconnect);
-            this.CommandProcessors.Add("join", ProcessCommandJoin);
-            this.CommandProcessors.Add("leave", ProcessCommandLeave);
-            this.CommandProcessors.Add("list", ProcessCommandList);
+            base.InitializeCommandProcessors();
         }
 
         #region Command Processors
 
-        private void ProcessCommandExit(string command, IList<string> parameters)
-        {
-            Stop();
-        }
-
-        private void ProcessCommandConnect(string command, IList<string> parameters)
-        {
-            if (parameters.Count < 1)
-                throw new ArgumentException(Properties.Resources.ErrorMessageNotEnoughArgs);
-
-            Connect(parameters[0], new IrcUserRegistrationInfo()
-                {
-                    NickName = "MarkovBot",
-                    UserName = "MarkovBot",
-                    RealName = "Markov Chain Text Bot"
-                });
-        }
-
-        private void ProcessCommandDisconnect(string command, IList<string> parameters)
-        {
-            if (parameters.Count < 1)
-                throw new ArgumentException(Properties.Resources.ErrorMessageNotEnoughArgs);
-
-            Disconnect(parameters[0]);
-        }
-
-        private void ProcessCommandJoin(string command, IList<string> parameters)
-        {
-            if (parameters.Count < 2)
-                throw new ArgumentException(Properties.Resources.ErrorMessageNotEnoughArgs);
-
-            // Join given channel on given server.
-            var client = GetClientFromServerNameMask(parameters[0]);
-            var channelName = parameters[1];
-            client.Channels.Join(channelName);
-        }
-
-        private void ProcessCommandLeave(string command, IList<string> parameters)
-        {
-            if (parameters.Count < 2)
-                throw new ArgumentException(Properties.Resources.ErrorMessageNotEnoughArgs);
-
-            // Leave given channel on the given server.
-            var client = GetClientFromServerNameMask(parameters[0]);
-            var channelName = parameters[1];
-            client.Channels.Leave(channelName);
-        }
-
-        private void ProcessCommandList(string command, IList<string> parameters)
-        {
-            // List all active server connections and channels of which local user is currently member.
-            foreach (var client in this.Clients)
-            {
-                Console.Out.WriteLine("Server: {0}", client.ServerName ?? "(unknown)");
-                foreach (var channel in client.Channels)
-                {
-                    if (channel.Users.Any(u => u.User == client.LocalUser))
-                    {
-                        Console.Out.WriteLine(" * {0}", channel.Name);
-                    }
-                }
-            }
-        }
+        //
 
         #endregion
     }
