@@ -8,9 +8,12 @@ using System.Threading;
 
 namespace IrcDotNet.Samples.Common
 {
+    // Provides core functionality for an IRC bot that operates via multiple clients.
     public abstract class IrcBot : IDisposable
     {
         private const int clientQuitTimeout = 1000;
+
+        private static readonly Regex commandSplitRegex = new Regex("(?<! /.*) ", RegexOptions.None);
 
         // Dictionary of all chat command processors, keyed by name.
         private IDictionary<string, ChatCommandProcessor> chatCommandProcessors;
@@ -203,8 +206,8 @@ namespace IrcDotNet.Samples.Common
             if (line.Length > 1 && line.StartsWith("."))
             {
                 // Process command.
-                var parts = line.Substring(1).Split(' ');
-                var command = parts[0];
+                var parts = commandSplitRegex.Split(line.Substring(1)).Select(p => p.TrimStart('/')).ToArray();
+                var command = parts.First();
                 var parameters = parts.Skip(1).ToArray();
                 ReadChatCommand(client, eventArgs.Source, eventArgs.Targets, command, parameters);
                 return true;
@@ -215,6 +218,8 @@ namespace IrcDotNet.Samples.Common
         private void ReadChatCommand(IrcClient client, IIrcMessageSource source, IList<IIrcMessageTarget> targets,
             string command, string[] parameters)
         {
+            var defaultReplyTarget = GetDefaultReplyTarget(client, source, targets);
+
             ChatCommandProcessor processor;
             if (this.chatCommandProcessors.TryGetValue(command, out processor))
             {
@@ -222,12 +227,17 @@ namespace IrcDotNet.Samples.Common
                 {
                     processor(client, source, targets, command, parameters);
                 }
+                catch (InvalidCommandParametersException exInvalidCommandParameters)
+                {
+                    client.LocalUser.SendNotice(defaultReplyTarget,
+                        exInvalidCommandParameters.GetMessage(command));
+                }
                 catch (Exception ex)
                 {
                     if (source is IIrcMessageTarget)
                     {
-                        client.LocalUser.SendNotice((IIrcMessageTarget)source, string.Format(
-                            "Error processing '{0}' command: {1}", command, ex.Message));
+                        client.LocalUser.SendNotice(defaultReplyTarget,
+                            "Error processing '{0}' command: {1}", command, ex.Message);
                     }
                 }
             }
@@ -235,7 +245,7 @@ namespace IrcDotNet.Samples.Common
             {
                 if (source is IIrcMessageTarget)
                 {
-                    client.LocalUser.SendNotice((IIrcMessageTarget)source, "Command '{0}' not recognized.", command);
+                    client.LocalUser.SendNotice(defaultReplyTarget, "Command '{0}' not recognized.", command);
                 }
             }
         }
@@ -253,6 +263,10 @@ namespace IrcDotNet.Samples.Common
         protected abstract void OnLocalUserNoticeReceived(IrcLocalUser localUser, IrcMessageEventArgs e);
 
         protected abstract void OnLocalUserMessageReceived(IrcLocalUser localUser, IrcMessageEventArgs e);
+
+        protected abstract void OnChannelUserJoined(IrcChannel channel, IrcChannelUserEventArgs e);
+
+        protected abstract void OnChannelUserLeft(IrcChannel channel, IrcChannelUserEventArgs e);
 
         protected abstract void OnChannelNoticeReceived(IrcChannel channel, IrcMessageEventArgs e);
 
@@ -283,6 +297,8 @@ namespace IrcDotNet.Samples.Common
             client.LocalUser.JoinedChannel += IrcClient_LocalUser_JoinedChannel;
             client.LocalUser.LeftChannel += IrcClient_LocalUser_LeftChannel;
 
+            Console.Beep();
+
             OnClientRegistered(client);
         }
 
@@ -311,6 +327,8 @@ namespace IrcDotNet.Samples.Common
         {
             var localUser = (IrcLocalUser)sender;
 
+            e.Channel.UserJoined += IrcClient_Channel_UserJoined;
+            e.Channel.UserLeft += IrcClient_Channel_UserLeft;
             e.Channel.MessageReceived += IrcClient_Channel_MessageReceived;
             e.Channel.NoticeReceived += IrcClient_Channel_NoticeReceived;
 
@@ -321,10 +339,26 @@ namespace IrcDotNet.Samples.Common
         {
             var localUser = (IrcLocalUser)sender;
 
+            e.Channel.UserJoined -= IrcClient_Channel_UserJoined;
+            e.Channel.UserLeft -= IrcClient_Channel_UserLeft;
             e.Channel.MessageReceived -= IrcClient_Channel_MessageReceived;
             e.Channel.NoticeReceived -= IrcClient_Channel_NoticeReceived;
 
             OnLocalUserJoinedChannel(localUser, e);
+        }
+
+        private void IrcClient_Channel_UserLeft(object sender, IrcChannelUserEventArgs e)
+        {
+            var channel = (IrcChannel)sender;
+
+            OnChannelUserJoined(channel, e);
+        }
+
+        private void IrcClient_Channel_UserJoined(object sender, IrcChannelUserEventArgs e)
+        {
+            var channel = (IrcChannel)sender;
+
+            OnChannelUserLeft(channel, e);
         }
 
         private void IrcClient_Channel_NoticeReceived(object sender, IrcMessageEventArgs e)

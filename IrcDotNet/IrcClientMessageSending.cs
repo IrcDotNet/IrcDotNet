@@ -86,11 +86,11 @@ namespace IrcDotNet
         /// Sends a request to disconnect the specified server from the network.
         /// This command is only available to oeprators.
         /// </summary>
-        /// <param name="serverName">The name of the server to disconnected from the network.</param>
+        /// <param name="targetServer">The name of the server to disconnected from the network.</param>
         /// <param name="comment">The comment to send the server.</param>
-        protected void SendMessageSquit(string serverName, string comment)
+        protected void SendMessageSquit(string targetServer, string comment)
         {
-            WriteMessage(null, "squit", serverName, comment);
+            WriteMessage(null, "squit", targetServer, comment);
         }
 
         /// <summary>

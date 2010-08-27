@@ -59,14 +59,5 @@ namespace MarkovChainTextBox.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Not enough arguments were specified for the given command..
-        /// </summary>
-        internal static string ErrorMessageNotEnoughArgs {
-            get {
-                return ResourceManager.GetString("ErrorMessageNotEnoughArgs", resourceCulture);
-            }
-        }
     }
 }

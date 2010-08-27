@@ -13,7 +13,7 @@ namespace IrcDotNet.Ctcp
         /// Sends an action message to the specified target.
         /// </summary>
         /// <param name="targets">A list of the targets of the message.</param>
-        /// <param name="info">The message text.</param>
+        /// <param name="text">The message text.</param>
         protected void SendMessageAction(IList<IIrcMessageTarget> targets, string text)
         {
             WriteMessage(targets, "action", text);

@@ -126,7 +126,7 @@ namespace IrcDotNet
         private bool isDisposed = false;
 
         /// <summary>
-        /// Initialiszs a new instance of the <see cref="IrcClient"/> class.
+        /// Initializes a new instance of the <see cref="IrcClient"/> class.
         /// </summary>
         public IrcClient()
         {
@@ -146,7 +146,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Finalises an instance of the <see cref="IrcClient"/> class.
+        /// Finalizes an instance of the <see cref="IrcClient"/> class.
         /// </summary>
         ~IrcClient()
         {
@@ -568,14 +568,14 @@ namespace IrcDotNet
         /// <summary>
         /// Requests the Message of the Day (MOTD) from the specified server.
         /// </summary>
-        /// <param name="serverName">The name of the server from which to request the MOTD, or <see langword="null"/>
+        /// <param name="targetServer">The name of the server from which to request the MOTD, or <see langword="null"/>
         /// for the current server.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void GetMessageOfTheDay(string serverName = null)
+        public void GetMessageOfTheDay(string targetServer = null)
         {
             CheckDisposed();
 
-            SendMessageMotd(serverName);
+            SendMessageMotd(targetServer);
         }
 
         /// <summary>
@@ -599,13 +599,13 @@ namespace IrcDotNet
         /// <summary>
         /// Requests the version of the specified server.
         /// </summary>
-        /// <param name="serverName">The name of the server whose version to request.</param>
+        /// <param name="targetServer">The name of the server whose version to request.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void GetServerVersion(string serverName = null)
+        public void GetServerVersion(string targetServer = null)
         {
             CheckDisposed();
 
-            SendMessageVersion(serverName);
+            SendMessageVersion(targetServer);
         }
 
         /// <summary>
@@ -636,13 +636,13 @@ namespace IrcDotNet
         ///     <description>The duration for which the server has been running since its last start.</description>
         ///   </item>
         /// </list></param>
-        /// <param name="serverName">The name of the server whose statistics to request.</param>
+        /// <param name="targetServer">The name of the server whose statistics to request.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void GetServerInfo(string query = null, string serverName = null)
+        public void GetServerInfo(string query = null, string targetServer = null)
         {
             CheckDisposed();
 
-            SendMessageStats(query, serverName);
+            SendMessageStats(query, targetServer);
         }
 
         /// <summary>
@@ -660,31 +660,31 @@ namespace IrcDotNet
         {
             CheckDisposed();
 
-            SendMessageStats(targetServer, serverMask);
+            SendMessageLinks(serverMask, targetServer);
         }
 
         /// <summary>
         /// Requests the local time on the specified server.
         /// </summary>
-        /// <param name="serverName">The name of the server whose local time to request.</param>
+        /// <param name="targetServer">The name of the server whose local time to request.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void GetServerTime(string serverName = null)
+        public void GetServerTime(string targetServer = null)
         {
             CheckDisposed();
 
-            SendMessageTime(serverName);
+            SendMessageTime(targetServer);
         }
 
         /// <summary>
         /// Sends a ping to the specified server.
         /// </summary>
-        /// <param name="serverName">The name of the server to ping.</param>
+        /// <param name="targetServer">The name of the server to ping.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void Ping(string serverName = null)
+        public void Ping(string targetServer = null)
         {
             CheckDisposed();
 
-            SendMessagePing(this.localUser.NickName, serverName);
+            SendMessagePing(this.localUser.NickName, targetServer);
         }
 
         /// <summary>

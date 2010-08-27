@@ -1,5 +1,4 @@
-﻿
-Overview
+﻿Overview
 ========
 
 This sample interacts with the Twitter API to provide Twitter services to users
