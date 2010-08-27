@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TwitterBot.Properties {
+namespace IrcDotNet.Samples.Common.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace TwitterBot.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TwitterBot.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("IrcDotNet.Samples.Common.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,42 @@ namespace TwitterBot.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The command &apos;{0}&apos; does not take any parameters..
+        /// </summary>
+        internal static string ErrorMessageCommandTakesNoParams {
+            get {
+                return ResourceManager.GetString("ErrorMessageCommandTakesNoParams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The command &apos;{0}&apos; takes {1} parameter(s)..
+        /// </summary>
+        internal static string ErrorMessageCommandTakesXParams {
+            get {
+                return ResourceManager.GetString("ErrorMessageCommandTakesXParams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The command &apos;{0}&apos; takes between {1} and {2} parameters..
+        /// </summary>
+        internal static string ErrorMessageCommandTakesXToYParams {
+            get {
+                return ResourceManager.GetString("ErrorMessageCommandTakesXToYParams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not enough arguments were specified for the given command..
+        /// </summary>
+        internal static string ErrorMessageNotEnoughArgs {
+            get {
+                return ResourceManager.GetString("ErrorMessageNotEnoughArgs", resourceCulture);
             }
         }
     }

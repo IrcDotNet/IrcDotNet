@@ -117,4 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ErrorMessageCommandTakesNoParams" xml:space="preserve">
+    <value>The command '{0}' does not take any parameters.</value>
+  </data>
+  <data name="ErrorMessageCommandTakesXParams" xml:space="preserve">
+    <value>The command '{0}' takes {1} parameter(s).</value>
+  </data>
+  <data name="ErrorMessageCommandTakesXToYParams" xml:space="preserve">
+    <value>The command '{0}' takes between {1} and {2} parameters.</value>
+  </data>
+  <data name="ErrorMessageNotEnoughArgs" xml:space="preserve">
+    <value>Not enough arguments were specified for the given command.</value>
+  </data>
 </root>
