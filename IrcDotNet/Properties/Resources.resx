@@ -162,8 +162,8 @@
   <data name="ErrorMessageISupportPrefixInvalid" xml:space="preserve">
     <value>The ISUPPORT message sent by the server contains an invalid PREFIX parameter.</value>
   </data>
-  <data name="ErrorMessageLineTooLong" xml:space="preserve">
-    <value>The length of the line must not exceed 510 characters.</value>
+  <data name="ErrorMessageRawMessageTooLong" xml:space="preserve">
+    <value>The length of a raw message must not exceed {0} characters.</value>
   </data>
   <data name="ErrorMessageNotEnoughModeParameters" xml:space="preserve">
     <value>Not enough mode parameters were specified for the given modes.</value>
@@ -197,5 +197,14 @@
   </data>
   <data name="ErrorMessageInvalidUrlScheme" xml:space="preserve">
     <value>The URL scheme '{0}' is not valid.</value>
+  </data>
+  <data name="ErrorMessageInvalidRegistrationInfoObject" xml:space="preserve">
+    <value>The object provided for registration info is of an unknown type.</value>
+  </data>
+  <data name="ErrorMessageInvalidUserRegistrationInfo" xml:space="preserve">
+    <value>The registration info for a user must have a valid nick name and user name.</value>
+  </data>
+  <data name="ErrorMessageInvalidServiceRegistrationInfo" xml:space="preserve">
+    <value>The registration info for a service must have a valid nick name and description.</value>
   </data>
 </root>

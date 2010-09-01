@@ -131,7 +131,8 @@ namespace TwitterBot
             var twitterUser = this.twitterUsers.SingleOrDefault(tu => tu.IrcUser == sourceUser);
             if (twitterUser != null)
                 throw new InvalidOperationException(string.Format(
-                    "User '{0}' is already logged in to Twitter.", sourceUser.NickName));
+                    "User '{0}' is already logged in to Twitter as {1}.", sourceUser.NickName,
+                    twitterUser.TwitterUser.ScreenName));
 
             if (parameters.Count != 2)
                 throw new InvalidCommandParametersException(1);

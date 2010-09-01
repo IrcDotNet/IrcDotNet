@@ -160,6 +160,24 @@ namespace IrcDotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The object provided for registration info is of an unknown type..
+        /// </summary>
+        internal static string ErrorMessageInvalidRegistrationInfoObject {
+            get {
+                return ResourceManager.GetString("ErrorMessageInvalidRegistrationInfoObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The registration info for a service must have a valid nick name and description..
+        /// </summary>
+        internal static string ErrorMessageInvalidServiceRegistrationInfo {
+            get {
+                return ResourceManager.GetString("ErrorMessageInvalidServiceRegistrationInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The source &apos;{0}&apos; of the message was not recognised as either a server or user..
         /// </summary>
         internal static string ErrorMessageInvalidSource {
@@ -223,6 +241,15 @@ namespace IrcDotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The registration info for a user must have a valid nick name and user name..
+        /// </summary>
+        internal static string ErrorMessageInvalidUserRegistrationInfo {
+            get {
+                return ResourceManager.GetString("ErrorMessageInvalidUserRegistrationInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The ISUPPORT message sent by the server contains an invalid PREFIX parameter..
         /// </summary>
         internal static string ErrorMessageISupportPrefixInvalid {
@@ -232,20 +259,20 @@ namespace IrcDotNet.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The length of the line must not exceed 510 characters..
-        /// </summary>
-        internal static string ErrorMessageLineTooLong {
-            get {
-                return ResourceManager.GetString("ErrorMessageLineTooLong", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Not enough mode parameters were specified for the given modes..
         /// </summary>
         internal static string ErrorMessageNotEnoughModeParameters {
             get {
                 return ResourceManager.GetString("ErrorMessageNotEnoughModeParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The length of a raw message must not exceed {0} characters..
+        /// </summary>
+        internal static string ErrorMessageRawMessageTooLong {
+            get {
+                return ResourceManager.GetString("ErrorMessageRawMessageTooLong", resourceCulture);
             }
         }
         

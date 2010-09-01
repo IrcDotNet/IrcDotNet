@@ -73,15 +73,16 @@ Examples:
 Chat Commands
 =============
 
-These commands may be sent by a user to a channel of which the bot is a member.
+These commands may be sent by a user directly to the bot user or to a channel of
+which the bot is a member.
 
 Note that all chat commands are prefixed with a period ('.').
 
 Talk
 ----
 
-This command tells the bot to generate a random message, composed of one or more
-sentences, and send it to the channel.
+Asks the bot to generate a random message, composed of one or more sentences,
+and send it to the channel.
 
 Syntax:
 
@@ -101,8 +102,7 @@ Examples:
 Statistics
 ----------
 
-This command asks the bot to report various statistics about its usage to the
-channel.
+Asks the bot to report various statistics about its usage to the channel.
 
 Syntax:
 
