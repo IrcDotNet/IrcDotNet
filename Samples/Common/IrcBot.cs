@@ -13,7 +13,8 @@ namespace IrcDotNet.Samples.Common
     {
         private const int clientQuitTimeout = 1000;
 
-        private static readonly Regex commandSplitRegex = new Regex("(?<! /.*) ", RegexOptions.None);
+        // Regex for splitting space-separated list of command parts until first parameter that begins with '/'.
+        private static readonly Regex commandPartsSplitRegex = new Regex("(?<! /.*) ", RegexOptions.None);
 
         // Dictionary of all chat command processors, keyed by name.
         private IDictionary<string, ChatCommandProcessor> chatCommandProcessors;
@@ -122,11 +123,6 @@ namespace IrcDotNet.Samples.Common
 
         protected abstract void InitializeCommandProcessors();
 
-        protected void WriteError(string message, params string[] args)
-        {
-            UseTextColour(ConsoleColor.Red, () => Console.Error.WriteLine(message, args));
-        }
-
         private void ReadCommand(string command, IList<string> parameters)
         {
             CommandProcessor processor;
@@ -138,21 +134,13 @@ namespace IrcDotNet.Samples.Common
                 }
                 catch (Exception ex)
                 {
-                    WriteError("Error executing command: {0}", ex.Message);
+                    ConsoleUtilities.WriteError("Error executing command: {0}", ex.Message);
                 }
             }
             else
             {
-                WriteError("Command '{0}' not recognized.", command);
+                ConsoleUtilities.WriteError("Command '{0}' not recognized.", command);
             }
-        }
-
-        private void UseTextColour(ConsoleColor colour, Action action)
-        {
-            var prevForegroundColor = Console.ForegroundColor;
-            Console.ForegroundColor = colour;
-            action();
-            Console.ForegroundColor = prevForegroundColor;
         }
 
         protected void Connect(string server, IrcRegistrationInfo registrationInfo)
@@ -172,7 +160,7 @@ namespace IrcDotNet.Samples.Common
                 if (!connectedEvent.Wait(10000))
                 {
                     client.Dispose();
-                    WriteError("Connection to '{0}' timed out.", server);
+                    ConsoleUtilities.WriteError("Connection to '{0}' timed out.", server);
                     return;
                 }
             }
@@ -206,7 +194,7 @@ namespace IrcDotNet.Samples.Common
             if (line.Length > 1 && line.StartsWith("."))
             {
                 // Process command.
-                var parts = commandSplitRegex.Split(line.Substring(1)).Select(p => p.TrimStart('/')).ToArray();
+                var parts = commandPartsSplitRegex.Split(line.Substring(1)).Select(p => p.TrimStart('/')).ToArray();
                 var command = parts.First();
                 var parameters = parts.Skip(1).ToArray();
                 ReadChatCommand(client, eventArgs.Source, eventArgs.Targets, command, parameters);

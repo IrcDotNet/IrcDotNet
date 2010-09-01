@@ -29,7 +29,7 @@ namespace MarkovChainTextBox
 #if !DEBUG
             catch (Exception ex)
             {
-                WriteError("Fatal error: " + ex.Message);
+                ConsoleUtilities.WriteError("Fatal error: " + ex.Message);
                 Environment.ExitCode = 1;
             }
 #endif

@@ -42,7 +42,7 @@
       <HintPath>..\References\Hammock.dll</HintPath>
     </Reference>
     <Reference Include="IrcDotNet">
-      <HintPath>..\IrcDotNet\bin\Release\IrcDotNet.dll</HintPath>
+      <HintPath>..\..\IrcDotNet\bin\Release\IrcDotNet.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
