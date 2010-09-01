@@ -62,6 +62,9 @@ namespace IrcDotNet
             isupportPrefix = @"\((?<modes>.*)\)(?<prefixes>.*)";
         }
 
+        // True if client can currently be disconnected.
+        private bool canDisconnect;
+
         // Internal collection of all known servers.
         private Collection<IrcServer> servers;
 
@@ -105,14 +108,11 @@ namespace IrcDotNet
         // Dictionary of message processor routines, keyed by their numeric codes (000 to 999).
         private Dictionary<int, MessageProcessor> numMessageProcessors;
 
-        // Queue of messages to be sent by write loop when appropiate.
+        // Queue of messages to be sent by write loop when ready.
         private Queue<string> messageSendQueue;
 
         // Prevents client from flooding server with messages by limiting send rate.
         private IIrcFloodPreventer floodPreventer;
-
-        // True if client can currently be disconnected.
-        private bool canDisconnect;
 
         private TcpClient client;
         private AutoResetEvent disconnectedEvent;
@@ -120,6 +120,7 @@ namespace IrcDotNet
         private Thread writeThread;
         private NetworkStream stream;
         private Stream dataStream;
+        private Encoding dataStreamEncoding;
         private StreamWriter writer;
         private StreamReader reader;
 
@@ -134,6 +135,8 @@ namespace IrcDotNet
             this.disconnectedEvent = new AutoResetEvent(false);
             this.readThread = new Thread(ReadLoop);
             this.writeThread = new Thread(WriteLoop);
+            this.dataStreamEncoding = Encoding.Default;
+
             this.canDisconnect = false;
             this.messageProcessors = new Dictionary<string, MessageProcessor>(
                 StringComparer.InvariantCultureIgnoreCase);
@@ -328,6 +331,16 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        /// Gets or sets the text encoding to use for reading from and writing to the network data stream.
+        /// </summary>
+        /// <value>The text encoding of the data stream.</value>
+        public Encoding DataStreamEncoding
+        {
+            get { return this.dataStreamEncoding; }
+            set { this.dataStreamEncoding = value; }
+        }
+
+        /// <summary>
         /// Gets whether the client is currently connected to a server.
         /// </summary>
         /// <value><see langword="true"/> if the client is connected; <see langword="false"/>, otherwise.</value>
@@ -511,7 +524,7 @@ namespace IrcDotNet
         /// Occurs when information about the IRC network has been received from the server.
         /// </summary>
         public event EventHandler<EventArgs> NetworkInformationReceived;
-        
+
         /// <summary>
         /// Occurs when information about a specific server on the IRC network has been received from the server.
         /// </summary>
@@ -1403,19 +1416,19 @@ namespace IrcDotNet
 #endif
 
                     string prefix = null;
-                    string command = null;
+                    string lineAfterPrefix = null;
 
                     // Extract prefix from message, if it contains one.
                     if (line[0] == ':')
                     {
                         var firstSpaceIndex = line.IndexOf(' ');
                         prefix = line.Substring(1, firstSpaceIndex - 1);
-                        line = line.Substring(firstSpaceIndex + 1);
+                        lineAfterPrefix = line.Substring(firstSpaceIndex + 1);
                     }
 
                     // Extract command from message.
-                    command = line.Substring(0, line.IndexOf(' '));
-                    var paramsLine = line.Substring(command.Length + 1);
+                    var command = lineAfterPrefix.Substring(0, lineAfterPrefix.IndexOf(' '));
+                    var paramsLine = lineAfterPrefix.Substring(command.Length + 1);
 
                     // Extract parameters from message.
                     // Each parameter is separated by a single space, except the last one, which may contain spaces if it is prefixed by a colon.
@@ -1441,7 +1454,7 @@ namespace IrcDotNet
                     }
 
                     var message = new IrcMessage(this, prefix, command, parameters);
-                    ReadMessage(message);
+                    ReadMessage(message, line);
                 }
             }
             catch (IOException exIO)
@@ -1478,13 +1491,15 @@ namespace IrcDotNet
                 // Continuously write messages in send queue to network stream, within given rate limit.
                 while (this.client != null && this.client.Connected)
                 {
-                    // Send messages in send queue until flood preventer stops it.
+                    // Send messages in send queue until flood preventer indicates to stop.
                     while (this.messageSendQueue.Count > 0)
                     {
                         if (this.floodPreventer != null && !this.floodPreventer.CanSendMessage())
                             break;
+
                         var line = this.messageSendQueue.Dequeue();
-                        this.writer.WriteLine(line);
+                        this.writer.Write(line);
+
                         if (this.floodPreventer != null)
                             this.floodPreventer.HandleMessageSent();
 
@@ -1524,9 +1539,9 @@ namespace IrcDotNet
             }
         }
 
-        private void ReadMessage(IrcMessage message)
+        private void ReadMessage(IrcMessage message, string line)
         {
-            OnRawMessageReceived(new IrcRawMessageEventArgs(message));
+            OnRawMessageReceived(new IrcRawMessageEventArgs(message, line));
 
             // Try to find corresponding message processor for command of given message.
             MessageProcessor messageProcessor;
@@ -1614,8 +1629,9 @@ namespace IrcDotNet
                     lineBuilder.Append(" :" + CheckTrailingParameter(lastParameter));
             }
 
-            WriteMessage(lineBuilder.ToString());
-            OnRawMessageSent(new IrcRawMessageEventArgs(message));
+            var line = lineBuilder.ToString();
+            WriteMessage(line);
+            OnRawMessageSent(new IrcRawMessageEventArgs(message, line));
         }
 
         /// <summary>
@@ -1628,20 +1644,18 @@ namespace IrcDotNet
         /// connection.
         /// </remarks>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        /// <exception cref="ArgumentException"><paramref name="line"/> is longer than 510 characters.</exception>
         private void WriteMessage(string line)
         {
             CheckDisposed();
 
             Debug.Assert(line != null);
-            if (line.Length > 510)
-                throw new ArgumentException(Properties.Resources.ErrorMessageLineTooLong, "line");
-
             messageSendQueue.Enqueue(line);
         }
 
         private string CheckPrefix(string value)
         {
+            Debug.Assert(value != null);
+
             if (value.Length == 0 || value.Any(IsInvalidMessageChar))
             {
                 throw new ArgumentException(string.Format(
@@ -1653,6 +1667,8 @@ namespace IrcDotNet
 
         private string CheckCommand(string value)
         {
+            Debug.Assert(value != null);
+
             if (value.Length == 0 || value.Any(IsInvalidMessageChar))
             {
                 throw new ArgumentException(string.Format(
@@ -1664,6 +1680,8 @@ namespace IrcDotNet
 
         private string CheckMiddleParameter(string value)
         {
+            Debug.Assert(value != null);
+
             if (value.Length == 0 || value.Any(c => IsInvalidMessageChar(c) || c == ' ') || value[0] == ':')
             {
                 throw new ArgumentException(string.Format(
@@ -1675,6 +1693,8 @@ namespace IrcDotNet
 
         private string CheckTrailingParameter(string value)
         {
+            Debug.Assert(value != null);
+
             if (value.Length == 0 || value.Any(c => IsInvalidMessageChar(c)))
             {
                 throw new ArgumentException(string.Format(
@@ -1696,6 +1716,10 @@ namespace IrcDotNet
         public void Connect(Uri url, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
+
+            if (registrationInfo == null)
+                throw new ArgumentNullException("registrationInfo");
+            CheckRegistrationInfo(registrationInfo, "registrationInfo");
 
             // Check URL scheme and decide whether to use SSL.
             bool useSsl;
@@ -1727,6 +1751,7 @@ namespace IrcDotNet
 
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
+            CheckRegistrationInfo(registrationInfo, "registrationInfo");
 
             DisconnectInternal();
             this.client.BeginConnect(host, port, ConnectCallback,
@@ -1751,6 +1776,7 @@ namespace IrcDotNet
 
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
+            CheckRegistrationInfo(registrationInfo, "registrationInfo");
 
             DisconnectInternal();
             this.client.BeginConnect(address, port, ConnectCallback,
@@ -1775,6 +1801,7 @@ namespace IrcDotNet
 
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
+            CheckRegistrationInfo(registrationInfo, "registrationInfo");
 
             DisconnectInternal();
             this.client.BeginConnect(addresses, port, ConnectCallback,
@@ -1797,11 +1824,36 @@ namespace IrcDotNet
 
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
+            CheckRegistrationInfo(registrationInfo, "registrationInfo");
 
             DisconnectInternal();
             this.client.BeginConnect(remoteEP.Address, remoteEP.Port, ConnectCallback,
                 Tuple.Create(useSsl, string.Empty, registrationInfo));
             HandleClientConnecting();
+        }
+
+        private void CheckRegistrationInfo(IrcRegistrationInfo registrationInfo, string registrationInfoParamName)
+        {
+            // Check that given registration info is valid.
+            if (registrationInfo is IrcUserRegistrationInfo)
+            {
+                if (registrationInfo.NickName == null ||
+                    ((IrcUserRegistrationInfo)registrationInfo).UserName == null)
+                    throw new ArgumentException(Properties.Resources.ErrorMessageInvalidUserRegistrationInfo,
+                        registrationInfoParamName);
+            }
+            else if (registrationInfo is IrcServiceRegistrationInfo)
+            {
+                if (registrationInfo.NickName == null ||
+                    ((IrcServiceRegistrationInfo)registrationInfo).Description == null)
+                    throw new ArgumentException(Properties.Resources.ErrorMessageInvalidServiceRegistrationInfo,
+                        registrationInfoParamName);
+            }
+            else
+            {
+                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidRegistrationInfoObject,
+                    registrationInfoParamName);
+            }
         }
 
         /// <summary>
@@ -1855,8 +1907,8 @@ namespace IrcDotNet
                 // Set up network I/O objects.
                 this.stream = this.client.GetStream();
                 this.dataStream = GetDataStream(state.Item1, state.Item2);
-                this.writer = new StreamWriter(this.dataStream, Encoding.Default);
-                this.reader = new StreamReader(this.dataStream, Encoding.Default);
+                this.writer = new StreamWriter(this.dataStream, this.dataStreamEncoding);
+                this.reader = new StreamReader(this.dataStream, this.dataStreamEncoding);
 
                 HandleClientConnected(state.Item3);
                 this.readThread.Start();
@@ -2150,7 +2202,7 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
-        
+
         /// <summary>
         /// Raises the <see cref="ServerVersionInfoReceived"/> event.
         /// </summary>

@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="945ee100-df10-4c77-b3f6-948755ab2d08" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    
+    <introduction>
+      <para>
+      IRC.NET is a fully-featured IRC (Internet Relay Chat) client library for the .NET Framework 4.0.
+      It aims to provide a complete and accurate implementation of the protocol as described in RFC 2812
+      (Internet Relay Chat: Client Protocol) as well as supporting de-facto modern features of the
+      protocol, such as ISUPPORT commands and CTCP (Client To Client Protocol).
+      </para>
+    </introduction>
+    
+    <section address="MainSection">
+      <title>Links</title>
+      <content>
+        <para>
+          <externalLink>
+            <linkText>Main Project Website</linkText>
+            <linkUri>https://launchpad.net/ircdotnet</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>
+        </para>
+        <para>
+          <externalLink>
+            <linkText>All Downloads</linkText>
+            <linkUri>https://launchpad.net/ircdotnet/+download</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>
+        </para>
+        <para>
+          <externalLink>
+            <linkText>Bug Reports</linkText>
+            <linkUri>https://bugs.launchpad.net/ircdotnet</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>
+        </para>
+        <para>
+          <externalLink>
+            <linkText>Questions and Answers</linkText>
+            <linkUri>https://answers.launchpad.net/ircdotnet</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>
+        </para>
+        <para>
+          <externalLink>
+            <linkText>Codeplex Mirror</linkText>
+            <linkUri>http://ircdotnet.codeplex.com/</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>
+        </para>
+      </content>
+    </section>
+    
+    <relatedTopics>
+    </relatedTopics>
+    
+  </developerConceptualDocument>
+</topic>

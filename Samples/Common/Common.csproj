@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleUtilities.cs" />
     <Compile Include="InvalidCommandParametersException.cs" />
     <Compile Include="IrcBot.cs" />
     <Compile Include="IrcBotUtilities.cs" />

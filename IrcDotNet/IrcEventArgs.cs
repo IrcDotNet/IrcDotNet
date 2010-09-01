@@ -549,10 +549,12 @@ namespace IrcDotNet
         /// Initializes a new instance of the <see cref="IrcRawMessageEventArgs"/> class.
         /// </summary>
         /// <param name="message">The message that was sent/received.</param>
-        public IrcRawMessageEventArgs(IrcClient.IrcMessage message)
+        /// <param name="rawContent">The raw content of the message.</param>
+        public IrcRawMessageEventArgs(IrcClient.IrcMessage message, string rawContent)
             : base()
         {
             this.Message = message;
+            this.RawContent = rawContent;
         }
 
         /// <summary>
@@ -560,6 +562,16 @@ namespace IrcDotNet
         /// </summary>
         /// <value>The message that was sent/received by the client.</value>
         public IrcClient.IrcMessage Message
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the raw content of the message.
+        /// </summary>
+        /// <value>The raw content of the message.</value>
+        public string RawContent
         {
             get;
             private set;
