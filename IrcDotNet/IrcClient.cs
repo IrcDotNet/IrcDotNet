@@ -1425,6 +1425,10 @@ namespace IrcDotNet
                         prefix = line.Substring(1, firstSpaceIndex - 1);
                         lineAfterPrefix = line.Substring(firstSpaceIndex + 1);
                     }
+                    else
+                    {
+                        lineAfterPrefix = line;
+                    }
 
                     // Extract command from message.
                     var command = lineAfterPrefix.Substring(0, lineAfterPrefix.IndexOf(' '));
