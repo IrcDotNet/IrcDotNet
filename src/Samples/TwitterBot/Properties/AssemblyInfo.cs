@@ -6,10 +6,10 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Twitter Bot")]
-[assembly: AssemblyDescription("An IRC bot that interacts with Twitter.")]
+[assembly: AssemblyDescription("IRC bot that interacts with Twitter service and allows IRC users to access their accounts.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Twitter Bot")]
+[assembly: AssemblyProduct("IRC.NET Samples")]
 [assembly: AssemblyCopyright("Copyright © Alex Regueiro 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

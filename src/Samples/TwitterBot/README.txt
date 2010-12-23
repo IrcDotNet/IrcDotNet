@@ -4,7 +4,8 @@
 This sample interacts with the Twitter API to provide Twitter
 <http://twitter.com/> services to users on an IRC network. The bot provides the
 ability for multiple IRC users to log in each on a separate Twitter account and
-perform tasks such as retrieving recent tweets and posting new tweets.
+perform tasks such as retrieving recent tweets and posting new tweets, via
+channel and private messages.
 
 Command-Line Commands
 =====================

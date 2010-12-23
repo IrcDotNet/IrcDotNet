@@ -1,18 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkovChainTextBot", "Samples\MarkovChainTextBot\MarkovChainTextBot.csproj", "{24292A1F-B302-4090-904D-5881FDD51DA1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkovChainTextBot", "MarkovChainTextBot\MarkovChainTextBot.csproj", "{24292A1F-B302-4090-904D-5881FDD51DA1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{BA2E5E15-9CE4-4C88-9263-E6C4D5C9D852}"
 	ProjectSection(SolutionItems) = preProject
-		AUTHORS.txt = AUTHORS.txt
-		LICENSE.txt = LICENSE.txt
+		..\..\AUTHORS.txt = ..\..\AUTHORS.txt
+		..\..\LICENSE.txt = ..\..\LICENSE.txt
 		README.txt = README.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterBot", "Samples\TwitterBot\TwitterBot.csproj", "{B2FF7BA7-8B67-4949-BB09-F34D0E85413E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterBot", "TwitterBot\TwitterBot.csproj", "{B2FF7BA7-8B67-4949-BB09-F34D0E85413E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Samples\Common\Common.csproj", "{8E2B2965-DF77-4D12-82AF-9A0AAD7C5C41}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{8E2B2965-DF77-4D12-82AF-9A0AAD7C5C41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

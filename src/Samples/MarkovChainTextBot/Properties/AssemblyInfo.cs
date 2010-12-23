@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Common library for IRC.NET samples")]
-[assembly: AssemblyDescription("A library for provides common functionality for sample projects using IRC.NET.")]
+[assembly: AssemblyTitle("Markov Chain Text Bot")]
+[assembly: AssemblyDescription("IRC bot that analyses messages received in channels to build Markov chains and generate random text.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("IRC.NET Samples")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("554b202a-d7f6-4506-8d7c-129b79b20761")]
+[assembly: Guid("32fd2a05-af7f-4b0e-b66a-c3865536ab5e")]
 
 // Version information for an assembly consists of the following four values:
 //

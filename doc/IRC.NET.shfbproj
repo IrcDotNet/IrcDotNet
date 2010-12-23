@@ -20,7 +20,7 @@
     <CopyrightText>Copyright &amp;#169%3b Alex Regueiro 2010</CopyrightText>
     <HelpTitle>IRC.NET Documentation</HelpTitle>
     <DocumentationSources>
-      <DocumentationSource sourceFile="..\IRC.NET.sln" />
+      <DocumentationSource sourceFile="..\src\IRC.NET.sln" />
     </DocumentationSources>
     <HelpFileFormat>HtmlHelp1, MSHelpViewer</HelpFileFormat>
     <FrameworkVersion>4.0.30319</FrameworkVersion>
