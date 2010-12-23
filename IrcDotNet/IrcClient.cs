@@ -1653,7 +1653,7 @@ namespace IrcDotNet
             CheckDisposed();
 
             Debug.Assert(line != null);
-            messageSendQueue.Enqueue(line);
+            messageSendQueue.Enqueue(line + Environment.NewLine);
         }
 
         private string CheckPrefix(string value)

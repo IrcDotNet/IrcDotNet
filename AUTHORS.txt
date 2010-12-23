@@ -2,7 +2,7 @@ IRC.NET is copyright © Alex Regueiro 2010.
 IRC.NET sample projects are copyright © Alex Regueiro 2010.
 
 All included software is licensed under the MIT License, available in full in
-the License.txt file.
+the `LICENSE` file.
 
 The following persons and groups are acknowledged for their contributions to
 specific releases of the software.
