@@ -9,13 +9,13 @@ library.
 Samples
 =======
 
- * MarkovChainTextBox
+ * `MarkovChainTextBox`
    
    An IRC bot that runs as a Markov text generator. It trains on messages
    received from multiple channels across multiple IRC networks and can generate
    random sentences from this.
  
- * TwitterBot
+ * `TwitterBot`
    
    An IRC bot that runs as a service for interacting with Twitter via its web
    API. It is capable of posting tweets sent to it for arbitrary users, as well
