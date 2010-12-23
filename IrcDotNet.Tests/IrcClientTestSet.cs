@@ -106,6 +106,7 @@ namespace IrcDotNet.Tests
         private static string userName1, userName2;
         private static string testChannelName;
 
+        // Manages state of tests.
         private static TestStateManager<IrcClientTestState> stateManager;
 
         [ClassInitialize()]

@@ -12,6 +12,7 @@ namespace IrcDotNet.Tests
 {
     using Common.Collections;
 
+    // Manages states and dependencies of set of tests.
     public class TestStateManager<TState> where TState : struct
     {
         private HashSet<TState> currentStates;
@@ -19,8 +20,8 @@ namespace IrcDotNet.Tests
 
         public TestStateManager()
         {
-            currentStates = new HashSet<TState>();
-            currentsStateReadOnly = new ReadOnlySet<TState>(currentStates);
+            this.currentStates = new HashSet<TState>();
+            this.currentsStateReadOnly = new ReadOnlySet<TState>(currentStates);
         }
 
         public ReadOnlySet<TState> CurrentStates
@@ -35,11 +36,11 @@ namespace IrcDotNet.Tests
 
         public void HasStates(IEnumerable<TState> states)
         {
-            Assert.IsTrue(currentStates.Intersect(states).Any(), string.Format(
+            Assert.IsTrue(this.currentStates.Intersect(states).Any(), string.Format(
                 "Current test is not in one or more required states for execution." + Environment.NewLine +
                 "Required states: {0}" + Environment.NewLine +
                 "Current states: {1}",
-                string.Join(",", states), string.Join(", ", currentStates)));
+                string.Join(",", states), string.Join(", ", this.currentStates)));
         }
 
         public void HasNotStates(params TState[] states)
@@ -49,11 +50,11 @@ namespace IrcDotNet.Tests
 
         public void HasNotStates(IEnumerable<TState> states)
         {
-            Assert.IsFalse(currentStates.Intersect(states).Any(), string.Format(
+            Assert.IsFalse(this.currentStates.Intersect(states).Any(), string.Format(
                 "Current test is in one or more forbidden states for execution." + Environment.NewLine +
                 "Forbidden states: {0}" + Environment.NewLine +
                 "Current states: {1}",
-                string.Join(",", states), string.Join(", ", currentStates)));
+                string.Join(",", states), string.Join(", ", this.currentStates)));
         }
 
         public void SetStates(params TState[] states)
@@ -63,7 +64,7 @@ namespace IrcDotNet.Tests
 
         public void SetStates(IEnumerable<TState> states)
         {
-            currentStates.AddRange(states);
+            this.currentStates.AddRange(states);
         }
 
         public void UnsetStates(params TState[] states)
@@ -73,7 +74,7 @@ namespace IrcDotNet.Tests
 
         public void UnsetStates(IEnumerable<TState> states)
         {
-            currentStates.RemoveRange(states);
+            this.currentStates.RemoveRange(states);
         }
     }
 }

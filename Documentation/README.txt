@@ -14,23 +14,23 @@ library.
    A user interface and project management system for Sandcastle documentation.
    Download from <http://shfb.codeplex.com/releases>.
 
-Once these tools are installed, open the appropiate .shfbproj file in the
+Once these tools are installed, open the appropiate `.shfbproj` file in the
 Documentation directory and run build. This action generates the user-readable
 documentation for the library (Release build by default).
 
 Output
 ======
 
-Upon a successful build, the 'output' directory is created, containing the
+Upon a successful build, the `output` directory is created, containing the
 following relevant files.
 
- * IRC.NET.chm
+ * `IRC.NET.chm`
    
    The Microsoft Compiled HTML Help file containing the full documentation.
    This file can be viewed using the Microsoft HTML Help v1 viewer, included
    with all recent versions of Windows.
  
- * IRC.NET.mshc
+ * `IRC.NET.mshc`
    
    The Microsoft Help Container file containing the full documentation.
    This file provides content to be viewed in Microsoft Help Viewer 1.0,
