@@ -8,6 +8,7 @@ namespace IrcDotNet
 {
     using Common.Collections;
 
+    // Utility methods relating to text.
     internal static class TextUtilities
     {
         public static string GetValue(this Group match)

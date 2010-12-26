@@ -6,6 +6,7 @@ using System.Text;
 
 namespace IrcDotNet
 {
+    // Utility methods relating to object reflection.
     internal static class ReflectionUtilities
     {
         public static IEnumerable<Tuple<TAttribute, TDelegate>> GetMethodAttributes<TAttribute, TDelegate>(

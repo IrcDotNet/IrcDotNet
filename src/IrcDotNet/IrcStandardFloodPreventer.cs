@@ -6,13 +6,16 @@ using System.Text;
 namespace IrcDotNet
 {
     /// <summary>
-    /// Represents a flood protector that operates according to the de-facto rules implemented by modern IRC servers.
+    /// Represents a flood protector that throttles data sent by the client according to the standard rules implemented
+    /// by modern IRC servers.
+    /// </summary>
+    /// <remarks>
     /// The principle is that no message may be sent by the client once the value of an internal counter has reached
     /// the value of <see cref="MaxMessageBurst"/>. The counter is incremented every time a message is sent, and
     /// decremented by one every duration of <see cref="CounterPeriod"/>. Hence, messages may be sent immediately in
     /// bursts so long as the high rate is not sustained, else a delay is introduced between the sending of
-    /// successive messages.
-    /// </summary>
+    /// successive messages, such that the data.
+    /// </remarks>
     public class IrcStandardFloodPreventer : IIrcFloodPreventer
     {
         private const int ticksPerMillisecond = 10000;
@@ -23,8 +26,11 @@ namespace IrcDotNet
         // Absolute time of last counter decrement, in milliseconds.
         private long lastCounterDecrementTime;
 
+        // Maximum number of messages that can be sent in burst.
         private int maxMessageBurst;
-        private int counterPeriod;
+
+        // Period between each decrement of counter, in milliseconds.
+        private long counterPeriod;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcStandardFloodPreventer"/> class.
@@ -32,7 +38,7 @@ namespace IrcDotNet
         /// <param name="maxMessageBurst">The maximum number of messages that can be sent in a burst.</param>
         /// <param name="counterPeriod">The number of milliseconds between each decrement of the message counter.
         /// </param>
-        public IrcStandardFloodPreventer(int maxMessageBurst, int counterPeriod)
+        public IrcStandardFloodPreventer(int maxMessageBurst, long counterPeriod)
         {
             this.maxMessageBurst = maxMessageBurst;
             this.counterPeriod = counterPeriod;
@@ -53,8 +59,8 @@ namespace IrcDotNet
         /// <summary>
         /// Gets the number of milliseconds between each decrement of the message counter.
         /// </summary>
-        /// <value>The number of milliseconds that is the period of the counter.</value>
-        public int CounterPeriod
+        /// <value>The period of the counter, in milliseconds.</value>
+        public long CounterPeriod
         {
             get { return this.counterPeriod; }
         }
@@ -62,22 +68,25 @@ namespace IrcDotNet
         #region IIrcFloodPreventer Members
 
         /// <inheritdoc/>
-        public bool CanSendMessage()
+        public long GetSendDelay()
         {
             // Subtract however many counter periods have elapsed since last decrement of counter.
             var currentTime = DateTime.Now.Ticks / ticksPerMillisecond;
             var elapsedMilliseconds = currentTime - this.lastCounterDecrementTime;
             this.messageCounter = Math.Max(0, this.messageCounter -
                 (int)(elapsedMilliseconds / this.counterPeriod));
+
             // Update time of last decrement of counter to theoretical time of decrement.
             this.lastCounterDecrementTime = currentTime - (elapsedMilliseconds % this.counterPeriod);
 
-            return this.messageCounter <= this.maxMessageBurst;
+            // Return time until next message can be sent.
+            return Math.Max((this.messageCounter - this.maxMessageBurst) * this.counterPeriod - elapsedMilliseconds, 0);
         }
 
         /// <inheritdoc/>
         public void HandleMessageSent()
         {
+            // Increment message count.
             this.messageCounter++;
         }
 

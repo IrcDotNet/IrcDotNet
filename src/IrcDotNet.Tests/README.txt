@@ -10,6 +10,10 @@ pre-defined conditions (expected states) and timeouts.
 
 **Note**
 
+When running in debug mode, tests do not ever time out.
+
+**Note**
+
 In rare situations, the `CompleteIrcClient` test may fail despite the library
 operating correctly in every way. This could be due to a number of reasons, most
 likely that an element of the server is not functioning properly, or extreme lag
