@@ -246,6 +246,36 @@ namespace IrcDotNet
     }
 
     /// <summary>
+    /// Provides data for the <see cref="IrcClient.PingReceived"/ event.
+    /// </summary>
+    public class IrcChannelInvitationEventArgs : IrcChannelEventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IrcChannelInvitationEventArgs"/> class.
+        /// </summary>
+        /// <param name="channel">The channel to which the recipient user is invited.</param>
+        /// <param name="inviter">The user inviting the recipient user to the channel.</param>
+        public IrcChannelInvitationEventArgs(IrcChannel channel, IrcUser inviter)
+            : base(channel)
+        {
+            if (inviter == null)
+                throw new ArgumentNullException("inviter");
+
+            this.Inviter = inviter;
+        }
+
+        /// <summary>
+        /// Gets the user inviting the recipient user to the channel
+        /// </summary>
+        /// <value>The inviter user.</value>
+        public IrcUser Inviter
+        {
+            get;
+            private set;
+        }
+    }
+
+    /// <summary>
     /// Provides data for events that concern an <see cref="IrcChannelUser"/>.
     /// </summary>
     public class IrcChannelUserEventArgs : IrcCommentEventArgs
@@ -254,7 +284,7 @@ namespace IrcDotNet
         /// Initializes a new instance of the <see cref="IrcChannelUserEventArgs"/> class.
         /// </summary>
         /// <param name="channelUser">The channel user that the event concerns.</param>
-        public IrcChannelUserEventArgs(IrcChannelUser channelUser, string comment)
+        public IrcChannelUserEventArgs(IrcChannelUser channelUser, string comment = null)
             : base(comment)
         {
             if (channelUser == null)
@@ -283,7 +313,7 @@ namespace IrcDotNet
         /// Initializes a new instance of the <see cref="IrcChannelEventArgs"/> class.
         /// </summary>
         /// <param name="channel">The channel that the event concerns.</param>
-        public IrcChannelEventArgs(IrcChannel channel, string comment)
+        public IrcChannelEventArgs(IrcChannel channel, string comment = null)
             : base(comment)
         {
             if (channel == null)
@@ -312,7 +342,7 @@ namespace IrcDotNet
         /// Initializes a new instance of the <see cref="IrcUserEventArgs"/> class.
         /// </summary>
         /// <param name="user">The user that the event concerns.</param>
-        public IrcUserEventArgs(IrcUser user, string comment)
+        public IrcUserEventArgs(IrcUser user, string comment = null)
             : base(comment)
         {
             if (user == null)

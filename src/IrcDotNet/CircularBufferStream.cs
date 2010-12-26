@@ -8,6 +8,7 @@ using System.Text;
 namespace IrcDotNet
 {
     // Allows reading and writing to circular buffer as stream.
+    // Note: Stream is non-blocking and non-thread-safe.
     internal class CircularBufferStream : Stream
     {
         // Buffer of data.
@@ -98,6 +99,7 @@ namespace IrcDotNet
 
         public override void Write(byte[] buffer, int offset, int count)
         {
+            // Write block of bytes from given buffer into circular buffer, wrapping around when necessary.
             int writeCount;
             while ((writeCount = Math.Min(count, (int)(this.buffer.Length - this.writePosition))) > 0)
             {
@@ -108,6 +110,7 @@ namespace IrcDotNet
 
         public override int Read(byte[] buffer, int offset, int count)
         {
+            // Read block of bytes from circular buffer, wrapping around when necessary.
             int totalReadCount = 0;
             int readCount;
             count = Math.Min(buffer.Length - offset, count);
