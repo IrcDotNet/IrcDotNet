@@ -7,7 +7,7 @@ using System.Text;
 namespace IrcDotNet
 {
     // Reads lines from text sources safely; unterminated lines are not returned.
-    public class SafeLineReader
+    internal class SafeLineReader
     {
         // Reads characters from text source.
         private TextReader textReader;

@@ -3,7 +3,7 @@ Implementation
 
 This library represents an complete implementation of the IRC client protocol,
 primarily as described in RFC 2812 <http://irchelp.org/irchelp/rfc/rfc2812.txt>.
-It additonally contains functionality that is in common use by modern IRC
+It additionally contains functionality that is in common use by modern IRC
 servers (as of December 2009), detailed as follows.
 
 Non-RFC Features

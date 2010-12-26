@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+#if !SILVERLIGHT
 using System.Net.Security;
+#endif
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -159,8 +161,9 @@ namespace IrcDotNet
     public class IrcPreviewMessageEventArgs : IrcMessageEventArgs
     {
         /// <inheritdoc/>
-        public IrcPreviewMessageEventArgs(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
-            : base(source, targets, text)
+        public IrcPreviewMessageEventArgs(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text,
+            Encoding encoding)
+            : base(source, targets, text, encoding)
         {
             this.Handled = false;
         }
@@ -187,20 +190,25 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="source">The source of the message.</param>
         /// <param name="targets">A list of the targets of the message.</param>
-        /// <param name="text">The text of the mesage.</param>
+        /// <param name="text">The text of the message.</param>
+        /// <param name="encoding">The encoding of the message text.</param>
         /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
-        public IrcMessageEventArgs(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
+        public IrcMessageEventArgs(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text,
+            Encoding encoding)
             : base()
         {
             if (targets == null)
                 throw new ArgumentNullException("target");
             if (text == null)
                 throw new ArgumentNullException("text");
+            if (encoding == null)
+                throw new ArgumentNullException("textEncoding");
 
             this.Source = source;
             this.Targets = new ReadOnlyCollection<IIrcMessageTarget>(targets);
             this.Text = text;
+            this.Encoding = encoding;
         }
 
         /// <summary>
@@ -211,7 +219,7 @@ namespace IrcDotNet
         /// <returns>The text of the message.</returns>
         public string GetText(Encoding encoding = null)
         {
-            return this.Text.ChangeEncoding(Encoding.Default, encoding);
+            return this.Text.ChangeEncoding(this.Encoding, encoding);
         }
 
         /// <summary>
@@ -243,10 +251,20 @@ namespace IrcDotNet
             get;
             private set;
         }
+
+        /// <summary>
+        /// Gets the encoding of the message text.
+        /// </summary>
+        /// <value>The encoding of the message text.</value>
+        public Encoding Encoding
+        {
+            get;
+            private set;
+        }
     }
 
     /// <summary>
-    /// Provides data for the <see cref="IrcClient.PingReceived"/ event.
+    /// Provides data for the <see cref="IrcClient.PingReceived"/> event.
     /// </summary>
     public class IrcChannelInvitationEventArgs : IrcChannelEventArgs
     {
@@ -280,6 +298,7 @@ namespace IrcDotNet
     /// </summary>
     public class IrcChannelUserEventArgs : IrcCommentEventArgs
     {
+        /// <inheritdoc/>
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcChannelUserEventArgs"/> class.
         /// </summary>
@@ -309,6 +328,7 @@ namespace IrcDotNet
     /// </summary>
     public class IrcChannelEventArgs : IrcCommentEventArgs
     {
+        /// <inheritdoc/>
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcChannelEventArgs"/> class.
         /// </summary>
@@ -338,6 +358,7 @@ namespace IrcDotNet
     /// </summary>
     public class IrcUserEventArgs : IrcCommentEventArgs
     {
+        /// <inheritdoc/>
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcUserEventArgs"/> class.
         /// </summary>
@@ -608,6 +629,8 @@ namespace IrcDotNet
         }
     }
 
+#if !SILVERLIGHT
+
     /// <summary>
     /// Provides data for the <see cref="IrcClient.ValidateSslCertificate"/> event.
     /// </summary>
@@ -668,6 +691,8 @@ namespace IrcDotNet
             set;
         }
     }
+
+#endif
 
     /// <summary>
     /// Provides data for the <see cref="IrcClient.Error"/> event.

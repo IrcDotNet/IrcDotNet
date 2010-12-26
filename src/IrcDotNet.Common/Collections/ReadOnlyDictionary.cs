@@ -12,11 +12,15 @@ namespace IrcDotNet.Common.Collections
     /// </summary>
     /// <typeparam name="TKey">The type of the keys in the dictionary.</typeparam>
     /// <typeparam name="TValue">The type of the values in the dictionary.</typeparam>
+#if !SILVERLIGHT
     [Serializable()]
+#endif
     [DebuggerDisplay("Count = {Count}")]
     public class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>,
-        IEnumerable<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable, ISerializable,
-        IDeserializationCallback
+        IEnumerable<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable
+#if !SILVERLIGHT
+        , ISerializable, IDeserializationCallback
+#endif
     {
         private IDictionary<TKey, TValue> dictionary;
 
@@ -96,12 +100,12 @@ namespace IrcDotNet.Common.Collections
             throw new NotSupportedException();
         }
 
-        bool  ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
+        bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
         {
             throw new NotSupportedException();
         }
 
-        void  ICollection<KeyValuePair<TKey, TValue>>.Clear()
+        void ICollection<KeyValuePair<TKey, TValue>>.Clear()
         {
             throw new NotSupportedException();
         }
@@ -221,6 +225,8 @@ namespace IrcDotNet.Common.Collections
 
         #endregion
 
+#if !SILVERLIGHT
+
         #region ISerializable Members
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -238,5 +244,7 @@ namespace IrcDotNet.Common.Collections
         }
 
         #endregion
+
+#endif
     }
 }
