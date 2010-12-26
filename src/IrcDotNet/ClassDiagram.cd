@@ -161,7 +161,7 @@
       </Struct>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>Pkfc0nd3LnPvU/rV+U/IW/PVn+/aMw456f9ev0572/M=</HashCode>
+      <HashCode>Pkfc0nZ3DnOvU/rVvU/IW/PVn+/aM045+f9ev05r2/E=</HashCode>
       <FileName>IrcClient.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -212,7 +212,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AABAFAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAgCCSAA=</HashCode>
+      <HashCode>AABAFAAAAAAAAAAAAAAAAAAAAAAAAAAAgIAAAACCSAA=</HashCode>
       <FileName>IrcStandardFloodPreventer.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -339,7 +339,7 @@
   <Interface Name="IrcDotNet.IIrcFloodPreventer">
     <Position X="3.75" Y="9.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAACAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAACAA=</HashCode>
       <FileName>IIrcFloodPreventer.cs</FileName>
     </TypeIdentifier>
   </Interface>

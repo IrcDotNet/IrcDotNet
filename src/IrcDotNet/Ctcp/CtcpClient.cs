@@ -196,14 +196,20 @@ namespace IrcDotNet.Ctcp
 
         private void ircClient_Connected(object sender, EventArgs e)
         {
-            this.ircClient.LocalUser.PreviewMessageReceived += ircClient_LocalUser_PreviewMessageReceived;
-            this.ircClient.LocalUser.PreviewNoticeReceived += ircClient_LocalUser_PreviewNoticeReceived;
+            if (this.ircClient.LocalUser != null)
+            {
+                this.ircClient.LocalUser.PreviewMessageReceived += ircClient_LocalUser_PreviewMessageReceived;
+                this.ircClient.LocalUser.PreviewNoticeReceived += ircClient_LocalUser_PreviewNoticeReceived;
+            }
         }
 
         private void ircClient_Disconnected(object sender, EventArgs e)
         {
-            this.ircClient.LocalUser.PreviewMessageReceived -= ircClient_LocalUser_PreviewMessageReceived;
-            this.ircClient.LocalUser.PreviewNoticeReceived -= ircClient_LocalUser_PreviewNoticeReceived;
+            if (this.ircClient.LocalUser != null)
+            {
+                this.ircClient.LocalUser.PreviewMessageReceived -= ircClient_LocalUser_PreviewMessageReceived;
+                this.ircClient.LocalUser.PreviewNoticeReceived -= ircClient_LocalUser_PreviewNoticeReceived;
+            }
         }
 
         private void ircClient_LocalUser_PreviewMessageReceived(object sender, IrcPreviewMessageEventArgs e)

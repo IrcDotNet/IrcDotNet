@@ -235,15 +235,19 @@ namespace IrcDotNet.Tests
 
         private static void ircClient1_Error(object sender, IrcErrorEventArgs e)
         {
-            if (client1ErrorEvent != null)
-                client1ErrorEvent.Set();
-
-            Debug.Assert(false, "Protocol error: " + e.Error.Message);
+            if (!client2ErrorEvent.SafeWaitHandle.IsClosed)
+            {
+                if (client1ErrorEvent != null)
+                    client1ErrorEvent.Set();
+            }
         }
 
-        private static void ircClient1_ProtocolError(object sender, EventArgs e)
+        private static void ircClient1_ProtocolError(object sender, IrcProtocolErrorEventArgs e)
         {
-            // Ignore.
+            Debug.Fail(string.Format(
+                "Client 1: protocol error {0}: {1}" + Environment.NewLine +
+                "Parameters: {2}",
+                e.Code, e.Message, string.Join(" ", e.Parameters)));
         }
 
         private static void ircClient1_Registered(object sender, EventArgs e)
@@ -385,7 +389,7 @@ namespace IrcDotNet.Tests
                 client1LocalUserNoticeReceivedEvent.Set();
         }
 
-        private static void ircClient2_User_Quit(object sender, IrcCommentEventArgs e)
+        private static void ircClient1_User_Quit(object sender, IrcCommentEventArgs e)
         {
             client1UserQuitComment = e.Comment;
 
@@ -413,7 +417,7 @@ namespace IrcDotNet.Tests
 
         private static void ircClient1_Channel_UserJoined(object sender, IrcChannelUserEventArgs e)
         {
-            e.ChannelUser.User.Quit += ircClient2_User_Quit;
+            e.ChannelUser.User.Quit += ircClient1_User_Quit;
 
             if (client1ChannelUserJoinedEvent != null)
                 client1ChannelUserJoinedEvent.Set();
@@ -421,7 +425,7 @@ namespace IrcDotNet.Tests
 
         private static void ircClient1_Channel_UserLeft(object sender, IrcChannelUserEventArgs e)
         {
-            e.ChannelUser.User.Quit -= ircClient2_User_Quit;
+            e.ChannelUser.User.Quit -= ircClient1_User_Quit;
 
             if (client1ChannelUserLeftEvent != null)
                 client1ChannelUserLeftEvent.Set();
@@ -469,13 +473,19 @@ namespace IrcDotNet.Tests
 
         private static void ircClient2_Error(object sender, IrcErrorEventArgs e)
         {
-            if (client2ErrorEvent != null)
-                client2ErrorEvent.Set();
+            if (!client2ErrorEvent.SafeWaitHandle.IsClosed)
+            {
+                if (client2ErrorEvent != null)
+                    client2ErrorEvent.Set();
+            }
         }
 
         private static void ircClient2_ProtocolError(object sender, IrcProtocolErrorEventArgs e)
         {
-            // Ignore.
+            Debug.Fail(string.Format(
+                "Client 2: protocol error {0}: {1}" + Environment.NewLine +
+                "Parameters: {2}",
+                e.Code, e.Message, string.Join(" ", e.Parameters)));
         }
 
         private static void ircClient2_Registered(object sender, EventArgs e)
@@ -671,9 +681,11 @@ namespace IrcDotNet.Tests
         public void QuitTest()
         {
             stateManager.HasStates(IrcClientTestState.Client2Connected);
-            ircClient2.Quit(quitMessage);
-            Assert.IsTrue(client1UserQuitEvent.WaitOne(10000), "Client 2 failed to quit from server.");
-            Assert.IsTrue(client2DisconnectedEvent.WaitOne(5000), "Client 2 failed to disconnect from server.");
+            ircClient2.Quit(3000, quitMessage);
+            Assert.IsTrue(client1UserQuitEvent.WaitOne(10000), 
+                "Client 1 failed to detect that client 2 user quit from server.");
+            Assert.IsTrue(client2DisconnectedEvent.WaitOne(5000), 
+                "Client 2 failed to disconnect from server.");
             stateManager.UnsetStates(IrcClientTestState.Client2Connected);
         }
 
@@ -938,7 +950,7 @@ namespace IrcDotNet.Tests
             }
 
             // Check that all sent messages are eventually received.
-            var messageWaitPeriod = ((IrcStandardFloodPreventer)ircClient1.FloodPreventer).CounterPeriod * 2;
+            var messageWaitPeriod = (int)((IrcStandardFloodPreventer)ircClient1.FloodPreventer).CounterPeriod * 2;
             for (int i = 1; i <= messageCount; i++)
             {
                 Assert.IsTrue(WaitForClientEvent(client2ChannelMessageReceivedEvent, messageWaitPeriod),

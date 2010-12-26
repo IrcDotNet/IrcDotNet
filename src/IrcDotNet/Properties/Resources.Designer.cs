@@ -268,6 +268,15 @@ namespace IrcDotNet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The host name &apos;{0}&apos; does not resolve to a valid IP address..
+        /// </summary>
+        internal static string ErrorMessageNoValidAddress {
+            get {
+                return ResourceManager.GetString("ErrorMessageNoValidAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The length of a raw message must not exceed {0} characters..
         /// </summary>
         internal static string ErrorMessageRawMessageTooLong {
