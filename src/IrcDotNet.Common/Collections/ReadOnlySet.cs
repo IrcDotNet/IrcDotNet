@@ -11,9 +11,14 @@ namespace IrcDotNet.Common.Collections
     /// Represents a read-only set of values.
     /// </summary>
     /// <typeparam name="T">The type of elements in the set.</typeparam>
+#if !SILVERLIGHT
     [Serializable()]
+#endif
     [DebuggerDisplay("Count = {Count}")]
-    public class ReadOnlySet<T> : ISet<T>, ISerializable, IDeserializationCallback
+    public class ReadOnlySet<T> : ISet<T>
+#if !SILVERLIGHT
+        , ISerializable, IDeserializationCallback
+#endif
     {
         private ISet<T> set;
 
@@ -146,6 +151,8 @@ namespace IrcDotNet.Common.Collections
 
         #endregion
 
+#if !SILVERLIGHT
+
         #region ISerializable Members
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -163,5 +170,7 @@ namespace IrcDotNet.Common.Collections
         }
 
         #endregion
+
+#endif
     }
 }

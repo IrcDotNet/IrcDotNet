@@ -78,7 +78,8 @@ namespace IrcDotNet
         {
             if (newEncoding == null)
                 return value;
-            return newEncoding.GetString(currentEncoding.GetBytes(value));
+            var buffer = currentEncoding.GetBytes(value);
+            return newEncoding.GetString(buffer, 0, buffer.Length);
         }
     }
 }

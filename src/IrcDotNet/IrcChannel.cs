@@ -317,7 +317,11 @@ namespace IrcDotNet
         {
             if (this.users.Contains(channelUser))
             {
+#if SILVERLIGHT
+                Debug.Assert(false, "User already in channel.");
+#else
                 Debug.Fail("User already in channel.");
+#endif
                 return;
             }
 
@@ -342,7 +346,11 @@ namespace IrcDotNet
         {
             if (this.users.Contains(channelUser))
             {
+#if SILVERLIGHT
+                Debug.Assert(false, "User already in channel.");
+#else
                 Debug.Fail("User already in channel.");
+#endif
                 return;
             }
 
@@ -385,18 +393,18 @@ namespace IrcDotNet
 
         internal void HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text);
+            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text, this.Client.TextEncoding);
             OnPreviewMessageReceived(previewEventArgs);
             if (!previewEventArgs.Handled)
-                OnMessageReceived(new IrcMessageEventArgs(source, targets, text));
+                OnMessageReceived(new IrcMessageEventArgs(source, targets, text, this.Client.TextEncoding));
         }
 
         internal void HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text);
+            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text, this.Client.TextEncoding);
             OnPreviewNoticeReceived(previewEventArgs);
             if (!previewEventArgs.Handled)
-                OnNoticeReceived(new IrcMessageEventArgs(source, targets, text));
+                OnNoticeReceived(new IrcMessageEventArgs(source, targets, text, this.Client.TextEncoding));
         }
 
         /// <summary>
@@ -464,7 +472,7 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
-        
+
         /// <summary>
         /// Raises the <see cref="UserInvited"/> event.
         /// </summary>
@@ -475,7 +483,7 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
-        
+
         /// <summary>
         /// Raises the <see cref="MessageReceived"/> event.
         /// </summary>

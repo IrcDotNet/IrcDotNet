@@ -6,14 +6,16 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Security;
 using System.Net.Sockets;
-using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+
+#if !SILVERLIGHT
+using System.Net.Security;
+#endif
 
 namespace IrcDotNet
 {
@@ -139,7 +141,7 @@ namespace IrcDotNet
             this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             this.sendTimer = new Timer(new TimerCallback(WritePendingMessages), null,
                 Timeout.Infinite, Timeout.Infinite);
-            this.textEncoding = Encoding.Default;
+            this.textEncoding = Encoding.UTF8;
             this.disconnectedEvent = new AutoResetEvent(false);
 
             this.messageProcessors = new Dictionary<string, MessageProcessor>(
@@ -444,11 +446,15 @@ namespace IrcDotNet
         /// </summary>
         public event EventHandler<IrcErrorEventArgs> Error;
 
+#if !SILVERLIGHT
+
         /// <summary>
         /// Occurs when the SSL certificate received from the server should be validated.
         /// The certificate is automatically validated if this event is not handled.
         /// </summary>
         public event EventHandler<IrcValidateSslCertificateEventArgs> ValidateSslCertificate;
+
+#endif
 
         /// <summary>
         /// Occurs when a raw message has been sent to the server.
@@ -1470,7 +1476,7 @@ namespace IrcDotNet
             WriteMessage(message);
         }
 
-        /// <inheritdoc cref="WriteMessage(string)"/>
+        /// <inheritdoc cref="WriteMessage(string, object)"/>
         /// <summary>
         /// Writes the specified message (prefix, command, and parameters) to the network stream.
         /// </summary>
@@ -1648,7 +1654,7 @@ namespace IrcDotNet
             Connect(hostName, defaultPort, useSsl, registrationInfo);
         }
 
-        /// <inheritdoc cref="Connect(IPEndPoint, bool, IrcRegistrationInfo)"/>
+        /// <inheritdoc cref="Connect(EndPoint, bool, IrcRegistrationInfo)"/>
         /// <param name="hostName">The name of the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
         public void Connect(string hostName, int port, bool useSsl, IrcRegistrationInfo registrationInfo)
@@ -1666,7 +1672,7 @@ namespace IrcDotNet
             Connect(address, defaultPort, useSsl, registrationInfo);
         }
 
-        /// <inheritdoc cref="Connect(IPEndPoint, bool, IrcRegistrationInfo)"/>
+        /// <inheritdoc cref="Connect(EndPoint, bool, IrcRegistrationInfo)"/>
         /// <param name="address">An IP addresses that designates the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
         public void Connect(IPAddress address, int port, bool useSsl, IrcRegistrationInfo registrationInfo)
@@ -1942,7 +1948,11 @@ namespace IrcDotNet
 
                 // Create stream for received data. Use SSL stream on top of network stream, if specified.
                 this.receiveStream = new CircularBufferStream(socketReceiveBufferSize);
+#if SILVERLIGHT
+                this.dataStream = this.receiveStream;
+#else
                 this.dataStream = GetDataStream(token.Item1, token.Item2);
+#endif
                 this.dataStreamReader = new StreamReader(this.dataStream, this.textEncoding);
                 this.dataStreamLineReader = new SafeLineReader(this.dataStreamReader);
 
@@ -1966,7 +1976,15 @@ namespace IrcDotNet
                 // Connect socket to remote endpoint asynchronously.
                 var disconnectEventArgs = new SocketAsyncEventArgs();
                 disconnectEventArgs.Completed += DisconnectCompleted;
+#if SILVERLIGHT
+                this.socket.Shutdown(SocketShutdown.Both);
+                DisconnectCompleted(this.socket, new SocketAsyncEventArgs()
+                    {
+                        SocketError = SocketError.Success
+                    });
+#else
                 this.socket.DisconnectAsync(disconnectEventArgs);
+#endif
             }
             catch (SocketException exSocket)
             {
@@ -1995,6 +2013,8 @@ namespace IrcDotNet
             }
         }
 
+#if !SILVERLIGHT
+
         private Stream GetDataStream(bool useSsl, string targetHost)
         {
             if (useSsl)
@@ -2022,6 +2042,8 @@ namespace IrcDotNet
             OnValidateSslCertificate(eventArgs);
             return eventArgs.IsValid;
         }
+
+#endif
 
         private void HandleClientConnecting()
         {
@@ -2137,6 +2159,8 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+#if !SILVERLIGHT
+
         /// <summary>
         /// Raises the <see cref="ValidateSslCertificate"/> event.
         /// </summary>
@@ -2148,6 +2172,8 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
+
+#endif
 
         /// <summary>
         /// Raises the <see cref="RawMessageSent"/> event.
