@@ -59,6 +59,7 @@ namespace IrcDotNet.Tests
         private static AutoResetEvent client1LocalUserNoticeReceivedEvent;
         private static AutoResetEvent client1ChannelJoinedEvent;
         private static AutoResetEvent client1ChannelLeftEvent;
+        private static AutoResetEvent client1ChannelUserInvitedEvent;
         private static AutoResetEvent client1WhoReplyReceivedEvent;
         private static AutoResetEvent client1WhoIsReplyReceivedEvent;
         private static AutoResetEvent client1WhoWasReplyReceivedEvent;
@@ -78,12 +79,14 @@ namespace IrcDotNet.Tests
         private static AutoResetEvent client2DisconnectedEvent;
         private static AutoResetEvent client2ErrorEvent;
         private static AutoResetEvent client2RegisteredEvent;
+        private static AutoResetEvent client2LocalUserInviteReceivedEvent;
         private static AutoResetEvent client2LocalUserMessageSentEvent;
         private static AutoResetEvent client2LocalUserNoticeSentEvent;
         private static AutoResetEvent client2LocalUserMessageReceivedEvent;
         private static AutoResetEvent client2LocalUserNoticeReceivedEvent;
         private static AutoResetEvent client2ChannelJoinedEvent;
         private static AutoResetEvent client2ChannelLeftEvent;
+        private static AutoResetEvent client2ChannelUserKickedEvent;
         private static AutoResetEvent client2ChannelMessageReceivedEvent;
         private static AutoResetEvent client2ChannelNoticeReceivedEvent;
 
@@ -342,6 +345,7 @@ namespace IrcDotNet.Tests
             e.Channel.UserJoined += ircClient1_Channel_UserJoined;
             e.Channel.UserLeft += ircClient1_Channel_UserLeft;
             e.Channel.UserKicked += ircClient1_Channel_UserKicked;
+            e.Channel.UserInvited += ircClient1_Channel_UserInvited;
             e.Channel.MessageReceived += ircClient1_Channel_MessageReceived;
             e.Channel.NoticeReceived += ircClient1_Channel_NoticeReceived;
 
@@ -357,7 +361,9 @@ namespace IrcDotNet.Tests
             e.Channel.UserJoined -= ircClient1_Channel_UserJoined;
             e.Channel.UserLeft -= ircClient1_Channel_UserLeft;
             e.Channel.UserKicked -= ircClient1_Channel_UserKicked;
+            e.Channel.UserInvited -= ircClient1_Channel_UserInvited;
             e.Channel.MessageReceived -= ircClient1_Channel_MessageReceived;
+            e.Channel.NoticeReceived -= ircClient1_Channel_NoticeReceived;
 
             client1ChannelLeaveComment = e.Comment;
 
@@ -437,6 +443,12 @@ namespace IrcDotNet.Tests
                 client1ChannelUserKickedEvent.Set();
         }
 
+        private static void ircClient1_Channel_UserInvited(object sender, IrcUserEventArgs e)
+        {
+            if (client1ChannelUserInvitedEvent != null)
+                client1ChannelUserInvitedEvent.Set();
+        }
+
         private static void ircClient1_Channel_MessageReceived(object sender, IrcMessageEventArgs e)
         {
             if (client1ChannelMessageReceivedEvent != null)
@@ -492,6 +504,7 @@ namespace IrcDotNet.Tests
         {
             ircClient2.LocalUser.JoinedChannel += ircClient2_LocalUser_JoinedChannel;
             ircClient2.LocalUser.LeftChannel += ircClient2_LocalUser_LeftChannel;
+            ircClient2.LocalUser.InviteReceived += ircClient2_LocalUser_InviteReceived;
             ircClient2.LocalUser.MessageSent += ircClient2_LocalUser_MessageSent;
             ircClient2.LocalUser.NoticeSent += ircClient2_LocalUser_NoticeSent;
             ircClient2.LocalUser.MessageReceived += ircClient2_LocalUser_MessageReceived;
@@ -505,6 +518,7 @@ namespace IrcDotNet.Tests
         {
             e.Channel.UserJoined += ircClient2_Channel_UserJoined;
             e.Channel.UserLeft += ircClient2_Channel_UserLeft;
+            e.Channel.UserKicked += ircClient2_Channel_UserKicked;
             e.Channel.MessageReceived += ircClient2_Channel_MessageReceived;
             e.Channel.NoticeReceived += ircClient2_Channel_NoticeReceived;
 
@@ -516,11 +530,18 @@ namespace IrcDotNet.Tests
         {
             e.Channel.UserJoined -= ircClient2_Channel_UserJoined;
             e.Channel.UserLeft -= ircClient2_Channel_UserLeft;
+            e.Channel.UserKicked -= ircClient2_Channel_UserKicked;
             e.Channel.MessageReceived -= ircClient2_Channel_MessageReceived;
             e.Channel.NoticeReceived -= ircClient2_Channel_NoticeReceived;
 
             if (client2ChannelLeftEvent != null)
                 client2ChannelLeftEvent.Set();
+        }
+
+        private static void ircClient2_LocalUser_InviteReceived(object sender, IrcChannelInvitationEventArgs e)
+        {
+            if (client2LocalUserInviteReceivedEvent != null)
+                client2LocalUserInviteReceivedEvent.Set();
         }
 
         private static void ircClient2_LocalUser_MessageSent(object sender, IrcMessageEventArgs e)
@@ -555,6 +576,12 @@ namespace IrcDotNet.Tests
         private static void ircClient2_Channel_UserLeft(object sender, IrcChannelUserEventArgs e)
         {
             //
+        }
+
+        private static void ircClient2_Channel_UserKicked(object sender, IrcChannelUserEventArgs e)
+        {
+            if (client2ChannelUserKickedEvent != null)
+                client2ChannelUserKickedEvent.Set();
         }
 
         private static void ircClient2_Channel_MessageReceived(object sender, IrcMessageEventArgs e)
@@ -682,9 +709,9 @@ namespace IrcDotNet.Tests
         {
             stateManager.HasStates(IrcClientTestState.Client2Connected);
             ircClient2.Quit(3000, quitMessage);
-            Assert.IsTrue(client1UserQuitEvent.WaitOne(10000), 
+            Assert.IsTrue(client1UserQuitEvent.WaitOne(10000),
                 "Client 1 failed to detect that client 2 user quit from server.");
-            Assert.IsTrue(client2DisconnectedEvent.WaitOne(5000), 
+            Assert.IsTrue(client2DisconnectedEvent.WaitOne(5000),
                 "Client 2 failed to disconnect from server.");
             stateManager.UnsetStates(IrcClientTestState.Client2Connected);
         }
@@ -823,10 +850,11 @@ namespace IrcDotNet.Tests
         [TestMethod()]
         public void RejoinChannelTest()
         {
-            stateManager.HasStates(IrcClientTestState.Client1Registered);
-            ircClient1.Channels.Join(testChannelName);
-            Assert.IsTrue(WaitForClientEvent(client1ChannelJoinedEvent, 10000), "Client 1 could not rejoin channel.");
-            stateManager.SetStates(IrcClientTestState.Client1InChannel);
+            stateManager.HasStates(IrcClientTestState.Client2Registered);
+            stateManager.HasNotStates(IrcClientTestState.Client2InChannel);
+            ircClient2.Channels.Join(testChannelName);
+            Assert.IsTrue(WaitForClientEvent(client2ChannelJoinedEvent, 10000), "Client 2 could not rejoin channel.");
+            stateManager.SetStates(IrcClientTestState.Client2InChannel);
         }
 
         [TestMethod()]
@@ -853,29 +881,6 @@ namespace IrcDotNet.Tests
         }
 
         [TestMethod()]
-        public void ChannelLocalUserModeTest()
-        {
-            stateManager.HasStates(IrcClientTestState.Client1InChannel);
-            var channel = ircClient1.Channels.Single(c => c.Name == testChannelName);
-            var channelUser = channel.Users.First();
-
-            // Local user should already have 'o' mode on joining channel.
-            Assert.IsTrue(channelUser.Modes.Contains('o'),
-                "Client 1 local user does not initially have 'o' mode in channel.");
-
-            channelUser.ModesChanged += (sender, e) =>
-                {
-                    if (client1ChannelUserModeChangedEvent != null)
-                        client1ChannelUserModeChangedEvent.Set();
-                };
-            channelUser.Voice();
-            Assert.IsTrue(WaitForClientEvent(client1ChannelUserModeChangedEvent, 10000),
-                "Client 1 channel mode of local user was not changed.");
-            Assert.IsTrue(channelUser.Modes.Contains('v'),
-                "Client 1 local user does not have 'v' mode in channel.");
-        }
-
-        [TestMethod()]
         public void ChannelModeTest()
         {
             stateManager.HasStates(IrcClientTestState.Client1InChannel);
@@ -895,6 +900,62 @@ namespace IrcDotNet.Tests
             Assert.IsTrue(WaitForClientEvent(client1ChannelModeChangedEvent, 10000),
                 "Client 1 channel mode was not changed to '-m'.");
             Assert.IsFalse(channel.Modes.Contains('m'), "Client 1 channel still has mode 'm'.");
+        }
+
+        [TestMethod()]
+        public void ChannelLocalUserModeTest()
+        {
+            stateManager.HasStates(IrcClientTestState.Client1InChannel);
+            var channel = ircClient1.Channels.Single(c => c.Name == testChannelName);
+            var channelUser = channel.GetChannelUser(ircClient1.LocalUser);
+            Assert.IsTrue(channelUser != null, "Cannot find local user in channel.");
+
+            // Local user should already have 'o' mode upon joining channel.
+            Assert.IsTrue(channelUser.Modes.Contains('o'),
+                "Client 1 local user does not initially have 'o' mode in channel.");
+
+            channelUser.ModesChanged += (sender, e) =>
+                {
+                    if (client1ChannelUserModeChangedEvent != null)
+                        client1ChannelUserModeChangedEvent.Set();
+                };
+            channelUser.Voice();
+            Assert.IsTrue(WaitForClientEvent(client1ChannelUserModeChangedEvent, 10000),
+                "Client 1 channel mode of local user was not changed.");
+            Assert.IsTrue(channelUser.Modes.Contains('v'),
+                "Client 1 local user does not have 'v' mode in channel.");
+        }
+
+        [TestMethod()]
+        public void ChannelKickTest()
+        {
+            stateManager.HasStates(IrcClientTestState.Client2InChannel);
+            var channel = ircClient1.Channels.Single(c => c.Name == testChannelName);
+            var channelUser = channel.Users.Single(cu => cu.User.NickName == ircClient2.LocalUser.NickName);
+            Assert.IsTrue(channelUser != null, "Client 1 cannot find client 2 user in channel.");
+
+            channelUser.Kick();
+            Assert.IsTrue(WaitForClientEvent(client2ChannelUserKickedEvent, 10000),
+                "Client 1 could not kick local user from channel.");
+            Assert.IsFalse(ircClient2.Channels.Any(c => c.Name == channel.Name),
+                "Client 2 collection of channels still contains channel from which local user was kicked.");
+            stateManager.UnsetStates(IrcClientTestState.Client2InChannel);
+        }
+
+        [TestMethod()]
+        public void ChannelInviteUserTest()
+        {
+            stateManager.HasStates(IrcClientTestState.Client1InChannel);
+            stateManager.HasNotStates(IrcClientTestState.Client2InChannel);
+            var channel = ircClient1.Channels.Single(c => c.Name == testChannelName);
+            var invitedUser = ircClient1.Users.Single(u => u.NickName == ircClient2.LocalUser.NickName);
+            Assert.IsTrue(invitedUser != null, "Client 1 cannot find client 2 user to invite.");
+
+            channel.Invite(invitedUser);
+            Assert.IsTrue(WaitForClientEvent(client1ChannelUserInvitedEvent, 5000),
+                "Client 1 could not invite client 2 user to channel.");
+            Assert.IsTrue(WaitForClientEvent(client2LocalUserInviteReceivedEvent, 5000),
+                "Client 2 did not receive invite to join channel.");
         }
 
         [TestMethod()]
@@ -963,22 +1024,6 @@ namespace IrcDotNet.Tests
                 "Client 1 is no longer connected to the server after attempting to flood the test channel.");
             Assert.IsTrue(ircClient1.Channels.Any(c => c.Name == testChannelName),
                 "Client 1 is no longer a member of the test channel after trying to flood it.");
-        }
-
-        [TestMethod()]
-        public void ChannelLocalUserKickTest()
-        {
-            stateManager.HasStates(IrcClientTestState.Client1InChannel);
-            var channel = ircClient1.Channels.Single(c => c.Name == testChannelName);
-            var channelUser = channel.GetChannelUser(ircClient1.LocalUser);
-            Assert.IsTrue(channel != null, "Cannot find local user in channel.");
-
-            channelUser.Kick();
-            Assert.IsTrue(WaitForClientEvent(client1ChannelUserKickedEvent, 10000),
-                "Client 1 could not kick local user from channel.");
-            Assert.IsFalse(ircClient1.Channels.Contains(channel),
-                "Client 1 collection of channels still contains channel from which local user kicked.");
-            stateManager.UnsetStates(IrcClientTestState.Client1InChannel);
         }
 
         [TestMethod()]

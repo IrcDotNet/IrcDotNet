@@ -1819,6 +1819,7 @@ namespace IrcDotNet
                 if (e.SocketError != SocketError.Success)
                     throw new SocketException((int)e.SocketError);
 
+                // Ensure that socket is still connected.
                 if (this.socket == null || !this.socket.Connected)
                     return;
 

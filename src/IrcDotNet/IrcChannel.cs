@@ -20,11 +20,14 @@ namespace IrcDotNet
 
         private IrcChannelType type;
 
+        // Current topic of channel.
         private string topic;
 
+        // Internal and exposable collections of current modes of channel.
         private HashSet<char> modes;
         private ReadOnlySet<char> modesReadOnly;
 
+        // Internal and exposable collections of users that are currently members of this channel.
         private ObservableCollection<IrcChannelUser> users;
         private IrcChannelUserCollection usersReadOnly;
 
@@ -140,6 +143,11 @@ namespace IrcDotNet
         /// Occurs when a user is kicked from the channel.
         /// </summary>
         public event EventHandler<IrcChannelUserEventArgs> UserKicked;
+
+        /// <summary>
+        /// Occurs when a user is invited to join the channel.
+        /// </summary>
+        public event EventHandler<IrcUserEventArgs> UserInvited;
 
         /// <summary>
         /// Occurs when the channel has received a message, before the <see cref="MessageReceived"/> event.
@@ -312,6 +320,8 @@ namespace IrcDotNet
                 Debug.Fail("User already in channel.");
                 return;
             }
+
+            channelUser.Channel = this;
             this.users.Add(channelUser);
         }
 
@@ -335,6 +345,8 @@ namespace IrcDotNet
                 Debug.Fail("User already in channel.");
                 return;
             }
+
+            channelUser.Channel = this;
             this.users.Add(channelUser);
             OnUserJoined(new IrcChannelUserEventArgs(channelUser, null));
         }
@@ -359,6 +371,11 @@ namespace IrcDotNet
         {
             OnUserKicked(new IrcChannelUserEventArgs(channelUser, comment));
             this.users.Remove(channelUser);
+        }
+
+        internal void HandleUserInvited(IrcUser user)
+        {
+            OnUserInvited(new IrcUserEventArgs(user));
         }
 
         internal void HandleUserQuit(IrcChannelUser channelUser)
@@ -447,7 +464,18 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
-
+        
+        /// <summary>
+        /// Raises the <see cref="UserInvited"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcUserEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnUserInvited(IrcUserEventArgs e)
+        {
+            var handler = this.UserInvited;
+            if (handler != null)
+                handler(this, e);
+        }
+        
         /// <summary>
         /// Raises the <see cref="MessageReceived"/> event.
         /// </summary>
