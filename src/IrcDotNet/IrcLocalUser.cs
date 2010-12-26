@@ -188,7 +188,7 @@ namespace IrcDotNet
             if (text == null)
                 throw new ArgumentNullException("text");
 
-            this.Client.SendPrivateMessage(targets, text.ChangeEncoding(Encoding.Default, encoding));
+            this.Client.SendPrivateMessage(targets, text.ChangeEncoding(this.Client.TextEncoding, encoding));
         }
 
         /// <inheritdoc cref="SendNotice(IEnumerable{IIrcMessageTarget}, string)"/>
@@ -246,7 +246,7 @@ namespace IrcDotNet
             if (text == null)
                 throw new ArgumentNullException("text");
 
-            this.Client.SendNotice(targets, text.ChangeEncoding(Encoding.Default, encoding));
+            this.Client.SendNotice(targets, text.ChangeEncoding(this.Client.TextEncoding, encoding));
         }
 
         /// <summary>
@@ -355,28 +355,28 @@ namespace IrcDotNet
 
         internal void HandleMessageSent(IList<IIrcMessageTarget> targets, string text)
         {
-            OnMessageSent(new IrcMessageEventArgs(this, targets, text));
+            OnMessageSent(new IrcMessageEventArgs(this, targets, text, this.Client.TextEncoding));
         }
 
         internal void HandleNoticeSent(IList<IIrcMessageTarget> targets, string text)
         {
-            OnNoticeSent(new IrcMessageEventArgs(this, targets, text));
+            OnNoticeSent(new IrcMessageEventArgs(this, targets, text, this.Client.TextEncoding));
         }
 
         internal void HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text);
+            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text, this.Client.TextEncoding);
             OnPreviewMessageReceived(previewEventArgs);
             if (!previewEventArgs.Handled)
-                OnMessageReceived(new IrcMessageEventArgs(source, targets, text));
+                OnMessageReceived(new IrcMessageEventArgs(source, targets, text, this.Client.TextEncoding));
         }
 
         internal void HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text);
+            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text, this.Client.TextEncoding);
             OnPreviewNoticeReceived(previewEventArgs);
             if (!previewEventArgs.Handled)
-                OnNoticeReceived(new IrcMessageEventArgs(source, targets, text));
+                OnNoticeReceived(new IrcMessageEventArgs(source, targets, text, this.Client.TextEncoding));
         }
 
         /// <summary>
