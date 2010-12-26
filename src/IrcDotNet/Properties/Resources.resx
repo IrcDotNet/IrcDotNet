@@ -207,4 +207,7 @@
   <data name="ErrorMessageInvalidServiceRegistrationInfo" xml:space="preserve">
     <value>The registration info for a service must have a valid nick name and description.</value>
   </data>
+  <data name="ErrorMessageNoValidAddress" xml:space="preserve">
+    <value>The host name '{0}' does not resolve to a valid IP address.</value>
+  </data>
 </root>

@@ -214,7 +214,8 @@ namespace IrcDotNet
             {
                 Debug.Assert(curTarget != null);
                 var messageHandler = (curTarget as IIrcMessageReceiveHandler) ?? this.localUser;
-                messageHandler.HandleNoticeReceived(message.Source, targets, text);
+                if (messageHandler != null)
+                    messageHandler.HandleNoticeReceived(message.Source, targets, text);
             }
         }
 
@@ -736,7 +737,7 @@ namespace IrcDotNet
             var visibleUsersCount = int.Parse(message.Parameters[2]);
             Debug.Assert(message.Parameters[3] != null);
             var topic = message.Parameters[3];
-            
+
             // Add information about channel to list.
             this.listedChannels.Add(new IrcChannelInfo(channelName, visibleUsersCount, topic));
         }
