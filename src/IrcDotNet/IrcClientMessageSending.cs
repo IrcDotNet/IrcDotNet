@@ -183,7 +183,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends a request to invite the specifier user to the specified channel.
+        /// Sends a request to invite the specified user to the specified channel.
         /// </summary>
         /// <param name="channel">The name of the channel to which to invite the user.</param>
         /// <param name="nickName">The nick name of the user to invite.</param>

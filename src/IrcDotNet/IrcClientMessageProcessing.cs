@@ -171,6 +171,23 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        /// Process INVITE messages from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("invite")]
+        protected void ProcessMessageInvite(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] != null);
+            var user = GetUserFromNickName(message.Parameters[0]);
+            Debug.Assert(message.Parameters[1] != null);
+            var channel = GetChannelFromName(message.Parameters[1]);
+
+            Debug.Assert(message.Source is IrcUser);
+            if (message.Source is IrcUser)
+                user.HandleInviteReceived((IrcUser)message.Source, channel);
+        }
+
+        /// <summary>
         /// Process PRIVMSG messages from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
@@ -782,6 +799,23 @@ namespace IrcDotNet
             var channel = GetChannelFromName(message.Parameters[1]);
             Debug.Assert(message.Parameters[2] != null);
             channel.Topic = message.Parameters[2];
+        }
+
+        /// <summary>
+        /// Process RPL_INVITING responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("341")]
+        protected void ProcessMessageReplyInviting(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var invitedUser = GetUserFromNickName(message.Parameters[1]);
+            Debug.Assert(message.Parameters[2] != null);
+            var channel = GetChannelFromName(message.Parameters[2]);
+
+            channel.HandleUserInvited(invitedUser);
         }
 
         /// <summary>

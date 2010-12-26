@@ -40,7 +40,7 @@ namespace IrcDotNet.Tests
                 "Current test is not in one or more required states for execution." + Environment.NewLine +
                 "Required states: {0}" + Environment.NewLine +
                 "Current states: {1}",
-                string.Join(",", states), string.Join(", ", this.currentStates)));
+                string.Join(", ", states), string.Join(", ", this.currentStates)));
         }
 
         public void HasNotStates(params TState[] states)

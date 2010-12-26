@@ -71,7 +71,6 @@
     <Compile Include="IrcUser.cs" />
     <Compile Include="IrcUtilities.cs" />
     <Compile Include="IrcEventArgs.cs" />
-    <Compile Include="SafeLineReader.cs" />
     <Compile Include="MessageProcessorAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -81,6 +80,7 @@
     </Compile>
     <Compile Include="ReflectionUtilities.cs" />
     <Compile Include="CircularBufferStream.cs" />
+    <Compile Include="SafeLineReader.cs" />
     <Compile Include="TextUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
