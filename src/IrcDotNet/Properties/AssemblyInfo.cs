@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("IRC.NET")]
-[assembly: AssemblyDescription("Library for communicating via Internet Relay Chat (IRC) protocol, using .NET Framework.")]
+[assembly: AssemblyDescription("Library for communicating via Internet Relay Chat (IRC) protocol and its extensions.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("IRC.NET")]
-[assembly: AssemblyCopyright("Copyright © Alex Regueiro 2010")]
+[assembly: AssemblyCopyright("Copyright © Alex Regueiro 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

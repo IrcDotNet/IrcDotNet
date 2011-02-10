@@ -14,7 +14,7 @@ library.
    A user interface and project management system for Sandcastle documentation.
    Download from <http://shfb.codeplex.com/releases>.
 
-Once these tools are installed, open the appropiate `.shfbproj` file in the
+Once these tools are installed, open the appropiate ``.shfbproj`` file in the
 Documentation directory and run build. This action generates the user-readable
 documentation for the library (Release build by default).
 

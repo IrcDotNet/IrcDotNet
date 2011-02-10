@@ -5,16 +5,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrcDotNet", "IrcDotNet\IrcD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{4C04B011-7998-4549-A3B5-E57AAF5A2966}"
 	ProjectSection(SolutionItems) = preProject
-		AUTHORS.txt = AUTHORS.txt
-		LICENSE.txt = LICENSE.txt
-		README.txt = README.txt
+		..\AUTHORS.txt = ..\AUTHORS.txt
+		..\LICENSE.txt = ..\LICENSE.txt
+		..\README.txt = ..\README.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrcDotNet.Tests", "IrcDotNet.Tests\IrcDotNet.Tests.csproj", "{0F93F768-3B81-499C-AF1B-7977254FA9ED}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3E6A3748-68FD-42DD-A12E-9C275C08EF44}"
 	ProjectSection(SolutionItems) = preProject
-		IRC.NET.vsmdi = IRC.NET.vsmdi
+		IrcDotNet.vsmdi = IrcDotNet.vsmdi
 		Local.testsettings = Local.testsettings
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrcDotNet.Common", "IrcDotN
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = IRC.NET.vsmdi
+		CategoryFile = IrcDotNet.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

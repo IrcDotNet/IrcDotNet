@@ -30,7 +30,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Release\IrcDotNet.Common.xml</DocumentationFile>
-    <NoWarn>1573, 1591</NoWarn>
+    <NoWarn>1573</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\IrcDotNet.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -46,6 +52,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Collections\ReadOnlySet.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\IrcDotNet.snk">
+      <Link>IrcDotNet.snk</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

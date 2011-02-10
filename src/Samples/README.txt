@@ -1,7 +1,7 @@
 Overview
 ========
 
-These sample projects are intended to be used to familiarise oneself with the
+These sample projects are intended to be used to familiarize oneself with the
 IRC.NET library and its API. The code that they contain should illustrate the
 standard methods of accomplishing a variety of common tasks involving the
 library.
