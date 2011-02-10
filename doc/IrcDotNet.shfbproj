@@ -17,10 +17,10 @@
     <OutputPath>.\output\</OutputPath>
     <HtmlHelpName>IRC.NET</HtmlHelpName>
     <Language>en-US</Language>
-    <CopyrightText>Copyright &amp;#169%3b Alex Regueiro 2010</CopyrightText>
+    <CopyrightText>Copyright &amp;#169%3b Alex Regueiro 2011</CopyrightText>
     <HelpTitle>IRC.NET Documentation</HelpTitle>
     <DocumentationSources>
-      <DocumentationSource sourceFile="..\src\IRC.NET.sln" />
+      <DocumentationSource sourceFile="..\src\IrcDotNet.sln" />
     </DocumentationSources>
     <HelpFileFormat>HtmlHelp1, MSHelpViewer</HelpFileFormat>
     <FrameworkVersion>4.0.30319</FrameworkVersion>
@@ -63,26 +63,22 @@
           </helpOutput>
         </component>
       </ComponentConfig>
-      <ComponentConfig id="IntelliSense Component" enabled="True">
-        <component id="IntelliSense Component" type="SandcastleBuilder.Components.IntelliSenseComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
-          <!-- Output options (optional)
+<ComponentConfig id="IntelliSense Component" enabled="True"><component id="IntelliSense Component" type="SandcastleBuilder.Components.IntelliSenseComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll"><!-- Output options (optional)
                  Attributes:
                     Include Namespaces (false by default)
                     Namespaces filename ("Namespaces" if not specified or empty)
-                    Directory (current folder if not specified or empty) -->
-          <output includeNamespaces="false" namespacesFile="Namespaces" folder="{@OutputFolder}" />
-        </component>
-      </ComponentConfig>
-      <ComponentConfig id="Cached Framework Comments Index Data" enabled="True">
-        <component id="Cached Framework Comments Index Data" type="SandcastleBuilder.Components.CachedCopyFromIndexComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
-          <index name="comments" value="/doc/members/member" key="@name" cache="100">
+                    Directory (current folder if not specified or empty) --><output includeNamespaces="true" namespacesFile="Namespaces" folder="{@OutputFolder}" /></component></ComponentConfig>
+<ComponentConfig id="Cached Framework Comments Index Data" enabled="True"><component id="Cached Framework Comments Index Data" type="SandcastleBuilder.Components.CachedCopyFromIndexComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll"><index name="comments" value="/doc/members/member" key="@name" cache="100">
 {@CachedFrameworkCommentList}
 {@CommentFileList}
-            </index>
-          <copy name="comments" source="*" target="/document/comments" />
-        </component>
-      </ComponentConfig>
-    </ComponentConfigurations>
+            </index><copy name="comments" source="*" target="/document/comments" /></component></ComponentConfig>
+<ComponentConfig id="Cached Reflection Index Data" enabled="False"><component id="Cached Reflection Index Data" type="SandcastleBuilder.Components.CachedCopyFromIndexComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
+<index name="reflection" value="/reflection/apis/api" key="@id" cache="10">
+  <cache base="{@SandcastlePath}Data\Reflection" recurse="true" files="*.xml" cacheFile="{@LocalDataFolder}Cache\Reflection.cache" />
+  <data files="reflection.xml" />
+</index>
+<copy name="reflection" source="*" target="/document/reference" />
+</component></ComponentConfig></ComponentConfigurations>
     <RootNamespaceContainer>True</RootNamespaceContainer>
     <RootNamespaceTitle>API Documentation</RootNamespaceTitle>
   </PropertyGroup>
@@ -113,7 +109,7 @@
     <None Include="Content\License.aml" />
   </ItemGroup>
   <ItemGroup>
-    <ContentLayout Include="IRC.NET.content" />
+    <ContentLayout Include="IrcDotNet.content" />
   </ItemGroup>
   <!-- Import the SHFB build targets -->
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />

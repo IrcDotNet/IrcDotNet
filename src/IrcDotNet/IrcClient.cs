@@ -1374,7 +1374,7 @@ namespace IrcDotNet
 
         private void InitializeMessageProcessors()
         {
-            this.GetMethodAttributes<MessageProcessorAttribute, MessageProcessor>().ForEach(item =>
+            this.GetAttributedMethods<MessageProcessorAttribute, MessageProcessor>().ForEach(item =>
                 {
                     var attribute = item.Item1;
                     var methodDelegate = item.Item2;
@@ -1791,6 +1791,7 @@ namespace IrcDotNet
                 {
                     case SocketError.Interrupted:
                     case SocketError.NotConnected:
+                    case SocketError.OperationAborted:
                         return;
                 }
 
@@ -1904,6 +1905,7 @@ namespace IrcDotNet
                 {
                     case SocketError.Interrupted:
                     case SocketError.NotConnected:
+                    case SocketError.OperationAborted:
                         return;
                 }
 
@@ -2096,6 +2098,9 @@ namespace IrcDotNet
         private void HandleClientDisconnected()
         {
             Debug.WriteLine("Disconnected from server.");
+
+            if (this.isDisposed)
+                return;
 
             // Stop sending messages immediately.
             this.sendTimer.Change(Timeout.Infinite, Timeout.Infinite);

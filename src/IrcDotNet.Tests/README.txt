@@ -1,5 +1,5 @@
-﻿Instructions for Running Tests
-==============================
+﻿Running Tests
+=============
 
 **Important**
 
@@ -10,7 +10,7 @@ pre-defined conditions (expected states) and timeouts.
 
 **Note**
 
-When running in debug mode, tests do not ever time out.
+When running in debug mode, tests never time out.
 
 **Note**
 

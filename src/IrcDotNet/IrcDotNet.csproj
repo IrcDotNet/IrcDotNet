@@ -30,7 +30,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Release\IrcDotNet.xml</DocumentationFile>
-    <NoWarn>1573, 1591</NoWarn>
+    <NoWarn>1573</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\IrcDotNet.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -84,6 +90,9 @@
     <Compile Include="TextUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\IrcDotNet.snk">
+      <Link>IrcDotNet.snk</Link>
+    </None>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup />
