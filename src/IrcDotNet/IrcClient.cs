@@ -106,8 +106,11 @@ namespace IrcDotNet
         private ObservableCollection<IrcUser> users;
         private IrcUserCollection usersReadOnly;
 
-        // List of information about channels returned by server in response to last LIST message.
+        // List of information about channels, returned by server in response to last LIST message.
         private List<IrcChannelInfo> listedChannels;
+
+        // List of servers to which client server links, return by server in response to last LINKS message.
+        private List<IrcServerInfo> listedServerLinks;
 
         // Dictionary of message processor routines, keyed by their command names.
         private Dictionary<string, MessageProcessor> messageProcessors;
@@ -190,10 +193,10 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets the Welcome message sent by the server.
+        /// Gets the 'Welcome' message sent by the server.
         /// This value is set after successful registration of the connection.
         /// </summary>
-        /// <value>The server Welcome message.</value>
+        /// <value>The 'Welcome' message received from the server..</value>
         public string WelcomeMessage
         {
             get;
@@ -201,10 +204,10 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets the Your Host message sent by the server.
+        /// Gets the 'Your Host' message sent by the server.
         /// This value is set after successful registration of the connection.
         /// </summary>
-        /// <value>The server Your Host message.</value>
+        /// <value>The 'Your Host' message received from the server.</value>
         public string YourHostMessage
         {
             get;
@@ -212,10 +215,10 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets the Created message sent by the server.
+        /// Gets the 'Created' message sent by the server.
         /// This value is set after successful registration of the connection.
         /// </summary>
-        /// <value>The server Created message.</value>
+        /// <value>The 'Created' message received from the server.</value>
         public string ServerCreatedMessage
         {
             get;
@@ -226,7 +229,7 @@ namespace IrcDotNet
         /// Gets the host name of the server.
         /// This value is set after successful registration of the connection.
         /// </summary>
-        /// <value>The server host name.</value>
+        /// <value>The host name given received from the server.</value>
         public string ServerName
         {
             get;
@@ -237,7 +240,7 @@ namespace IrcDotNet
         /// Gets the version of the server.
         /// This value is set after successful registration of the connection.
         /// </summary>
-        /// <value>The server version.</value>
+        /// <value>The version given received from the server.</value>
         public string ServerVersion
         {
             get;
@@ -534,6 +537,11 @@ namespace IrcDotNet
         public event EventHandler<IrcServerTimeEventArgs> ServerTimeReceived;
 
         /// <summary>
+        /// Occurs when a list of server links has been received from the server.
+        /// </summary>
+        public event EventHandler<IrcServerLinksListReceivedEventArgs> ServerLinksListReceived;
+
+        /// <summary>
         /// Occurs when a reply to a Who query has been received from the server.
         /// </summary>
         public event EventHandler<IrcNameEventArgs> WhoReplyReceived;
@@ -649,7 +657,10 @@ namespace IrcDotNet
         /// </list></param>
         /// <param name="targetServer">The name of the server whose statistics to request.</param>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
-        public void GetServerInfo(string query = null, string targetServer = null)
+        /// <remarks>
+        /// Support for the processing of responses to this request is not yet implemented.
+        /// </remarks>
+        public void GetServerStats(string query = null, string targetServer = null)
         {
             CheckDisposed();
 
@@ -1370,6 +1381,7 @@ namespace IrcDotNet
             this.users = new ObservableCollection<IrcUser>();
             this.usersReadOnly = new IrcUserCollection(this, this.users);
             this.listedChannels = new List<IrcChannelInfo>();
+            this.listedServerLinks = new List<IrcServerInfo>();
         }
 
         private void InitializeMessageProcessors()
@@ -2334,6 +2346,18 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="ServerLinksListReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcServerLinksListReceivedEventArgs"/> instance containing the event data.
+        /// </param>
+        protected virtual void OnServerLinksListReceived(IrcServerLinksListReceivedEventArgs e)
+        {
+            var handler = this.ServerLinksListReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+        
         /// <summary>
         /// Raises the <see cref="WhoReplyReceived"/> event.
         /// </summary>

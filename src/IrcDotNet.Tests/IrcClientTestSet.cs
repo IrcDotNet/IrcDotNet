@@ -12,7 +12,7 @@ namespace IrcDotNet.Tests
     using Common.Collections;
     using Ctcp;
 
-    // Set of all tests for IRC client.
+    // Set of all tests for IRC (and CTCP) client.
     [TestClass()]
     public class IrcClientTestSet
     {
@@ -50,6 +50,7 @@ namespace IrcDotNet.Tests
         private static AutoResetEvent client1NetworkInfoReceivedEvent;
         private static AutoResetEvent client1ServerVersionInfoReceivedEvent;
         private static AutoResetEvent client1ServerTimeReceivedEvent;
+        private static AutoResetEvent client1ServerLinksListReceivedEvent;
         private static AutoResetEvent client1LocalUserNickNameChangedEvent;
         private static AutoResetEvent client1LocalUserModeChangedEvent;
         private static AutoResetEvent client1LocalUserIsAwayChangedEvent;
@@ -133,6 +134,7 @@ namespace IrcDotNet.Tests
             ircClient1.NetworkInformationReceived += ircClient1_NetworkInformationReceived;
             ircClient1.ServerVersionInfoReceived += ircClient1_ServerVersionInfoReceived;
             ircClient1.ServerTimeReceived += ircClient1_ServerTimeReceived;
+            ircClient1.ServerLinksListReceived += ircClient1_ServerLinksListReceived;
             ircClient1.WhoReplyReceived += ircClient1_WhoReplyReceived;
             ircClient1.WhoIsReplyReceived += ircClient1_WhoIsReplyReceived;
             ircClient1.WhoWasReplyReceived += ircClient1_WhoWasReplyReceived;
@@ -291,6 +293,12 @@ namespace IrcDotNet.Tests
         {
             if (client1ServerTimeReceivedEvent != null)
                 client1ServerTimeReceivedEvent.Set();
+        }
+
+        static void ircClient1_ServerLinksListReceived(object sender, IrcServerLinksListReceivedEventArgs e)
+        {
+            if (client1ServerLinksListReceivedEvent != null)
+                client1ServerLinksListReceivedEvent.Set();
         }
 
         private static void ircClient1_WhoReplyReceived(object sender, EventArgs e)
@@ -681,6 +689,8 @@ namespace IrcDotNet.Tests
         {
         }
 
+        #region Test Methods
+
         [TestMethod()]
         public void ConnectTest()
         {
@@ -771,6 +781,15 @@ namespace IrcDotNet.Tests
             ircClient1.GetServerTime();
             Assert.IsTrue(WaitForClientEvent(client1ServerTimeReceivedEvent, 10000),
                 "Client 1 did not receive date/time info from server.");
+        }
+
+        [TestMethod()]
+        public void ServerLinksTest()
+        {
+            stateManager.HasStates(IrcClientTestState.Client1Registered);
+            ircClient1.GetServerLinks();
+            Assert.IsTrue(WaitForClientEvent(client1ServerLinksListReceivedEvent, 10000),
+                "Client 1 did not receive list of server links from server.");
         }
 
         [TestMethod()]
@@ -1147,6 +1166,8 @@ namespace IrcDotNet.Tests
             Assert.IsTrue(WaitForClientEvent(ctcpClient1ActionReceivedEvent, 10000));
             Assert.AreEqual(testMessage1, client2ReceivedActionText);
         }
+
+        #endregion
 
         private bool WaitForClientEvent(WaitHandle eventHandle, int millisecondsTimeout = Timeout.Infinite)
         {

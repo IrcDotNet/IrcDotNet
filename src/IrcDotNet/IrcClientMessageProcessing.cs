@@ -14,7 +14,7 @@ namespace IrcDotNet
     partial class IrcClient
     {
         /// <summary>
-        /// Process NICK messages from the server.
+        /// Process NICK messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("nick")]
@@ -31,7 +31,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process QUIT messages from the server.
+        /// Process QUIT messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("quit")]
@@ -49,7 +49,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process JOIN messages from the server.
+        /// Process JOIN messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("join")]
@@ -70,7 +70,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process PART messages from the server.
+        /// Process PART messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("part")]
@@ -92,7 +92,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process MODE messages from the server.
+        /// Process MODE messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("mode")]
@@ -122,7 +122,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process TOPIC messages from the server.
+        /// Process TOPIC messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("topic")]
@@ -135,7 +135,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process KICK messages from the server.
+        /// Process KICK messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("kick")]
@@ -171,7 +171,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process INVITE messages from the server.
+        /// Process INVITE messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("invite")]
@@ -188,7 +188,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process PRIVMSG messages from the server.
+        /// Process PRIVMSG messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("privmsg")]
@@ -212,7 +212,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process NOTICE messages from the server.
+        /// Process NOTICE messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("notice")]
@@ -237,7 +237,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process PING messages from the server.
+        /// Process PING messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("ping")]
@@ -251,7 +251,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process PONG messages from the server.
+        /// Process PONG messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("pong")]
@@ -263,7 +263,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process ERROR messages from the server.
+        /// Process ERROR messages received from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("error")]
@@ -719,7 +719,7 @@ namespace IrcDotNet
             }
 
             Debug.Assert(message.Parameters[7] != null);
-            var lastParamParts = message.Parameters[7].SplitAtIndex(message.Parameters[7].IndexOf(' '));
+            var lastParamParts = message.Parameters[7].SplitIntoPair(" ");
             user.HopCount = int.Parse(lastParamParts.Item1);
             if (lastParamParts.Item2 != null)
                 user.RealName = lastParamParts.Item2;
@@ -755,7 +755,7 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[3] != null);
             var topic = message.Parameters[3];
 
-            // Add information about channel to list.
+            // Add channel information to temporary list.
             this.listedChannels.Add(new IrcChannelInfo(channelName, visibleUsersCount, topic));
         }
 
@@ -886,6 +886,46 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        /// Process RPL_LINKS responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("364")]
+        protected void ProcessMessageReplyLinks(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var hostName = message.Parameters[1];
+            Debug.Assert(message.Parameters[2] != null);
+            var clientServerHostName = message.Parameters[2];
+            Debug.Assert(this.ServerName == null || clientServerHostName == this.ServerName);
+            Debug.Assert(message.Parameters[3] != null);
+            var infoParts = message.Parameters[3].SplitIntoPair(" ");
+            Debug.Assert(infoParts.Item2 != null);
+            var hopCount = int.Parse(infoParts.Item1);
+            var info = infoParts.Item2;
+
+            // Add server information to temporary list.
+            this.listedServerLinks.Add(new IrcServerInfo(hostName, hopCount, info));
+        }
+
+        /// <summary>
+        /// Process RPL_ENDOFLINKS responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("365")]
+        protected void ProcessMessageReplyEndOfLinks(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var mask = message.Parameters[1];
+
+            OnServerLinksListReceived(new IrcServerLinksListReceivedEventArgs(this.listedServerLinks));
+            this.listedServerLinks = new List<IrcServerInfo>();
+        }
+
+        /// <summary>
         /// Process RPL_MOTD responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
@@ -923,6 +963,7 @@ namespace IrcDotNet
 
             Debug.Assert(message.Parameters[1] != null);
             this.motdBuilder.AppendLine(message.Parameters[1]);
+
             OnMotdReceived(new EventArgs());
         }
 

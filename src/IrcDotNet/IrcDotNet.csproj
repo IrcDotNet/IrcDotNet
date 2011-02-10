@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CollectionUtilities.cs" />
+    <Compile Include="IrcServerInfo.cs" />
     <Compile Include="Ctcp\CtcpClient.cs" />
     <Compile Include="Ctcp\CtcpClientMessageProcessing.cs" />
     <Compile Include="Ctcp\CtcpClientMessageSending.cs" />
