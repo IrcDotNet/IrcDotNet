@@ -10,7 +10,7 @@ namespace IrcDotNet.Ctcp
     partial class CtcpClient
     {
         /// <summary>
-        /// Process ACTION messages from a user.
+        /// Process ACTION messages received from a user.
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("action")]
@@ -27,7 +27,7 @@ namespace IrcDotNet.Ctcp
         }
 
         /// <summary>
-        /// Process TIME messages from a user.
+        /// Process TIME messages received from a user.
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("time")]
@@ -42,13 +42,13 @@ namespace IrcDotNet.Ctcp
             else
             {
                 var localDateTime = DateTimeOffset.Now.ToString("o");
-                
+
                 SendMessageTime(new[] { message.Source }, localDateTime, true);
             }
         }
 
         /// <summary>
-        /// Process VERSION messages from a user.
+        /// Process VERSION messages received from a user.
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("version")]
@@ -70,7 +70,32 @@ namespace IrcDotNet.Ctcp
         }
 
         /// <summary>
-        /// Process PING messages from a user.
+        /// Process ERRMSG messages received from a user.
+        /// </summary>
+        /// <param name="message">The message received from the user.</param>
+        [MessageProcessor("errmsg")]
+        protected void ProcessMessageErrMsg(CtcpMessage message)
+        {
+            Debug.Assert(message.Data != null);
+
+            if (message.IsResponse)
+            {
+                // Get failed query and error message from data.
+                var parts = message.Data.SplitIntoPair(" :");
+                var failedQuery = parts.Item1;
+                var errorMessage = parts.Item2;
+
+                OnErrorMessageResponseReceived(new CtcpErrorMessageReceivedEventArgs(message.Source,
+                    failedQuery, errorMessage));
+            }
+            else
+            {
+                SendMessageErrMsg(new[] { message.Source }, message.Data + " :" + messageNoError, true);
+            }
+        }
+
+        /// <summary>
+        /// Process PING messages received from a user.
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("ping")]

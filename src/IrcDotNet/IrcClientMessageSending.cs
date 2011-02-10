@@ -277,7 +277,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends a request to query stastics for the server.
+        /// Sends a request to query statistics for the server.
         /// </summary>
         /// <param name="query">The query to send the server.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>

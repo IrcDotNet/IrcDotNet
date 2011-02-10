@@ -18,7 +18,7 @@ namespace IrcDotNet
         /// <summary>
         /// The number of visible users in the channel.
         /// </summary>
-        public int VisibleUsersCount;
+        public int? VisibleUsersCount;
 
         /// <summary>
         /// The current topic of the channel.
@@ -26,12 +26,12 @@ namespace IrcDotNet
         public string Topic;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IrcChannelInfo"/> structure.
+        /// Initializes a new instance of the <see cref="IrcChannelInfo"/> structure with the specified properties.
         /// </summary>
         /// <param name="name">The name of the channel.</param>
         /// <param name="visibleUsersCount">The number of visible users in the channel.</param>
         /// <param name="topic">The current topic of the channel.</param>
-        public IrcChannelInfo(string name, int visibleUsersCount, string topic)
+        public IrcChannelInfo(string name, int? visibleUsersCount, string topic)
         {
             this.Name = name;
             this.VisibleUsersCount = visibleUsersCount;

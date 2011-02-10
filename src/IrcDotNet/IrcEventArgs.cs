@@ -19,18 +19,18 @@ namespace IrcDotNet
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcChannelListReceivedEventArgs"/> class.
         /// </summary>
-        /// <param name="channels">A list of information about the channels returned by the server.</param>
+        /// <param name="channels">A list of information about the channels that was returned by the server.</param>
         public IrcChannelListReceivedEventArgs(IList<IrcChannelInfo> channels)
             : base()
         {
             if (channels == null)
                 throw new ArgumentNullException("channels");
 
-            this.Channels = channels;
+            this.Channels = new ReadOnlyCollection<IrcChannelInfo>(channels);
         }
 
         /// <summary>
-        /// Gets the list of information about the channels returned by the server.
+        /// Gets the list of information about the channels that was returned by the server.
         /// </summary>
         /// <value>The list of channels.</value>
         public IList<IrcChannelInfo> Channels
@@ -148,6 +148,35 @@ namespace IrcDotNet
         /// </summary>
         /// <value>The local date/time for the server.</value>
         public string DateTime
+        {
+            get;
+            private set;
+        }
+    }
+
+    /// <summary>
+    /// Provides data for the <see cref="IrcClient.ServerLinksListReceived"/> event.
+    /// </summary>
+    public class IrcServerLinksListReceivedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IrcServerLinksListReceivedEventArgs"/> class.
+        /// </summary>
+        /// <param name="links">A list of information about the server links that was returned by the server.</param>
+        public IrcServerLinksListReceivedEventArgs(IList<IrcServerInfo> links)
+            : base()
+        {
+            if (links == null)
+                throw new ArgumentNullException("links");
+
+            this.Links = new ReadOnlyCollection<IrcServerInfo>(links);
+        }
+
+        /// <summary>
+        /// Gets the list of information about the server links that was returned by the server
+        /// </summary>
+        /// <value>The list of server links.</value>
+        public IList<IrcServerInfo> Links
         {
             get;
             private set;
