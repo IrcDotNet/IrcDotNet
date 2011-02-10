@@ -16,6 +16,10 @@ namespace IrcDotNet.Ctcp
     [DebuggerDisplay("{ToString(), nq}")]
     public partial class CtcpClient
     {
+        private const string messageNoError = "no error";
+
+        private const string noErrorTag = "NO_ERROR";
+
         private const char taggedDataDelimeterChar = '\x001';
 
         private const char lowLevelQuotingEscapeChar = '\x10';
@@ -78,21 +82,6 @@ namespace IrcDotNet.Ctcp
         }
 
         /// <summary>
-        /// Occurs when a ping response has been received from a user.
-        /// </summary>
-        public event EventHandler<CtcpPingResponseReceivedEventArgs> PingResponseReceived;
-
-        /// <summary>
-        /// Occurs when a response to a version request has been received from a user.
-        /// </summary>
-        public event EventHandler<CtcpVersionResponseReceivedEventArgs> VersionResponseReceived;
-
-        /// <summary>
-        /// Occurs when a response to a date/time request has been received from a user.
-        /// </summary>
-        public event EventHandler<CtcpTimeResponseReceivedEventArgs> TimeResponseReceived;
-
-        /// <summary>
         /// Occurs when an action has been sent to a user.
         /// </summary>
         public event EventHandler<CtcpMessageEventArgs> ActionSent;
@@ -101,6 +90,26 @@ namespace IrcDotNet.Ctcp
         /// Occurs when an action has been received from a user.
         /// </summary>
         public event EventHandler<CtcpMessageEventArgs> ActionReceived;
+
+        /// <summary>
+        /// Occurs when a response to a date/time request has been received from a user.
+        /// </summary>
+        public event EventHandler<CtcpTimeResponseReceivedEventArgs> TimeResponseReceived;
+
+        /// <summary>
+        /// Occurs when a response to a version request has been received from a user.
+        /// </summary>
+        public event EventHandler<CtcpVersionResponseReceivedEventArgs> VersionResponseReceived;
+
+        /// <summary>
+        /// Occurs when an error message has been received from a user. 
+        /// </summary>
+        public event EventHandler<CtcpErrorMessageReceivedEventArgs> ErrorMessageReceived;
+
+        /// <summary>
+        /// Occurs when a ping response has been received from a user.
+        /// </summary>
+        public event EventHandler<CtcpPingResponseReceivedEventArgs> PingResponseReceived;
 
         /// <summary>
         /// Occurs when a raw message has been sent to a user.
@@ -117,42 +126,24 @@ namespace IrcDotNet.Ctcp
         /// </summary>
         public event EventHandler<IrcErrorEventArgs> Error;
 
-        /// <inheritdoc cref="Ping(IList{IIrcMessageTarget})"/>
+        /// <inheritdoc cref="SendAction(IList{IIrcMessageTarget}, string)"/>
         /// <summary>
-        /// Pings the specified user.
+        /// Sends an action message to the specified list of users.
         /// </summary>
         /// <param name="user">The user to which to send the request.</param>
-        public void Ping(IIrcMessageTarget user)
+        public void SendAction(IIrcMessageTarget user, string text)
         {
-            Ping(new[] { user });
+            SendMessageAction(new[] { user }, text);
         }
 
         /// <summary>
-        /// Pings the specified list of users.
+        /// Sends an action message to the specified list of users.
         /// </summary>
         /// <param name="users">A list of users to which to send the request.</param>
-        public void Ping(IList<IIrcMessageTarget> users)
+        /// <param name="text">The text of the message.</param>
+        public void SendAction(IList<IIrcMessageTarget> users, string text)
         {
-            SendMessagePing(users, DateTime.Now.Ticks.ToString(), false);
-        }
-
-        /// <inheritdoc cref="GetVersion(IList{IIrcMessageTarget})"/>
-        /// <summary>
-        /// Gets the client version of the specified user.
-        /// </summary>
-        /// <param name="user">The user to which to send the request.</param>
-        public void GetVersion(IIrcMessageTarget user)
-        {
-            GetVersion(new[] { user });
-        }
-
-        /// <summary>
-        /// Gets the client version of the specified list of users.
-        /// </summary>
-        /// <param name="users">A list of users to which to send the request.</param>
-        public void GetVersion(IList<IIrcMessageTarget> users)
-        {
-            SendMessageVersion(users, null, false);
+            SendMessageAction(users, text);
         }
 
         /// <inheritdoc cref="GetTime(IList{IIrcMessageTarget})"/>
@@ -174,24 +165,61 @@ namespace IrcDotNet.Ctcp
             SendMessageTime(users, null, false);
         }
 
-        /// <inheritdoc cref="SendAction(IList{IIrcMessageTarget}, string)"/>
+        /// <inheritdoc cref="GetVersion(IList{IIrcMessageTarget})"/>
         /// <summary>
-        /// Sends an action message to the specified list of users.
+        /// Gets the client version of the specified user.
         /// </summary>
         /// <param name="user">The user to which to send the request.</param>
-        public void SendAction(IIrcMessageTarget user, string text)
+        public void GetVersion(IIrcMessageTarget user)
         {
-            SendMessageAction(new[] { user }, text);
+            GetVersion(new[] { user });
         }
 
         /// <summary>
-        /// Sends an action message to the specified list of users.
+        /// Gets the client version of the specified list of users.
         /// </summary>
         /// <param name="users">A list of users to which to send the request.</param>
-        /// <param name="text">The text of the message.</param>
-        public void SendAction(IList<IIrcMessageTarget> users, string text)
+        public void GetVersion(IList<IIrcMessageTarget> users)
         {
-            SendMessageAction(users, text);
+            SendMessageVersion(users, null, false);
+        }
+
+        /// <inheritdoc cref="CheckErrorOccurred(IList{IIrcMessageTarget})"/>
+        /// <summary>
+        /// Asks the specified user whether an error occurred.
+        /// </summary>
+        /// <param name="user">The user to which to send the request.</param>
+        public void CheckErrorOccurred(IIrcMessageTarget user)
+        {
+            CheckErrorOccurred(new[] { user });
+        }
+
+        /// <summary>
+        /// Asks the specified list of users whether an error occurred.
+        /// </summary>
+        /// <param name="users">A list of users to which to send the request.</param>
+        public void CheckErrorOccurred(IList<IIrcMessageTarget> users)
+        {
+            SendMessageErrMsg(users, noErrorTag, false);
+        }
+
+        /// <inheritdoc cref="Ping(IList{IIrcMessageTarget})"/>
+        /// <summary>
+        /// Pings the specified user.
+        /// </summary>
+        /// <param name="user">The user to which to send the request.</param>
+        public void Ping(IIrcMessageTarget user)
+        {
+            Ping(new[] { user });
+        }
+
+        /// <summary>
+        /// Pings the specified list of users.
+        /// </summary>
+        /// <param name="users">A list of users to which to send the request.</param>
+        public void Ping(IList<IIrcMessageTarget> users)
+        {
+            SendMessagePing(users, DateTime.Now.Ticks.ToString(), false);
         }
 
         private void ircClient_Connected(object sender, EventArgs e)
@@ -407,6 +435,18 @@ namespace IrcDotNet.Ctcp
         protected virtual void OnVersionResponseReceived(CtcpVersionResponseReceivedEventArgs e)
         {
             var handler = this.VersionResponseReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="ErrorMessageReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="CtcpErrorMessageReceivedEventArgs"/> instance containing the event
+        /// data.</param>
+        protected virtual void OnErrorMessageResponseReceived(CtcpErrorMessageReceivedEventArgs e)
+        {
+            var handler = this.ErrorMessageReceived;
             if (handler != null)
                 handler(this, e);
         }

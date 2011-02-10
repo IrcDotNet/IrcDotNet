@@ -1,6 +1,9 @@
 ﻿Running Tests
 =============
 
+All tests in this project presume the availability of a fully-functional and
+compliant IRC server. The server ``irc.freenode.net`` is used by default.
+
 **Important**
 
 Do not run any individual tests in this project, as most will fail because they

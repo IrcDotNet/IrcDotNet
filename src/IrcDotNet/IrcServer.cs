@@ -6,7 +6,7 @@ using System.Text;
 namespace IrcDotNet
 {
     /// <summary>
-    /// Represents an IRC server.
+    /// Represents an IRC server from the view of a particular client.
     /// </summary>
     public class IrcServer : IIrcMessageSource
     {
