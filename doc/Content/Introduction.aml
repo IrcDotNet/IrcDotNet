@@ -4,10 +4,7 @@
     
     <introduction>
       <para>
-      IRC.NET is a fully-featured IRC (Internet Relay Chat) client library for the .NET Framework 4.0.
-      It aims to provide a complete and accurate implementation of the protocol as described in RFC 2812
-      (Internet Relay Chat: Client Protocol) as well as supporting de-facto modern features of the
-      protocol, such as ISUPPORT commands and CTCP (Client To Client Protocol).
+      IRC.NET is a fully-featured IRC (Internet Relay Chat) client library for the .NET Framework 4.0. It aims to provide a complete and accurate implementation of the protocol as described in RFC 2812 (Internet Relay Chat: Client Protocol) as well as supporting de-facto modern features of the protocol, such as ISUPPORT commands and CTCP (Client To Client Protocol).
       </para>
     </introduction>
     

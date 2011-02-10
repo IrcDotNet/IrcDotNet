@@ -22,6 +22,7 @@ namespace IrcDotNet.Common.Collections
         , ISerializable, IDeserializationCallback
 #endif
     {
+        // Dictionary to expose as read-only.
         private IDictionary<TKey, TValue> dictionary;
 
         /// <summary>
@@ -39,16 +40,30 @@ namespace IrcDotNet.Common.Collections
 
         #region IDictionary<TKey, TValue> Members
 
+        /// <summary>
+        /// Gets a collection containing the keys in the dictionary.
+        /// </summary>
+        /// <value>A collection containing the keys in the dictionary.</value>
         public ICollection<TKey> Keys
         {
             get { return this.dictionary.Keys; }
         }
 
+        /// <summary>
+        /// Gets a collection containing the values in the dictionary.
+        /// </summary>
+        /// <value>A collection containing the values in the dictionary.</value>
         public ICollection<TValue> Values
         {
             get { return this.dictionary.Values; }
         }
 
+        /// <summary>
+        /// Gets or sets the element with the specified key.
+        /// </summary>
+        /// <value>The element with the specified key.</value>
+        /// <exception cref="NotSupportedException">This operation is not supported on a read-only dictionary.
+        /// </exception>
         public TValue this[TKey key]
         {
             get
@@ -61,6 +76,39 @@ namespace IrcDotNet.Common.Collections
             }
         }
 
+        /// <summary>
+        /// Determines whether the dictionary contains the specified key.
+        /// </summary>
+        /// <param name="key">The key to locate in the dictionary.</param>
+        /// <returns><see langword="true"/> if the dictionary contains an element with the specified key;
+        /// <see langword="false"/>, otherwise.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <see langword="null"/>.</exception>
+        public bool ContainsKey(TKey key)
+        {
+            if (key == null)
+                throw new ArgumentNullException("key");
+
+            return this.dictionary.ContainsKey(key);
+        }
+
+        /// <summary>
+        /// Gets the value associated with the specified key.
+        /// </summary>
+        /// <param name="key">The key of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified key, if the
+        /// key is found; otherwise, the default value for the type of the value parameter. This parameter is passed
+        /// uninitialized.</param>
+        /// <returns><see langword="true"/> if the dictionary contains an element with the specified key;
+        /// <see langword="false"/>, otherwise.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <see langword="null"/>.</exception>
+        public bool TryGetValue(TKey key, out TValue value)
+        {
+            if (key == null)
+                throw new ArgumentNullException("key");
+
+            return this.dictionary.TryGetValue(key, out value);
+        }
+
         void IDictionary<TKey, TValue>.Add(TKey key, TValue value)
         {
             throw new NotSupportedException();
@@ -71,26 +119,20 @@ namespace IrcDotNet.Common.Collections
             throw new NotSupportedException();
         }
 
-        public bool ContainsKey(TKey key)
-        {
-            return this.dictionary.ContainsKey(key);
-        }
-
-        public bool TryGetValue(TKey key, out TValue value)
-        {
-            return this.dictionary.TryGetValue(key, out value);
-        }
-
         #endregion
 
         #region ICollection<KeyValuePair<TKey, TValue>> Members
 
+        /// <summary>
+        /// Gets the number of key/value pairs contained in the dictionary.
+        /// </summary>
+        /// <value>The number of key/value pairs contained in the dictionary.</value>
         public int Count
         {
             get { return this.dictionary.Count; }
         }
 
-        public bool IsReadOnly
+        bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly
         {
             get { return true; }
         }
@@ -110,12 +152,12 @@ namespace IrcDotNet.Common.Collections
             throw new NotSupportedException();
         }
 
-        public bool Contains(KeyValuePair<TKey, TValue> item)
+        bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item)
         {
             return this.dictionary.Contains(item);
         }
 
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+        void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
             this.dictionary.CopyTo(array, arrayIndex);
         }
@@ -124,6 +166,10 @@ namespace IrcDotNet.Common.Collections
 
         #region IEnumerable<KeyValuePair<TKey, TValue>> Members
 
+        /// <summary>
+        /// Returns an enumerator that iterates through the dictionary.
+        /// </summary>
+        /// <returns>An enumerator for the dictionary.</returns>
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             return ((IEnumerable<KeyValuePair<TKey, TValue>>)this.dictionary).GetEnumerator();

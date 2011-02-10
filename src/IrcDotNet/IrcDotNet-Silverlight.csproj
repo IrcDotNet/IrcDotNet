@@ -34,6 +34,8 @@
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>
+    </NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -45,6 +47,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Release\Silverlight\IrcDotNet.xml</DocumentationFile>
+    <NoWarn>1573</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\IrcDotNet.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -94,6 +103,9 @@
     <Compile Include="TextUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\IrcDotNet.snk">
+      <Link>IrcDotNet.snk</Link>
+    </None>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>

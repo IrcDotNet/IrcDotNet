@@ -224,7 +224,7 @@ namespace IrcDotNet.Ctcp
 
         private void InitializeMessageProcessors()
         {
-            this.GetMethodAttributes<MessageProcessorAttribute, MessageProcessor>().ForEach(item =>
+            this.GetAttributedMethods<MessageProcessorAttribute, MessageProcessor>().ForEach(item =>
                 {
                     var attribute = item.Item1;
                     var methodDelegate = item.Item2;
