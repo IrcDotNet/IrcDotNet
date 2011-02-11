@@ -90,6 +90,7 @@
     <Compile Include="IrcNetworkInfo.cs" />
     <Compile Include="IrcRegistrationInfo.cs" />
     <Compile Include="IrcServer.cs" />
+    <Compile Include="IrcServerInfo.cs" />
     <Compile Include="IrcStandardFloodPreventer.cs" />
     <Compile Include="IrcTargetMask.cs" />
     <Compile Include="IrcUser.cs" />
