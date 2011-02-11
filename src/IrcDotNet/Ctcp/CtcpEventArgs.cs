@@ -124,7 +124,7 @@ namespace IrcDotNet.Ctcp
         /// Initializes a new instance of the <see cref="CtcpErrorMessageReceivedEventArgs"/> class,
         /// specifying that no error occurred.
         /// </summary>
-        /// <param name="errorMessage">The message indicating that no error occurred.</param>
+        /// <param name="noErrorMessage">The message indicating that no error occurred.</param>
         public CtcpErrorMessageReceivedEventArgs(IrcUser user, string noErrorMessage)
             : base(user)
         {

@@ -186,7 +186,7 @@ namespace IrcDotNet.Ctcp
 
         /// <inheritdoc cref="CheckErrorOccurred(IList{IIrcMessageTarget})"/>
         /// <summary>
-        /// Asks the specified user whether an error occurred.
+        /// Asks the specified user whether an error just occurred.
         /// </summary>
         /// <param name="user">The user to which to send the request.</param>
         public void CheckErrorOccurred(IIrcMessageTarget user)
@@ -195,7 +195,7 @@ namespace IrcDotNet.Ctcp
         }
 
         /// <summary>
-        /// Asks the specified list of users whether an error occurred.
+        /// Asks the specified list of users whether an error just occurred.
         /// </summary>
         /// <param name="users">A list of users to which to send the request.</param>
         public void CheckErrorOccurred(IList<IIrcMessageTarget> users)
