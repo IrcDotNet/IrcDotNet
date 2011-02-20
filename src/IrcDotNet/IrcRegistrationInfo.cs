@@ -8,6 +8,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides information used by an <see cref="IrcClient"/> for registering the connection as a service.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcServiceRegistrationInfo : IrcRegistrationInfo
     {
         /// <summary>
@@ -44,6 +45,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides information used by an <see cref="IrcClient"/> for registering the connection as a user.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcUserRegistrationInfo : IrcRegistrationInfo
     {
         /// <summary>
@@ -92,6 +94,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides information used by an <see cref="IrcClient"/> for registering the connection with the server.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public abstract class IrcRegistrationInfo
     {
         /// <summary>

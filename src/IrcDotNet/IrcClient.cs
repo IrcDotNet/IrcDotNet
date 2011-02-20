@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -23,8 +24,12 @@ namespace IrcDotNet
 
     /// <summary>
     /// Provides methods for communicating with a server using the IRC (Internet Relay Chat) protocol.
-    /// Do not inherit unless the protocol itself is being extended.
+    /// Do not inherit this class unless the protocol itself is being extended.
     /// </summary>
+    /// <remarks>
+    /// All instance methods are thread-safe; all collection objects are not thread-safe.
+    /// </remarks>
+    /// <threadsafety static="true" instance="false"/>
     [DebuggerDisplay("{ToString(), nq}")]
     public partial class IrcClient : IDisposable
     {
@@ -81,11 +86,11 @@ namespace IrcDotNet
         // Stores information about local user.
         private IrcLocalUser localUser;
 
-        // Internal and exposable dictionary of various features supported by server.
+        // Dictionary of protocol features supported by server.
         private Dictionary<string, string> serverSupportedFeatures;
         private ReadOnlyDictionary<string, string> serverSupportedFeaturesReadOnly;
 
-        // Internal and exposable collection of channel modes that apply to users in a channel.
+        // Collection of channel modes that apply to users in a channel.
         private Collection<char> channelUserModes;
         private ReadOnlyCollection<char> channelUserModesReadOnly;
 
@@ -98,17 +103,17 @@ namespace IrcDotNet
         // Information about the IRC network given by the server.
         private IrcNetworkInfo networkInformation;
 
-        // Internal and exposable collection of all currently joined channels.
-        private ObservableCollection<IrcChannel> channels;
+        // Collection of all currently joined channels.
+        private Collection<IrcChannel> channels;
         private IrcChannelCollection channelsReadOnly;
 
-        // Internal and exposable collection of all known users.
-        private ObservableCollection<IrcUser> users;
+        // Collection of all known users.
+        private Collection<IrcUser> users;
         private IrcUserCollection usersReadOnly;
 
         // List of information about channels, returned by server in response to last LIST message.
         private List<IrcChannelInfo> listedChannels;
-
+        
         // List of servers to which client server links, return by server in response to last LINKS message.
         private List<IrcServerInfo> listedServerLinks;
 
@@ -116,7 +121,7 @@ namespace IrcDotNet
         private Dictionary<string, MessageProcessor> messageProcessors;
 
         // Dictionary of message processor routines, keyed by their numeric codes (000 to 999).
-        private Dictionary<int, MessageProcessor> numMessageProcessors;
+        private Dictionary<int, MessageProcessor> numericMessageProcessors;
 
         // Queue of pending messages and their tokens to be sent when ready.
         private Queue<Tuple<string, object>> messageSendQueue;
@@ -134,7 +139,8 @@ namespace IrcDotNet
         private Encoding textEncoding;
         private AutoResetEvent disconnectedEvent;
 
-        private bool isDisposed = false;
+        // Non-zero if object has been disposed or is currently being disposed.
+        private int disposedFlag = 0;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcClient"/> class.
@@ -149,12 +155,11 @@ namespace IrcDotNet
 
             this.messageProcessors = new Dictionary<string, MessageProcessor>(
                 StringComparer.InvariantCultureIgnoreCase);
-            this.numMessageProcessors = new Dictionary<int, MessageProcessor>(1000);
+            this.numericMessageProcessors = new Dictionary<int, MessageProcessor>(1000);
             this.messageSendQueue = new Queue<Tuple<string, object>>();
             this.floodPreventer = null;
-
+            
             InitializeMessageProcessors();
-            ResetState();
         }
 
         /// <summary>
@@ -363,9 +368,9 @@ namespace IrcDotNet
         /// </summary>
         /// <value><see langword="true"/> if the <see cref="IrcClient"/> object has been disposed;
         /// <see langword="false"/>, otherwise.</value>
-        public bool IsDisposed
+        protected bool IsDisposed
         {
-            get { return this.isDisposed; }
+            get { return Interlocked.CompareExchange(ref this.disposedFlag, 0, 0) > 0; }
         }
 
         /// <summary>
@@ -380,49 +385,46 @@ namespace IrcDotNet
         /// <summary>
         /// Releases all resources used by the <see cref="IrcClient"/>.
         /// </summary>
-        /// <param name="disposing"><see langword="true"/> if the user is actively disposing the object;
+        /// <param name="disposing"><see langword="true"/> if the consumer is actively disposing the object;
         /// <see langword="false"/> if the garbage collector is finalizing the object.</param>
         protected void Dispose(bool disposing)
         {
-            if (!this.isDisposed)
-            {
-                if (disposing)
-                {
-                    DisconnectInternal();
+            if (Interlocked.CompareExchange(ref this.disposedFlag, 1, 0) > 0)
+                return;
 
-                    if (this.socket != null)
-                    {
-                        this.socket.Close();
-                        this.socket = null;
-                    }
-                    if (this.receiveStream != null)
-                    {
-                        this.receiveStream.Dispose();
-                        this.receiveStream = null;
-                    }
-                    if (this.dataStream != null)
-                    {
-                        this.dataStream.Dispose();
-                        this.dataStream = null;
-                    }
-                    if (this.dataStreamReader != null)
-                    {
-                        this.dataStreamReader.Dispose();
-                        this.dataStreamReader = null;
-                    }
-                    if (this.sendTimer != null)
-                    {
-                        this.sendTimer.Dispose();
-                        this.sendTimer = null;
-                    }
-                    if (this.disconnectedEvent != null)
-                    {
-                        this.disconnectedEvent.Close();
-                        this.disconnectedEvent = null;
-                    }
+            if (disposing)
+            {
+                if (this.socket != null)
+                {
+                    this.socket.Close();
+                    this.socket = null;
+                }
+                if (this.receiveStream != null)
+                {
+                    this.receiveStream.Dispose();
+                    this.receiveStream = null;
+                }
+                if (this.dataStream != null)
+                {
+                    this.dataStream.Dispose();
+                    this.dataStream = null;
+                }
+                if (this.dataStreamReader != null)
+                {
+                    this.dataStreamReader.Dispose();
+                    this.dataStreamReader = null;
+                }
+                if (this.sendTimer != null)
+                {
+                    this.sendTimer.Dispose();
+                    this.sendTimer = null;
+                }
+                if (this.disconnectedEvent != null)
+                {
+                    this.disconnectedEvent.Close();
+                    this.disconnectedEvent = null;
                 }
             }
-            this.isDisposed = true;
         }
 
         /// <summary>
@@ -445,7 +447,7 @@ namespace IrcDotNet
         public event EventHandler<EventArgs> Disconnected;
 
         /// <summary>
-        /// Occurs when the client encounters an error during execution.
+        /// Occurs when the client encounters an error during execution, while connected.
         /// </summary>
         public event EventHandler<IrcErrorEventArgs> Error;
 
@@ -1253,6 +1255,8 @@ namespace IrcDotNet
             if (channel == null)
             {
                 channel = new IrcChannel(channelName);
+                channel.Client = this;
+
                 this.channels.Add(channel);
                 createdNew = true;
             }
@@ -1292,7 +1296,9 @@ namespace IrcDotNet
             if (user == null)
             {
                 user = new IrcUser();
+                user.Client = this;
                 user.NickName = nickName;
+
                 this.users.Add(user);
                 createdNew = true;
             }
@@ -1330,7 +1336,9 @@ namespace IrcDotNet
             if (user == null)
             {
                 user = new IrcUser();
+                user.Client = this;
                 user.UserName = userName;
+
                 this.users.Add(user);
                 createdNew = true;
             }
@@ -1376,9 +1384,9 @@ namespace IrcDotNet
                 { '@', 'o' }, { '+', 'v' } };
             this.motdBuilder = new StringBuilder();
             this.networkInformation = new IrcNetworkInfo();
-            this.channels = new ObservableCollection<IrcChannel>();
+            this.channels = new Collection<IrcChannel>();
             this.channelsReadOnly = new IrcChannelCollection(this, this.channels);
-            this.users = new ObservableCollection<IrcUser>();
+            this.users = new Collection<IrcUser>();
             this.usersReadOnly = new IrcUserCollection(this, this.users);
             this.listedChannels = new List<IrcChannelInfo>();
             this.listedServerLinks = new List<IrcServerInfo>();
@@ -1391,30 +1399,30 @@ namespace IrcDotNet
                     var attribute = item.Item1;
                     var methodDelegate = item.Item2;
 
-                    var commandRangeParts = attribute.Command.Split('-');
+                    var commandRangeParts = attribute.CommandName.Split('-');
                     if (commandRangeParts.Length == 2)
                     {
                         // Numeric command range was specified.
                         var commandRangeStart = int.Parse(commandRangeParts[0]);
                         var commandRangeEnd = int.Parse(commandRangeParts[1]);
                         for (int code = commandRangeStart; code <= commandRangeEnd; code++)
-                            this.numMessageProcessors.Add(code, methodDelegate);
+                            this.numericMessageProcessors.Add(code, methodDelegate);
                     }
                     else if (commandRangeParts.Length == 1)
                     {
                         // Single command was specified. Check whether it is numeric or alphabetic.
                         int commandCode;
-                        if (int.TryParse(attribute.Command, out commandCode))
+                        if (int.TryParse(attribute.CommandName, out commandCode))
                             // Numeric
-                            this.numMessageProcessors.Add(commandCode, methodDelegate);
+                            this.numericMessageProcessors.Add(commandCode, methodDelegate);
                         else
                             // Alphabetic
-                            this.messageProcessors.Add(attribute.Command, methodDelegate);
+                            this.messageProcessors.Add(attribute.CommandName, methodDelegate);
                     }
                     else
                     {
                         throw new ProtocolViolationException(string.Format(
-                            Properties.Resources.ErrorMessageInvalidCommandDefinition, attribute.Command));
+                            Properties.Resources.ErrorMessageInvalidCommandDefinition, attribute.CommandName));
                     }
                 });
         }
@@ -1423,10 +1431,6 @@ namespace IrcDotNet
         {
             try
             {
-                // Check that socket is still connected.
-                if (this.socket == null || !this.socket.Connected)
-                    return;
-
                 // Send pending messages in queue until flood preventer indicates to stop.
                 long sendDelay = 0;
 
@@ -1458,6 +1462,10 @@ namespace IrcDotNet
 
                 // Make timer fire when next message in send queue should be written.
                 this.sendTimer.Change(Math.Max(sendDelay, minimumSendWaitTime), Timeout.Infinite);
+            }
+            catch (SocketException exSocket)
+            {
+                HandleSocketError(exSocket);
             }
 #if !DEBUG
             catch (Exception ex)
@@ -1493,12 +1501,12 @@ namespace IrcDotNet
         /// Writes the specified message (prefix, command, and parameters) to the network stream.
         /// </summary>
         /// <param name="message">The message to write.</param>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="message"/> contains more than 15 many parameters. -or-
-        /// The value of <see cref="IrcMessage.Command"/> of <paramref name="message"/> is invalid. -or-
-        /// The value of one of the items of <see cref="IrcMessage.Parameters"/> of <paramref name="message"/> is
-        /// invalid.
+        /// <exception cref="ArgumentException"><paramref name="message"/> contains more than 15 many parameters.
         /// </exception>
+        /// <exception cref="ArgumentException">The value of <see cref="IrcMessage.Command"/> of
+        /// <paramref name="message"/> is invalid.</exception>
+        /// <exception cref="ArgumentException">The value of one of the items of <see cref="IrcMessage.Parameters"/> of
+        /// <paramref name="message"/> is invalid.</exception>
         protected void WriteMessage(IrcMessage message)
         {
             if (message.Command == null)
@@ -1538,9 +1546,8 @@ namespace IrcDotNet
         {
             CheckDisposed();
 
-            Debug.Assert(line != null);
-
             // Add message line to send queue.
+            Debug.Assert(line != null);
             messageSendQueue.Enqueue(Tuple.Create(line + Environment.NewLine, token));
         }
 
@@ -1553,7 +1560,7 @@ namespace IrcDotNet
             int commandCode;
             if (this.messageProcessors.TryGetValue(message.Command, out messageProcessor) ||
                 (int.TryParse(message.Command, out commandCode) &&
-                this.numMessageProcessors.TryGetValue(commandCode, out messageProcessor)))
+                this.numericMessageProcessors.TryGetValue(commandCode, out messageProcessor)))
             {
                 try
                 {
@@ -1643,7 +1650,6 @@ namespace IrcDotNet
 
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
-            CheckRegistrationInfo(registrationInfo, "registrationInfo");
 
             // Check URL scheme and decide whether to use SSL.
             bool useSsl;
@@ -1663,6 +1669,9 @@ namespace IrcDotNet
         {
             CheckDisposed();
 
+            if (registrationInfo == null)
+                throw new ArgumentNullException("registrationInfo");
+
             Connect(hostName, defaultPort, useSsl, registrationInfo);
         }
 
@@ -1673,6 +1682,9 @@ namespace IrcDotNet
         {
             CheckDisposed();
 
+            if (registrationInfo == null)
+                throw new ArgumentNullException("registrationInfo");
+
             Connect(new DnsEndPoint(hostName, port), useSsl, registrationInfo);
         }
 
@@ -1680,6 +1692,9 @@ namespace IrcDotNet
         public void Connect(IPAddress address, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
+
+            if (registrationInfo == null)
+                throw new ArgumentNullException("registrationInfo");
 
             Connect(address, defaultPort, useSsl, registrationInfo);
         }
@@ -1691,18 +1706,26 @@ namespace IrcDotNet
         {
             CheckDisposed();
 
+            if (registrationInfo == null)
+                throw new ArgumentNullException("registrationInfo");
+
             Connect(new IPEndPoint(address, port), useSsl, registrationInfo);
         }
 
         /// <summary>
-        /// Connects to a server using the specified host and user information.
+        /// Connects asynchronously to the specified server.
         /// </summary>
         /// <param name="remoteEndPoint">The network endpoint (IP address and port) of the server to which to connect.
         /// </param>
         /// <param name="useSsl"><see langword="true"/> to connect to the server via SSL; <see langword="false"/>,
         /// otherwise</param>
-        /// <param name="registrationInfo">The information used for registering the client. The type of the object may
-        /// be either <see cref="IrcUserRegistrationInfo"/> or <see cref="IrcServiceRegistrationInfo"/>.</param>
+        /// <param name="registrationInfo">The information used for registering the client.
+        /// The type of the object may be either <see cref="IrcUserRegistrationInfo"/> or
+        /// <see cref="IrcServiceRegistrationInfo"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="registrationInfo"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException"><paramref name="registrationInfo"/> does not specify valid registration
+        /// information.</exception>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         public void Connect(EndPoint remoteEndPoint, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
@@ -1710,10 +1733,9 @@ namespace IrcDotNet
 
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
-            CheckRegistrationInfo(registrationInfo, "registrationInfo");
 
-            // Disconnect socket if already connected.
-            DisconnectInternal();
+            CheckRegistrationInfo(registrationInfo, "registrationInfo");
+            ResetState();
 
             // Connect socket to remote host.
             ConnectAsync(remoteEndPoint, Tuple.Create(useSsl, string.Empty, registrationInfo));
@@ -1746,7 +1768,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Disconnects immediately from the server.
+        /// Disconnects asynchronously from the server.
         /// </summary>
         /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
         /// <remarks>
@@ -1757,34 +1779,25 @@ namespace IrcDotNet
         public void Disconnect()
         {
             CheckDisposed();
-            DisconnectInternal();
-        }
-
-        /// <summary>
-        /// Disconnects from the server. Does nothing if client object has already been disposed.
-        /// </summary>
-        protected void DisconnectInternal()
-        {
-            if (this.socket != null && this.socket.Connected)
-            {
-                // Disconnect socket from remote host.
-                DisconnectAsync();
-            }
+            DisconnectAsync();
         }
 
         private void SendAsync(byte[] buffer, object token = null)
         {
-            SendAsync(buffer, 0, buffer.Length);
+            SendAsync(buffer, 0, buffer.Length, token);
         }
 
         private void SendAsync(byte[] buffer, int offset, int count, object token = null)
         {
-            // Write data from buffer into socket asynchronously.
+            // Write data from buffer to socket asynchronously.
             var sendEventArgs = new SocketAsyncEventArgs();
             sendEventArgs.SetBuffer(buffer, offset, count);
             sendEventArgs.UserToken = token;
             sendEventArgs.Completed += SendCompleted;
-            this.socket.SendAsync(sendEventArgs);
+
+            if (!this.socket.SendAsync(sendEventArgs))
+                ((EventHandler<SocketAsyncEventArgs>)SendCompleted).BeginInvoke(
+                    this.socket, sendEventArgs, null, null);
         }
 
         private void SendCompleted(object sender, SocketAsyncEventArgs e)
@@ -1792,22 +1805,14 @@ namespace IrcDotNet
             try
             {
                 if (e.SocketError != SocketError.Success)
-                    throw new SocketException((int)e.SocketError);
-
-                var messageSentEventArgs = (IrcRawMessageEventArgs)e.UserToken;
-                OnRawMessageSent(messageSentEventArgs);
-            }
-            catch (SocketException exSocket)
-            {
-                switch (exSocket.SocketErrorCode)
                 {
-                    case SocketError.Interrupted:
-                    case SocketError.NotConnected:
-                    case SocketError.OperationAborted:
-                        return;
+                    HandleSocketError(e.SocketError);
+                    return;
                 }
 
-                OnError(new IrcErrorEventArgs(exSocket));
+                Debug.Assert(e.UserToken != null);
+                var messageSentEventArgs = (IrcRawMessageEventArgs)e.UserToken;
+                OnRawMessageSent(messageSentEventArgs);
             }
 #if !DEBUG
             catch (Exception ex)
@@ -1820,15 +1825,17 @@ namespace IrcDotNet
             }
         }
 
-
         private void ReceiveAsync()
         {
-            // Read data received from socket into buffer asynchronously.
+            // Read data received from socket to buffer asynchronously.
             var receiveEventArgs = new SocketAsyncEventArgs();
             receiveEventArgs.SetBuffer(this.receiveStream.Buffer, (int)this.receiveStream.WritePosition,
                 this.receiveStream.Buffer.Length - (int)this.receiveStream.WritePosition);
             receiveEventArgs.Completed += ReceiveCompleted;
-            this.socket.ReceiveAsync(receiveEventArgs);
+
+            if (!this.socket.ReceiveAsync(receiveEventArgs))
+                ((EventHandler<SocketAsyncEventArgs>)ReceiveCompleted).BeginInvoke(
+                    this.socket, receiveEventArgs, null, null);
         }
 
         private void ReceiveCompleted(object sender, SocketAsyncEventArgs e)
@@ -1836,17 +1843,23 @@ namespace IrcDotNet
             try
             {
                 if (e.SocketError != SocketError.Success)
-                    throw new SocketException((int)e.SocketError);
-
-                // Ensure that socket is still connected.
-                if (this.socket == null || !this.socket.Connected)
+                {
+                    HandleSocketError(e.SocketError);
                     return;
+                }
+
+                // Check if remote host has closed connection.
+                if (e.BytesTransferred == 0)
+                {
+                    HandleClientDisconnected();
+                    return;
+                }
 
                 // Indicate that block of data has been read into receive buffer.
                 this.receiveStream.WritePosition += e.BytesTransferred;
                 this.dataStreamReader.DiscardBufferedData();
 
-                // Read each terminated line from data stream.
+                // Read each terminated line of characters from data stream.
                 while (true)
                 {
                     // Read next line from data stream.
@@ -1859,6 +1872,7 @@ namespace IrcDotNet
 #if DEBUG
                     Debug.WriteLine(string.Format("{0:HH:mm:ss} ({1}) >>> {2}", DateTime.Now, this.ClientId, line));
 #endif
+
                     string prefix = null;
                     string lineAfterPrefix = null;
 
@@ -1913,15 +1927,7 @@ namespace IrcDotNet
             }
             catch (SocketException exSocket)
             {
-                switch (exSocket.SocketErrorCode)
-                {
-                    case SocketError.Interrupted:
-                    case SocketError.NotConnected:
-                    case SocketError.OperationAborted:
-                        return;
-                }
-
-                OnError(new IrcErrorEventArgs(exSocket));
+                HandleSocketError(exSocket);
             }
 #if !DEBUG
             catch (Exception ex)
@@ -1936,19 +1942,15 @@ namespace IrcDotNet
 
         private void ConnectAsync(EndPoint remoteEndPoint, object token = null)
         {
-            try
-            {
-                // Connect socket to remote endpoint asynchronously.
-                var connectEventArgs = new SocketAsyncEventArgs();
-                connectEventArgs.RemoteEndPoint = remoteEndPoint;
-                connectEventArgs.UserToken = token;
-                connectEventArgs.Completed += ConnectCompleted;
-                this.socket.ConnectAsync(connectEventArgs);
-            }
-            catch (Exception ex)
-            {
-                OnConnectFailed(new IrcErrorEventArgs(ex));
-            }
+            // Connect socket to remote endpoint asynchronously.
+            var connectEventArgs = new SocketAsyncEventArgs();
+            connectEventArgs.RemoteEndPoint = remoteEndPoint;
+            connectEventArgs.UserToken = token;
+            connectEventArgs.Completed += ConnectCompleted;
+
+            if (!this.socket.ConnectAsync(connectEventArgs))
+                ((EventHandler<SocketAsyncEventArgs>)ConnectCompleted).BeginInvoke(
+                    this.socket, connectEventArgs, null, null);
         }
 
         private void ConnectCompleted(object sender, SocketAsyncEventArgs e)
@@ -1956,8 +1958,12 @@ namespace IrcDotNet
             try
             {
                 if (e.SocketError != SocketError.Success)
-                    throw new SocketException((int)e.SocketError);
+                {
+                    HandleSocketError(e.SocketError);
+                    return;
+                }
 
+                Debug.Assert(e.UserToken != null);
                 var token = (Tuple<bool, string, IrcRegistrationInfo>)e.UserToken;
 
                 // Create stream for received data. Use SSL stream on top of network stream, if specified.
@@ -1975,40 +1981,39 @@ namespace IrcDotNet
                 ReceiveAsync();
 
                 HandleClientConnected(token.Item3);
-                OnConnected(new EventArgs());
             }
+            catch (SocketException exSocket)
+            {
+                HandleSocketError(exSocket);
+            }
+#if !DEBUG
             catch (Exception ex)
             {
                 OnConnectFailed(new IrcErrorEventArgs(ex));
+            }
+#endif
+            finally
+            {
             }
         }
 
         private void DisconnectAsync()
         {
-            try
-            {
-                // Connect socket to remote endpoint asynchronously.
-                var disconnectEventArgs = new SocketAsyncEventArgs();
-                disconnectEventArgs.Completed += DisconnectCompleted;
+            // Connect socket to remote endpoint asynchronously.
+            var disconnectEventArgs = new SocketAsyncEventArgs();
+            disconnectEventArgs.Completed += DisconnectCompleted;
+
 #if SILVERLIGHT
                 this.socket.Shutdown(SocketShutdown.Both);
-                DisconnectCompleted(this.socket, new SocketAsyncEventArgs()
-                    {
-                        SocketError = SocketError.Success
-                    });
+                disconnectEventArgs.SocketError = SocketError.Success;
+                ((EventHandler<SocketAsyncEventArgs>)DisconnectCompleted).BeginInvoke(
+                    this.socket, disconnectEventArgs, null, null);
 #else
-                this.socket.DisconnectAsync(disconnectEventArgs);
+            disconnectEventArgs.DisconnectReuseSocket = true;
+            if (!this.socket.DisconnectAsync(disconnectEventArgs))
+                ((EventHandler<SocketAsyncEventArgs>)DisconnectCompleted).BeginInvoke(
+                    this.socket, disconnectEventArgs, null, null);
 #endif
-            }
-            catch (SocketException exSocket)
-            {
-                if (exSocket.SocketErrorCode != SocketError.NotConnected)
-                    throw;
-            }
-            catch (Exception ex)
-            {
-                OnError(new IrcErrorEventArgs(ex));
-            }
         }
 
         private void DisconnectCompleted(object sender, SocketAsyncEventArgs e)
@@ -2016,14 +2021,21 @@ namespace IrcDotNet
             try
             {
                 if (e.SocketError != SocketError.Success)
-                    throw new SocketException((int)e.SocketError);
+                {
+                    HandleSocketError(e.SocketError);
+                    return;
+                }
 
                 HandleClientDisconnected();
-                OnDisconnected(new EventArgs());
             }
+#if !DEBUG
             catch (Exception ex)
             {
                 OnError(new IrcErrorEventArgs(ex));
+            }
+#endif
+            finally
+            {
             }
         }
 
@@ -2071,8 +2083,8 @@ namespace IrcDotNet
 
             try
             {
-                // Authenticate with server with password, if specified.
                 if (regInfo.Password != null)
+                    // Authenticate with server using password.
                     SendMessagePassword(regInfo.Password);
 
                 // Check if client is registering as service or normal user.
@@ -2097,13 +2109,20 @@ namespace IrcDotNet
                     this.localUser = new IrcLocalUser(userRegInfo.NickName, userRegInfo.UserName, userRegInfo.RealName,
                         userRegInfo.UserModes);
                 }
+                this.localUser.Client = this;
 
                 this.users.Add(this.localUser);
             }
+#if !DEBUG
             catch (Exception ex)
             {
                 OnError(new IrcErrorEventArgs(ex));
-                DisconnectInternal();
+                Disconnect();
+            }
+#endif
+            finally
+            {
+                OnConnected(new EventArgs());
             }
         }
 
@@ -2111,25 +2130,36 @@ namespace IrcDotNet
         {
             Debug.WriteLine("Disconnected from server.");
 
-            if (this.isDisposed)
-                return;
+            try
+            {
+                // Stop sending messages immediately.
+                this.sendTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
-            // Stop sending messages immediately.
-            this.sendTimer.Change(Timeout.Infinite, Timeout.Infinite);
-
-            // Reset state of client.
-            this.disconnectedEvent.Set();
-            ResetState();
+                this.disconnectedEvent.Set();
+            }
+            finally
+            {
+                OnDisconnected(new EventArgs());
+            }
         }
 
-        /// <summary>
-        /// Throws an exception if the object has been disposed; otherwise, simply returns immediately.
-        /// </summary>
-        /// <exception cref="ObjectDisposedException">The object has already been disposed.</exception>
-        protected void CheckDisposed()
+        private void HandleSocketError(SocketError error)
         {
-            if (this.isDisposed)
-                throw new ObjectDisposedException(GetType().FullName);
+            HandleSocketError(new SocketException((int)error));
+        }
+
+        private void HandleSocketError(SocketException exception)
+        {
+            switch (exception.SocketErrorCode)
+            {
+                case SocketError.NotConnected:
+                case SocketError.ConnectionReset:
+                    HandleClientDisconnected();
+                    return;
+                default:
+                    OnError(new IrcErrorEventArgs(exception));
+                    return;
+            }
         }
 
         /// <summary>
@@ -2357,7 +2387,7 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
-        
+
         /// <summary>
         /// Raises the <see cref="WhoReplyReceived"/> event.
         /// </summary>
@@ -2409,11 +2439,17 @@ namespace IrcDotNet
         /// <returns>A string that represents this instance.</returns>
         public override string ToString()
         {
-            if (this.socket.Connected)
+            if (this.IsConnected)
                 return string.Format("{0}@{1}", this.localUser.UserName,
                     this.ServerName ?? this.socket.RemoteEndPoint.ToString());
             else
                 return "(Not connected)";
+        }
+
+        private void CheckDisposed()
+        {
+            if (this.IsDisposed)
+                throw new ObjectDisposedException(GetType().FullName);
         }
 
         /// <summary>

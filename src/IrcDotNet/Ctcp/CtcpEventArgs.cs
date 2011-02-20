@@ -6,9 +6,10 @@ using System.Text;
 
 namespace IrcDotNet.Ctcp
 {
-/// <summary>
+    /// <summary>
     /// Provides data for events that are raised when a CTCP message or notice is sent or received.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpMessageEventArgs : EventArgs
     {
         /// <summary>
@@ -62,10 +63,11 @@ namespace IrcDotNet.Ctcp
             private set;
         }
     }
-    
+
     /// <summary>
     /// Provides data for the <see cref="CtcpClient.TimeResponseReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpTimeResponseReceivedEventArgs : CtcpResponseReceivedEventArgs
     {
         /// <summary>
@@ -92,6 +94,7 @@ namespace IrcDotNet.Ctcp
     /// <summary>
     /// Provides data for the <see cref="CtcpClient.VersionResponseReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpVersionResponseReceivedEventArgs : CtcpResponseReceivedEventArgs
     {
         /// <summary>
@@ -118,6 +121,7 @@ namespace IrcDotNet.Ctcp
     /// <summary>
     /// Provides data for the <see cref="CtcpClient.ErrorMessageReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpErrorMessageReceivedEventArgs : CtcpResponseReceivedEventArgs
     {
         /// <summary>
@@ -182,6 +186,7 @@ namespace IrcDotNet.Ctcp
     /// <summary>
     /// Provides data for the <see cref="CtcpClient.PingResponseReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpPingResponseReceivedEventArgs : CtcpResponseReceivedEventArgs
     {
         /// <inheritdoc/>
@@ -210,6 +215,7 @@ namespace IrcDotNet.Ctcp
     /// <summary>
     /// Provides data for events that indicate a response to a CTCP request.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpResponseReceivedEventArgs : EventArgs
     {
         /// <summary>
@@ -236,6 +242,7 @@ namespace IrcDotNet.Ctcp
     /// Provides data for the <see cref="CtcpClient.RawMessageSent"/> and
     /// <see cref="CtcpClient.RawMessageReceived"/> events.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpRawMessageEventArgs : EventArgs
     {
         /// <summary>

@@ -1,8 +1,8 @@
-Building Documentation
-======================
+Building
+========
 
-The following prerequisites are required to build the documentation for the
-library.
+The following prerequisites must be installed in order to build the
+documentation for the library.
 
  * Microsoft Sandcastle 2.6
    
@@ -15,8 +15,8 @@ library.
    Download from <http://shfb.codeplex.com/releases>.
 
 Once these tools are installed, open the appropiate ``.shfbproj`` file in the
-Documentation directory and run build. This action generates the user-readable
-documentation for the library (Release build by default).
+directory and run the build. This action generates the entire user-readable
+documentation for the library (in *Release* configuration by default).
 
 Output
 ======

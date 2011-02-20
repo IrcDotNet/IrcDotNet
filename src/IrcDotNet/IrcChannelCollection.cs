@@ -12,12 +12,13 @@ namespace IrcDotNet
     /// <summary>
     /// Represents a collection of <see cref="IrcChannel"/> objects.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     /// <seealso cref="IrcChannel"/>
-    public class IrcChannelCollection : ReadOnlyObservableCollection<IrcChannel>
+    public class IrcChannelCollection : ReadOnlyCollection<IrcChannel>
     {
         private IrcClient client;
 
-        internal IrcChannelCollection(IrcClient client, ObservableCollection<IrcChannel> list)
+        internal IrcChannelCollection(IrcClient client, IList<IrcChannel> list)
             : base(list)
         {
             this.client = client;
@@ -75,21 +76,6 @@ namespace IrcDotNet
         public void Leave(IEnumerable<string> channels, string comment = null)
         {
             this.Client.Leave(channels, comment);
-        }
-
-        /// <summary>
-        /// Raises the <see cref="ReadOnlyObservableCollection{T}.CollectionChanged"/> event.
-        /// </summary>
-        /// <param name="e">The <see cref="NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            base.OnCollectionChanged(e);
-
-            // Unset channel of all items removed from collection to null, and set channel of all items added to collection.
-            if (e.OldItems != null)
-                e.OldItems.Cast<IrcChannel>().ForEach(item => item.Client = null);
-            if (e.NewItems != null)
-                e.NewItems.Cast<IrcChannel>().ForEach(item => item.Client = this.client);
         }
     }
 }

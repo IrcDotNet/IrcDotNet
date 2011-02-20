@@ -21,7 +21,7 @@
     <HelpTitle>IRC.NET Documentation</HelpTitle>
     <DocumentationSources>
       <DocumentationSource sourceFile="..\src\IrcDotNet.sln" />
-    </DocumentationSources>
+<DocumentationSource sourceFile="..\src\IrcDotNet-Silverlight.sln" /></DocumentationSources>
     <HelpFileFormat>HtmlHelp1, MSHelpViewer</HelpFileFormat>
     <FrameworkVersion>4.0.30319</FrameworkVersion>
     <ProjectSummary>A library for communicating via the Internet Relay Chat %28IRC%29 protocol, using the .NET Framework 4.0.</ProjectSummary>
@@ -123,6 +123,20 @@
   </ItemGroup>
   <ItemGroup>
     <ContentLayout Include="IrcDotNet.content" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\Silverlight\v4.0\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\Silverlight\v4.0\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\Silverlight\v4.0\System.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\Silverlight\v4.0\System.Windows.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <!-- Import the SHFB build targets -->
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />

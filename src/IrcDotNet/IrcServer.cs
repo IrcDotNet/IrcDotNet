@@ -8,6 +8,7 @@ namespace IrcDotNet
     /// <summary>
     /// Represents an IRC server from the view of a particular client.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcServer : IIrcMessageSource
     {
         private string hostName;
