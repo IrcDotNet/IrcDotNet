@@ -8,7 +8,7 @@ namespace IrcDotNet
 {
     using Common.Collections;
 
-    // Utility methods relating to text.
+    // Utilities for text manipulation.
     internal static class TextUtilities
     {
         // Gets single matched value of group, if match succeeded.

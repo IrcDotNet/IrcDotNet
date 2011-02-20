@@ -14,12 +14,13 @@ namespace IrcDotNet
     /// <summary>
     /// Represents a collection of <see cref="IrcChannelUser"/> objects.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     /// <seealso cref="IrcChannelUser"/>
-    public class IrcChannelUserCollection : ReadOnlyObservableCollection<IrcChannelUser>
+    public class IrcChannelUserCollection : ReadOnlyCollection<IrcChannelUser>
     {
         private IrcChannel channel;
         
-        internal IrcChannelUserCollection(IrcChannel channel, ObservableCollection<IrcChannelUser> list)
+        internal IrcChannelUserCollection(IrcChannel channel, IList<IrcChannelUser> list)
             : base(list)
         {
             this.channel = channel;
@@ -41,21 +42,6 @@ namespace IrcDotNet
         public IEnumerable<IrcUser> GetUsers()
         {
             return this.Items.Select(channelUser => channelUser.User);
-        }
-
-        /// <summary>
-        /// Raises the <see cref="ReadOnlyObservableCollection{T}.CollectionChanged"/> event.
-        /// </summary>
-        /// <param name="e">The <see cref="NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            base.OnCollectionChanged(e);
-
-            // Unset channel of all items removed from collection to null, and set channel of all items added to collection.
-            if (e.OldItems != null)
-                e.OldItems.Cast<IrcChannelUser>().ForEach(item => item.Channel = null);
-            if (e.NewItems != null)
-                e.NewItems.Cast<IrcChannelUser>().ForEach(item => item.Channel = this.channel);
         }
     }
 }

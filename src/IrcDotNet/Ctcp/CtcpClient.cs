@@ -13,6 +13,7 @@ namespace IrcDotNet.Ctcp
     /// connection to an IRC server.
     /// Do not inherit unless the protocol itself is being extended.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     [DebuggerDisplay("{ToString(), nq}")]
     public partial class CtcpClient
     {
@@ -257,7 +258,7 @@ namespace IrcDotNet.Ctcp
                     var attribute = item.Item1;
                     var methodDelegate = item.Item2;
 
-                    this.messageProcessors.Add(attribute.Command, methodDelegate);
+                    this.messageProcessors.Add(attribute.CommandName, methodDelegate);
                 });
         }
 
@@ -340,10 +341,10 @@ namespace IrcDotNet.Ctcp
 
         /// <inheritdoc cref="WriteMessage(IList{IIrcMessageTarget}, string, bool)"/>
         /// <param name="message">The message to write.</param>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="message"/> contains more than 15 many parameters. -or-
-        /// The value of <see cref="CtcpMessage.Tag"/> of <paramref name="message"/> is invalid.
+        /// <exception cref="ArgumentException"><paramref name="message"/> contains more than 15 many parameters.
         /// </exception>
+        /// <exception cref="ArgumentException">The value of <see cref="CtcpMessage.Tag"/> of <paramref name="message"/>
+        /// is invalid.</exception>
         protected void WriteMessage(IList<IIrcMessageTarget> targets, CtcpMessage message)
         {
             if (message.Tag == null)

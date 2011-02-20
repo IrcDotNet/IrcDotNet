@@ -28,7 +28,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAEAABAAAAAABAAAAAQ=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAEAAAAAAAAABAAAAAQ=</HashCode>
       <FileName>IrcChannelCollection.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -38,7 +38,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAABAAAAAQ=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAQ=</HashCode>
       <FileName>IrcUserCollection.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -55,113 +55,11 @@
   </Class>
   <Class Name="IrcDotNet.IrcClient" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="8" Y="2.25" Width="1.5" />
-    <Members>
-      <Method Name="ProcessMessageError" Hidden="true" />
-      <Method Name="ProcessMessageJoin" Hidden="true" />
-      <Method Name="ProcessMessageKick" Hidden="true" />
-      <Method Name="ProcessMessageLUserClient" Hidden="true" />
-      <Method Name="ProcessMessageMode" Hidden="true" />
-      <Method Name="ProcessMessageNick" Hidden="true" />
-      <Method Name="ProcessMessageNotice" Hidden="true" />
-      <Method Name="ProcessMessageNumericError" Hidden="true" />
-      <Method Name="ProcessMessagePart" Hidden="true" />
-      <Method Name="ProcessMessagePing" Hidden="true" />
-      <Method Name="ProcessMessagePong" Hidden="true" />
-      <Method Name="ProcessMessagePrivateMessage" Hidden="true" />
-      <Method Name="ProcessMessageQuit" Hidden="true" />
-      <Method Name="ProcessMessageReplyAway" Hidden="true" />
-      <Method Name="ProcessMessageReplyBounceOrISupport" Hidden="true" />
-      <Method Name="ProcessMessageReplyCreated" Hidden="true" />
-      <Method Name="ProcessMessageReplyEndOfNames" Hidden="true" />
-      <Method Name="ProcessMessageReplyEndOfWho" Hidden="true" />
-      <Method Name="ProcessMessageReplyEndOfWhoIs" Hidden="true" />
-      <Method Name="ProcessMessageReplyEndOfWhoWas" Hidden="true" />
-      <Method Name="ProcessMessageReplyMotd" Hidden="true" />
-      <Method Name="ProcessMessageReplyMotdEnd" Hidden="true" />
-      <Method Name="ProcessMessageReplyMotdStart" Hidden="true" />
-      <Method Name="ProcessMessageReplyMyInfo" Hidden="true" />
-      <Method Name="ProcessMessageReplyNameReply" Hidden="true" />
-      <Method Name="ProcessMessageReplyNowAway" Hidden="true" />
-      <Method Name="ProcessMessageReplyTopic" Hidden="true" />
-      <Method Name="ProcessMessageReplyUnAway" Hidden="true" />
-      <Method Name="ProcessMessageReplyWelcome" Hidden="true" />
-      <Method Name="ProcessMessageReplyWhoIsChannels" Hidden="true" />
-      <Method Name="ProcessMessageReplyWhoIsIdle" Hidden="true" />
-      <Method Name="ProcessMessageReplyWhoIsOperator" Hidden="true" />
-      <Method Name="ProcessMessageReplyWhoIsServer" Hidden="true" />
-      <Method Name="ProcessMessageReplyWhoIsUser" Hidden="true" />
-      <Method Name="ProcessMessageReplyWhoReply" Hidden="true" />
-      <Method Name="ProcessMessageReplyWhoWasUser" Hidden="true" />
-      <Method Name="ProcessMessageReplyYourHost" Hidden="true" />
-      <Method Name="ProcessMessageTopic" Hidden="true" />
-      <Method Name="SendMessageAdmin" Hidden="true" />
-      <Method Name="SendMessageAway" Hidden="true" />
-      <Method Name="SendMessageChannelMode" Hidden="true" />
-      <Method Name="SendMessageConnect" Hidden="true" />
-      <Method Name="SendMessageDie" Hidden="true" />
-      <Method Name="SendMessageInfo" Hidden="true" />
-      <Method Name="SendMessageInvite" Hidden="true" />
-      <Method Name="SendMessageIsOn" Hidden="true" />
-      <Method Name="SendMessageJoin" Hidden="true" />
-      <Method Name="SendMessageKick" Hidden="true" />
-      <Method Name="SendMessageKill" Hidden="true" />
-      <Method Name="SendMessageLeaveAll" Hidden="true" />
-      <Method Name="SendMessageLinks" Hidden="true" />
-      <Method Name="SendMessageList" Hidden="true" />
-      <Method Name="SendMessageLUsers" Hidden="true" />
-      <Method Name="SendMessageMotd" Hidden="true" />
-      <Method Name="SendMessageNames" Hidden="true" />
-      <Method Name="SendMessageNick" Hidden="true" />
-      <Method Name="SendMessageNotice" Hidden="true" />
-      <Method Name="SendMessageOper" Hidden="true" />
-      <Method Name="SendMessagePart" Hidden="true" />
-      <Method Name="SendMessagePassword" Hidden="true" />
-      <Method Name="SendMessagePing" Hidden="true" />
-      <Method Name="SendMessagePong" Hidden="true" />
-      <Method Name="SendMessagePrivateMessage" Hidden="true" />
-      <Method Name="SendMessageQuit" Hidden="true" />
-      <Method Name="SendMessageRehash" Hidden="true" />
-      <Method Name="SendMessageRestart" Hidden="true" />
-      <Method Name="SendMessageService" Hidden="true" />
-      <Method Name="SendMessageServlist" Hidden="true" />
-      <Method Name="SendMessageSquery" Hidden="true" />
-      <Method Name="SendMessageSquit" Hidden="true" />
-      <Method Name="SendMessageStats" Hidden="true" />
-      <Method Name="SendMessageTime" Hidden="true" />
-      <Method Name="SendMessageTopic" Hidden="true" />
-      <Method Name="SendMessageTrace" Hidden="true" />
-      <Method Name="SendMessageUser" Hidden="true" />
-      <Method Name="SendMessageUserHost" Hidden="true" />
-      <Method Name="SendMessageUserMode" Hidden="true" />
-      <Method Name="SendMessageUsers" Hidden="true" />
-      <Method Name="SendMessageVersion" Hidden="true" />
-      <Method Name="SendMessageWallops" Hidden="true" />
-      <Method Name="SendMessageWho" Hidden="true" />
-      <Method Name="SendMessageWhoIs" Hidden="true" />
-      <Method Name="SendMessageWhoWas" Hidden="true" />
-      <Method Name="SendNotice" Hidden="true" />
-      <Method Name="SendPrivateMessage" Hidden="true" />
-    </Members>
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
-    <NestedTypes>
-      <Delegate Name="IrcDotNet.IrcClient.MessageProcessor">
-        <TypeIdentifier>
-          <NewMemberFileName>IrcClient.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Delegate>
-      <Struct Name="IrcDotNet.IrcClient.IrcMessage">
-        <Compartments>
-          <Compartment Name="Fields" Collapsed="true" />
-        </Compartments>
-        <TypeIdentifier>
-          <NewMemberFileName>IrcClient.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Struct>
-    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>Pkfc0nZ3LnOvU/rVuU/IW/PVn+/aM0456f9ev05r2/M=</HashCode>
+      <HashCode>Pkfc0nZ3LnOvU/rVuU/IW/PVn+/6M0456f9ev05r2/s=</HashCode>
       <FileName>IrcClient.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -172,7 +70,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>IAAAAAAgAAAAIAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <HashCode>IAAAAAAgAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IrcChannelUserCollection.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -248,7 +146,7 @@
   <Class Name="IrcDotNet.TextUtilities" Collapsed="true">
     <Position X="6.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAIgAAAAAAAAABAAAAgBAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAIgAAAAAAAAAAAAAAgBAAAAAAAAAAAAACAAA=</HashCode>
       <FileName>TextUtilities.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -261,29 +159,11 @@
   </Class>
   <Class Name="IrcDotNet.Ctcp.CtcpClient" Collapsed="true">
     <Position X="6.25" Y="1.25" Width="1.5" />
-    <Members>
-      <Method Name="ircClient_Connected" Hidden="true" />
-      <Method Name="ircClient_Disconnected" Hidden="true" />
-      <Method Name="ircClient_LocalUser_PreviewMessageReceived" Hidden="true" />
-      <Method Name="ircClient_LocalUser_PreviewNoticeReceived" Hidden="true" />
-    </Members>
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
-    <NestedTypes>
-      <Delegate Name="IrcDotNet.Ctcp.CtcpClient.MessageProcessor" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Ctcp\CtcpClient.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Delegate>
-      <Struct Name="IrcDotNet.Ctcp.CtcpClient.CtcpMessage" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Ctcp\CtcpClient.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Struct>
-    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AQUIAWQICwGRQUAFYdACARBIACgMAAAQQgEAiACSmEA=</HashCode>
+      <HashCode>AQUICWQMCwGRQUCFYdACARBIACkcAAAQQgkAiACSmEA=</HashCode>
       <FileName>Ctcp\CtcpClient.cs</FileName>
     </TypeIdentifier>
   </Class>

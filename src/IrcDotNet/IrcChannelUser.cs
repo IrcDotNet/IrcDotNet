@@ -11,12 +11,15 @@ namespace IrcDotNet
     using Common.Collections;
 
     /// <summary>
-    /// Represents an IRC user that resides on a specific channel on a specific <see cref="IrcClient"/>.
+    /// Represents an IRC user that exists on a specific channel on a specific <see cref="IrcClient"/>.
     /// </summary>
-    [DebuggerDisplay("{ToString(),nq}")]
+    /// <threadsafety static="true" instance="false"/>
+    /// <seealso cref="IrcUser"/>
+    /// <seealso cref="IrcChannel"/>
+    [DebuggerDisplay("{ToString(), nq}")]
     public class IrcChannelUser : INotifyPropertyChanged
     {
-        // Internal and exposable collections of channel modes currently active on user.
+        // Collection of channel modes currently active on user.
         private HashSet<char> modes;
         private ReadOnlySet<char> modesReadOnly;
 

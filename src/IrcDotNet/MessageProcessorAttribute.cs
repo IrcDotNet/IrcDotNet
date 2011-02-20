@@ -5,25 +5,14 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    /// <summary>
-    /// Indicates that a method processes messages for a given command.
-    /// </summary>
-    public class MessageProcessorAttribute : Attribute
+    internal class MessageProcessorAttribute : Attribute
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MessageProcessorAttribute"/> class.
-        /// </summary>
-        /// <param name="command">The name of the command for which messages are processed.</param>
-        public MessageProcessorAttribute(string command)
+        public MessageProcessorAttribute(string commandName)
         {
-            this.Command = command;
+            this.CommandName = commandName;
         }
 
-        /// <summary>
-        /// Gets the name of the command for which messages are processed.
-        /// </summary>
-        /// <value>The name of the command.</value>
-        public string Command
+        public string CommandName
         {
             get;
             private set;

@@ -15,13 +15,14 @@ namespace IrcDotNet
     /// The local user is the user as which the client has connected and registered, and may be either a normal user or
     /// service.
     /// </summary>
-    [DebuggerDisplay("{ToString(),nq} (local)")]
+    /// <threadsafety static="true" instance="false"/>
+    [DebuggerDisplay("{ToString(), nq} (local)")]
     public class IrcLocalUser : IrcUser, IIrcMessageSendHandler, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
         // True if local user is service; false, if local user is normal user.
         private bool isService;
 
-        // Internal and exposable collections of current modes of user.
+        // Collection of current modes of user.
         private HashSet<char> modes;
         private ReadOnlySet<char> modesReadOnly;
 
@@ -179,8 +180,8 @@ namespace IrcDotNet
         /// <param name="targets">A collection of the names of targets to which to send the message.</param>
         /// <param name="text">The ASCII-encoded text of the message to send.</param>
         /// <param name="encoding">The encoding in which to send the value of <paramref name="text"/>.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>. -or-
-        /// <paramref name="text"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
         public void SendMessage(IEnumerable<string> targets, string text, Encoding encoding = null)
         {
             if (targets == null)
@@ -237,8 +238,8 @@ namespace IrcDotNet
         /// <param name="targets">A collection of the names of targets to which to send the notice.</param>
         /// <param name="text">The ASCII-encoded text of the notice to send.</param>
         /// <param name="encoding">The encoding in which to send the value of <paramref name="text"/>.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>. -or-
-        /// <paramref name="text"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
         public void SendNotice(IEnumerable<string> targets, string text, Encoding encoding = null)
         {
             if (targets == null)
@@ -311,8 +312,8 @@ namespace IrcDotNet
         }
 
         /// <inheritdoc cref="SetModes(string)"/>
-        /// <exception cref="ArgumentNullException"><paramref name="setModes"/> is <see langword="null"/>. -or-
-        /// <paramref name="unsetModes"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="setModes"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="unsetModes"/> is <see langword="null"/>.</exception>
         public void SetModes(IEnumerable<char> setModes, IEnumerable<char> unsetModes)
         {
             if (setModes == null)

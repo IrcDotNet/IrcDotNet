@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IrcDotNet.Common</RootNamespace>
-    <AssemblyName>IrcDotNet.Common</AssemblyName>
+    <AssemblyName>IrcDotNet.Common-Silverlight</AssemblyName>
     <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
@@ -44,7 +44,7 @@
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Release\Silverlight\IrcDotNet.Common.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\Release\Silverlight\IrcDotNet.Common-Silverlight.xml</DocumentationFile>
     <NoWarn>1573</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
