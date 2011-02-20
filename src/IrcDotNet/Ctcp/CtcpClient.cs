@@ -9,11 +9,13 @@ namespace IrcDotNet.Ctcp
     using Common.Collections;
 
     /// <summary>
-    /// Provides methods for communicating with a server using CTCP (Client to Client Protocol), which operates over a
-    /// connection to an IRC server.
-    /// Do not inherit unless the protocol itself is being extended.
+    /// Provides methods for communicating with a server using CTCP (Client to Client Protocol), which operates over an
+    /// IRC connection.
+    /// 
+    /// Do not inherit this class unless the protocol itself is being extended.
     /// </summary>
     /// <threadsafety static="true" instance="false"/>
+    /// <seealso cref="IrcClient"/>
     [DebuggerDisplay("{ToString(), nq}")]
     public partial class CtcpClient
     {
@@ -513,8 +515,9 @@ namespace IrcDotNet.Ctcp
         protected delegate void MessageProcessor(CtcpMessage message);
 
         /// <summary>
-        /// Represents a message that is sent/received by the client/server using the CTCP protocol.
+        /// Represents a raw CTCP message that is sent/received by <see cref="CtcpClient"/>.
         /// </summary>
+        /// <seealso cref="CtcpClient"/>
         [DebuggerDisplay("{ToString(), nq}")]
         public struct CtcpMessage
         {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -24,6 +23,7 @@ namespace IrcDotNet
 
     /// <summary>
     /// Provides methods for communicating with a server using the IRC (Internet Relay Chat) protocol.
+    /// 
     /// Do not inherit this class unless the protocol itself is being extended.
     /// </summary>
     /// <remarks>
@@ -113,7 +113,7 @@ namespace IrcDotNet
 
         // List of information about channels, returned by server in response to last LIST message.
         private List<IrcChannelInfo> listedChannels;
-        
+
         // List of servers to which client server links, return by server in response to last LINKS message.
         private List<IrcServerInfo> listedServerLinks;
 
@@ -158,7 +158,7 @@ namespace IrcDotNet
             this.numericMessageProcessors = new Dictionary<int, MessageProcessor>(1000);
             this.messageSendQueue = new Queue<Tuple<string, object>>();
             this.floodPreventer = null;
-            
+
             InitializeMessageProcessors();
         }
 
@@ -396,8 +396,10 @@ namespace IrcDotNet
             {
                 if (this.socket != null)
                 {
-                    this.socket.Close();
+                    this.socket.Dispose();
                     this.socket = null;
+
+                    HandleClientDisconnected();
                 }
                 if (this.receiveStream != null)
                 {
@@ -431,8 +433,8 @@ namespace IrcDotNet
         /// Occurs when the client has connected to the server.
         /// </summary>
         /// <remarks>
-        /// Note that the <see cref="LocalUser"/> object is not set at this point, but is accessible when the
-        /// <see cref="Registered"/> event is raised.
+        /// Note that the <see cref="LocalUser"/> object is not yet set when this event occurs, but is only accessible
+        /// when the <see cref="Registered"/> event is raised.
         /// </remarks>
         public event EventHandler<EventArgs> Connected;
 
@@ -484,6 +486,9 @@ namespace IrcDotNet
         /// <summary>
         /// Occurs when the connection has been registered.
         /// </summary>
+        /// <remarks>
+        /// The <see cref="LocalUser"/> object is set when this event occurs.
+        /// </remarks>
         public event EventHandler<EventArgs> Registered;
 
         /// <summary>
@@ -591,7 +596,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="targetServer">The name of the server from which to request the MOTD, or <see langword="null"/>
         /// for the current server.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void GetMessageOfTheDay(string targetServer = null)
         {
             CheckDisposed();
@@ -609,7 +614,7 @@ namespace IrcDotNet
         /// to match the entire network.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>
         /// for the current server.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void GetNetworkInfo(string serverMask = null, string targetServer = null)
         {
             CheckDisposed();
@@ -621,7 +626,7 @@ namespace IrcDotNet
         /// Requests the version of the specified server.
         /// </summary>
         /// <param name="targetServer">The name of the server whose version to request.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void GetServerVersion(string targetServer = null)
         {
             CheckDisposed();
@@ -658,7 +663,7 @@ namespace IrcDotNet
         ///   </item>
         /// </list></param>
         /// <param name="targetServer">The name of the server whose statistics to request.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         /// <remarks>
         /// Support for the processing of responses to this request is not yet implemented.
         /// </remarks>
@@ -679,7 +684,7 @@ namespace IrcDotNet
         /// to match the entire network.</param>
         /// <param name="targetServer">The name of the server to which to forward the request, or <see langword="null"/>
         /// for the current server.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void GetServerLinks(string serverMask = null, string targetServer = null)
         {
             CheckDisposed();
@@ -691,7 +696,7 @@ namespace IrcDotNet
         /// Requests the local time on the specified server.
         /// </summary>
         /// <param name="targetServer">The name of the server whose local time to request.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void GetServerTime(string targetServer = null)
         {
             CheckDisposed();
@@ -703,7 +708,7 @@ namespace IrcDotNet
         /// Sends a ping to the specified server.
         /// </summary>
         /// <param name="targetServer">The name of the server to ping.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void Ping(string targetServer = null)
         {
             CheckDisposed();
@@ -719,7 +724,7 @@ namespace IrcDotNet
         /// all users are matched.</param>
         /// <param name="onlyOperators"><see langword="true"/> to match only server operators; 
         /// <see langword="false"/> to match all users.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void QueryWho(string mask = null, bool onlyOperators = false)
         {
             CheckDisposed();
@@ -744,7 +749,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="nickNameMasks">A collection of wildcard expressions for matching against nick names of users.
         /// </param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="nickNameMasks"/> is <see langword="null"/>.</exception>
         public void QueryWhoIs(IEnumerable<string> nickNameMasks)
         {
@@ -773,7 +778,7 @@ namespace IrcDotNet
         /// <param name="nickNames">The nick names of the users to query.</param>
         /// <param name="entriesCount">The maximum number of entries to return from the query. A negative value
         /// specifies to return an unlimited number of entries.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="nickNames"/> is <see langword="null"/>.</exception>
         public void QueryWhoWas(IEnumerable<string> nickNames, int entriesCount = -1)
         {
@@ -787,10 +792,13 @@ namespace IrcDotNet
 
         /// <inheritdoc cref="Quit(string)"/>
         /// <summary>
-        /// Quits the server, giving the specified comment. Waits the specified time before forcibly disconnecting.
+        /// Quits the server, giving the specified comment. Waits the specified duration of time before forcibly
+        /// disconnecting.
         /// </summary>
         /// <param name="timeout">The number of milliseconds to wait before forcibly disconnecting.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <remarks>
+        /// </remarks>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void Quit(int timeout, string comment = null)
         {
             CheckDisposed();
@@ -806,9 +814,10 @@ namespace IrcDotNet
         /// <param name="comment">The comment to send to the server.</param>
         /// <remarks>
         /// Note that because this message is not sent immediately, calling <see cref="Disconnect"/> immediately after
-        /// this will likely disconnect the client before it has a chance to send the command.
+        /// this will likely disconnect the client before it has a chance to quit the server properly.
+        /// Quitting the server should automatically disconnect the client.
         /// </remarks>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void Quit(string comment = null)
         {
             CheckDisposed();
@@ -820,7 +829,7 @@ namespace IrcDotNet
         /// Sends the specified raw message to the server.
         /// </summary>
         /// <param name="message">The text (single line) of the message to send the server.</param>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="message"/> is <see langword="null"/>.</exception>
         public void SendRawMessage(string message)
         {
@@ -1467,6 +1476,10 @@ namespace IrcDotNet
             {
                 HandleSocketError(exSocket);
             }
+            catch (ObjectDisposedException)
+            {
+                // Ignore.
+            }
 #if !DEBUG
             catch (Exception ex)
             {
@@ -1479,8 +1492,11 @@ namespace IrcDotNet
         }
 
         /// <inheritdoc cref="WriteMessage(string, string, string[])"/>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         protected void WriteMessage(string prefix, string command, IEnumerable<string> parameters)
         {
+            CheckDisposed();
+
             WriteMessage(prefix, command, parameters.ToArray());
         }
 
@@ -1488,8 +1504,11 @@ namespace IrcDotNet
         /// <param name="prefix">The message prefix that represents the source of the message.</param>
         /// <param name="command">The name of the command.</param>
         /// <param name="parameters">A collection of the parameters to the command.</param>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         protected void WriteMessage(string prefix, string command, params string[] parameters)
         {
+            CheckDisposed();
+
             var message = new IrcMessage(this, prefix, command, parameters.ToArray());
             if (message.Source == null)
                 message.Source = this.localUser;
@@ -1507,8 +1526,11 @@ namespace IrcDotNet
         /// <paramref name="message"/> is invalid.</exception>
         /// <exception cref="ArgumentException">The value of one of the items of <see cref="IrcMessage.Parameters"/> of
         /// <paramref name="message"/> is invalid.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         protected void WriteMessage(IrcMessage message)
         {
+            CheckDisposed();
+
             if (message.Command == null)
                 throw new ArgumentException(Properties.Resources.ErrorMessageInvalidCommand, "message");
             if (message.Parameters.Count > maxParamsCount)
@@ -1726,7 +1748,7 @@ namespace IrcDotNet
         /// </exception>
         /// <exception cref="ArgumentException"><paramref name="registrationInfo"/> does not specify valid registration
         /// information.</exception>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void Connect(EndPoint remoteEndPoint, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
@@ -1770,7 +1792,7 @@ namespace IrcDotNet
         /// <summary>
         /// Disconnects asynchronously from the server.
         /// </summary>
-        /// <exception cref="ObjectDisposedException">The object has already been been disposed.</exception>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         /// <remarks>
         /// This method closes the client connection immediately and forcibly, and does not send a quit message to the
         /// server. To disconnect from the IRC server gracefully, call <see cref="Quit(string)"/> and wait for the
@@ -1779,6 +1801,7 @@ namespace IrcDotNet
         public void Disconnect()
         {
             CheckDisposed();
+
             DisconnectAsync();
         }
 
@@ -1813,6 +1836,10 @@ namespace IrcDotNet
                 Debug.Assert(e.UserToken != null);
                 var messageSentEventArgs = (IrcRawMessageEventArgs)e.UserToken;
                 OnRawMessageSent(messageSentEventArgs);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Ignore.
             }
 #if !DEBUG
             catch (Exception ex)
@@ -1929,6 +1956,10 @@ namespace IrcDotNet
             {
                 HandleSocketError(exSocket);
             }
+            catch (ObjectDisposedException)
+            {
+                // Ignore.
+            }
 #if !DEBUG
             catch (Exception ex)
             {
@@ -1976,7 +2007,7 @@ namespace IrcDotNet
                 this.dataStreamReader = new StreamReader(this.dataStream, this.textEncoding);
                 this.dataStreamLineReader = new SafeLineReader(this.dataStreamReader);
 
-                // Start sending/receiving messages to/from server.
+                // Start sending and receiving data to/from server.
                 this.sendTimer.Change(0, Timeout.Infinite);
                 ReceiveAsync();
 
@@ -1985,6 +2016,10 @@ namespace IrcDotNet
             catch (SocketException exSocket)
             {
                 HandleSocketError(exSocket);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Ignore.
             }
 #if !DEBUG
             catch (Exception ex)
@@ -2027,6 +2062,14 @@ namespace IrcDotNet
                 }
 
                 HandleClientDisconnected();
+            }
+            catch (SocketException exSocket)
+            {
+                HandleSocketError(exSocket);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Ignore.
             }
 #if !DEBUG
             catch (Exception ex)
@@ -2081,66 +2124,55 @@ namespace IrcDotNet
             Debug.WriteLine(string.Format("Connected to server at '{0}'.",
                 ((IPEndPoint)this.socket.RemoteEndPoint).Address));
 
-            try
+            if (regInfo.Password != null)
+                // Authenticate with server using password.
+                SendMessagePassword(regInfo.Password);
+
+            // Check if client is registering as service or normal user.
+            if (regInfo is IrcServiceRegistrationInfo)
             {
-                if (regInfo.Password != null)
-                    // Authenticate with server using password.
-                    SendMessagePassword(regInfo.Password);
+                // Register client as service.
+                var serviceRegInfo = (IrcServiceRegistrationInfo)regInfo;
+                SendMessageService(serviceRegInfo.NickName, serviceRegInfo.Distribution,
+                    serviceRegInfo.Description);
 
-                // Check if client is registering as service or normal user.
-                if (regInfo is IrcServiceRegistrationInfo)
-                {
-                    // Register client as service.
-                    var serviceRegInfo = (IrcServiceRegistrationInfo)regInfo;
-                    SendMessageService(serviceRegInfo.NickName, serviceRegInfo.Distribution,
-                        serviceRegInfo.Description);
-
-                    this.localUser = new IrcLocalUser(serviceRegInfo.NickName, serviceRegInfo.Distribution,
-                        serviceRegInfo.Description);
-                }
-                else
-                {
-                    // Register client as normal user.
-                    var userRegInfo = (IrcUserRegistrationInfo)regInfo;
-                    SendMessageNick(userRegInfo.NickName);
-                    SendMessageUser(userRegInfo.UserName, GetNumericUserMode(userRegInfo.UserModes),
-                        userRegInfo.RealName);
-
-                    this.localUser = new IrcLocalUser(userRegInfo.NickName, userRegInfo.UserName, userRegInfo.RealName,
-                        userRegInfo.UserModes);
-                }
-                this.localUser.Client = this;
-
-                this.users.Add(this.localUser);
+                this.localUser = new IrcLocalUser(serviceRegInfo.NickName, serviceRegInfo.Distribution,
+                    serviceRegInfo.Description);
             }
-#if !DEBUG
-            catch (Exception ex)
+            else
             {
-                OnError(new IrcErrorEventArgs(ex));
-                Disconnect();
+                // Register client as normal user.
+                var userRegInfo = (IrcUserRegistrationInfo)regInfo;
+                SendMessageNick(userRegInfo.NickName);
+                SendMessageUser(userRegInfo.UserName, GetNumericUserMode(userRegInfo.UserModes),
+                    userRegInfo.RealName);
+
+                this.localUser = new IrcLocalUser(userRegInfo.NickName, userRegInfo.UserName, userRegInfo.RealName,
+                    userRegInfo.UserModes);
             }
-#endif
-            finally
-            {
-                OnConnected(new EventArgs());
-            }
+            this.localUser.Client = this;
+
+            // Add local user to list of known users.
+            this.users.Add(this.localUser);
+
+            OnConnected(new EventArgs());
         }
 
         private void HandleClientDisconnected()
         {
+            // Ensure that client has not already handled disconnection.
+            if (this.disconnectedEvent.WaitOne(0))
+                return;
+
             Debug.WriteLine("Disconnected from server.");
 
-            try
-            {
-                // Stop sending messages immediately.
-                this.sendTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            // Stop sending messages immediately.
+            this.sendTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            
+            // Set that client has disconnected.
+            this.disconnectedEvent.Set();
 
-                this.disconnectedEvent.Set();
-            }
-            finally
-            {
-                OnDisconnected(new EventArgs());
-            }
+            OnDisconnected(new EventArgs());
         }
 
         private void HandleSocketError(SocketError error)
@@ -2459,10 +2491,11 @@ namespace IrcDotNet
         protected delegate void MessageProcessor(IrcMessage message);
 
         /// <summary>
-        /// Represents a message that is sent/received by the client/server using the IRC protocol.
+        /// Represents a raw IRC message that is sent/received by <see cref="IrcClient"/>.
         /// A message contains a prefix (representing the source), a command name (a word or three-digit number),
-        /// and an arbitrary number of parameters (up to a maximum of 15).
+        /// and any number of parameters (up to a maximum of 15).
         /// </summary>
+        /// <seealso cref="IrcClient"/>
         [DebuggerDisplay("{ToString(), nq}")]
         public struct IrcMessage
         {
