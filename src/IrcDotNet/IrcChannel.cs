@@ -11,9 +11,10 @@ namespace IrcDotNet
     using Common.Collections;
 
     /// <summary>
-    /// Represents an IRC channel that resides on a specific <see cref="IrcClient"/>.
+    /// Represents an IRC channel that exists on a specific <see cref="IrcClient"/>.
     /// </summary>
-    [DebuggerDisplay("{ToString(),nq}")]
+    /// <threadsafety static="true" instance="false"/>
+    [DebuggerDisplay("{ToString(), nq}")]
     public class IrcChannel : INotifyPropertyChanged, IIrcMessageTarget, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
         private string name;
@@ -23,12 +24,12 @@ namespace IrcDotNet
         // Current topic of channel.
         private string topic;
 
-        // Internal and exposable collections of current modes of channel.
+        // Collection of current modes of channel.
         private HashSet<char> modes;
         private ReadOnlySet<char> modesReadOnly;
 
-        // Internal and exposable collections of users that are currently members of this channel.
-        private ObservableCollection<IrcChannelUser> users;
+        // Collection of users that are currently members of this channel.
+        private Collection<IrcChannelUser> users;
         private IrcChannelUserCollection usersReadOnly;
 
         private IrcClient client;
@@ -39,7 +40,7 @@ namespace IrcDotNet
             this.type = IrcChannelType.Unspecified;
             this.modes = new HashSet<char>();
             this.modesReadOnly = new ReadOnlySet<char>(this.modes);
-            this.users = new ObservableCollection<IrcChannelUser>();
+            this.users = new Collection<IrcChannelUser>();
             this.usersReadOnly = new IrcChannelUserCollection(this, this.users);
         }
 
@@ -264,8 +265,8 @@ namespace IrcDotNet
         }
 
         /// <inheritdoc cref="SetModes(string, IEnumerable{string})"/>
-        /// <exception cref="ArgumentNullException"><paramref name="setModes"/> is <see langword="null"/>. -or-
-        /// <paramref name="unsetModes"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="setModes"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="unsetModes"/> is <see langword="null"/>.</exception>
         public void SetModes(IEnumerable<char> setModes, IEnumerable<char> unsetModes,
             IEnumerable<string> modeParameters = null)
         {

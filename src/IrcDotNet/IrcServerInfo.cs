@@ -8,6 +8,7 @@ namespace IrcDotNet
     /// <summary>
     /// Stores information about a particular server in an IRC network.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public struct IrcServerInfo
     {
         /// <summary>

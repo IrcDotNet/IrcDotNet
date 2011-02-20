@@ -16,6 +16,7 @@ namespace IrcDotNet
     /// bursts so long as the high rate is not sustained, else a delay is introduced between the sending of
     /// successive messages, such that the data.
     /// </remarks>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcStandardFloodPreventer : IIrcFloodPreventer
     {
         private const int ticksPerMillisecond = 10000;

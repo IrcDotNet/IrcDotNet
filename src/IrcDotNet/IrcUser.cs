@@ -8,9 +8,10 @@ using System.Text;
 namespace IrcDotNet
 {
     /// <summary>
-    /// Represents an IRC user that resides on a specific <see cref="IrcClient"/>.
+    /// Represents an IRC user that exists on a specific <see cref="IrcClient"/>.
     /// </summary>
-    [DebuggerDisplay("{ToString(),nq}")]
+    /// <threadsafety static="true" instance="false"/>
+    [DebuggerDisplay("{ToString(), nq}")]
     public class IrcUser : INotifyPropertyChanged, IIrcMessageSource, IIrcMessageTarget
     {
         private bool isOnline;
@@ -234,9 +235,9 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets the client to which the user belongs.
+        /// Gets the client on which the user exists.
         /// </summary>
-        /// <value>The client to which the user belongs.</value>
+        /// <value>The client on which the user exists.</value>
         public IrcClient Client
         {
             get { return this.client; }

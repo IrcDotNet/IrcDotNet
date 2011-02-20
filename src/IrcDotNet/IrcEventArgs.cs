@@ -14,6 +14,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for the <see cref="IrcClient.ChannelListReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcChannelListReceivedEventArgs : EventArgs
     {
         /// <summary>
@@ -43,6 +44,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for the <see cref="IrcClient.ServerVersionInfoReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcServerVersionInfoEventArgs : EventArgs
     {
         /// <summary>
@@ -114,6 +116,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for the <see cref="IrcClient.ServerTimeReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcServerTimeEventArgs : EventArgs
     {
         /// <summary>
@@ -157,6 +160,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for the <see cref="IrcClient.ServerLinksListReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcServerLinksListReceivedEventArgs : EventArgs
     {
         /// <summary>
@@ -187,6 +191,7 @@ namespace IrcDotNet
     /// <inheritdoc select="/summary/node()"/>
     /// Gives the option to handle the preview event and thus stop the normal event from being raised.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcPreviewMessageEventArgs : IrcMessageEventArgs
     {
         /// <inheritdoc/>
@@ -212,6 +217,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for events that are raised when an IRC message or notice is sent or received.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcMessageEventArgs : EventArgs
     {
         /// <summary>
@@ -295,6 +301,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for the <see cref="IrcClient.PingReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcChannelInvitationEventArgs : IrcChannelEventArgs
     {
         /// <summary>
@@ -325,6 +332,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for events that concern an <see cref="IrcChannelUser"/>.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcChannelUserEventArgs : IrcCommentEventArgs
     {
         /// <inheritdoc/>
@@ -355,6 +363,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for events that concern an <see cref="IrcChannel"/>.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcChannelEventArgs : IrcCommentEventArgs
     {
         /// <inheritdoc/>
@@ -385,6 +394,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for events that concern an <see cref="IrcUser"/>.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcUserEventArgs : IrcCommentEventArgs
     {
         /// <inheritdoc/>
@@ -415,6 +425,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for events that specify a comment.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcNameEventArgs : EventArgs
     {
         /// <summary>
@@ -441,6 +452,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for events that specify a name.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcCommentEventArgs : EventArgs
     {
         /// <summary>
@@ -467,6 +479,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for the <see cref="IrcClient.PingReceived"/> and <see cref="IrcClient.PongReceived"/> events.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcPingOrPongReceivedEventArgs : EventArgs
     {
         /// <summary>
@@ -495,6 +508,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for events that specify information about a server.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcServerInfoEventArgs : EventArgs
     {
         /// <summary>
@@ -538,6 +552,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for the <see cref="IrcClient.ErrorMessageReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcErrorMessageEventArgs : EventArgs
     {
         /// <summary>
@@ -567,6 +582,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for the <see cref="IrcClient.ProtocolError"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcProtocolErrorEventArgs : EventArgs
     {
         /// <summary>
@@ -623,6 +639,7 @@ namespace IrcDotNet
     /// Provides data for the <see cref="IrcClient.RawMessageSent"/> and
     /// <see cref="IrcClient.RawMessageReceived"/> events.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcRawMessageEventArgs : EventArgs
     {
         /// <summary>
@@ -663,6 +680,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for the <see cref="IrcClient.ValidateSslCertificate"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcValidateSslCertificateEventArgs : EventArgs
     {
         /// <summary>
@@ -711,7 +729,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets or sets whether the ceritifcate given by the server is valid.
+        /// Gets or sets whether the certificate given by the server is valid.
         /// </summary>
         /// <value><see langword="true"/> if the certificate is valid; <see langword="false"/>, otherwise.</value>
         public bool IsValid
@@ -726,6 +744,7 @@ namespace IrcDotNet
     /// <summary>
     /// Provides data for the <see cref="IrcClient.Error"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcErrorEventArgs : EventArgs
     {
         /// <summary>
