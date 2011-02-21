@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -22,12 +22,12 @@ namespace IrcDotNet
     using Common.Collections;
 
     /// <summary>
-    /// Provides methods for communicating with a server using the IRC (Internet Relay Chat) protocol.
+    /// Represents a client that communicates with a server using the IRC (Internet Relay Chat) protocol.
     /// 
     /// Do not inherit this class unless the protocol itself is being extended.
     /// </summary>
     /// <remarks>
-    /// All instance methods are thread-safe; all collection objects are not thread-safe.
+    /// All collection objects must be locked on the <see cref="ICollection.SyncRoot"/> object for thread-safety.
     /// </remarks>
     /// <threadsafety static="true" instance="false"/>
     [DebuggerDisplay("{ToString(), nq}")]
@@ -661,13 +661,14 @@ namespace IrcDotNet
         ///     <term>u</term>
         ///     <description>The duration for which the server has been running since its last start.</description>
         ///   </item>
-        /// </list></param>
+        /// </list>
+        /// </param>
         /// <param name="targetServer">The name of the server whose statistics to request.</param>
-        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         /// <remarks>
-        /// Support for the processing of responses to this request is not yet implemented.
+        /// The server may not accept the command if <paramref name="query"/> is unspecified.
         /// </remarks>
-        public void GetServerStats(string query = null, string targetServer = null)
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
+        public void GetServerStatistics(string query = null, string targetServer = null)
         {
             CheckDisposed();
 
@@ -942,9 +943,10 @@ namespace IrcDotNet
             if (paramName == null)
                 throw new ArgumentNullException("paramName");
             if (paramName.Length == 0)
-                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "paramName");
+                throw new ArgumentException(Properties.Resources.MessageValueCannotBeEmptyString, "paramName");
 
-            switch (paramName.ToLower())
+            // Check name of parameter.
+            switch (paramName.ToLowerInvariant())
             {
                 case "prefix":
                     var prefixValueMatch = Regex.Match(paramValue, isupportPrefix); ;
@@ -952,9 +954,14 @@ namespace IrcDotNet
                     var modes = prefixValueMatch.Groups["modes"].GetValue();
 
                     if (prefixes.Length != modes.Length)
-                        throw new ProtocolViolationException(Properties.Resources.ErrorMessageISupportPrefixInvalid);
-                    this.channelUserModes.Clear();
-                    this.channelUserModes.AddRange(modes);
+                        throw new ProtocolViolationException(Properties.Resources.MessageISupportPrefixInvalid);
+
+                    lock (((ICollection)this.channelUserModesReadOnly).SyncRoot)
+                    {
+                        this.channelUserModes.Clear();
+                        this.channelUserModes.AddRange(modes);
+                    }
+
                     this.channelUserModesPrefixes.Clear();
                     for (int i = 0; i < prefixes.Length; i++)
                         this.channelUserModesPrefixes.Add(prefixes[i], modes[i]);
@@ -975,7 +982,7 @@ namespace IrcDotNet
             if (input == null)
                 throw new ArgumentNullException("input");
             if (input.Length == 0)
-                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "input");
+                throw new ArgumentException(Properties.Resources.MessageValueCannotBeEmptyString, "input");
 
             char mode;
             if (this.channelUserModesPrefixes.TryGetValue(input[0], out mode))
@@ -1092,7 +1099,7 @@ namespace IrcDotNet
                     return IrcChannelType.Secret;
                 default:
                     throw new ArgumentException(string.Format(
-                        Properties.Resources.ErrorMessageInvalidChannelType, type), "type");
+                        Properties.Resources.MessageInvalidChannelType, type), "type");
             }
         }
 
@@ -1109,7 +1116,7 @@ namespace IrcDotNet
             if (targetName == null)
                 throw new ArgumentNullException("targetName");
             if (targetName.Length == 0)
-                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "targetName");
+                throw new ArgumentException(Properties.Resources.MessageValueCannotBeEmptyString, "targetName");
 
             // Check whether target name represents channel, user, or target mask.
             var targetNameMatch = Regex.Match(targetName, regexMessageTarget);
@@ -1153,7 +1160,7 @@ namespace IrcDotNet
             else
             {
                 throw new ArgumentException(string.Format(
-                    Properties.Resources.ErrorMessageInvalidSource, targetName), "targetName");
+                    Properties.Resources.MessageInvalidSource, targetName), "targetName");
             }
         }
 
@@ -1171,7 +1178,7 @@ namespace IrcDotNet
             if (prefix == null)
                 return null;
             if (prefix.Length == 0)
-                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "prefix");
+                throw new ArgumentException(Properties.Resources.MessageValueCannotBeEmptyString, "prefix");
 
             // Check whether prefix represents server or user.
             var prefixMatch = Regex.Match(prefix, regexMessagePrefix);
@@ -1198,7 +1205,7 @@ namespace IrcDotNet
             else
             {
                 throw new ArgumentException(string.Format(
-                    Properties.Resources.ErrorMessageInvalidSource, prefix), "prefix");
+                    Properties.Resources.MessageInvalidSource, prefix), "prefix");
             }
         }
 
@@ -1221,14 +1228,15 @@ namespace IrcDotNet
             if (hostName == null)
                 throw new ArgumentNullException("hostName");
             if (hostName.Length == 0)
-                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "hostName");
+                throw new ArgumentException(Properties.Resources.MessageValueCannotBeEmptyString, "hostName");
 
-            // Search for server  with given name in list of known servers. If it does not exist, add it.
+            // Search for server with given name in list of known servers. If it does not exist, add it.
             var server = this.servers.SingleOrDefault(s => s.HostName == hostName);
             if (server == null)
             {
                 server = new IrcServer(hostName);
                 this.servers.Add(server);
+
                 createdNew = true;
             }
             else
@@ -1257,7 +1265,7 @@ namespace IrcDotNet
             if (channelName == null)
                 throw new ArgumentNullException("channelName");
             if (channelName.Length == 0)
-                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "channelName");
+                throw new ArgumentException(Properties.Resources.MessageValueCannotBeEmptyString, "channelName");
 
             // Search for channel with given name in list of known channel. If it does not exist, add it.
             var channel = this.channels.SingleOrDefault(c => c.Name == channelName);
@@ -1265,8 +1273,9 @@ namespace IrcDotNet
             {
                 channel = new IrcChannel(channelName);
                 channel.Client = this;
+                lock (((ICollection)this.channelsReadOnly).SyncRoot)
+                    this.channels.Add(channel);
 
-                this.channels.Add(channel);
                 createdNew = true;
             }
             else
@@ -1298,7 +1307,7 @@ namespace IrcDotNet
             if (nickName == null)
                 throw new ArgumentNullException("nickName");
             if (nickName.Length == 0)
-                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "nickName");
+                throw new ArgumentException(Properties.Resources.MessageValueCannotBeEmptyString, "nickName");
 
             // Search for user with given nick name in list of known users. If it does not exist, add it.
             var user = this.users.SingleOrDefault(u => u.NickName == nickName);
@@ -1307,8 +1316,9 @@ namespace IrcDotNet
                 user = new IrcUser();
                 user.Client = this;
                 user.NickName = nickName;
+                lock (((ICollection)this.usersReadOnly).SyncRoot)
+                    this.users.Add(user);
 
-                this.users.Add(user);
                 createdNew = true;
             }
             else
@@ -1338,7 +1348,7 @@ namespace IrcDotNet
             if (userName == null)
                 throw new ArgumentNullException("userName");
             if (userName.Length == 0)
-                throw new ArgumentException(Properties.Resources.ErrorMessageValueCannotBeEmptyString, "userName");
+                throw new ArgumentException(Properties.Resources.MessageValueCannotBeEmptyString, "userName");
 
             // Search for user with given nick name in list of known users. If it does not exist, add it.
             var user = this.users.SingleOrDefault(u => u.UserName == userName);
@@ -1347,8 +1357,9 @@ namespace IrcDotNet
                 user = new IrcUser();
                 user.Client = this;
                 user.UserName = userName;
+                lock (((ICollection)this.usersReadOnly).SyncRoot)
+                    this.users.Add(user);
 
-                this.users.Add(user);
                 createdNew = true;
             }
             else
@@ -1403,6 +1414,7 @@ namespace IrcDotNet
 
         private void InitializeMessageProcessors()
         {
+            // Find each method defined as processor for IRC message.
             this.GetAttributedMethods<MessageProcessorAttribute, MessageProcessor>().ForEach(item =>
                 {
                     var attribute = item.Item1;
@@ -1431,7 +1443,7 @@ namespace IrcDotNet
                     else
                     {
                         throw new ProtocolViolationException(string.Format(
-                            Properties.Resources.ErrorMessageInvalidCommandDefinition, attribute.CommandName));
+                            Properties.Resources.MessageInvalidCommandDefinition, attribute.CommandName));
                     }
                 });
         }
@@ -1532,9 +1544,9 @@ namespace IrcDotNet
             CheckDisposed();
 
             if (message.Command == null)
-                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidCommand, "message");
+                throw new ArgumentException(Properties.Resources.MessageInvalidCommand, "message");
             if (message.Parameters.Count > maxParamsCount)
-                throw new ArgumentException(Properties.Resources.ErrorMessageTooManyParams, "parameters");
+                throw new ArgumentException(Properties.Resources.MessageTooManyParams, "parameters");
 
             var lineBuilder = new StringBuilder();
 
@@ -1612,7 +1624,7 @@ namespace IrcDotNet
             if (value.Length == 0 || value.Any(IsInvalidMessageChar))
             {
                 throw new ArgumentException(string.Format(
-                    Properties.Resources.ErrorMessageInvalidPrefix, value), "value");
+                    Properties.Resources.MessageInvalidPrefix, value), "value");
             }
 
             return value;
@@ -1625,7 +1637,7 @@ namespace IrcDotNet
             if (value.Length == 0 || value.Any(IsInvalidMessageChar))
             {
                 throw new ArgumentException(string.Format(
-                    Properties.Resources.ErrorMessageInvalidCommand, value), "value");
+                    Properties.Resources.MessageInvalidCommand, value), "value");
             }
 
             return value;
@@ -1638,7 +1650,7 @@ namespace IrcDotNet
             if (value.Length == 0 || value.Any(c => IsInvalidMessageChar(c) || c == ' ') || value[0] == ':')
             {
                 throw new ArgumentException(string.Format(
-                    Properties.Resources.ErrorMessageInvalidMiddleParameter, value), "value");
+                    Properties.Resources.MessageInvalidMiddleParameter, value), "value");
             }
 
             return value;
@@ -1651,7 +1663,7 @@ namespace IrcDotNet
             if (value.Length == 0 || value.Any(c => IsInvalidMessageChar(c)))
             {
                 throw new ArgumentException(string.Format(
-                    Properties.Resources.ErrorMessageInvalidMiddleParameter, value), "value");
+                    Properties.Resources.MessageInvalidMiddleParameter, value), "value");
             }
 
             return value;
@@ -1680,7 +1692,7 @@ namespace IrcDotNet
             else if (url.Scheme == "ircs")
                 useSsl = true;
             else
-                throw new ArgumentException(string.Format(Properties.Resources.ErrorMessageInvalidUrlScheme,
+                throw new ArgumentException(string.Format(Properties.Resources.MessageInvalidUrlScheme,
                     url.Scheme), "url");
 
             Connect(url.Host, url.Port == -1 ? defaultPort : url.Port, useSsl, registrationInfo);
@@ -1772,19 +1784,19 @@ namespace IrcDotNet
             {
                 if (registrationInfo.NickName == null ||
                     ((IrcUserRegistrationInfo)registrationInfo).UserName == null)
-                    throw new ArgumentException(Properties.Resources.ErrorMessageInvalidUserRegistrationInfo,
+                    throw new ArgumentException(Properties.Resources.MessageInvalidUserRegistrationInfo,
                         registrationInfoParamName);
             }
             else if (registrationInfo is IrcServiceRegistrationInfo)
             {
                 if (registrationInfo.NickName == null ||
                     ((IrcServiceRegistrationInfo)registrationInfo).Description == null)
-                    throw new ArgumentException(Properties.Resources.ErrorMessageInvalidServiceRegistrationInfo,
+                    throw new ArgumentException(Properties.Resources.MessageInvalidServiceRegistrationInfo,
                         registrationInfoParamName);
             }
             else
             {
-                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidRegistrationInfoObject,
+                throw new ArgumentException(Properties.Resources.MessageInvalidRegistrationInfoObject,
                     registrationInfoParamName);
             }
         }
@@ -2153,7 +2165,8 @@ namespace IrcDotNet
             this.localUser.Client = this;
 
             // Add local user to list of known users.
-            this.users.Add(this.localUser);
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                this.users.Add(this.localUser);
 
             OnConnected(new EventArgs());
         }
@@ -2168,7 +2181,7 @@ namespace IrcDotNet
 
             // Stop sending messages immediately.
             this.sendTimer.Change(Timeout.Infinite, Timeout.Infinite);
-            
+
             // Set that client has disconnected.
             this.disconnectedEvent.Set();
 

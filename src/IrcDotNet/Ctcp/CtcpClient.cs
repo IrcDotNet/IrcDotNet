@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,11 +10,14 @@ namespace IrcDotNet.Ctcp
     using Common.Collections;
 
     /// <summary>
-    /// Provides methods for communicating with a server using CTCP (Client to Client Protocol), which operates over an
+    /// Represents a client that communicates with a server using CTCP (Client to Client Protocol), operating over an
     /// IRC connection.
     /// 
     /// Do not inherit this class unless the protocol itself is being extended.
     /// </summary>
+    /// <remarks>
+    /// All collection objects must be locked on the <see cref="ICollection.SyncRoot"/> object for thread-safety.
+    /// </remarks>
     /// <threadsafety static="true" instance="false"/>
     /// <seealso cref="IrcClient"/>
     [DebuggerDisplay("{ToString(), nq}")]
@@ -255,6 +259,7 @@ namespace IrcDotNet.Ctcp
 
         private void InitializeMessageProcessors()
         {
+            // Find each method defined as processor for CTCP message.
             this.GetAttributedMethods<MessageProcessorAttribute, MessageProcessor>().ForEach(item =>
                 {
                     var attribute = item.Item1;
@@ -350,7 +355,7 @@ namespace IrcDotNet.Ctcp
         protected void WriteMessage(IList<IIrcMessageTarget> targets, CtcpMessage message)
         {
             if (message.Tag == null)
-                throw new ArgumentException(Properties.Resources.ErrorMessageInvalidTag, "message");
+                throw new ArgumentException(Properties.Resources.MessageInvalidTag, "message");
 
             var tag = message.Tag.ToUpper();
             var taggedData = message.Data == null ? tag : tag + " :" + message.Data;

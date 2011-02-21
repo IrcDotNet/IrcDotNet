@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Text.RegularExpressions;
 namespace IrcDotNet
 {
     using Common.Collections;
-
+    
     // Defines all message processors for the client.
     partial class IrcClient
     {
@@ -23,7 +24,7 @@ namespace IrcDotNet
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
                 throw new ProtocolViolationException(string.Format(
-                    Properties.Resources.ErrorMessageSourceNotUser, message.Source.Name));
+                    Properties.Resources.MessageSourceNotUser, message.Source.Name));
 
             // Local or remote user has changed nick name.
             Debug.Assert(message.Parameters[0] != null);
@@ -40,12 +41,14 @@ namespace IrcDotNet
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
                 throw new ProtocolViolationException(string.Format(
-                    Properties.Resources.ErrorMessageSourceNotUser, message.Source.Name));
+                    Properties.Resources.MessageSourceNotUser, message.Source.Name));
 
             // Remote user has quit server.
             Debug.Assert(message.Parameters[0] != null);
             sourceUser.HandeQuit(message.Parameters[0]);
-            this.users.Remove(sourceUser);
+
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                this.users.Remove(sourceUser);
         }
 
         /// <summary>
@@ -58,7 +61,7 @@ namespace IrcDotNet
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
                 throw new ProtocolViolationException(string.Format(
-                    Properties.Resources.ErrorMessageSourceNotUser, message.Source.Name));
+                    Properties.Resources.MessageSourceNotUser, message.Source.Name));
 
             // Local or remote user has joined one or more channels.
             Debug.Assert(message.Parameters[0] != null);
@@ -79,7 +82,7 @@ namespace IrcDotNet
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
                 throw new ProtocolViolationException(string.Format(
-                    Properties.Resources.ErrorMessageSourceNotUser, message.Source.Name));
+                    Properties.Resources.MessageSourceNotUser, message.Source.Name));
 
             // Local or remote user has left one or more channels.
             Debug.Assert(message.Parameters[0] != null);
@@ -116,7 +119,7 @@ namespace IrcDotNet
             }
             else
             {
-                throw new ProtocolViolationException(string.Format(Properties.Resources.ErrorMessageCannotSetUserMode,
+                throw new ProtocolViolationException(string.Format(Properties.Resources.MessageCannotSetUserMode,
                     message.Parameters[0]));
             }
         }
@@ -155,11 +158,13 @@ namespace IrcDotNet
                 {
                     // Local user was kicked from channel.
                     var channel = channelUser.Channel;
-                    this.channels.Remove(channel);
+                    lock (((ICollection)this.channelsReadOnly).SyncRoot)
+                        this.channels.Remove(channel);
+
                     channelUser.Channel.HandleUserKicked(channelUser, comment);
                     this.localUser.HandleLeftChannel(channel);
 
-                    // Local user has left channel. Do not process other kicks.
+                    // Local user has left channel. Do not process kicks of remote users.
                     break;
                 }
                 else
@@ -384,6 +389,66 @@ namespace IrcDotNet
                 OnServerSupportedFeaturesReceived(new EventArgs());
             }
         }
+        
+        /// <summary>
+        /// Process RPL_STATSLINKINFO responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("211")]
+        protected void ProcessMessageStatsLinkInfo(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // TODO
+        }
+
+        /// <summary>
+        /// Process RPL_STATSCOMMANDS responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("212")]
+        protected void ProcessMessageStatsCommands(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // TODO
+        }
+
+        /// <summary>
+        /// Process RPL_ENDOFSTATS responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("219")]
+        protected void ProcessMessageEndOfStats(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // TODO
+        }
+
+        /// <summary>
+        /// Process RPL_STATSUPTIME responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("242")]
+        protected void ProcessMessageStatsUpTime(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // TODO
+        }
+
+        /// <summary>
+        /// Process RPL_STATSOLINE responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("243")]
+        protected void ProcessMessageStatsOLine(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // TODO
+        }
 
         /// <summary>
         /// Process RPL_LUSERCLIENT responses from the server.
@@ -473,21 +538,6 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Process RPL_ISON responses from the server.
-        /// </summary>
-        /// <param name="message">The message received from the server.</param>
-        [MessageProcessor("303")]
-        protected void ProcessMessageReplyIsOn(IrcMessage message)
-        {
-            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
-
-            // Set each user listed in reply as online.
-            Debug.Assert(message.Parameters[1] != null);
-            var onlineUsers = message.Parameters[1].Split(' ').Select(n => GetUserFromNickName(n));
-            onlineUsers.ForEach(u => u.IsOnline = true);
-        }
-
-        /// <summary>
         /// Process RPL_AWAY responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
@@ -501,6 +551,21 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[2] != null);
             user.AwayMessage = message.Parameters[2];
             user.IsAway = true;
+        }
+
+        /// <summary>
+        /// Process RPL_ISON responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("303")]
+        protected void ProcessMessageReplyIsOn(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            // Set each user listed in reply as online.
+            Debug.Assert(message.Parameters[1] != null);
+            var onlineUsers = message.Parameters[1].Split(' ').Select(n => GetUserFromNickName(n));
+            onlineUsers.ForEach(u => u.IsOnline = true);
         }
 
         /// <summary>
@@ -579,6 +644,40 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        /// Process RPL_WHOWASUSER responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("314")]
+        protected void ProcessMessageReplyWhoWasUser(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var user = GetUserFromNickName(message.Parameters[1], false);
+            Debug.Assert(message.Parameters[2] != null);
+            user.UserName = message.Parameters[2];
+            Debug.Assert(message.Parameters[3] != null);
+            user.HostName = message.Parameters[3];
+            Debug.Assert(message.Parameters[4] != null);
+            Debug.Assert(message.Parameters[5] != null);
+            user.RealName = message.Parameters[5];
+        }
+
+        /// <summary>
+        /// Process RPL_ENDOFWHO responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("315")]
+        protected void ProcessMessageReplyEndOfWho(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var mask = message.Parameters[1];
+            OnWhoReplyReceived(new IrcNameEventArgs(mask));
+        }
+
+        /// <summary>
         /// Process RPL_WHOISIDLE responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
@@ -631,112 +730,6 @@ namespace IrcDotNet
                 if (channel.GetChannelUser(user) == null)
                     channel.HandleUserJoined(new IrcChannelUser(user, channelNameAndUserMode.Item2));
             }
-        }
-
-        /// <summary>
-        /// Process RPL_WHOWASUSER responses from the server.
-        /// </summary>
-        /// <param name="message">The message received from the server.</param>
-        [MessageProcessor("314")]
-        protected void ProcessMessageReplyWhoWasUser(IrcMessage message)
-        {
-            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
-
-            Debug.Assert(message.Parameters[1] != null);
-            var user = GetUserFromNickName(message.Parameters[1], false);
-            Debug.Assert(message.Parameters[2] != null);
-            user.UserName = message.Parameters[2];
-            Debug.Assert(message.Parameters[3] != null);
-            user.HostName = message.Parameters[3];
-            Debug.Assert(message.Parameters[4] != null);
-            Debug.Assert(message.Parameters[5] != null);
-            user.RealName = message.Parameters[5];
-        }
-
-        /// <summary>
-        /// Process RPL_ENDOFWHOWAS responses from the server.
-        /// </summary>
-        /// <param name="message">The message received from the server.</param>
-        [MessageProcessor("369")]
-        protected void ProcessMessageReplyEndOfWhoWas(IrcMessage message)
-        {
-            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
-
-            Debug.Assert(message.Parameters[1] != null);
-            var user = GetUserFromNickName(message.Parameters[1], false);
-            OnWhoWasReplyReceived(new IrcUserEventArgs(user, null));
-        }
-
-        /// <summary>
-        /// Process RPL_WHOREPLY responses from the server.
-        /// </summary>
-        /// <param name="message">The message received from the server.</param>
-        [MessageProcessor("352")]
-        protected void ProcessMessageReplyWhoReply(IrcMessage message)
-        {
-            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
-
-            Debug.Assert(message.Parameters[1] != null);
-            var channel = message.Parameters[1] == "*" ? null : GetChannelFromName(message.Parameters[1]);
-
-            Debug.Assert(message.Parameters[5] != null);
-            var user = GetUserFromNickName(message.Parameters[5]);
-
-            Debug.Assert(message.Parameters[2] != null);
-            var userName = message.Parameters[2];
-            Debug.Assert(message.Parameters[3] != null);
-            user.HostName = message.Parameters[3];
-            Debug.Assert(message.Parameters[4] != null);
-            user.ServerName = message.Parameters[4];
-
-            Debug.Assert(message.Parameters[6] != null);
-            var userModeFlags = message.Parameters[6];
-            Debug.Assert(userModeFlags.Length > 0);
-            if (userModeFlags.Contains('H'))
-                user.IsAway = false;
-            else if (userModeFlags.Contains('G'))
-                user.IsAway = true;
-            user.IsOperator = userModeFlags.Contains('*');
-            if (channel != null)
-            {
-                // Add user to channel if it does not already exist in it.
-                var channelUser = channel.GetChannelUser(user);
-                if (channelUser == null)
-                {
-                    channelUser = new IrcChannelUser(user);
-                    channel.HandleUserJoined(channelUser);
-                }
-
-                // Set modes on user corresponding to given mode flags (prefix characters).
-                foreach (var c in userModeFlags)
-                {
-                    char mode;
-                    if (this.channelUserModesPrefixes.TryGetValue(c, out mode))
-                        channelUser.HandleModeChanged(true, mode);
-                    else
-                        break;
-                }
-            }
-
-            Debug.Assert(message.Parameters[7] != null);
-            var lastParamParts = message.Parameters[7].SplitIntoPair(" ");
-            user.HopCount = int.Parse(lastParamParts.Item1);
-            if (lastParamParts.Item2 != null)
-                user.RealName = lastParamParts.Item2;
-        }
-
-        /// <summary>
-        /// Process RPL_ENDOFWHO responses from the server.
-        /// </summary>
-        /// <param name="message">The message received from the server.</param>
-        [MessageProcessor("315")]
-        protected void ProcessMessageReplyEndOfWho(IrcMessage message)
-        {
-            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
-
-            Debug.Assert(message.Parameters[1] != null);
-            var mask = message.Parameters[1];
-            OnWhoReplyReceived(new IrcNameEventArgs(mask));
         }
 
         /// <summary>
@@ -841,6 +834,64 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        /// Process RPL_WHOREPLY responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("352")]
+        protected void ProcessMessageReplyWhoReply(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var channel = message.Parameters[1] == "*" ? null : GetChannelFromName(message.Parameters[1]);
+
+            Debug.Assert(message.Parameters[5] != null);
+            var user = GetUserFromNickName(message.Parameters[5]);
+
+            Debug.Assert(message.Parameters[2] != null);
+            var userName = message.Parameters[2];
+            Debug.Assert(message.Parameters[3] != null);
+            user.HostName = message.Parameters[3];
+            Debug.Assert(message.Parameters[4] != null);
+            user.ServerName = message.Parameters[4];
+
+            Debug.Assert(message.Parameters[6] != null);
+            var userModeFlags = message.Parameters[6];
+            Debug.Assert(userModeFlags.Length > 0);
+            if (userModeFlags.Contains('H'))
+                user.IsAway = false;
+            else if (userModeFlags.Contains('G'))
+                user.IsAway = true;
+            user.IsOperator = userModeFlags.Contains('*');
+            if (channel != null)
+            {
+                // Add user to channel if it does not already exist in it.
+                var channelUser = channel.GetChannelUser(user);
+                if (channelUser == null)
+                {
+                    channelUser = new IrcChannelUser(user);
+                    channel.HandleUserJoined(channelUser);
+                }
+
+                // Set modes on user corresponding to given mode flags (prefix characters).
+                foreach (var c in userModeFlags)
+                {
+                    char mode;
+                    if (this.channelUserModesPrefixes.TryGetValue(c, out mode))
+                        channelUser.HandleModeChanged(true, mode);
+                    else
+                        break;
+                }
+            }
+
+            Debug.Assert(message.Parameters[7] != null);
+            var lastParamParts = message.Parameters[7].SplitIntoPair(" ");
+            user.HopCount = int.Parse(lastParamParts.Item1);
+            if (lastParamParts.Item2 != null)
+                user.RealName = lastParamParts.Item2;
+        }
+
+        /// <summary>
         /// Process RPL_NAMEREPLY responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
@@ -869,20 +920,6 @@ namespace IrcDotNet
                     channel.HandleUserNameReply(new IrcChannelUser(user, userNickNameAndMode.Item2));
                 }
             }
-        }
-
-        /// <summary>
-        /// Process RPL_ENDOFNAMES responses from the server.
-        /// </summary>
-        /// <param name="message">The message received from the server.</param>
-        [MessageProcessor("366")]
-        protected void ProcessMessageReplyEndOfNames(IrcMessage message)
-        {
-            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
-
-            Debug.Assert(message.Parameters[1] != null);
-            var channel = GetChannelFromName(message.Parameters[1]);
-            channel.HandleUsersListReceived();
         }
 
         /// <summary>
@@ -923,6 +960,34 @@ namespace IrcDotNet
 
             OnServerLinksListReceived(new IrcServerLinksListReceivedEventArgs(this.listedServerLinks));
             this.listedServerLinks = new List<IrcServerInfo>();
+        }
+
+        /// <summary>
+        /// Process RPL_ENDOFNAMES responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("366")]
+        protected void ProcessMessageReplyEndOfNames(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var channel = GetChannelFromName(message.Parameters[1]);
+            channel.HandleUsersListReceived();
+        }
+
+        /// <summary>
+        /// Process RPL_ENDOFWHOWAS responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("369")]
+        protected void ProcessMessageReplyEndOfWhoWas(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            Debug.Assert(message.Parameters[1] != null);
+            var user = GetUserFromNickName(message.Parameters[1], false);
+            OnWhoWasReplyReceived(new IrcUserEventArgs(user, null));
         }
 
         /// <summary>

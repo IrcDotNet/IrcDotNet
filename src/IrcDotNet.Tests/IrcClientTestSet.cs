@@ -16,11 +16,6 @@ namespace IrcDotNet.Tests
     [TestClass()]
     public class IrcClientTestSet
     {
-        // Test parameters for IRC connections.
-        private const string serverHostName = "irc.freenode.net";
-        private const string serverPassword = null;
-        private const string realName = "IRC.NET Test Bot";
-
         // Information used for sending messages, to be used in tests.
         private const string clientVersionInfo = "IRC.NET Test Bot";
         private const string quitMessage = "Client 2 quitting test.";
@@ -51,6 +46,7 @@ namespace IrcDotNet.Tests
         private static AutoResetEvent client1ServerVersionInfoReceivedEvent;
         private static AutoResetEvent client1ServerTimeReceivedEvent;
         private static AutoResetEvent client1ServerLinksListReceivedEvent;
+        private static AutoResetEvent client1ServerStatisticsReceivedEvent;
         private static AutoResetEvent client1LocalUserNickNameChangedEvent;
         private static AutoResetEvent client1LocalUserModeChangedEvent;
         private static AutoResetEvent client1LocalUserIsAwayChangedEvent;
@@ -106,8 +102,10 @@ namespace IrcDotNet.Tests
         // Primary and secondary client, with associated user information.
         private static IrcClient ircClient1, ircClient2;
         private static CtcpClient ctcpClient1, ctcpClient2;
+        private static string serverPassword;
         private static string nickName1, nickName2;
         private static string userName1, userName2;
+        private static string realName;
         private static string testChannelName;
 
         // Manages state of tests.
@@ -171,25 +169,32 @@ namespace IrcDotNet.Tests
 
             // Nick name length limit on irc.freenode.net is 16 chars.
             Func<string> getRandomUserId = () => Guid.NewGuid().ToString().Substring(0, 8);
-            nickName1 = userName1 = string.Format("itb-{0}", getRandomUserId());
-            nickName2 = userName2 = string.Format("itb-{0}", getRandomUserId());
-            Debug.WriteLine("Cllient 1 user has nick name '{0}' and user name '{1}'.", nickName1, userName1);
-            Debug.WriteLine("Cllient 2 user has nick name '{0}' and user name '{1}'.", nickName2, userName2);
+
+            serverPassword = Properties.Resources.ServerPassword;
+            if (string.IsNullOrEmpty(serverPassword))
+                serverPassword = null;
+            nickName1 = userName1 = string.Format(Properties.Resources.NickNameFormat, getRandomUserId());
+            nickName2 = userName2 = string.Format(Properties.Resources.NickNameFormat, getRandomUserId());
+            realName = Properties.Resources.RealName;
+
+            Debug.WriteLine("Client users have real name '{0}'", realName);
+            Debug.WriteLine("Client 1 user has nick name '{0}' and user name '{1}'.", nickName1, userName1);
+            Debug.WriteLine("Client 2 user has nick name '{0}' and user name '{1}'.", nickName2, userName2);
 
             stateManager.SetStates(IrcClientTestState.Client1Initialized, IrcClientTestState.Client2Initialized);
-            ircClient1.Connect(serverHostName, false, new IrcUserRegistrationInfo()
+            ircClient1.Connect(Properties.Resources.ServerHostName, false, new IrcUserRegistrationInfo()
                 {
                     Password = serverPassword,
                     NickName = nickName1,
                     UserName = userName1,
-                    RealName = realName
+                    RealName = realName,
                 });
-            ircClient2.Connect(serverHostName, false, new IrcUserRegistrationInfo()
+            ircClient2.Connect(Properties.Resources.ServerHostName, false, new IrcUserRegistrationInfo()
                 {
                     Password = serverPassword,
                     NickName = nickName2,
                     UserName = userName2,
-                    RealName = realName
+                    RealName = realName,
                 });
         }
 
@@ -249,10 +254,8 @@ namespace IrcDotNet.Tests
 
         private static void ircClient1_ProtocolError(object sender, IrcProtocolErrorEventArgs e)
         {
-            Debug.Fail(string.Format(
-                "Client 1: protocol error {0}: {1}" + Environment.NewLine +
-                "Parameters: {2}",
-                e.Code, e.Message, string.Join(" ", e.Parameters)));
+            Debug.Fail(string.Format(Properties.Resources.MessageProtocolError,
+                1, e.Code, e.Message, string.Join(" ", e.Parameters)));
         }
 
         private static void ircClient1_Registered(object sender, EventArgs e)
@@ -502,10 +505,8 @@ namespace IrcDotNet.Tests
 
         private static void ircClient2_ProtocolError(object sender, IrcProtocolErrorEventArgs e)
         {
-            Debug.Fail(string.Format(
-                "Client 2: protocol error {0}: {1}" + Environment.NewLine +
-                "Parameters: {2}",
-                e.Code, e.Message, string.Join(" ", e.Parameters)));
+            Debug.Fail(string.Format(Properties.Resources.MessageProtocolError,
+                2, e.Code, e.Message, string.Join(" ", e.Parameters)));
         }
 
         private static void ircClient2_Registered(object sender, EventArgs e)
@@ -735,7 +736,8 @@ namespace IrcDotNet.Tests
             stateManager.SetStates(IrcClientTestState.Client1Registered);
             Assert.AreEqual(nickName1, ircClient1.LocalUser.NickName, "Client 1 nick name was not correctly set.");
             Assert.AreEqual(userName1, ircClient1.LocalUser.UserName, "Client 1 user name was not correctly set.");
-            Assert.AreEqual(realName, ircClient1.LocalUser.RealName, "Client 1 real name was not correctly set.");
+            Assert.AreEqual(realName, ircClient1.LocalUser.RealName,
+                "Client 1 real name was not correctly set.");
 
             stateManager.HasStates(IrcClientTestState.Client2Connected);
             Assert.IsTrue(WaitForClientEvent(client2RegisteredEvent, 20000),
@@ -743,7 +745,8 @@ namespace IrcDotNet.Tests
             stateManager.SetStates(IrcClientTestState.Client2Registered);
             Assert.AreEqual(nickName2, ircClient2.LocalUser.NickName, "Client 2 nick name was not correctly set.");
             Assert.AreEqual(userName2, ircClient2.LocalUser.UserName, "Client 2 user name was not correctly set.");
-            Assert.AreEqual(realName, ircClient2.LocalUser.RealName, "Client 2 real name was not correctly set.");
+            Assert.AreEqual(realName, ircClient2.LocalUser.RealName,
+                "Client 2 real name was not correctly set.");
         }
 
         [TestMethod()]
@@ -781,6 +784,17 @@ namespace IrcDotNet.Tests
             ircClient1.GetServerTime();
             Assert.IsTrue(WaitForClientEvent(client1ServerTimeReceivedEvent, 10000),
                 "Client 1 did not receive date/time info from server.");
+        }
+
+        [TestMethod()]
+        public void ServerStatisticsTest()
+        {
+            stateManager.HasStates(IrcClientTestState.Client1Registered);
+            ircClient1.GetServerStatistics("l");
+            // TODO
+            return;
+            Assert.IsTrue(WaitForClientEvent(client1ServerStatisticsReceivedEvent, 10000),
+                "Client 1 did not receive statistics from server.");
         }
 
         [TestMethod()]
@@ -1202,7 +1216,8 @@ namespace IrcDotNet.Tests
         }
     }
 
-    // Defines set of test states managed by TestStateManager. Any number of states may be set at any time.
+    // Defines set of test states managed by TestStateManager.
+    // Any number of states may be set at any time.
     public enum IrcClientTestState
     {
         None,
