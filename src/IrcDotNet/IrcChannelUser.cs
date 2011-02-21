@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -88,7 +89,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Ops the user in the channel.
+        /// Gives the user operator privileges in the channel.
         /// </summary>
         public void Op()
         {
@@ -96,7 +97,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Deops the user in the channel.
+        /// Removes operator privileges from the user in the channel.
         /// </summary>
         public void DeOp()
         {
@@ -121,10 +122,14 @@ namespace IrcDotNet
 
         internal void HandleModeChanged(bool add, char mode)
         {
-            if (add)
-                this.modes.Add(mode);
-            else
-                this.modes.Remove(mode);
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+            {
+                if (add)
+                    this.modes.Add(mode);
+                else
+                    this.modes.Remove(mode);
+            }
+
             OnModesChanged(new EventArgs());
         }
 

@@ -57,7 +57,7 @@ namespace IrcDotNet
                     else
                     {
                         throw new InvalidOperationException(
-                            Properties.Resources.ErrorMessageInvalidQuotedChar);
+                            Properties.Resources.MessageInvalidQuotedChar);
                     }
                 }
                 else
