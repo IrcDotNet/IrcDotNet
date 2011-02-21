@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -327,7 +328,8 @@ namespace IrcDotNet
             }
 
             channelUser.Channel = this;
-            this.users.Add(channelUser);
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                this.users.Add(channelUser);
         }
 
         internal void HandleUsersListReceived()
@@ -337,9 +339,11 @@ namespace IrcDotNet
 
         internal void HandleModesChanged(string newModes, IEnumerable<string> newModeParameters)
         {
-            this.modes.UpdateModes(newModes, newModeParameters, this.client.ChannelUserModes,
-                (add, mode, modeParameter) => this.users.Single(
-                    cu => cu.User.NickName == modeParameter).HandleModeChanged(add, mode));
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                this.modes.UpdateModes(newModes, newModeParameters, this.client.ChannelUserModes,
+                    (add, mode, modeParameter) => this.users.Single(
+                        cu => cu.User.NickName == modeParameter).HandleModeChanged(add, mode));
+
             OnModesChanged(new EventArgs());
         }
 
@@ -356,7 +360,9 @@ namespace IrcDotNet
             }
 
             channelUser.Channel = this;
-            this.users.Add(channelUser);
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                this.users.Add(channelUser);
+
             OnUserJoined(new IrcChannelUserEventArgs(channelUser, null));
         }
 
@@ -367,8 +373,10 @@ namespace IrcDotNet
 
         internal void HandleUserLeft(IrcChannelUser channelUser, string comment)
         {
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                this.users.Remove(channelUser);
+
             OnUserLeft(new IrcChannelUserEventArgs(channelUser, comment));
-            this.users.Remove(channelUser);
         }
 
         internal void HandleUserKicked(IrcUser user, string comment)
@@ -378,8 +386,10 @@ namespace IrcDotNet
 
         internal void HandleUserKicked(IrcChannelUser channelUser, string comment)
         {
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                this.users.Remove(channelUser);
+
             OnUserKicked(new IrcChannelUserEventArgs(channelUser, comment));
-            this.users.Remove(channelUser);
         }
 
         internal void HandleUserInvited(IrcUser user)
@@ -389,7 +399,8 @@ namespace IrcDotNet
 
         internal void HandleUserQuit(IrcChannelUser channelUser)
         {
-            this.users.Remove(channelUser);
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                this.users.Remove(channelUser);
         }
 
         internal void HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)

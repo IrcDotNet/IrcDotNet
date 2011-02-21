@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,7 +10,7 @@ using System.Text;
 namespace IrcDotNet
 {
     using Common.Collections;
-
+    
     /// <summary>
     /// Represents the local user of a specific <see cref="IrcClient"/>.
     /// The local user is the user as which the client has connected and registered, and may be either a normal user or
@@ -340,7 +341,9 @@ namespace IrcDotNet
 
         internal void HandleModesChanged(string newModes)
         {
-            this.modes.UpdateModes(newModes);
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                this.modes.UpdateModes(newModes);
+
             OnModesChanged(new EventArgs());
         }
 

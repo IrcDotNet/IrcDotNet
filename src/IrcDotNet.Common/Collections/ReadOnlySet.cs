@@ -23,6 +23,8 @@ namespace IrcDotNet.Common.Collections
         // Set to expose as read-only.
         private ISet<T> set;
 
+        private object syncRoot = new object();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadOnlySet{T}"/> class.
         /// </summary>
@@ -256,22 +258,17 @@ namespace IrcDotNet.Common.Collections
 
         void ICollection.CopyTo(Array array, int index)
         {
-            ((ICollection)this.set).CopyTo(array, index);
-        }
-
-        int ICollection.Count
-        {
-            get { return ((ICollection)this.set).Count; }
+            this.set.CopyTo((T[])array, index);
         }
 
         bool ICollection.IsSynchronized
         {
-            get { return ((ICollection)this.set).IsSynchronized; }
+            get { return true; }
         }
 
         object ICollection.SyncRoot
         {
-            get { return ((ICollection)this.set).SyncRoot; }
+            get { return this.syncRoot; }
         }
 
         #endregion
