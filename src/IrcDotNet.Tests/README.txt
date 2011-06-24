@@ -1,6 +1,9 @@
 ﻿Running Tests
 =============
 
+The tests in this project may be run under the Visual Studio Unit Testing
+Framework.
+
 All tests in this project presume the availability of a fully-functional and
 compliant IRC server. The server ``irc.freenode.net`` is used by default.
 

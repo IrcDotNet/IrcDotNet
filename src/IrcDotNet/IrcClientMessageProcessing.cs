@@ -9,8 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace IrcDotNet
 {
-    using Common.Collections;
-    
+    using Collections;
+
     // Defines all message processors for the client.
     partial class IrcClient
     {
@@ -358,11 +358,11 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
-            Debug.Assert(message.Parameters[1] != null);
             // Check if message is RPL_BOUNCE or RPL_ISUPPORT.
+            Debug.Assert(message.Parameters[1] != null);
             if (message.Parameters[1].StartsWith("Try server"))
             {
-                // RPL_BOUNCE
+                // Message is RPL_BOUNCE.
                 // Current server is redirecting client to new server.
                 var textParts = message.Parameters[0].Split(' ', ',');
                 var serverAddress = textParts[2];
@@ -372,7 +372,7 @@ namespace IrcDotNet
             }
             else
             {
-                // RPL_ISUPPORT
+                // Message is RPL_ISUPPORT.
                 // Add key/value pairs to dictionary of supported server features.
                 for (int i = 1; i < message.Parameters.Count - 1; i++)
                 {
@@ -389,7 +389,7 @@ namespace IrcDotNet
                 OnServerSupportedFeaturesReceived(new EventArgs());
             }
         }
-        
+
         /// <summary>
         /// Process RPL_STATSLINKINFO responses from the server.
         /// </summary>
@@ -399,7 +399,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
-            // TODO
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.Connection, message);
         }
 
         /// <summary>
@@ -411,7 +411,67 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
-            // TODO
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.Command, message);
+        }
+
+        /// <summary>
+        /// Process RPL_STATSCLINE responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("213")]
+        protected void ProcessMessageStatsCLine(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.AllowedServerConnect, message);
+        }
+
+        /// <summary>
+        /// Process RPL_STATSNLINE responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("214")]
+        protected void ProcessMessageStatsNLine(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.AllowedServerAccept, message);
+        }
+
+        /// <summary>
+        /// Process RPL_STATSILINE responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("215")]
+        protected void ProcessMessageStatsILine(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+            
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.AllowedClient, message);
+        }
+
+        /// <summary>
+        /// Process RPL_STATSKLINE responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("216")]
+        protected void ProcessMessageStatsKLine(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.BannedClient, message);
+        }
+
+        /// <summary>
+        /// Process RPL_STATSYLINE responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("218")]
+        protected void ProcessMessageStatsYLine(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.ConnectionClass, message);
         }
 
         /// <summary>
@@ -423,7 +483,20 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
-            // TODO
+            OnServerStatsReceived(new IrcServerStatsReceivedEventArgs(this.listedStatsEntries));
+            this.listedStatsEntries = new List<IrcServerStatisticalEntry>();
+        }
+
+        /// <summary>
+        /// Process RPL_STATSLLINE responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("241")]
+        protected void ProcessMessageStatsLLine(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.LeafDepth, message);
         }
 
         /// <summary>
@@ -435,7 +508,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
-            // TODO
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.Uptime, message);
         }
 
         /// <summary>
@@ -447,7 +520,19 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
-            // TODO
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.AllowedOperator, message);
+        }
+
+        /// <summary>
+        /// Process RPL_STATSHLINE responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("244")]
+        protected void ProcessMessageStatsHLine(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.HubServer, message);
         }
 
         /// <summary>

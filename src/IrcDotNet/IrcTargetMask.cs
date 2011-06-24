@@ -108,7 +108,7 @@ namespace IrcDotNet
     }
 
     /// <summary>
-    /// Defines the type of a target mask.
+    /// Defines the types of a target mask.
     /// </summary>
     public enum IrcTargetMaskType
     {

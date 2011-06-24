@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-#if !SILVERLIGHT
-using System.Net.Security;
-#endif
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+
+#if !SILVERLIGHT
+using System.Net.Security;
+#endif
 
 namespace IrcDotNet
 {
@@ -181,6 +182,36 @@ namespace IrcDotNet
         /// </summary>
         /// <value>The list of server links.</value>
         public IList<IrcServerInfo> Links
+        {
+            get;
+            private set;
+        }
+    }
+
+    /// <summary>
+    /// Provides data for the <see cref="IrcClient.ServerStatsReceived"/> event.
+    /// </summary>
+    /// <threadsafety static="true" instance="false"/>
+    public class IrcServerStatsReceivedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IrcServerStatsReceivedEventArgs"/> class.
+        /// </summary>
+        /// <param name="entries">A list of statistical entries that was returned by the server.</param>
+        public IrcServerStatsReceivedEventArgs(IList<IrcServerStatisticalEntry> entries)
+            : base()
+        {
+            if (entries == null)
+                throw new ArgumentNullException("entries");
+
+            this.Entries = new ReadOnlyCollection<IrcServerStatisticalEntry>(entries);
+        }
+
+        /// <summary>
+        /// Gets the list of statistical entries that was returned by the server.
+        /// </summary>
+        /// <value>The list of statistical entries.</value>
+        public IList<IrcServerStatisticalEntry> Entries
         {
             get;
             private set;

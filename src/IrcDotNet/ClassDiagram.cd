@@ -59,7 +59,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>Pkfc0nZ3LnOvU/rVuU/IW/PVv+/6M1456f9ev05r2/s=</HashCode>
+      <HashCode>Pkfc0nZ3LnOvU/rVuc/IW/PVv+/6M1496f9ev05r2/s=</HashCode>
       <FileName>IrcClient.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -181,6 +181,20 @@
       <FileName>IrcNetworkInfo.cs</FileName>
     </TypeIdentifier>
   </Struct>
+  <Struct Name="IrcDotNet.IrcServerInfo" Collapsed="true">
+    <Position X="9.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>IrcServerInfo.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="IrcDotNet.IrcServerStatisticalEntry" Collapsed="true">
+    <Position X="11.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAA=</HashCode>
+      <FileName>IrcServerStatisticalEntry.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
   <Interface Name="IrcDotNet.IIrcMessageReceiveHandler" Collapsed="true">
     <Position X="8" Y="6.75" Width="1.5" />
     <TypeIdentifier>
@@ -224,10 +238,17 @@
     </TypeIdentifier>
   </Interface>
   <Enum Name="IrcDotNet.IrcTargetMaskType" Collapsed="true">
-    <Position X="6.25" Y="8.5" Width="1.5" />
+    <Position X="8" Y="8.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAQAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>IrcTargetMask.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="IrcDotNet.IrcServerStatisticalEntryCommonType" Collapsed="true">
+    <Position X="6.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAACAAEAAIQABAAAAAAAAAgAQAAAAACQAEA=</HashCode>
+      <FileName>IrcServerStatisticalEntry.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Segoe UI" Size="9" />

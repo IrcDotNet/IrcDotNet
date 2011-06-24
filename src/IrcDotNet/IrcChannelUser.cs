@@ -9,7 +9,7 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    using Common.Collections;
+    using Collections;
 
     /// <summary>
     /// Represents an IRC user that exists on a specific channel on a specific <see cref="IrcClient"/>.

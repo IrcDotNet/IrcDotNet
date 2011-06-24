@@ -9,8 +9,8 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    using Common.Collections;
-    
+    using Collections;
+
     /// <summary>
     /// Represents the local user of a specific <see cref="IrcClient"/>.
     /// The local user is the user as which the client has connected and registered, and may be either a normal user or
@@ -309,7 +309,8 @@ namespace IrcDotNet
             if (newModes == null)
                 throw new ArgumentNullException("newModes");
 
-            SetModes(newModes.Except(this.modes), this.modes.Except(newModes));
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                SetModes(newModes.Except(this.modes), this.modes.Except(newModes));
         }
 
         /// <inheritdoc cref="SetModes(string)"/>

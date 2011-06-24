@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace IrcDotNet.Tests
 {
-    using Common.Collections;
+    using Collections;
     using Ctcp;
 
     // Set of all tests for IRC (and CTCP) client.
@@ -26,6 +26,7 @@ namespace IrcDotNet.Tests
 
         // Information received from server, to be used in tests.
         private static IList<IrcChannelInfo> client1ListedChannels;
+        private static IList<IrcServerStatisticalEntry> client1ServerStatsEntries;
         private static string client1UserQuitComment;
         private static string client1ChannelLeaveComment;
 
@@ -133,6 +134,7 @@ namespace IrcDotNet.Tests
             ircClient1.ServerVersionInfoReceived += ircClient1_ServerVersionInfoReceived;
             ircClient1.ServerTimeReceived += ircClient1_ServerTimeReceived;
             ircClient1.ServerLinksListReceived += ircClient1_ServerLinksListReceived;
+            ircClient1.ServerStatsReceived += ircClient1_ServerStatsReceived;
             ircClient1.WhoReplyReceived += ircClient1_WhoReplyReceived;
             ircClient1.WhoIsReplyReceived += ircClient1_WhoIsReplyReceived;
             ircClient1.WhoWasReplyReceived += ircClient1_WhoWasReplyReceived;
@@ -298,10 +300,18 @@ namespace IrcDotNet.Tests
                 client1ServerTimeReceivedEvent.Set();
         }
 
-        static void ircClient1_ServerLinksListReceived(object sender, IrcServerLinksListReceivedEventArgs e)
+        private static void ircClient1_ServerLinksListReceived(object sender, IrcServerLinksListReceivedEventArgs e)
         {
             if (client1ServerLinksListReceivedEvent != null)
                 client1ServerLinksListReceivedEvent.Set();
+        }
+
+        private static void ircClient1_ServerStatsReceived(object sender, IrcServerStatsReceivedEventArgs e)
+        {
+            client1ServerStatsEntries = e.Entries;
+
+            if (client1ServerStatisticsReceivedEvent != null)
+                client1ServerStatisticsReceivedEvent.Set();
         }
 
         private static void ircClient1_WhoReplyReceived(object sender, EventArgs e)
@@ -790,18 +800,20 @@ namespace IrcDotNet.Tests
         public void ServerStatisticsTest()
         {
             stateManager.HasStates(IrcClientTestState.Client1Registered);
-            ircClient1.GetServerStatistics("l");
-            // TODO
-            return;
+            // Request uptime statistics of server.
+            ircClient1.GetServerStatistics('u');
             Assert.IsTrue(WaitForClientEvent(client1ServerStatisticsReceivedEvent, 10000),
-                "Client 1 did not receive statistics from server.");
+                "Client 1 did not receive server statistics from server.");
+            Assert.IsTrue(client1ServerStatsEntries.Count > 0 &&
+                client1ServerStatsEntries.First().Type == (int)IrcServerStatisticalEntryCommonType.Uptime,
+                "Client 1 did not receive correct statistical entry for server.");
         }
 
         [TestMethod()]
         public void ServerLinksTest()
         {
             stateManager.HasStates(IrcClientTestState.Client1Registered);
-            ircClient1.GetServerLinks();
+            ircClient1.GetServerLinks("y");
             Assert.IsTrue(WaitForClientEvent(client1ServerLinksListReceivedEvent, 10000),
                 "Client 1 did not receive list of server links from server.");
         }

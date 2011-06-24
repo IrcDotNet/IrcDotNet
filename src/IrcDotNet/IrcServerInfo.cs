@@ -17,7 +17,7 @@ namespace IrcDotNet
         private string HostName;
 
         /// <summary>
-        /// The hop count of the server from the client server.
+        /// The hop count of the server from the local server.
         /// </summary>
         private int? HopCount;
 
@@ -30,7 +30,7 @@ namespace IrcDotNet
         /// Initializes a new instance of the <see cref="IrcServerInfo"/> class with the specified properties.
         /// </summary>
         /// <param name="hostName">The host name of the server.</param>
-        /// <param name="hopCount">The hop count of the server from the client server.</param>
+        /// <param name="hopCount">The hop count of the server from the local server.</param>
         /// <param name="info">A string containing arbitrary information about the server.</param>
         public IrcServerInfo(string hostName, int? hopCount, string info)
         {

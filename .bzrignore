@@ -2,6 +2,7 @@
 *.log
 *.suo
 *.user
+*.docstates
 bin/
 obj/
 output/

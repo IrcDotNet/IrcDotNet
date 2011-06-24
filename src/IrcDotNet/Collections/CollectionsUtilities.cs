@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace IrcDotNet.Common.Collections
+namespace IrcDotNet.Collections
 {
     /// <summary>
     /// Contains common utilities for functionality relating to collections.
