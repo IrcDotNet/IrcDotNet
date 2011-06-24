@@ -2,19 +2,19 @@ Overview
 ========
 
 IRC.NET is a complete IRC (Internet Relay Chat) client library for the
-.NET Framework 4.0 and Silverlight 4. It aims to provide a complete and
-efficient implementation of the protocol as described in RFC 2812
-(Internet Relay Chat: Client Protocol) as well as supporting de-facto modern
-features of the protocol, as described below.
+.NET Framework 4.0 and Silverlight 4.0. It aims to provide a complete and
+efficient implementation of the protocol as described in RFCs 1459 and 2812,
+as well as supporting de-facto modern features of the protocol, as described
+below.
 
 Mono
 ----
 
-The .NET Framework library is also intended to compile and run under Mono 2.6
-and later.
+The .NET Framework version of the library is also intended to compile and run
+under Mono 2.6 and later.
 
-The Silverlight library is not guaranteed to compile or run on the Moonlight
-framework.
+The Silverlight version of the library is not guaranteed to compile or run on
+the Moonlight framework.
 
 Non-RFC Features
 ----------------

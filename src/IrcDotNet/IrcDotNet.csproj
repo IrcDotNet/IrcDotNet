@@ -45,7 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\CollectionsUtilities.cs" />
+    <Compile Include="Collections\ReadOnlyDictionary.cs" />
+    <Compile Include="Collections\ReadOnlySet.cs" />
     <Compile Include="CollectionUtilities.cs" />
+    <Compile Include="DebugUtilities.cs" />
     <Compile Include="IrcServerInfo.cs" />
     <Compile Include="Ctcp\CtcpClient.cs" />
     <Compile Include="Ctcp\CtcpClientMessageProcessing.cs" />
@@ -54,6 +58,7 @@
     <Compile Include="IrcChannelInfo.cs" />
     <Compile Include="IrcNetworkInfo.cs" />
     <Compile Include="IrcRegistrationInfo.cs" />
+    <Compile Include="IrcServerStatisticalEntry.cs" />
     <Compile Include="IrcStandardFloodPreventer.cs" />
     <Compile Include="IIrcFloodPreventer.cs" />
     <Compile Include="IIrcMessageSendHandler.cs" />
@@ -99,12 +104,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IrcDotNet.Common\IrcDotNet.Common.csproj">
-      <Project>{9138300E-94C6-4F79-999F-6830FA76488E}</Project>
-      <Name>IrcDotNet.Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

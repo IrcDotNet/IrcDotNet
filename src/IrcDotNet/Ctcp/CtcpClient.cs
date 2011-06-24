@@ -7,7 +7,7 @@ using System.Text;
 
 namespace IrcDotNet.Ctcp
 {
-    using Common.Collections;
+    using Collections;
 
     /// <summary>
     /// Represents a client that communicates with a server using CTCP (Client to Client Protocol), operating over an
@@ -17,18 +17,23 @@ namespace IrcDotNet.Ctcp
     /// </summary>
     /// <remarks>
     /// All collection objects must be locked on the <see cref="ICollection.SyncRoot"/> object for thread-safety.
+    /// They can however be used safely without locking within event handlers.
     /// </remarks>
-    /// <threadsafety static="true" instance="false"/>
+    /// <threadsafety static="true" instance="true"/>
     /// <seealso cref="IrcClient"/>
     [DebuggerDisplay("{ToString(), nq}")]
     public partial class CtcpClient
     {
+        // Message indicating that no error occurred.
         private const string messageNoError = "no error";
 
+        // Tag used for checking whether no error occurred for remote user.
         private const string noErrorTag = "NO_ERROR";
 
+        // Character that marks start and end of tagged data.
         private const char taggedDataDelimeterChar = '\x001';
 
+        // Information for low-level quoting of messages.
         private const char lowLevelQuotingEscapeChar = '\x10';
         private static readonly IDictionary<char, char> lowLevelQuotedChars = new Dictionary<char, char>()
             {
@@ -38,6 +43,7 @@ namespace IrcDotNet.Ctcp
             };
         private static readonly IDictionary<char, char> lowLevelDequotedChars = lowLevelQuotedChars.Invert();
 
+        // Information for CTCP-quoting of messages.
         private const char ctcpQuotingEscapeChar = '\x5C';
         private static readonly IDictionary<char, char> ctcpQuotedChars = new Dictionary<char, char>()
             {
@@ -48,6 +54,7 @@ namespace IrcDotNet.Ctcp
         // Dictionary of message processor routines, keyed by their command names.
         private Dictionary<string, MessageProcessor> messageProcessors;
 
+        // IRC client for communication.
         private IrcClient ircClient;
 
         /// <summary>
@@ -331,7 +338,7 @@ namespace IrcDotNet.Ctcp
             else
             {
                 // Unknown command.
-                Debug.WriteLine(string.Format("Unknown CTCP message tag '{0}'.", message.Tag));
+                DebugUtilities.WriteEvent("Unknown CTCP message tag '{0}'.", message.Tag);
             }
         }
 

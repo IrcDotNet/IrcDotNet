@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace IrcDotNet.Common.Collections
+namespace IrcDotNet.Collections
 {
     /// <summary>
     /// Represents a read-only collection of keys and values.
