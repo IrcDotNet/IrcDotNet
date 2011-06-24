@@ -6,7 +6,7 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    using Common.Collections;
+    using Collections;
 
     /// <summary>
     /// Represents a collection of <see cref="IrcChannel"/> objects.

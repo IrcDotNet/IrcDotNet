@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace IrcDotNet
 {
-    using Common.Collections;
+    using Collections;
 
     // Utilities for text manipulation.
     internal static class TextUtilities

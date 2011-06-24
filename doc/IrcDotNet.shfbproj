@@ -21,7 +21,8 @@
     <HelpTitle>IRC.NET Documentation</HelpTitle>
     <DocumentationSources>
       <DocumentationSource sourceFile="..\src\IrcDotNet.sln" />
-<DocumentationSource sourceFile="..\src\IrcDotNet-Silverlight.sln" /></DocumentationSources>
+      <DocumentationSource sourceFile="..\src\IrcDotNet-Silverlight.sln" />
+    </DocumentationSources>
     <HelpFileFormat>HtmlHelp1, MSHelpViewer</HelpFileFormat>
     <FrameworkVersion>4.0.30319</FrameworkVersion>
     <ProjectSummary>A library for communicating via the Internet Relay Chat %28IRC%29 protocol, using the .NET Framework 4.0.</ProjectSummary>

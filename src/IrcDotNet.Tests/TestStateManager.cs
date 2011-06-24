@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace IrcDotNet.Tests
 {
-    using Common.Collections;
+    using Collections;
 
     // Manages states and dependencies of set of tests.
     public class TestStateManager<TState> where TState : struct

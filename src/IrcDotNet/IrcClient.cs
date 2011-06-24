@@ -19,7 +19,7 @@ using System.Net.Security;
 
 namespace IrcDotNet
 {
-    using Common.Collections;
+    using Collections;
 
     /// <summary>
     /// Represents a client that communicates with a server using the IRC (Internet Relay Chat) protocol.
@@ -28,8 +28,9 @@ namespace IrcDotNet
     /// </summary>
     /// <remarks>
     /// All collection objects must be locked on the <see cref="ICollection.SyncRoot"/> object for thread-safety.
+    /// They can however be used safely without locking within event handlers.
     /// </remarks>
-    /// <threadsafety static="true" instance="false"/>
+    /// <threadsafety static="true" instance="true"/>
     [DebuggerDisplay("{ToString(), nq}")]
     public partial class IrcClient : IDisposable
     {
@@ -77,6 +78,8 @@ namespace IrcDotNet
             isupportPrefix = @"\((?<modes>.*)\)(?<prefixes>.*)";
         }
 
+        #region Protocol Data
+
         // Internal collection of all known servers.
         private Collection<IrcServer> servers;
 
@@ -114,8 +117,13 @@ namespace IrcDotNet
         // List of information about channels, returned by server in response to last LIST message.
         private List<IrcChannelInfo> listedChannels;
 
-        // List of servers to which client server links, return by server in response to last LINKS message.
+        // List of other servers to which server links, returned by server in response to last LINKS message.
         private List<IrcServerInfo> listedServerLinks;
+
+        // List of statistical entries, returned by server in response to last STATS message.
+        private List<IrcServerStatisticalEntry> listedStatsEntries;
+
+        #endregion
 
         // Dictionary of message processor routines, keyed by their command names.
         private Dictionary<string, MessageProcessor> messageProcessors;
@@ -129,7 +137,7 @@ namespace IrcDotNet
         // Prevents client from flooding server with messages by limiting send rate.
         private IIrcFloodPreventer floodPreventer;
 
-        // Objects for network (TCP) I/O.
+        // Network (TCP) I/O.
         private Socket socket;
         private CircularBufferStream receiveStream;
         private Stream dataStream;
@@ -539,7 +547,7 @@ namespace IrcDotNet
         public event EventHandler<IrcServerVersionInfoEventArgs> ServerVersionInfoReceived;
 
         /// <summary>
-        /// Occurs when the local date/time of a specific server has been received from the server.
+        /// Occurs when the local date/time for a specific server has been received from the server.
         /// </summary>
         public event EventHandler<IrcServerTimeEventArgs> ServerTimeReceived;
 
@@ -547,6 +555,11 @@ namespace IrcDotNet
         /// Occurs when a list of server links has been received from the server.
         /// </summary>
         public event EventHandler<IrcServerLinksListReceivedEventArgs> ServerLinksListReceived;
+
+        /// <summary>
+        /// Occurs when server statistics have been received from the server.
+        /// </summary>
+        public event EventHandler<IrcServerStatsReceivedEventArgs> ServerStatsReceived;
 
         /// <summary>
         /// Occurs when a reply to a Who query has been received from the server.
@@ -637,42 +650,19 @@ namespace IrcDotNet
         /// <summary>
         /// Requests statistics about the specified server.
         /// </summary>
-        /// <param name="query">The query that indicates to the server what statistics to return.
-        /// The syntax for this value is dependent on the implementation of the server, but should support the following
-        /// query characters:
-        /// <list type="bullet">
-        ///   <listheader>
-        ///     <term>Character</term>
-        ///     <description>Query</description>
-        ///   </listheader>
-        ///   <item>
-        ///     <term>l</term>
-        ///     <description>A list of connections of the server and information about them.</description>
-        ///   </item>
-        ///   <item>
-        ///     <term>m</term>
-        ///     <description>The usage count for each of the commands supported by the server.</description>
-        ///   </item>
-        ///   <item>
-        ///     <term>o</term>
-        ///     <description>A list of all server operators.</description>
-        ///   </item>
-        ///   <item>
-        ///     <term>u</term>
-        ///     <description>The duration for which the server has been running since its last start.</description>
-        ///   </item>
-        /// </list>
+        /// <param name="query">The query character that indicates which server statistics to return.
+        /// The set of valid query characters is dependent on the implementation of the particular IRC server.
         /// </param>
         /// <param name="targetServer">The name of the server whose statistics to request.</param>
         /// <remarks>
         /// The server may not accept the command if <paramref name="query"/> is unspecified.
         /// </remarks>
         /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
-        public void GetServerStatistics(string query = null, string targetServer = null)
+        public void GetServerStatistics(char? query = null, string targetServer = null)
         {
             CheckDisposed();
 
-            SendMessageStats(query, targetServer);
+            SendMessageStats(query == null ? null : query.Value.ToString(), targetServer);
         }
 
         /// <summary>
@@ -933,7 +923,22 @@ namespace IrcDotNet
         #endregion
 
         /// <summary>
-        /// Handles the specified parameter of an ISUPPORT message received from the server upon registration.
+        /// Handles the specified statistical entry for the server, received in response to a STATS message.
+        /// </summary>
+        /// <param name="type">The type of the statistical entry for the server.</param>
+        /// <param name="message">The message that contains the statistical entry.</param>
+        protected void HandleStatsEntryReceived(int type, IrcMessage message)
+        {
+            // Add statistical entry to temporary list.
+            this.listedStatsEntries.Add(new IrcServerStatisticalEntry()
+                {
+                    Type = type,
+                    Parameters = message.Parameters.Skip(1).ToArray(),
+                });
+        }
+
+        /// <summary>
+        /// Handles the specified parameter value of an ISUPPORT message, received from the server upon registration.
         /// </summary>
         /// <param name="paramName">The name of the parameter.</param>
         /// <param name="paramValue">The value of the parameter, or <see langword="null"/> if it does not have a value.
@@ -1044,7 +1049,8 @@ namespace IrcDotNet
             if (nickNamesList == null)
                 throw new ArgumentNullException("nickNamesList");
 
-            return nickNamesList.Split(',').Select(n => this.users.Single(u => u.NickName == n));
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                return nickNamesList.Split(',').Select(n => this.users.Single(u => u.NickName == n));
         }
 
         /// <summary>
@@ -1268,21 +1274,24 @@ namespace IrcDotNet
                 throw new ArgumentException(Properties.Resources.MessageValueCannotBeEmptyString, "channelName");
 
             // Search for channel with given name in list of known channel. If it does not exist, add it.
-            var channel = this.channels.SingleOrDefault(c => c.Name == channelName);
-            if (channel == null)
+            lock (((ICollection)this.channelsReadOnly).SyncRoot)
             {
-                channel = new IrcChannel(channelName);
-                channel.Client = this;
-                lock (((ICollection)this.channelsReadOnly).SyncRoot)
+                var channel = this.channels.SingleOrDefault(c => c.Name == channelName);
+                if (channel == null)
+                {
+                    channel = new IrcChannel(channelName);
+                    channel.Client = this;
                     this.channels.Add(channel);
 
-                createdNew = true;
+                    createdNew = true;
+                }
+                else
+                {
+                    createdNew = false;
+                }
+
+                return channel;
             }
-            else
-            {
-                createdNew = false;
-            }
-            return channel;
         }
 
         /// <inheritdoc cref="GetUserFromNickName(string, bool, out bool)"/>
@@ -1351,22 +1360,25 @@ namespace IrcDotNet
                 throw new ArgumentException(Properties.Resources.MessageValueCannotBeEmptyString, "userName");
 
             // Search for user with given nick name in list of known users. If it does not exist, add it.
-            var user = this.users.SingleOrDefault(u => u.UserName == userName);
-            if (user == null)
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
             {
-                user = new IrcUser();
-                user.Client = this;
-                user.UserName = userName;
-                lock (((ICollection)this.usersReadOnly).SyncRoot)
+                var user = this.users.SingleOrDefault(u => u.UserName == userName);
+                if (user == null)
+                {
+                    user = new IrcUser();
+                    user.Client = this;
+                    user.UserName = userName;
                     this.users.Add(user);
 
-                createdNew = true;
+                    createdNew = true;
+                }
+                else
+                {
+                    createdNew = false;
+                }
+
+                return user;
             }
-            else
-            {
-                createdNew = false;
-            }
-            return user;
         }
 
         private int GetNumericUserMode(ICollection<char> modes)
@@ -1410,42 +1422,43 @@ namespace IrcDotNet
             this.usersReadOnly = new IrcUserCollection(this, this.users);
             this.listedChannels = new List<IrcChannelInfo>();
             this.listedServerLinks = new List<IrcServerInfo>();
+            this.listedStatsEntries = new List<IrcServerStatisticalEntry>();
         }
 
         private void InitializeMessageProcessors()
         {
             // Find each method defined as processor for IRC message.
-            this.GetAttributedMethods<MessageProcessorAttribute, MessageProcessor>().ForEach(item =>
-                {
-                    var attribute = item.Item1;
-                    var methodDelegate = item.Item2;
+            foreach (var method in this.GetAttributedMethods<MessageProcessorAttribute, MessageProcessor>())
+            {
+                var attribute = method.Item1;
+                var methodDelegate = method.Item2;
 
-                    var commandRangeParts = attribute.CommandName.Split('-');
-                    if (commandRangeParts.Length == 2)
-                    {
-                        // Numeric command range was specified.
-                        var commandRangeStart = int.Parse(commandRangeParts[0]);
-                        var commandRangeEnd = int.Parse(commandRangeParts[1]);
-                        for (int code = commandRangeStart; code <= commandRangeEnd; code++)
-                            this.numericMessageProcessors.Add(code, methodDelegate);
-                    }
-                    else if (commandRangeParts.Length == 1)
-                    {
-                        // Single command was specified. Check whether it is numeric or alphabetic.
-                        int commandCode;
-                        if (int.TryParse(attribute.CommandName, out commandCode))
-                            // Numeric
-                            this.numericMessageProcessors.Add(commandCode, methodDelegate);
-                        else
-                            // Alphabetic
-                            this.messageProcessors.Add(attribute.CommandName, methodDelegate);
-                    }
+                var commandRangeParts = attribute.CommandName.Split('-');
+                if (commandRangeParts.Length == 2)
+                {
+                    // Numeric command range was defined.
+                    var commandRangeStart = int.Parse(commandRangeParts[0]);
+                    var commandRangeEnd = int.Parse(commandRangeParts[1]);
+                    for (int code = commandRangeStart; code <= commandRangeEnd; code++)
+                        this.numericMessageProcessors.Add(code, methodDelegate);
+                }
+                else if (commandRangeParts.Length == 1)
+                {
+                    // Single command name was defined. Check whether it is numeric or alphabetic.
+                    int commandCode;
+                    if (int.TryParse(attribute.CommandName, out commandCode))
+                        // Command is numeric.
+                        this.numericMessageProcessors.Add(commandCode, methodDelegate);
                     else
-                    {
-                        throw new ProtocolViolationException(string.Format(
-                            Properties.Resources.MessageInvalidCommandDefinition, attribute.CommandName));
-                    }
-                });
+                        // Command is alphabetic.
+                        this.messageProcessors.Add(attribute.CommandName, methodDelegate);
+                }
+                else
+                {
+                    throw new ProtocolViolationException(string.Format(
+                        Properties.Resources.MessageInvalidCommandDefinition, attribute.CommandName));
+                }
+            };
         }
 
         private void WritePendingMessages(object state)
@@ -1457,7 +1470,7 @@ namespace IrcDotNet
 
                 while (this.messageSendQueue.Count > 0)
                 {
-                    // Check that flood preventer permits sending of messages currently.
+                    // Check that flood preventer currently permits sending of messages.
                     if (this.floodPreventer != null)
                     {
                         sendDelay = this.floodPreventer.GetSendDelay();
@@ -1475,10 +1488,6 @@ namespace IrcDotNet
                     // Tell flood preventer mechanism that message has just been sent.
                     if (this.floodPreventer != null)
                         this.floodPreventer.HandleMessageSent();
-
-#if DEBUG
-                    Debug.WriteLine(string.Format("{0:HH:mm:ss} ({1}) <<< {2}", DateTime.Now, this.ClientId, line));
-#endif
                 }
 
                 // Make timer fire when next message in send queue should be written.
@@ -1587,8 +1596,6 @@ namespace IrcDotNet
 
         private void ReadMessage(IrcMessage message, string line)
         {
-            OnRawMessageReceived(new IrcRawMessageEventArgs(message, line));
-
             // Try to find corresponding message processor for command of given message.
             MessageProcessor messageProcessor;
             int commandCode;
@@ -1613,7 +1620,7 @@ namespace IrcDotNet
             else
             {
                 // Unknown command.
-                Debug.WriteLine(string.Format("Unknown IRC message command '{0}'.", message.Command));
+                DebugUtilities.WriteEvent("Unknown IRC message command '{0}'.", message.Command);
             }
         }
 
@@ -1845,9 +1852,14 @@ namespace IrcDotNet
                     return;
                 }
 
+                // Handle sent IRC message.
                 Debug.Assert(e.UserToken != null);
                 var messageSentEventArgs = (IrcRawMessageEventArgs)e.UserToken;
                 OnRawMessageSent(messageSentEventArgs);
+                
+#if DEBUG
+                DebugUtilities.WriteIrcRawLine(this, "<<< " + messageSentEventArgs.RawContent);
+#endif
             }
             catch (ObjectDisposedException)
             {
@@ -1908,10 +1920,6 @@ namespace IrcDotNet
                     if (line.Length == 0)
                         continue;
 
-#if DEBUG
-                    Debug.WriteLine(string.Format("{0:HH:mm:ss} ({1}) >>> {2}", DateTime.Now, this.ClientId, line));
-#endif
-
                     string prefix = null;
                     string lineAfterPrefix = null;
 
@@ -1956,9 +1964,15 @@ namespace IrcDotNet
                             break;
                     }
 
-                    // Read IRC message.
+                    // Parse received IRC message.
                     var message = new IrcMessage(this, prefix, command, parameters);
+                    var messageReceivedEventArgs = new IrcRawMessageEventArgs(message, line);
+                    OnRawMessageReceived(messageReceivedEventArgs);
                     ReadMessage(message, line);
+
+#if DEBUG
+                    DebugUtilities.WriteIrcRawLine(this, ">>> " + messageReceivedEventArgs.RawContent);
+#endif
                 }
 
                 // Continue reading data from socket.
@@ -2128,12 +2142,12 @@ namespace IrcDotNet
 
         private void HandleClientConnecting()
         {
-            Debug.WriteLine("Connecting to server...");
+            DebugUtilities.WriteEvent("Connecting to server...");
         }
 
         private void HandleClientConnected(IrcRegistrationInfo regInfo)
         {
-            Debug.WriteLine(string.Format("Connected to server at '{0}'.",
+            DebugUtilities.WriteEvent(string.Format("Connected to server at '{0}'.",
                 ((IPEndPoint)this.socket.RemoteEndPoint).Address));
 
             if (regInfo.Password != null)
@@ -2177,7 +2191,7 @@ namespace IrcDotNet
             if (this.disconnectedEvent.WaitOne(0))
                 return;
 
-            Debug.WriteLine("Disconnected from server.");
+            DebugUtilities.WriteEvent("Disconnected from server.");
 
             // Stop sending messages immediately.
             this.sendTimer.Change(Timeout.Infinite, Timeout.Infinite);
@@ -2432,7 +2446,19 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
-
+        
+        /// <summary>
+        /// Raises the <see cref="ServerStatsReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcServerStatsReceivedEventArgs"/> instance containing the event data.
+        /// </param>
+        protected virtual void OnServerStatsReceived(IrcServerStatsReceivedEventArgs e)
+        {
+            var handler = this.ServerStatsReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+        
         /// <summary>
         /// Raises the <see cref="WhoReplyReceived"/> event.
         /// </summary>

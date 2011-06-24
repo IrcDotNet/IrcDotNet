@@ -9,7 +9,7 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    using Common.Collections;
+    using Collections;
 
     /// <summary>
     /// Represents an IRC channel that exists on a specific <see cref="IrcClient"/>.
@@ -262,7 +262,8 @@ namespace IrcDotNet
             if (newModes == null)
                 throw new ArgumentNullException("newModes");
 
-            SetModes(newModes.Except(this.modes), this.modes.Except(newModes));
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                SetModes(newModes.Except(this.modes), this.modes.Except(newModes));
         }
 
         /// <inheritdoc cref="SetModes(string, IEnumerable{string})"/>
@@ -317,14 +318,17 @@ namespace IrcDotNet
 
         internal void HandleUserNameReply(IrcChannelUser channelUser)
         {
-            if (this.users.Contains(channelUser))
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
             {
+                if (this.users.Contains(channelUser))
+                {
 #if SILVERLIGHT
-                Debug.Assert(false, "User already in channel.");
+                    Debug.Assert(false, "User already in channel.");
 #else
-                Debug.Fail("User already in channel.");
+                    Debug.Fail("User already in channel.");
 #endif
-                return;
+                    return;
+                }
             }
 
             channelUser.Channel = this;
@@ -349,14 +353,17 @@ namespace IrcDotNet
 
         internal void HandleUserJoined(IrcChannelUser channelUser)
         {
-            if (this.users.Contains(channelUser))
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
             {
+                if (this.users.Contains(channelUser))
+                {
 #if SILVERLIGHT
                 Debug.Assert(false, "User already in channel.");
 #else
-                Debug.Fail("User already in channel.");
+                    Debug.Fail("User already in channel.");
 #endif
-                return;
+                    return;
+                }
             }
 
             channelUser.Channel = this;
@@ -368,7 +375,8 @@ namespace IrcDotNet
 
         internal void HandleUserLeft(IrcUser user, string comment)
         {
-            HandleUserLeft(this.users.Single(u => u.User == user), comment);
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                HandleUserLeft(this.users.Single(u => u.User == user), comment);
         }
 
         internal void HandleUserLeft(IrcChannelUser channelUser, string comment)
@@ -381,7 +389,8 @@ namespace IrcDotNet
 
         internal void HandleUserKicked(IrcUser user, string comment)
         {
-            HandleUserKicked(this.users.Single(u => u.User == user), comment);
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                HandleUserKicked(this.users.Single(u => u.User == user), comment);
         }
 
         internal void HandleUserKicked(IrcChannelUser channelUser, string comment)
@@ -394,7 +403,8 @@ namespace IrcDotNet
 
         internal void HandleUserInvited(IrcUser user)
         {
-            OnUserInvited(new IrcUserEventArgs(user));
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                OnUserInvited(new IrcUserEventArgs(user));
         }
 
         internal void HandleUserQuit(IrcChannelUser channelUser)
