@@ -1667,7 +1667,7 @@ namespace IrcDotNet
         {
             Debug.Assert(value != null);
 
-            if (value.Length == 0 || value.Any(c => IsInvalidMessageChar(c)))
+            if (value.Any(c => IsInvalidMessageChar(c)))
             {
                 throw new ArgumentException(string.Format(
                     Properties.Resources.MessageInvalidMiddleParameter, value), "value");
@@ -1836,7 +1836,7 @@ namespace IrcDotNet
             sendEventArgs.SetBuffer(buffer, offset, count);
             sendEventArgs.UserToken = token;
             sendEventArgs.Completed += SendCompleted;
-
+            
             if (!this.socket.SendAsync(sendEventArgs))
                 ((EventHandler<SocketAsyncEventArgs>)SendCompleted).BeginInvoke(
                     this.socket, sendEventArgs, null, null);
@@ -1856,7 +1856,7 @@ namespace IrcDotNet
                 Debug.Assert(e.UserToken != null);
                 var messageSentEventArgs = (IrcRawMessageEventArgs)e.UserToken;
                 OnRawMessageSent(messageSentEventArgs);
-                
+
 #if DEBUG
                 DebugUtilities.WriteIrcRawLine(this, "<<< " + messageSentEventArgs.RawContent);
 #endif
@@ -1873,6 +1873,7 @@ namespace IrcDotNet
 #endif
             finally
             {
+                e.Dispose();
             }
         }
 
@@ -1994,6 +1995,7 @@ namespace IrcDotNet
 #endif
             finally
             {
+                e.Dispose();
             }
         }
 
@@ -2055,6 +2057,7 @@ namespace IrcDotNet
 #endif
             finally
             {
+                e.Dispose();
             }
         }
 
@@ -2105,6 +2108,7 @@ namespace IrcDotNet
 #endif
             finally
             {
+                e.Dispose();
             }
         }
 
@@ -2446,7 +2450,7 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
-        
+
         /// <summary>
         /// Raises the <see cref="ServerStatsReceived"/> event.
         /// </summary>
@@ -2458,7 +2462,7 @@ namespace IrcDotNet
             if (handler != null)
                 handler(this, e);
         }
-        
+
         /// <summary>
         /// Raises the <see cref="WhoReplyReceived"/> event.
         /// </summary>
