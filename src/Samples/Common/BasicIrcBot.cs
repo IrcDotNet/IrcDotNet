@@ -29,7 +29,7 @@ namespace IrcDotNet.Samples.Common
             IList<IIrcMessageTarget> targets, string command, IList<string> parameters)
         {
             if (parameters.Count != 0)
-                throw new InvalidCommandParametersException(1);
+                throw new InvalidCommandParametersException(0);
 
             // List all commands recognized by this bot.
             var replyTarget = GetDefaultReplyTarget(client, source, targets);
@@ -64,7 +64,7 @@ namespace IrcDotNet.Samples.Common
         private void ProcessCommandConnect(string command, IList<string> parameters)
         {
             if (parameters.Count < 1)
-                throw new ArgumentException(Properties.Resources.ErrorMessageNotEnoughArgs);
+                throw new ArgumentException(Properties.Resources.MessageNotEnoughArgs);
 
             Connect(parameters[0], this.RegistrationInfo);
         }
@@ -72,7 +72,7 @@ namespace IrcDotNet.Samples.Common
         private void ProcessCommandDisconnect(string command, IList<string> parameters)
         {
             if (parameters.Count < 1)
-                throw new ArgumentException(Properties.Resources.ErrorMessageNotEnoughArgs);
+                throw new ArgumentException(Properties.Resources.MessageNotEnoughArgs);
 
             Disconnect(parameters[0]);
         }
@@ -80,7 +80,7 @@ namespace IrcDotNet.Samples.Common
         private void ProcessCommandJoin(string command, IList<string> parameters)
         {
             if (parameters.Count < 2)
-                throw new ArgumentException(Properties.Resources.ErrorMessageNotEnoughArgs);
+                throw new ArgumentException(Properties.Resources.MessageNotEnoughArgs);
 
             // Join given channel on given server.
             var client = GetClientFromServerNameMask(parameters[0]);
@@ -91,7 +91,7 @@ namespace IrcDotNet.Samples.Common
         private void ProcessCommandLeave(string command, IList<string> parameters)
         {
             if (parameters.Count < 2)
-                throw new ArgumentException(Properties.Resources.ErrorMessageNotEnoughArgs);
+                throw new ArgumentException(Properties.Resources.MessageNotEnoughArgs);
 
             // Leave given channel on the given server.
             var client = GetClientFromServerNameMask(parameters[0]);

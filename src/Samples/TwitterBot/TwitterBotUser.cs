@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using IrcDotNet;
 using IrcDotNet.Samples.Common;
 using TweetSharp;
-using TweetSharp.Twitter;
-using TweetSharp.Twitter.Extensions;
-using TweetSharp.Twitter.Fluent;
-using TweetSharp.Twitter.Model;
-using TweetSharp.Twitter.Service;
 
 namespace TwitterBot
 {
@@ -77,20 +73,33 @@ namespace TwitterBot
             return this.service.ListTweetsOnHomeTimeline(tweetCount);
         }
 
-        public void LogIn(string username, string password)
+        // Returns whether log-in succeeds.
+        public bool LogIn(string username, string password)
         {
-            // Log in to Twitter service using xAuth authentication.
-            var request = FluentTwitter.CreateRequest().Configuration.UseHttps().Authentication
-                .GetClientAuthAccessToken(username, password);
-            var response = request.Request();
+            try
+            {
+                // Log in to Twitter service using xAuth authentication.
+                var token = this.service.GetAccessTokenWithXAuth(username, password);
+                this.service.AuthenticateWith(token.Token, token.TokenSecret);
+                var user = this.service.GetUserProfile();
+                if (user.Name == null)
+                    return false;
+                
+                this.TwitterUser = user;
+                this.IsAuthenticated = true;
 
-            if (response.IsTwitterError)
-                throw new InvalidOperationException(response.Response);
-
-            var token = response.AsToken();
-            this.service.AuthenticateWith(token.Token, token.TokenSecret);
-            this.TwitterUser = this.service.GetUserProfile();
-            this.IsAuthenticated = true;
+                return true;
+            }
+            catch (WebException exWeb)
+            {
+                var httpResponse = exWeb.Response as HttpWebResponse;
+                if (httpResponse != null)
+                {
+                    if (httpResponse.StatusCode == HttpStatusCode.Unauthorized)
+                        return false;
+                }
+                throw;
+            }
         }
 
         public void LogOut()

@@ -5,14 +5,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkovChainTextBot", "Marko
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{BA2E5E15-9CE4-4C88-9263-E6C4D5C9D852}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\AUTHORS.txt = ..\..\AUTHORS.txt
-		..\..\LICENSE.txt = ..\..\LICENSE.txt
-		README.txt = README.txt
+		..\..\AUTHORS.md = ..\..\AUTHORS.md
+		..\..\LICENSE.md = ..\..\LICENSE.md
+		..\..\README.md = ..\..\README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterBot", "TwitterBot\TwitterBot.csproj", "{B2FF7BA7-8B67-4949-BB09-F34D0E85413E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{8E2B2965-DF77-4D12-82AF-9A0AAD7C5C41}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B6517C2F-521F-452D-867A-907AC6F90B29}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

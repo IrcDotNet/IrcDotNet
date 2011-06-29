@@ -3,11 +3,11 @@
 
 This sample makes use of a well-known mathematical model called the Markov chain
 <http://en.wikipedia.org/wiki/Markov_chain> to implement an IRC bot that
-performs Markov text generation. The bot can on request generate pseudo-random
-sentences that are intended to be vaguely gramatically correct, based on the
-text of messages it has received over time. The more the bot has trained using
-human messages sent on IRC, the better it typically becomes at generating
-meaningful sentences of its own.
+performs Markov text generation. The bot can, on request, generate pseudo-random
+sentences with moderately high levels of grammatical correctness, based on
+actual channel messages it has received over time. The more the bot has trained
+using human messages sent over IRC, the better it typically performs at
+generating meaningful sentences of its own.
 
 The bot is capable of connecting to multiple servers and multiple channels on
 each server, from which it constantly monitors messages sent in the channel to
@@ -57,7 +57,7 @@ Syntax:
 
 Examples:
 
-  join freenode #ircsil
+  join freenode #TestChannel
   
 Leave a channel
 ---------------
@@ -68,7 +68,7 @@ Syntax:
 
 Examples:
 
-  leave freenode #ircsil
+  leave freenode #TestChannel
 
 Chat Commands
 =============

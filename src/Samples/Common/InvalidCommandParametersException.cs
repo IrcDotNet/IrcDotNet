@@ -43,12 +43,12 @@ namespace IrcDotNet.Samples.Common
         public string GetMessage(string command)
         {
             if (this.MinParameters == 0 && this.MaxParameters == 0)
-                return string.Format(Properties.Resources.ErrorMessageCommandTakesNoParams, command);
+                return string.Format(Properties.Resources.MessageCommandTakesNoParams, command);
             else if (this.MinParameters == this.MaxParameters)
-                return string.Format(Properties.Resources.ErrorMessageCommandTakesXParams, command,
+                return string.Format(Properties.Resources.MessageCommandTakesXParams, command,
                     this.MinParameters);
             else
-                return string.Format(Properties.Resources.ErrorMessageCommandTakesXToYParams, command,
+                return string.Format(Properties.Resources.MessageCommandTakesXToYParams, command,
                     this.MinParameters, this.MaxParameters);
         }
     }
