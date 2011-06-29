@@ -6,9 +6,6 @@ using System.Text;
 using IrcDotNet;
 using IrcDotNet.Samples.Common;
 using TweetSharp;
-using TweetSharp.Twitter;
-using TweetSharp.Twitter.Model;
-using TweetSharp.Twitter.Service;
 
 namespace TwitterBot
 {
@@ -115,7 +112,7 @@ namespace TwitterBot
 
             // List all currently logged-in twitter users.
             var replyTargets = GetDefaultReplyTarget(client, sourceUser, targets);
-            client.LocalUser.SendMessage(replyTargets, "Currently logged-in Twitter users ({0}):", 
+            client.LocalUser.SendMessage(replyTargets, "Currently logged-in Twitter users ({0}):",
                 this.twitterUsers.Count);
             foreach (var tu in this.twitterUsers)
             {
@@ -137,14 +134,26 @@ namespace TwitterBot
             if (parameters.Count != 2)
                 throw new InvalidCommandParametersException(1);
 
-            // Create new Twitter user and log in.
+            // Create new Twitter user and log in to service.
             var twitterBotUser = new TwitterBotUser(sourceUser);
-            twitterBotUser.LogIn(parameters[0], parameters[1]);
-            this.twitterUsers.Add(twitterBotUser);
+            var success = twitterBotUser.LogIn(parameters[0], parameters[1]);
 
             var replyTargets = GetDefaultReplyTarget(client, sourceUser, targets);
-            client.LocalUser.SendMessage(replyTargets, "You are now logged in as {0} / '{1}'.",
-                twitterBotUser.TwitterUser.ScreenName, twitterBotUser.TwitterUser.Name);
+            if (success)
+            {
+                // Log-in succeeded.
+
+                this.twitterUsers.Add(twitterBotUser);
+
+                client.LocalUser.SendMessage(replyTargets, "You are now logged in as {0} / '{1}'.",
+                    twitterBotUser.TwitterUser.ScreenName, twitterBotUser.TwitterUser.Name);
+            }
+            else
+            {
+                // Log-in failed.
+
+                client.LocalUser.SendMessage(replyTargets, "Invalid log-in username/password.");
+            }
         }
 
         private void ProcessChatCommandLogOut(IrcClient client, IIrcMessageSource source,
@@ -172,7 +181,7 @@ namespace TwitterBot
 
             if (parameters.Count != 1)
                 throw new InvalidCommandParametersException(1);
-
+            
             // Send tweet from user.
             var tweetStatus = twitterBotUser.SendTweet(parameters[0].TrimStart());
             var replyTargets = GetDefaultReplyTarget(client, sourceUser, targets);
@@ -222,7 +231,8 @@ namespace TwitterBot
 
         private void SendTweetInfo(IrcClient client, IList<IIrcMessageTarget> targets, TwitterStatus tweet)
         {
-            client.LocalUser.SendMessage(targets, "@{0}: {1}", tweet.User.ScreenName, tweet.Text);
+            client.LocalUser.SendMessage(targets, "@{0}: {1}", tweet.User.ScreenName,
+                SanitizeTextForIrc(tweet.Text));
         }
 
         private void SendGreeting(IrcLocalUser localUser, IIrcMessageTarget target)
@@ -239,6 +249,14 @@ namespace TwitterBot
                 throw new InvalidOperationException(string.Format(
                     "User '{0}' is not logged in to Twitter.", ircUser.NickName));
             return twitterUser;
+        }
+
+        private string SanitizeTextForIrc(string value)
+        {
+            var sb = new StringBuilder(value);
+            sb.Replace('\r', ' ');
+            sb.Replace('\n', ' ');
+            return sb.ToString();
         }
 
         protected override void InitializeCommandProcessors()

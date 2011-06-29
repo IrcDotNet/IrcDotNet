@@ -46,6 +46,7 @@
     <Compile Include="ConsoleUtilities.cs" />
     <Compile Include="InvalidCommandParametersException.cs" />
     <Compile Include="IrcBot.cs" />
+    <Compile Include="IrcBotException.cs" />
     <Compile Include="IrcBotUtilities.cs" />
     <Compile Include="BasicIrcBot.cs" />
     <Compile Include="ProgramInfo.cs" />
