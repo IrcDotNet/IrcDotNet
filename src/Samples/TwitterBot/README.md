@@ -7,6 +7,12 @@ ability for multiple IRC users to log in each on a separate Twitter account and
 perform tasks such as retrieving recent tweets and posting new tweets, via
 channel and private messages.
 
+Credits
+=======
+
+Interaction with the Twitter service is done using the *TweetSharp* library
+<https://github.com/danielcrenna/tweetsharp>.
+
 Command-Line Commands
 =====================
 
@@ -49,7 +55,7 @@ Syntax:
 
 Examples:
 
-  join freenode #ircsil
+  join freenode #TestChannel
   
 Leave a channel
 ---------------
@@ -60,7 +66,7 @@ Syntax:
 
 Examples:
 
-  leave freenode #ircsil
+  leave freenode #TestChannel
 
 Chat Commands
 =============
