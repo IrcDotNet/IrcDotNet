@@ -3,7 +3,9 @@
 *.suo
 *.user
 *.docstates
+*.*_*
+tmp/
 bin/
 obj/
-output/
+out/
 TestResults/
