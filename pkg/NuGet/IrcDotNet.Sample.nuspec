@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>IrcDotNet.Sample</id>
+    <version>0.4.1</version>
+    <title>IRC.NET -- Samples</title>
+    <authors>Alex Regueiro</authors>
+    <owners>Alex Regueiro</owners>
+    <description>
+      These sample projects demonstrate how the IRC.NET library can be used in various ways.
+    </description>
+    <summary>
+      Sample projects for IRC.NET library (.NET 4.0)
+    </summary>
+    <language>en-US</language>
+    <projectUrl>https://launchpad.net/ircdotnet</projectUrl>
+    <iconUrl>https://launchpadlibrarian.net/38103097/Launchpad_Logo.png</iconUrl>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <dependencies>
+      <dependency id="IrcDotNet" version="[0.4.1]" />
+    </dependencies>
+    <tags>communication networking irc ctcp</tags>
+  </metadata>
+  <files>
+    <file src="..\..\src\Samples\**" target="content\Samples\" />
+    <file src="..\..\README.md" target="content\App_Readme\IrcDotNet.readme.md" />
+    <file src="..\..\AUTHORS.md" target="content\App_Readme\IrcDotNet.authors.md" />
+    <file src="..\..\LICENSE.md" target="content\App_Readme\IrcDotNet.license.md" />
+  </files>
+</package>

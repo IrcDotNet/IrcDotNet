@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\bin\Debug\Samples\</OutputPath>
+    <OutputPath>..\..\..\bin\Samples\Debug\net40\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,7 +29,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\bin\Release\Samples\</OutputPath>
+    <OutputPath>..\..\..\bin\Samples\Release\net40\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -39,8 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="IrcDotNet">
-      <HintPath>..\..\..\bin\Debug\IrcDotNet.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\..\bin\Debug\net40\IrcDotNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,6 +69,7 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{8E2B2965-DF77-4D12-82AF-9A0AAD7C5C41}</Project>
       <Name>Common</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
