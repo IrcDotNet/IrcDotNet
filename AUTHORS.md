@@ -13,7 +13,7 @@ Version 0.4.1
 Alex Regueiro <alexreg@gmail.com>
 > Project Lead, Programming
 
-Claus Jørgensen <?>
+Claus Jørgensen <10229@iha.dk>
 > Programming (WP7 port)
 
 Evan Plumlee <eplumlee@yahoo.com>

@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IrcDotNet</RootNamespace>
-    <AssemblyName>IrcDotNet-Silverlight</AssemblyName>
+    <AssemblyName>IrcDotNet</AssemblyName>
     <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
@@ -28,7 +28,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\Debug\Silverlight\</OutputPath>
+    <OutputPath>..\..\bin\Debug\sl40\</OutputPath>
     <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
@@ -40,13 +40,13 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\Release\Silverlight\</OutputPath>
+    <OutputPath>..\..\bin\Release\sl40\</OutputPath>
     <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Release\Silverlight\IrcDotNet-Silverlight.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\Release\sl40\IrcDotNet.xml</DocumentationFile>
     <NoWarn>1573</NoWarn>
   </PropertyGroup>
   <PropertyGroup>

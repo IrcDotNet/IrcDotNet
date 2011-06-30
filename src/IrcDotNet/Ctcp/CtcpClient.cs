@@ -337,7 +337,7 @@ namespace IrcDotNet.Ctcp
             }
             else
             {
-                // Unknown command.
+                // Command is unknown.
                 DebugUtilities.WriteEvent("Unknown CTCP message tag '{0}'.", message.Tag);
             }
         }
