@@ -25,7 +25,7 @@ directory.
  
  * Building the samples package:
    
-   > nuget pack IrcDotNet.Sample.nuspec -OutputDirectory out/
+   > nuget pack IrcDotNet.Sample.nuspec -Exclude **\obj\** -OutputDirectory out/
 
 Output
 ======
