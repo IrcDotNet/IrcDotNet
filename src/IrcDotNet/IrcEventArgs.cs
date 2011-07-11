@@ -12,12 +12,14 @@ using System.Net.Security;
 
 namespace IrcDotNet
 {
+
     /// <summary>
     /// Provides data for the <see cref="IrcClient.ChannelListReceived"/> event.
     /// </summary>
     /// <threadsafety static="true" instance="false"/>
     public class IrcChannelListReceivedEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcChannelListReceivedEventArgs"/> class.
         /// </summary>
@@ -40,6 +42,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -48,6 +51,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcServerVersionInfoEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcServerVersionInfoEventArgs"/> class.
         /// </summary>
@@ -112,6 +116,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -120,6 +125,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcServerTimeEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcServerTimeEventArgs"/> class.
         /// </summary>
@@ -156,6 +162,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -164,6 +171,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcServerLinksListReceivedEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcServerLinksListReceivedEventArgs"/> class.
         /// </summary>
@@ -186,6 +194,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -194,6 +203,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcServerStatsReceivedEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcServerStatsReceivedEventArgs"/> class.
         /// </summary>
@@ -216,6 +226,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -225,6 +236,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcPreviewMessageEventArgs : IrcMessageEventArgs
     {
+
         /// <inheritdoc/>
         public IrcPreviewMessageEventArgs(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text,
             Encoding encoding)
@@ -243,6 +255,7 @@ namespace IrcDotNet
             get;
             set;
         }
+
     }
 
     /// <summary>
@@ -251,6 +264,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcMessageEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcMessageEventArgs"/> class.
         /// </summary>
@@ -327,6 +341,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -335,6 +350,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcChannelInvitationEventArgs : IrcChannelEventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcChannelInvitationEventArgs"/> class.
         /// </summary>
@@ -358,6 +374,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -366,6 +383,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcChannelUserEventArgs : IrcCommentEventArgs
     {
+
         /// <inheritdoc/>
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcChannelUserEventArgs"/> class.
@@ -389,6 +407,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -397,6 +416,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcChannelEventArgs : IrcCommentEventArgs
     {
+
         /// <inheritdoc/>
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcChannelEventArgs"/> class.
@@ -420,6 +440,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -428,6 +449,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcUserEventArgs : IrcCommentEventArgs
     {
+
         /// <inheritdoc/>
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcUserEventArgs"/> class.
@@ -451,6 +473,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -459,6 +482,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcNameEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcNameEventArgs"/> class.
         /// </summary>
@@ -478,6 +502,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -486,6 +511,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcCommentEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcCommentEventArgs"/> class.
         /// </summary>
@@ -505,6 +531,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -513,6 +540,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcPingOrPongReceivedEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcPingOrPongReceivedEventArgs"/> class.
         /// </summary>
@@ -534,6 +562,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -542,6 +571,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcServerInfoEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcServerInfoEventArgs"/> class.
         /// </summary>
@@ -578,6 +608,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -586,6 +617,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcErrorMessageEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcErrorMessageEventArgs"/> class.
         /// </summary>
@@ -608,6 +640,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -616,6 +649,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcProtocolErrorEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcProtocolErrorEventArgs"/> class.
         /// </summary>
@@ -664,6 +698,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
     /// <summary>
@@ -673,6 +708,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcRawMessageEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcRawMessageEventArgs"/> class.
         /// </summary>
@@ -704,6 +740,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
 
 #if !SILVERLIGHT
@@ -714,6 +751,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcValidateSslCertificateEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcValidateSslCertificateEventArgs"/> class.
         /// </summary>
@@ -768,6 +806,7 @@ namespace IrcDotNet
             get;
             set;
         }
+
     }
 
 #endif
@@ -778,6 +817,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcErrorEventArgs : EventArgs
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcErrorEventArgs"/> class.
         /// </summary>
@@ -800,5 +840,7 @@ namespace IrcDotNet
             get;
             private set;
         }
+
     }
+
 }

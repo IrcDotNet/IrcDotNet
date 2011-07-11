@@ -9,8 +9,10 @@ using IrcDotNet.Samples.Common;
 
 namespace MarkovChainTextBox
 {
+
     public class MarkovChainTextBot : BasicIrcBot
     {
+
         private const string quitMessage = "Andrey Markov, 1856 - 1922";
 
         // Bot statistics
@@ -227,5 +229,7 @@ namespace MarkovChainTextBox
         //
 
         #endregion
+
     }
+
 }

@@ -20,7 +20,7 @@
     <dependencies>
       <dependency id="IrcDotNet" version="[0.4.1]" />
     </dependencies>
-    <tags>communication networking irc ctcp</tags>
+    <tags>communication networking irc ctcp sample</tags>
   </metadata>
   <files>
     <file src="..\..\src\Samples\**" target="content\Samples\" />

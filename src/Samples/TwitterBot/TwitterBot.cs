@@ -9,8 +9,10 @@ using TweetSharp;
 
 namespace TwitterBot
 {
+
     public class TwitterBot : BasicIrcBot
     {
+
         // List of all currently logged-in Twitter users.
         private List<TwitterBotUser> twitterUsers;
 
@@ -266,6 +268,10 @@ namespace TwitterBot
 
         #region Command Processors
 
+        //
+
         #endregion
+
     }
+
 }

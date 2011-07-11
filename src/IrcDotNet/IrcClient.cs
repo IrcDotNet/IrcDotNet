@@ -19,6 +19,7 @@ using System.Net.Security;
 
 namespace IrcDotNet
 {
+
     using Collections;
 
     /// <summary>
@@ -34,6 +35,7 @@ namespace IrcDotNet
     [DebuggerDisplay("{ToString(), nq}")]
     public partial class IrcClient : IDisposable
     {
+
         // Maximum number of parameters that can be sent in single raw message.        
         private const int maxParamsCount = 15;
 
@@ -368,7 +370,11 @@ namespace IrcDotNet
         /// <value><see langword="true"/> if the client is connected; <see langword="false"/>, otherwise.</value>
         public bool IsConnected
         {
-            get { return this.socket.Connected; }
+            get
+            {
+                CheckDisposed();
+                return this.socket != null && this.socket.Connected;
+            }
         }
 
         /// <summary>
@@ -1836,7 +1842,7 @@ namespace IrcDotNet
             sendEventArgs.SetBuffer(buffer, offset, count);
             sendEventArgs.UserToken = token;
             sendEventArgs.Completed += SendCompleted;
-            
+
             if (!this.socket.SendAsync(sendEventArgs))
                 ((EventHandler<SocketAsyncEventArgs>)SendCompleted).BeginInvoke(
                     this.socket, sendEventArgs, null, null);
@@ -2508,23 +2514,23 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
+        private void CheckDisposed()
+        {
+            if (this.IsDisposed)
+                throw new ObjectDisposedException(GetType().FullName);
+        }
+
         /// <summary>
         /// Returns a string representation of this instance.
         /// </summary>
         /// <returns>A string that represents this instance.</returns>
         public override string ToString()
         {
-            if (this.IsConnected)
+            if (!this.IsDisposed && this.IsConnected)
                 return string.Format("{0}@{1}", this.localUser.UserName,
                     this.ServerName ?? this.socket.RemoteEndPoint.ToString());
             else
                 return "(Not connected)";
-        }
-
-        private void CheckDisposed()
-        {
-            if (this.IsDisposed)
-                throw new ObjectDisposedException(GetType().FullName);
         }
 
         /// <summary>
@@ -2542,6 +2548,7 @@ namespace IrcDotNet
         [DebuggerDisplay("{ToString(), nq}")]
         public struct IrcMessage
         {
+
             /// <summary>
             /// The source of the message, which is the object represented by the value of <see cref="Prefix"/>.
             /// </summary>
@@ -2587,6 +2594,9 @@ namespace IrcDotNet
             {
                 return string.Format("{0} ({1} parameters)", this.Command, this.Parameters.Count);
             }
+
         }
+
     }
+
 }

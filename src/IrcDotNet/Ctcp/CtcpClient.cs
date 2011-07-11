@@ -7,6 +7,7 @@ using System.Text;
 
 namespace IrcDotNet.Ctcp
 {
+
     using Collections;
 
     /// <summary>
@@ -24,6 +25,7 @@ namespace IrcDotNet.Ctcp
     [DebuggerDisplay("{ToString(), nq}")]
     public partial class CtcpClient
     {
+
         // Message indicating that no error occurred.
         private const string messageNoError = "no error";
 
@@ -533,6 +535,7 @@ namespace IrcDotNet.Ctcp
         [DebuggerDisplay("{ToString(), nq}")]
         public struct CtcpMessage
         {
+
             /// <summary>
             /// The user that sent the message.
             /// </summary>
@@ -586,6 +589,9 @@ namespace IrcDotNet.Ctcp
             {
                 return string.Format("{0} {1}", this.Tag, this.Data);
             }
+
         }
+
     }
+
 }

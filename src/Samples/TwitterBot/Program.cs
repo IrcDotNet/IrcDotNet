@@ -8,8 +8,10 @@ using IrcDotNet.Samples.Common;
 
 namespace TwitterBot
 {
+
     internal static class Program
     {
+
         public static void Main(string[] args)
         {
             IrcBot bot = null;
@@ -39,5 +41,7 @@ namespace TwitterBot
                     bot.Dispose();
             }
         }
+
     }
+
 }

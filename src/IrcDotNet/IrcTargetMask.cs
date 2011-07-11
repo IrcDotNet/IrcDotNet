@@ -5,12 +5,14 @@ using System.Text;
 
 namespace IrcDotNet
 {
+
     /// <summary>
     /// Represents a mask of an IRC server name or host name, used for specifying the targets of a message.
     /// </summary>
     /// <threadsafety static="true" instance="false"/>
     public class IrcTargetMask : IIrcMessageTarget
     {
+
         private IrcTargetMaskType type;
 
         private string mask;
@@ -105,6 +107,7 @@ namespace IrcDotNet
         }
 
         #endregion
+
     }
 
     /// <summary>
@@ -112,13 +115,17 @@ namespace IrcDotNet
     /// </summary>
     public enum IrcTargetMaskType
     {
+
         /// <summary>
         /// A mask of a server name.
         /// </summary>
         ServerMask,
+
         /// <summary>
         /// A mask of a host name.
         /// </summary>
         HostMask,
+
     }
+
 }

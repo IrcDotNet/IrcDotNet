@@ -6,9 +6,11 @@ using System.Text;
 
 namespace IrcDotNet.Ctcp
 {
+
     // Defines all message senders for the client.
     partial class CtcpClient
     {
+        
         /// <summary>
         /// Sends an action message to the specified target.
         /// </summary>
@@ -68,5 +70,7 @@ namespace IrcDotNet.Ctcp
         {
             WriteMessage(targets, "ping", info, isResponse);
         }
+
     }
+
 }

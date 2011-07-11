@@ -6,8 +6,10 @@ using System.Text;
 
 namespace IrcDotNet.Samples.Common
 {
+
     public class InvalidCommandParametersException : Exception
     {
+
         public InvalidCommandParametersException(int minParameters, int? maxParameters = null)
             : base()
         {
@@ -51,5 +53,7 @@ namespace IrcDotNet.Samples.Common
                 return string.Format(Properties.Resources.MessageCommandTakesXToYParams, command,
                     this.MinParameters, this.MaxParameters);
         }
+
     }
+
 }
