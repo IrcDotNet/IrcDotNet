@@ -9,6 +9,7 @@ using System.Text;
 
 namespace IrcDotNet
 {
+
     using Collections;
 
     /// <summary>
@@ -20,6 +21,7 @@ namespace IrcDotNet
     [DebuggerDisplay("{ToString(), nq} (local)")]
     public class IrcLocalUser : IrcUser, IIrcMessageSendHandler, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
+
         // True if local user is service; false, if local user is normal user.
         private bool isService;
 
@@ -512,5 +514,7 @@ namespace IrcDotNet
         }
 
         #endregion
+
     }
+
 }

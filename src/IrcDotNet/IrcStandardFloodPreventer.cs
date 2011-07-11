@@ -5,6 +5,7 @@ using System.Text;
 
 namespace IrcDotNet
 {
+
     /// <summary>
     /// Represents a flood protector that throttles data sent by the client according to the standard rules implemented
     /// by modern IRC servers.
@@ -19,6 +20,7 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcStandardFloodPreventer : IIrcFloodPreventer
     {
+
         private const int ticksPerMillisecond = 10000;
 
         // Number of messages sent within current burst.
@@ -92,5 +94,7 @@ namespace IrcDotNet
         }
 
         #endregion
+
     }
+
 }

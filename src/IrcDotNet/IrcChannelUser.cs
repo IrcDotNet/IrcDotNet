@@ -9,6 +9,7 @@ using System.Text;
 
 namespace IrcDotNet
 {
+
     using Collections;
 
     /// <summary>
@@ -20,6 +21,7 @@ namespace IrcDotNet
     [DebuggerDisplay("{ToString(), nq}")]
     public class IrcChannelUser : INotifyPropertyChanged
     {
+
         // Collection of channel modes currently active on user.
         private HashSet<char> modes;
         private ReadOnlySet<char> modesReadOnly;
@@ -163,5 +165,7 @@ namespace IrcDotNet
         {
             return string.Format("{0}/{1}", this.channel.Name, this.user.NickName);
         }
+    
     }
+
 }

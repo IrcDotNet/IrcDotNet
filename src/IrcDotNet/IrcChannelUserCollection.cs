@@ -8,6 +8,7 @@ using System.Text;
 
 namespace IrcDotNet
 {
+
     using Collections;
 
     /// <summary>
@@ -17,6 +18,7 @@ namespace IrcDotNet
     /// <seealso cref="IrcChannelUser"/>
     public class IrcChannelUserCollection : ReadOnlyCollection<IrcChannelUser>
     {
+
         private IrcChannel channel;
         
         internal IrcChannelUserCollection(IrcChannel channel, IList<IrcChannelUser> list)
@@ -42,5 +44,7 @@ namespace IrcDotNet
         {
             return this.Items.Select(channelUser => channelUser.User);
         }
+
     }
+
 }

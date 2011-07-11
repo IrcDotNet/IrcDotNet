@@ -5,12 +5,15 @@ using System.Text;
 
 namespace IrcDotNet.Samples.Common
 {
+
     public class IrcBotException : Exception
     {
+
         public IrcBotException(IrcBotExceptionType type, string message)
             : base(message)
         {
         }
+
     }
 
     public enum IrcBotExceptionType
@@ -18,4 +21,5 @@ namespace IrcDotNet.Samples.Common
         Unknown,
         NoConnection,
     }
+
 }
