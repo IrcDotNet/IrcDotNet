@@ -6,6 +6,7 @@ using System.Text;
 
 namespace IrcDotNet
 {
+
     using Collections;
 
     /// <summary>
@@ -15,6 +16,7 @@ namespace IrcDotNet
     /// <seealso cref="IrcChannel"/>
     public class IrcChannelCollection : ReadOnlyCollection<IrcChannel>
     {
+
         private IrcClient client;
 
         internal IrcChannelCollection(IrcClient client, IList<IrcChannel> list)
@@ -76,5 +78,7 @@ namespace IrcDotNet
         {
             this.Client.Leave(channels, comment);
         }
+
     }
+
 }

@@ -5,6 +5,8 @@ using System.Text;
 
 namespace IrcDotNet
 {
+
+    // Indicates that method processes message for some protocol.
     internal class MessageProcessorAttribute : Attribute
     {
         public MessageProcessorAttribute(string commandName)
@@ -18,4 +20,5 @@ namespace IrcDotNet
             private set;
         }
     }
+
 }

@@ -6,9 +6,11 @@ using System.Text;
 
 namespace IrcDotNet.Ctcp
 {
+
     // Defines all message processors for the client.
     partial class CtcpClient
     {
+
         /// <summary>
         /// Process ACTION messages received from a user.
         /// </summary>
@@ -116,5 +118,7 @@ namespace IrcDotNet.Ctcp
                 SendMessagePing(new[] { message.Source }, message.Data, true);
             }
         }
+
     }
+
 }

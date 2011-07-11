@@ -7,10 +7,12 @@ using System.Text;
 
 namespace MarkovChainTextBox
 {
+
     // Represents a node within a Markov chain.
     [DebuggerDisplay("Value: {this.value == null ? \"(null)\" : this.value.ToString()}, {this.links.Count} links")]
     public class MarkovChainNode<T>
     {
+
         private T value;
         private List<MarkovChainNode<T>> links;
         private ReadOnlyCollection<MarkovChainNode<T>> linksReadOnly;
@@ -42,5 +44,7 @@ namespace MarkovChainTextBox
         {
             this.links.Add(toNode);
         }
+
     }
+
 }

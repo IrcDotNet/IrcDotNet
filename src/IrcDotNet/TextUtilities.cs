@@ -6,11 +6,13 @@ using System.Text.RegularExpressions;
 
 namespace IrcDotNet
 {
+
     using Collections;
 
     // Utilities for text manipulation.
     internal static class TextUtilities
     {
+
         // Gets single matched value of group, if match succeeded.
         public static string GetValue(this Group match)
         {
@@ -87,5 +89,7 @@ namespace IrcDotNet
             var buffer = currentEncoding.GetBytes(value);
             return newEncoding.GetString(buffer, 0, buffer.Length);
         }
+
     }
+
 }

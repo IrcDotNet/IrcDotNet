@@ -7,11 +7,13 @@ using System.Text;
 
 namespace IrcDotNet
 {
+
     // Allows reading and writing to circular buffer as stream.
     // Note: Stream is non-blocking and non-thread-safe.
     internal class CircularBufferStream : Stream
     {
-        // Buffer of data.
+
+        // Buffer for storing data.
         private byte[] buffer;
 
         // Current index within buffer for writing and reading.
@@ -124,5 +126,7 @@ namespace IrcDotNet
             }
             return totalReadCount;
         }
+
     }
+
 }

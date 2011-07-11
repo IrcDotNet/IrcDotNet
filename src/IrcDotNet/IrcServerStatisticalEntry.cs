@@ -5,11 +5,13 @@ using System.Text;
 
 namespace IrcDotNet
 {
+
     /// <summary>
     /// Stores a statistical entry for an IRC server.
     /// </summary>
     public struct IrcServerStatisticalEntry
     {
+
         /// <summary>
         /// The type of the statistical entry.
         /// </summary>
@@ -19,6 +21,7 @@ namespace IrcDotNet
         /// The list of parameters of the statistical entry.
         /// </summary>
         public IList<string> Parameters;
+
     }
 
     /// <summary>
@@ -29,6 +32,7 @@ namespace IrcDotNet
     /// </remarks>
     public enum IrcServerStatisticalEntryCommonType : int
     {
+
         /// <summary>
         /// An active connection to the server.
         /// </summary>
@@ -83,5 +87,7 @@ namespace IrcDotNet
         /// A hub server within the network.
         /// </summary>
         HubServer,
+
     }
+
 }

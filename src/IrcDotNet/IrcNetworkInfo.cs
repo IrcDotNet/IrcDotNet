@@ -5,11 +5,13 @@ using System.Text;
 
 namespace IrcDotNet
 {
+
     /// <summary>
     /// Stores information about a specific IRC network.
     /// </summary>
     public struct IrcNetworkInfo
     {
+
         /// <summary>
         /// The number of visible users on the network.
         /// </summary>
@@ -49,5 +51,7 @@ namespace IrcDotNet
         /// The number of others servers connected to the server.
         /// </summary>
         public int? ServerServersCount;
+
     }
+
 }

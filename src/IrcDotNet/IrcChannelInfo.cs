@@ -5,11 +5,13 @@ using System.Text;
 
 namespace IrcDotNet
 {
+
     /// <summary>
     /// Stores information about a particular channel on an IRC network.
     /// </summary>
     public struct IrcChannelInfo
     {
+
         /// <summary>
         /// The name of the channel.
         /// </summary>
@@ -37,5 +39,7 @@ namespace IrcDotNet
             this.VisibleUsersCount = visibleUsersCount;
             this.Topic = topic;
         }
+    
     }
+
 }
