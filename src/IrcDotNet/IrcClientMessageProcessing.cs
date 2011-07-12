@@ -112,7 +112,8 @@ namespace IrcDotNet
                 // Get channel modes and list of mode parameters from message parameters.
                 Debug.Assert(message.Parameters[1] != null);
                 var modesAndParameters = GetModeAndParameters(message.Parameters.Skip(1));
-                channel.HandleModesChanged(modesAndParameters.Item1, modesAndParameters.Item2);
+                channel.HandleModesChanged(message.Source as IrcUser, modesAndParameters.Item1,
+                    modesAndParameters.Item2);
             }
             else if (message.Parameters[0] == this.localUser.NickName)
             {
@@ -136,7 +137,7 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[0] != null);
             var channel = GetChannelFromName(message.Parameters[0]);
             Debug.Assert(message.Parameters[1] != null);
-            channel.Topic = message.Parameters[1];
+            channel.HandleTopicChanged(message.Source as IrcUser, message.Parameters[1]);
         }
 
         /// <summary>
@@ -448,7 +449,7 @@ namespace IrcDotNet
         protected void ProcessMessageStatsILine(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
-            
+
             HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.AllowedClient, message);
         }
 
@@ -863,7 +864,7 @@ namespace IrcDotNet
 
             Debug.Assert(message.Parameters[1] != null);
             var channel = GetChannelFromName(message.Parameters[1]);
-            channel.Topic = null;
+            channel.HandleTopicChanged(null, null);
         }
 
         /// <summary>
@@ -878,7 +879,7 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[1] != null);
             var channel = GetChannelFromName(message.Parameters[1]);
             Debug.Assert(message.Parameters[2] != null);
-            channel.Topic = message.Parameters[2];
+            channel.HandleTopicChanged(null, message.Parameters[2]);
         }
 
         /// <summary>
@@ -993,7 +994,7 @@ namespace IrcDotNet
             {
                 Debug.Assert(message.Parameters[1] != null);
                 Debug.Assert(message.Parameters[1].Length == 1);
-                channel.Type = GetChannelType(message.Parameters[1][0]);
+                channel.HandleTypeChanged(GetChannelType(message.Parameters[1][0]));
 
                 Debug.Assert(message.Parameters[3] != null);
                 foreach (var userId in message.Parameters[3].Split(' '))

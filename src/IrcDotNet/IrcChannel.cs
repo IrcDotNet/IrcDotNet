@@ -63,7 +63,7 @@ namespace IrcDotNet
         public IrcChannelType Type
         {
             get { return this.type; }
-            internal set
+            private set
             {
                 this.type = value;
                 OnPropertyChanged(new PropertyChangedEventArgs("Type"));
@@ -77,10 +77,9 @@ namespace IrcDotNet
         public string Topic
         {
             get { return this.topic; }
-            internal set
+            private set
             {
                 this.topic = value;
-                OnTopicChanged(new EventArgs());
                 OnPropertyChanged(new PropertyChangedEventArgs("Topic"));
             }
         }
@@ -126,12 +125,12 @@ namespace IrcDotNet
         /// <summary>
         /// Occurs when any of the modes of the channel have changed.
         /// </summary>
-        public event EventHandler<EventArgs> ModesChanged;
+        public event EventHandler<IrcUserEventArgs> ModesChanged;
 
         /// <summary>
         /// Occurs when the topic of the channel has changed.
         /// </summary>
-        public event EventHandler<EventArgs> TopicChanged;
+        public event EventHandler<IrcUserEventArgs> TopicChanged;
 
         /// <summary>
         /// Occurs when a user has joined the channel.
@@ -338,19 +337,31 @@ namespace IrcDotNet
                 this.users.Add(channelUser);
         }
 
+        internal void HandleTypeChanged(IrcChannelType type)
+        {
+            this.Type = type;
+        }
+
         internal void HandleUsersListReceived()
         {
             OnUsersListReceived(new EventArgs());
         }
 
-        internal void HandleModesChanged(string newModes, IEnumerable<string> newModeParameters)
+        internal void HandleTopicChanged(IrcUser source, string newTopic)
+        {
+            this.Topic = newTopic;
+
+            OnTopicChanged(new IrcUserEventArgs(source));
+        }
+
+        internal void HandleModesChanged(IrcUser source,  string newModes, IEnumerable<string> newModeParameters)
         {
             lock (((ICollection)this.modesReadOnly).SyncRoot)
                 this.modes.UpdateModes(newModes, newModeParameters, this.client.ChannelUserModes,
                     (add, mode, modeParameter) => this.users.Single(
                         cu => cu.User.NickName == modeParameter).HandleModeChanged(add, mode));
 
-            OnModesChanged(new EventArgs());
+            OnModesChanged(new IrcUserEventArgs(source));
         }
 
         internal void HandleUserJoined(IrcChannelUser channelUser)
@@ -445,8 +456,8 @@ namespace IrcDotNet
         /// <summary>
         /// Raises the <see cref="ModesChanged"/> event.
         /// </summary>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected virtual void OnModesChanged(EventArgs e)
+        /// <param name="e">The <see cref="IrcUserEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnModesChanged(IrcUserEventArgs e)
         {
             var handler = this.ModesChanged;
             if (handler != null)
@@ -456,8 +467,8 @@ namespace IrcDotNet
         /// <summary>
         /// Raises the <see cref="TopicChanged"/> event.
         /// </summary>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected virtual void OnTopicChanged(EventArgs e)
+        /// <param name="e">The <see cref="IrcUserEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnTopicChanged(IrcUserEventArgs e)
         {
             var handler = this.TopicChanged;
             if (handler != null)

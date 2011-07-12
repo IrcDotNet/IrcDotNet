@@ -28,8 +28,8 @@ namespace IrcDotNet
                     throw new ArgumentNullException("handleModeParameter");
             }
 
-            // Reads list of mode changes, where each group of modes is prefixed by a '+' or '-', representing respectively
-            // setting or unsetting of the given modes.
+            // Reads list of mode changes, where each group of modes is prefixed by a '+' or '-', representing
+            // respectively setting or unsetting of the given modes.
             bool? addMode = null;
             var modeParametersEnumerator = newModeParameters == null ? null : newModeParameters.GetEnumerator();
             foreach (var mode in newModes)

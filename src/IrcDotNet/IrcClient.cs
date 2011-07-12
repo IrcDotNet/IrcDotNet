@@ -1145,24 +1145,21 @@ namespace IrcDotNet
             else if (nickName != null)
             {
                 // Find user by nick name. If no user exists in list, create it and set its properties.
-                bool createdNew;
-                var user = GetUserFromNickName(nickName, true, out createdNew);
-                if (createdNew)
-                {
+                var user = GetUserFromNickName(nickName, true);
+                if (user.UserName == null)
                     user.UserName = userName;
+                if (user.HostName == null)
                     user.HostName = hostName;
-                }
+
                 return user;
             }
             else if (userName != null)
             {
                 // Find user by user  name. If no user exists in list, create it and set its properties.
-                bool createdNew;
-                var user = GetUserFromNickName(nickName, true, out createdNew);
-                if (createdNew)
-                {
+                var user = GetUserFromNickName(nickName, true);
+                if (user.HostName == null)
                     user.HostName = hostName;
-                }
+
                 return user;
             }
             else if (targetMask != null)
@@ -1205,13 +1202,12 @@ namespace IrcDotNet
             else if (nickName != null)
             {
                 // Find user by nick name. If no user exists in list, create it and set its properties.
-                bool createdNew;
-                var user = GetUserFromNickName(nickName, true, out createdNew);
-                if (createdNew)
-                {
+                var user = GetUserFromNickName(nickName, true);
+                if (user.UserName == null)
                     user.UserName = userName;
+                if (user.HostName == null)
                     user.HostName = hostName;
-                }
+
                 return user;
             }
             else
