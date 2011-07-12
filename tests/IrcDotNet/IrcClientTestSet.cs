@@ -14,6 +14,7 @@ namespace IrcDotNet.Tests
     using Ctcp;
 
     // Set of all tests for IRC (and CTCP) client.
+    // TODO: Use closures and inline event handlers here instead of instance AutoResetEvents?
     [TestClass()]
     public class IrcClientTestSet
     {
@@ -37,7 +38,9 @@ namespace IrcDotNet.Tests
         private static string client2ReceivedVersionInfo;
         private static string client2ReceivedActionText;
 
-        // Threading events used to signify when client raises event.
+        #region Wait Events
+
+        // Wait events used to signify when client raises event.
 #pragma warning disable 0649
 
         private static AutoResetEvent client1ConnectedEvent;
@@ -102,6 +105,8 @@ namespace IrcDotNet.Tests
 
 #pragma warning restore 0649
 
+        #endregion
+
         // Primary and secondary client, with associated user information.
         private static IrcClient ircClient1, ircClient2;
         private static CtcpClient ctcpClient1, ctcpClient2;
@@ -118,7 +123,7 @@ namespace IrcDotNet.Tests
         public static void ClassInitialize(TestContext testContext)
         {
             stateManager = new TestStateManager<IrcClientTestState>();
-
+            
             // Create IRC clients.
             ircClient1 = new IrcClient();
 #if DEBUG
@@ -173,7 +178,7 @@ namespace IrcDotNet.Tests
 
             // Nick name length limit on irc.freenode.net is 16 chars.
             Func<string> getRandomUserId = () => Guid.NewGuid().ToString().Substring(0, 8);
-
+            
             serverPassword = Properties.Resources.ServerPassword;
             if (string.IsNullOrEmpty(serverPassword))
                 serverPassword = null;
@@ -184,7 +189,7 @@ namespace IrcDotNet.Tests
             Debug.WriteLine("Client users have real name '{0}'", realName);
             Debug.WriteLine("Client 1 user has nick name '{0}' and user name '{1}'.", nickName1, userName1);
             Debug.WriteLine("Client 2 user has nick name '{0}' and user name '{1}'.", nickName2, userName2);
-
+            
             stateManager.SetStates(IrcClientTestState.Client1Initialized, IrcClientTestState.Client2Initialized);
             ircClient1.Connect(Properties.Resources.ServerHostName, false, new IrcUserRegistrationInfo()
                 {
@@ -258,7 +263,7 @@ namespace IrcDotNet.Tests
 
         private static void ircClient1_ProtocolError(object sender, IrcProtocolErrorEventArgs e)
         {
-            Debug.Fail(string.Format(Properties.Resources.MessageProtocolError,
+            Debug.Assert(false, string.Format(Properties.Resources.MessageProtocolError,
                 1, e.Code, e.Message, string.Join(" ", e.Parameters)));
         }
 
@@ -517,7 +522,7 @@ namespace IrcDotNet.Tests
 
         private static void ircClient2_ProtocolError(object sender, IrcProtocolErrorEventArgs e)
         {
-            Debug.Fail(string.Format(Properties.Resources.MessageProtocolError,
+            Debug.Assert(false, string.Format(Properties.Resources.MessageProtocolError,
                 2, e.Code, e.Message, string.Join(" ", e.Parameters)));
         }
 
@@ -690,6 +695,12 @@ namespace IrcDotNet.Tests
         public IrcClientTestSet()
             : base()
         {
+        }
+
+        public TestContext TestContext
+        {
+            get;
+            set;
         }
 
         [TestInitialize()]

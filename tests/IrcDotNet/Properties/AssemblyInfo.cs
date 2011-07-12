@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("IRC.NET Tests")]
-[assembly: AssemblyDescription("Testing framework for IRC.NET library.")]
+[assembly: AssemblyDescription("Testing framework for IRC.NET library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("IRC.NET")]
