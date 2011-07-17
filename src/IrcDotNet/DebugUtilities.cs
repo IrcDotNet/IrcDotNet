@@ -8,7 +8,7 @@ namespace IrcDotNet
 {
 
     // Utilities for debugging execution.
-    // TODO: use TraceSource here and configure trace listeners in test project.
+    // TODO: Use TraceSource here and configure trace listeners in test project.
     internal static class DebugUtilities
     {
 

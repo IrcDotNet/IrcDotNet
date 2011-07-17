@@ -7,6 +7,10 @@ using System.Text;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+#if SILVERLIGHT
+using Microsoft.Silverlight.Testing;
+#endif
+
 namespace IrcDotNet.Tests
 {
 
@@ -119,12 +123,23 @@ namespace IrcDotNet.Tests
         // Manages state of tests.
         private static TestStateManager<IrcClientTestState> stateManager;
 
+#if SILVERLIGHT
         [ClassInitialize()]
+        [Tag("Integration")]
+        public static void ClassInitialize()
+        {
+            ClassInitialize(null);
+        }
+#endif
+
+#if !SILVERLIGHT
+        [ClassInitialize()]
+#endif
         public static void ClassInitialize(TestContext testContext)
         {
             stateManager = new TestStateManager<IrcClientTestState>();
-            
-            // Create IRC clients.
+
+            // Create instances of IRC clients.
             ircClient1 = new IrcClient();
 #if DEBUG
             ircClient1.ClientId = "1";
@@ -157,8 +172,9 @@ namespace IrcDotNet.Tests
             ircClient2.Error += ircClient2_Error;
             ircClient2.ProtocolError += ircClient2_ProtocolError;
             ircClient2.Registered += ircClient2_Registered;
+            
 
-            // Create CTCP clients over IRC clients.
+            // Create instances of CTCP clients over IRC clients.
             ctcpClient1 = new CtcpClient(ircClient1);
             ctcpClient1.ClientVersion = clientVersionInfo;
             ctcpClient1.PingResponseReceived += ctcpClient1_PingResponseReceived;
@@ -178,7 +194,7 @@ namespace IrcDotNet.Tests
 
             // Nick name length limit on irc.freenode.net is 16 chars.
             Func<string> getRandomUserId = () => Guid.NewGuid().ToString().Substring(0, 8);
-            
+
             serverPassword = Properties.Resources.ServerPassword;
             if (string.IsNullOrEmpty(serverPassword))
                 serverPassword = null;
@@ -189,7 +205,7 @@ namespace IrcDotNet.Tests
             Debug.WriteLine("Client users have real name '{0}'", realName);
             Debug.WriteLine("Client 1 user has nick name '{0}' and user name '{1}'.", nickName1, userName1);
             Debug.WriteLine("Client 2 user has nick name '{0}' and user name '{1}'.", nickName2, userName2);
-            
+
             stateManager.SetStates(IrcClientTestState.Client1Initialized, IrcClientTestState.Client2Initialized);
             ircClient1.Connect(Properties.Resources.ServerHostName, false, new IrcUserRegistrationInfo()
                 {
@@ -208,6 +224,9 @@ namespace IrcDotNet.Tests
         }
 
         [ClassCleanup()]
+#if SILVERLIGHT
+        [Tag("Integration")]
+#endif
         public static void ClassCleanup()
         {
             if (ircClient1 != null)
@@ -714,6 +733,47 @@ namespace IrcDotNet.Tests
         }
 
         #region Test Methods
+
+        [TestMethod()]
+#if SILVERLIGHT
+        [Tag("Integration")]
+#endif
+        public void CompleteIrcClientTest()
+        {
+            // Run all individual tests in order.
+            ConnectTest();
+            RegisterTest();
+            MotdTest();
+            NetworkInfoTest();
+            ServerVersionTest();
+            ServerTimeTest();
+            ServerStatisticsTest();
+            ServerLinksTest();
+            LocalUserChangeNickNameTest();
+            LocalUserModeTest();
+            LocalUserAwayTest();
+            JoinChannelTest();
+            ListChannelsTest();
+            ChannelUsersListReceivedTest();
+            ChannelLocalUserModeTest();
+            ChannelModeTest();
+            ChannelSendAndReceiveMessage();
+            ChannelSendAndReceiveNotice();
+            ChannelFloodPreventionTest();
+            ChannelKickTest();
+            ChannelInviteUserTest();
+            RejoinChannelTest();
+            WhoTest();
+            WhoIsTest();
+            CtcpPingTest();
+            CtcpVersionTest();
+            CtcpTimeTest();
+            CtcpActionTest();
+            QuitTest();
+            PartChannelTest();
+            WhoWasTest();
+            DisconnectTest();
+        }
 
         [TestMethod()]
         public void ConnectTest()

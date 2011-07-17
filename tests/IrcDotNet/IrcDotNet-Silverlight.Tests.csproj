@@ -73,8 +73,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IrcDotNet">
-      <HintPath>..\..\bin\Debug\sl40\IrcDotNet.dll</HintPath>
+    <Reference Include="IrcDotNet-Silverlight">
+      <HintPath>..\..\bin\Debug\sl40\IrcDotNet-Silverlight.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Silverlight.Testing">
       <HintPath>$(MSBuildExtensionsPath)\..\Microsoft SDKs\Silverlight\v4.0\Toolkit\Apr10\Testing\Microsoft.Silverlight.Testing.dll</HintPath>
@@ -92,8 +92,6 @@
     <Reference Include="System.Xml.Linq, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompleteIrcClientOrderedTest.cs" />
-    <Compile Include="OrderedTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -113,9 +111,6 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CompleteIrcClient.orderedtest">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <None Include="Properties\AppManifest.xml" />
   </ItemGroup>
   <ItemGroup>

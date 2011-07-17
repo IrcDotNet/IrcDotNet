@@ -25,7 +25,7 @@
     </DocumentationSources>
     <HelpFileFormat>HtmlHelp1, MSHelpViewer</HelpFileFormat>
     <FrameworkVersion>Silverlight 4.0</FrameworkVersion>
-    <ProjectSummary>A library for communicating via the Internet Relay Chat %28IRC%29 protocol, using the .NET Framework 4.0.</ProjectSummary>
+    <ProjectSummary>A library for communicating via the Internet Relay Chat %28IRC%29 protocol, using Silverlight 4.0.</ProjectSummary>
     <Preliminary>True</Preliminary>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" />
