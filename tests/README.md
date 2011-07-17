@@ -2,8 +2,9 @@
 =============
 
 The test projects in this directory should be run using the Visual Studio Unit
-Testing Framework. The `.vsmdi` file contains metadata for all tests in the
-solution.
+Testing framework (MSTest).
+
+The `.vsmdi` file contains metadata for all tests in the solution.
 
 IrcDotNet
 ---------

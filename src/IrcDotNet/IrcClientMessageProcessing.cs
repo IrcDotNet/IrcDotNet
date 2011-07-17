@@ -21,7 +21,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("nick")]
-        protected void ProcessMessageNick(IrcMessage message)
+        protected internal void ProcessMessageNick(IrcMessage message)
         {
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
@@ -38,7 +38,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("quit")]
-        protected void ProcessMessageQuit(IrcMessage message)
+        protected internal void ProcessMessageQuit(IrcMessage message)
         {
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
@@ -58,7 +58,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("join")]
-        protected void ProcessMessageJoin(IrcMessage message)
+        protected internal void ProcessMessageJoin(IrcMessage message)
         {
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
@@ -79,7 +79,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("part")]
-        protected void ProcessMessagePart(IrcMessage message)
+        protected internal void ProcessMessagePart(IrcMessage message)
         {
             var sourceUser = message.Source as IrcUser;
             if (sourceUser == null)
@@ -101,7 +101,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("mode")]
-        protected void ProcessMessageMode(IrcMessage message)
+        protected internal void ProcessMessageMode(IrcMessage message)
         {
             // Check if mode applies to channel or user.
             Debug.Assert(message.Parameters[0] != null);
@@ -132,7 +132,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("topic")]
-        protected void ProcessMessageTopic(IrcMessage message)
+        protected internal void ProcessMessageTopic(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
             var channel = GetChannelFromName(message.Parameters[0]);
@@ -145,7 +145,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("kick")]
-        protected void ProcessMessageKick(IrcMessage message)
+        protected internal void ProcessMessageKick(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
             var channels = GetChannelsFromList(message.Parameters[0]);
@@ -183,7 +183,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("invite")]
-        protected void ProcessMessageInvite(IrcMessage message)
+        protected internal void ProcessMessageInvite(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
             var user = GetUserFromNickName(message.Parameters[0]);
@@ -200,7 +200,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("privmsg")]
-        protected void ProcessMessagePrivateMessage(IrcMessage message)
+        protected internal void ProcessMessagePrivateMessage(IrcMessage message)
         {
             // Get list of message targets.
             Debug.Assert(message.Parameters[0] != null);
@@ -224,7 +224,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("notice")]
-        protected void ProcessMessageNotice(IrcMessage message)
+        protected internal void ProcessMessageNotice(IrcMessage message)
         {
             // Get list of message targets.
             Debug.Assert(message.Parameters[0] != null);
@@ -249,7 +249,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("ping")]
-        protected void ProcessMessagePing(IrcMessage message)
+        protected internal void ProcessMessagePing(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
             var server = message.Parameters[0];
@@ -263,7 +263,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("pong")]
-        protected void ProcessMessagePong(IrcMessage message)
+        protected internal void ProcessMessagePong(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
             var server = message.Parameters[0];
@@ -275,7 +275,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("error")]
-        protected void ProcessMessageError(IrcMessage message)
+        protected internal void ProcessMessageError(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
             var errorMessage = message.Parameters[0];
@@ -287,7 +287,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("001")]
-        protected void ProcessMessageReplyWelcome(IrcMessage message)
+        protected internal void ProcessMessageReplyWelcome(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
 
@@ -309,7 +309,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("002")]
-        protected void ProcessMessageReplyYourHost(IrcMessage message)
+        protected internal void ProcessMessageReplyYourHost(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -322,7 +322,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("003")]
-        protected void ProcessMessageReplyCreated(IrcMessage message)
+        protected internal void ProcessMessageReplyCreated(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -335,7 +335,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("004")]
-        protected void ProcessMessageReplyMyInfo(IrcMessage message)
+        protected internal void ProcessMessageReplyMyInfo(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -357,7 +357,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("005")]
-        protected void ProcessMessageReplyBounceOrISupport(IrcMessage message)
+        protected internal void ProcessMessageReplyBounceOrISupport(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -398,7 +398,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("211")]
-        protected void ProcessMessageStatsLinkInfo(IrcMessage message)
+        protected internal void ProcessMessageStatsLinkInfo(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -410,7 +410,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("212")]
-        protected void ProcessMessageStatsCommands(IrcMessage message)
+        protected internal void ProcessMessageStatsCommands(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -422,7 +422,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("213")]
-        protected void ProcessMessageStatsCLine(IrcMessage message)
+        protected internal void ProcessMessageStatsCLine(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -434,7 +434,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("214")]
-        protected void ProcessMessageStatsNLine(IrcMessage message)
+        protected internal void ProcessMessageStatsNLine(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -446,7 +446,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("215")]
-        protected void ProcessMessageStatsILine(IrcMessage message)
+        protected internal void ProcessMessageStatsILine(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -458,7 +458,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("216")]
-        protected void ProcessMessageStatsKLine(IrcMessage message)
+        protected internal void ProcessMessageStatsKLine(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -470,7 +470,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("218")]
-        protected void ProcessMessageStatsYLine(IrcMessage message)
+        protected internal void ProcessMessageStatsYLine(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -482,7 +482,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("219")]
-        protected void ProcessMessageEndOfStats(IrcMessage message)
+        protected internal void ProcessMessageEndOfStats(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -495,7 +495,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("241")]
-        protected void ProcessMessageStatsLLine(IrcMessage message)
+        protected internal void ProcessMessageStatsLLine(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -507,7 +507,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("242")]
-        protected void ProcessMessageStatsUpTime(IrcMessage message)
+        protected internal void ProcessMessageStatsUpTime(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -519,7 +519,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("243")]
-        protected void ProcessMessageStatsOLine(IrcMessage message)
+        protected internal void ProcessMessageStatsOLine(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -531,7 +531,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("244")]
-        protected void ProcessMessageStatsHLine(IrcMessage message)
+        protected internal void ProcessMessageStatsHLine(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -543,7 +543,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("251")]
-        protected void ProcessMessageLUserClient(IrcMessage message)
+        protected internal void ProcessMessageLUserClient(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -563,7 +563,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("252")]
-        protected void ProcessMessageLUserOp(IrcMessage message)
+        protected internal void ProcessMessageLUserOp(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -579,7 +579,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("253")]
-        protected void ProcessMessageLUserUnknown(IrcMessage message)
+        protected internal void ProcessMessageLUserUnknown(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -595,7 +595,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("254")]
-        protected void ProcessMessageLUserChannels(IrcMessage message)
+        protected internal void ProcessMessageLUserChannels(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -611,7 +611,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("255")]
-        protected void ProcessMessageLUserMe(IrcMessage message)
+        protected internal void ProcessMessageLUserMe(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -630,7 +630,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("301")]
-        protected void ProcessMessageReplyAway(IrcMessage message)
+        protected internal void ProcessMessageReplyAway(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -646,7 +646,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("303")]
-        protected void ProcessMessageReplyIsOn(IrcMessage message)
+        protected internal void ProcessMessageReplyIsOn(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -661,7 +661,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("305")]
-        protected void ProcessMessageReplyUnAway(IrcMessage message)
+        protected internal void ProcessMessageReplyUnAway(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -673,7 +673,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("306")]
-        protected void ProcessMessageReplyNowAway(IrcMessage message)
+        protected internal void ProcessMessageReplyNowAway(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -685,7 +685,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("311")]
-        protected void ProcessMessageReplyWhoIsUser(IrcMessage message)
+        protected internal void ProcessMessageReplyWhoIsUser(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -705,7 +705,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("312")]
-        protected void ProcessMessageReplyWhoIsServer(IrcMessage message)
+        protected internal void ProcessMessageReplyWhoIsServer(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -722,7 +722,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("313")]
-        protected void ProcessMessageReplyWhoIsOperator(IrcMessage message)
+        protected internal void ProcessMessageReplyWhoIsOperator(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -736,7 +736,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("314")]
-        protected void ProcessMessageReplyWhoWasUser(IrcMessage message)
+        protected internal void ProcessMessageReplyWhoWasUser(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -756,7 +756,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("315")]
-        protected void ProcessMessageReplyEndOfWho(IrcMessage message)
+        protected internal void ProcessMessageReplyEndOfWho(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -770,7 +770,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("317")]
-        protected void ProcessMessageReplyWhoIsIdle(IrcMessage message)
+        protected internal void ProcessMessageReplyWhoIsIdle(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -785,7 +785,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("318")]
-        protected void ProcessMessageReplyEndOfWhoIs(IrcMessage message)
+        protected internal void ProcessMessageReplyEndOfWhoIs(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -799,7 +799,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("319")]
-        protected void ProcessMessageReplyWhoIsChannels(IrcMessage message)
+        protected internal void ProcessMessageReplyWhoIsChannels(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -825,7 +825,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("322")]
-        protected void ProcessMessageReplyList(IrcMessage message)
+        protected internal void ProcessMessageReplyList(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -845,7 +845,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("323")]
-        protected void ProcessMessageReplyListEnd(IrcMessage message)
+        protected internal void ProcessMessageReplyListEnd(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -858,7 +858,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("331")]
-        protected void ProcessMessageReplyNoTopic(IrcMessage message)
+        protected internal void ProcessMessageReplyNoTopic(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -872,7 +872,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("332")]
-        protected void ProcessMessageReplyTopic(IrcMessage message)
+        protected internal void ProcessMessageReplyTopic(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -887,7 +887,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("341")]
-        protected void ProcessMessageReplyInviting(IrcMessage message)
+        protected internal void ProcessMessageReplyInviting(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -904,7 +904,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("351")]
-        protected void ProcessMessageReplyVersion(IrcMessage message)
+        protected internal void ProcessMessageReplyVersion(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -926,7 +926,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("352")]
-        protected void ProcessMessageReplyWhoReply(IrcMessage message)
+        protected internal void ProcessMessageReplyWhoReply(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -984,7 +984,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("353")]
-        protected void ProcessMessageReplyNameReply(IrcMessage message)
+        protected internal void ProcessMessageReplyNameReply(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -1015,7 +1015,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("364")]
-        protected void ProcessMessageReplyLinks(IrcMessage message)
+        protected internal void ProcessMessageReplyLinks(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -1039,7 +1039,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("365")]
-        protected void ProcessMessageReplyEndOfLinks(IrcMessage message)
+        protected internal void ProcessMessageReplyEndOfLinks(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -1055,7 +1055,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("366")]
-        protected void ProcessMessageReplyEndOfNames(IrcMessage message)
+        protected internal void ProcessMessageReplyEndOfNames(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -1069,7 +1069,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("369")]
-        protected void ProcessMessageReplyEndOfWhoWas(IrcMessage message)
+        protected internal void ProcessMessageReplyEndOfWhoWas(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -1083,7 +1083,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("372")]
-        protected void ProcessMessageReplyMotd(IrcMessage message)
+        protected internal void ProcessMessageReplyMotd(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -1096,7 +1096,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("375")]
-        protected void ProcessMessageReplyMotdStart(IrcMessage message)
+        protected internal void ProcessMessageReplyMotdStart(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -1110,7 +1110,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("376")]
-        protected void ProcessMessageReplyMotdEnd(IrcMessage message)
+        protected internal void ProcessMessageReplyMotdEnd(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -1125,7 +1125,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("383")]
-        protected void ProcessMessageReplyYouAreService(IrcMessage message)
+        protected internal void ProcessMessageReplyYouAreService(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
 
@@ -1141,7 +1141,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("391")]
-        protected void ProcessMessageReplyTime(IrcMessage message)
+        protected internal void ProcessMessageReplyTime(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
 
@@ -1158,9 +1158,9 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("400-599")]
-        protected void ProcessMessageNumericError(IrcMessage message)
+        protected internal void ProcessMessageNumericError(IrcMessage message)
         {
-            Debug.Assert(message.Parameters[0] == this.localUser.NickName);
+            Debug.Assert(message.Parameters[0] != null);
 
             // Extract error parameters and message text from message parameters.
             Debug.Assert(message.Parameters[1] != null);

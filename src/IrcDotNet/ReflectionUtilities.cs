@@ -17,7 +17,8 @@ namespace IrcDotNet
             where TDelegate : class
         {
             // Find all methods in class that are marked by one or more instances of given attribute.
-            var messageProcessorsMethods = obj.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
+            var messageProcessorsMethods = obj.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic
+                | BindingFlags.Public);
             foreach (var methodInfo in messageProcessorsMethods)
             {
                 var methodAttributes = (TAttribute[])methodInfo.GetCustomAttributes(
