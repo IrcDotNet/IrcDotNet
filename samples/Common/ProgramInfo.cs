@@ -6,10 +6,8 @@ using System.Text;
 
 namespace IrcDotNet.Samples.Common
 {
-
     public static class ProgramInfo
     {
-
         public static string AssemblyTitle
         {
             get
@@ -35,7 +33,5 @@ namespace IrcDotNet.Samples.Common
                 return Assembly.GetEntryAssembly().GetName().Version;
             }
         }
-
     }
-
 }

@@ -9,7 +9,6 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     using Collections;
 
     /// <summary>
@@ -19,7 +18,6 @@ namespace IrcDotNet
     [DebuggerDisplay("{ToString(), nq}")]
     public class IrcChannel : INotifyPropertyChanged, IIrcMessageTarget, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
-
         private string name;
 
         private IrcChannelType type;
@@ -607,7 +605,6 @@ namespace IrcDotNet
         }
 
         #endregion
-
     }
 
     /// <summary>
@@ -615,7 +612,6 @@ namespace IrcDotNet
     /// </summary>
     public enum IrcChannelType
     {
-
         /// <summary>
         /// The channel type is unspecified.
         /// </summary>
@@ -636,7 +632,5 @@ namespace IrcDotNet
         /// queries.
         /// </summary>
         Secret,
-
     }
-
 }

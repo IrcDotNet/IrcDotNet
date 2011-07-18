@@ -5,14 +5,12 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     /// <summary>
     /// Stores information about a particular server in an IRC network.
     /// </summary>
     /// <threadsafety static="true" instance="false"/>
     public struct IrcServerInfo
     {
-
         /// <summary>
         /// The host name of the server.
         /// </summary>
@@ -40,7 +38,5 @@ namespace IrcDotNet
             this.HopCount = hopCount;
             this.Info = info;
         }
-
     }
-
 }

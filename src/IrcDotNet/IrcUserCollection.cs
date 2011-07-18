@@ -7,7 +7,6 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     using Collections;
 
     /// <summary>
@@ -17,7 +16,6 @@ namespace IrcDotNet
     /// <seealso cref="IrcUser"/>
     public class IrcUserCollection : ReadOnlyCollection<IrcUser>
     {
-
         private IrcClient client;
         
         internal IrcUserCollection(IrcClient client, IList<IrcUser> list)
@@ -34,7 +32,5 @@ namespace IrcDotNet
         {
             get { return this.client; }
         }
-
     }
-
 }

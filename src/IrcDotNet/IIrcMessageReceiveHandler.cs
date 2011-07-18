@@ -5,13 +5,11 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     /// <summary>
     /// Represents an object that handles messages and notices received by an IRC client.
     /// </summary>
     internal interface IIrcMessageReceiveHandler
     {
-
         /// <summary>
         /// Handles the specified message that was received by the client.
         /// </summary>
@@ -29,5 +27,4 @@ namespace IrcDotNet
         void HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text);
     
     }
-
 }

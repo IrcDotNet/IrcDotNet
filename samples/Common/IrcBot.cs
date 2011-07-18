@@ -8,11 +8,9 @@ using System.Threading;
 
 namespace IrcDotNet.Samples.Common
 {
-
     // Provides core functionality for an IRC bot that operates via multiple clients.
     public abstract class IrcBot : IDisposable
     {
-
         private const int clientQuitTimeout = 1000;
 
         // Regex for splitting space-separated list of command parts until first parameter that begins with '/'.
@@ -399,7 +397,5 @@ namespace IrcDotNet.Samples.Common
             IList<IIrcMessageTarget> targets, string command, IList<string> parameters);
 
         protected delegate void CommandProcessor(string command, IList<string> parameters);
-
     }
-
 }

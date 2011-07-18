@@ -5,11 +5,9 @@ using System.Text;
 
 namespace IrcDotNet.Samples.Common
 {
-
     // Provides access to basic commands for controlling an IRC bot.
     public abstract class BasicIrcBot : IrcBot
     {
-
         public BasicIrcBot()
             : base()
         {
@@ -118,7 +116,5 @@ namespace IrcDotNet.Samples.Common
         }
 
         #endregion
-
     }
-
 }

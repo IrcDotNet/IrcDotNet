@@ -10,13 +10,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace IrcDotNet.Tests
 {
-
     using Collections;
 
     // Manages states and dependencies of set of tests.
     public class TestStateManager<TState> where TState : struct
     {
-
         private HashSet<TState> currentStates;
         private ReadOnlySet<TState> currentsStateReadOnly;
 
@@ -78,7 +76,5 @@ namespace IrcDotNet.Tests
         {
             this.currentStates.RemoveRange(states);
         }
-
     }
-
 }

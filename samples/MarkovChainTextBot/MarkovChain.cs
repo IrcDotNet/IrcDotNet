@@ -7,12 +7,10 @@ using System.Text;
 
 namespace MarkovChainTextBox
 {
-
     // Represents a Markov chain of arbitrary length.
     [DebuggerDisplay("{this.nodes.Count} nodes")]
     public class MarkovChain<T>
     {
-
         private static readonly IEqualityComparer<T> comparer = EqualityComparer<T>.Default;
 
         private readonly Random random = new Random();
@@ -62,7 +60,5 @@ namespace MarkovChainTextBox
             }
             return node;
         }
-
     }
-
 }

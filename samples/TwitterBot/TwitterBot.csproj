@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\bin\Samples\Debug\net40\</OutputPath>
+    <OutputPath>..\..\bin\Samples\Debug\net40\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,7 +29,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\bin\Samples\Release\net40\</OutputPath>
+    <OutputPath>..\..\bin\Samples\Release\net40\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -38,12 +38,11 @@
     <StartupObject>TwitterBot.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hammock.ClientProfile, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c148cfba29ed1a4d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\Samples\Hammock.ClientProfile.dll</HintPath>
+    <Reference Include="Hammock.ClientProfile">
+      <HintPath>..\..\lib\Samples\Hammock.ClientProfile.dll</HintPath>
     </Reference>
     <Reference Include="IrcDotNet">
-      <HintPath>..\..\..\bin\Debug\net40\IrcDotNet.dll</HintPath>
+      <HintPath>..\..\bin\Debug\net40\IrcDotNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,9 +51,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TweetSharp, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c148cfba29ed1a4d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\Samples\TweetSharp.dll</HintPath>
+    <Reference Include="TweetSharp">
+      <HintPath>..\..\lib\Samples\TweetSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

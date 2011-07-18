@@ -10,10 +10,8 @@ using TweetSharp;
 
 namespace TwitterBot
 {
-
     public class TwitterBotUser
     {
-
         private const int defaultReplyTweetCount = 5;
 
         private const string twitterConsumerKey = "SqaDmCpB8sTAMYlHS6X6g";
@@ -111,7 +109,5 @@ namespace TwitterBot
             this.TwitterUser = null;
             this.IsAuthenticated = false;
         }
-
     }
-
 }

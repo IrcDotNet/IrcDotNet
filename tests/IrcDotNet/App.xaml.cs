@@ -7,10 +7,8 @@ using Microsoft.Silverlight.Testing.Harness;
 
 namespace IrcDotNet.Tests
 {
-
     public partial class App : Application
     {
-
         private const string messageUnhandledError = "Unhandled error in Silverlight test application.";
 
         public App()
@@ -76,7 +74,5 @@ namespace IrcDotNet.Tests
             
             return settings;
         }
-
     }
-
 }

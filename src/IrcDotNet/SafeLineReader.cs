@@ -6,11 +6,9 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     // Reads lines from text sources safely; non-terminated lines are not returned.
     internal class SafeLineReader
     {
-
         // Reads characters from text source.
         private TextReader textReader;
 
@@ -60,7 +58,5 @@ namespace IrcDotNet
 
             return null;
         }
-
     }
-
 }

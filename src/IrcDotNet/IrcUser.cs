@@ -7,7 +7,6 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     /// <summary>
     /// Represents an IRC user that exists on a specific <see cref="IrcClient"/>.
     /// </summary>
@@ -15,7 +14,6 @@ namespace IrcDotNet
     [DebuggerDisplay("{ToString(), nq}")]
     public class IrcUser : INotifyPropertyChanged, IIrcMessageSource, IIrcMessageTarget
     {
-
         private bool isOnline;
 
         private string nickName;
@@ -408,7 +406,5 @@ namespace IrcDotNet
         }
 
         #endregion
-
     }
-
 }
