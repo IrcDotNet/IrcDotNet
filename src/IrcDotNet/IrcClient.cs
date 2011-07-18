@@ -19,7 +19,6 @@ using System.Net.Security;
 
 namespace IrcDotNet
 {
-
     using Collections;
 
     /// <summary>
@@ -35,7 +34,6 @@ namespace IrcDotNet
     [DebuggerDisplay("{ToString(), nq}")]
     public partial class IrcClient : IDisposable
     {
-
         // Maximum number of parameters that can be sent in single raw message.        
         private const int maxParamsCount = 15;
 
@@ -1905,7 +1903,7 @@ namespace IrcDotNet
                 // Check if remote host has closed connection.
                 if (e.BytesTransferred == 0)
                 {
-                    HandleClientDisconnected();
+                    Disconnect();
                     return;
                 }
 
@@ -2070,10 +2068,10 @@ namespace IrcDotNet
             disconnectEventArgs.Completed += DisconnectCompleted;
 
 #if SILVERLIGHT
-                this.socket.Shutdown(SocketShutdown.Both);
-                disconnectEventArgs.SocketError = SocketError.Success;
-                ((EventHandler<SocketAsyncEventArgs>)DisconnectCompleted).BeginInvoke(
-                    this.socket, disconnectEventArgs, null, null);
+            this.socket.Shutdown(SocketShutdown.Both);
+            disconnectEventArgs.SocketError = SocketError.Success;
+            ((EventHandler<SocketAsyncEventArgs>)DisconnectCompleted).BeginInvoke(
+                this.socket, disconnectEventArgs, null, null);
 #else
             disconnectEventArgs.DisconnectReuseSocket = true;
             if (!this.socket.DisconnectAsync(disconnectEventArgs))
@@ -2544,7 +2542,6 @@ namespace IrcDotNet
         [DebuggerDisplay("{ToString(), nq}")]
         public struct IrcMessage
         {
-
             /// <summary>
             /// The source of the message, which is the object represented by the value of <see cref="Prefix"/>.
             /// </summary>
@@ -2590,9 +2587,6 @@ namespace IrcDotNet
             {
                 return string.Format("{0} ({1} parameters)", this.Command, this.Parameters.Count);
             }
-
         }
-
     }
-
 }

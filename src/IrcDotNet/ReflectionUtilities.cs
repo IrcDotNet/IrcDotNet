@@ -6,11 +6,9 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     // Utilities for reflection of managed entities.
     internal static class ReflectionUtilities
     {
-
         public static IEnumerable<Tuple<TAttribute, TDelegate>> GetAttributedMethods<TAttribute, TDelegate>(
             this object obj)
             where TAttribute : Attribute
@@ -33,7 +31,5 @@ namespace IrcDotNet
                 }
             }
         }
-
     }
-
 }

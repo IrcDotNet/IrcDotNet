@@ -6,12 +6,10 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     // Utilities for debugging execution.
     // TODO: Use TraceSource here and configure trace listeners in test project.
     internal static class DebugUtilities
     {
-
         [Conditional("DEBUG")]
         public static void WriteIrcRawLine(IrcClient client, string line)
         {
@@ -25,7 +23,5 @@ namespace IrcDotNet
         {
             Debug.WriteLine(string.Format("{0:HH:mm:ss} {1}", DateTime.Now, string.Format(message, args)));
         }
-
     }
-
 }

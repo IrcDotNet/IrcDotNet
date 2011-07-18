@@ -9,13 +9,11 @@ using System.Text.RegularExpressions;
 
 namespace IrcDotNet
 {
-
     using Collections;
 
     // Defines all message processors for the client.
     partial class IrcClient
     {
-
         /// <summary>
         /// Process NICK messages received from the server.
         /// </summary>
@@ -1182,7 +1180,5 @@ namespace IrcDotNet
             Debug.Assert(errorMessage != null);
             OnProtocolError(new IrcProtocolErrorEventArgs(int.Parse(message.Command), errorParameters, errorMessage));
         }
-
     }
-
 }

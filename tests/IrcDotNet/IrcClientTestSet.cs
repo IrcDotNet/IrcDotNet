@@ -13,7 +13,6 @@ using Microsoft.Silverlight.Testing;
 
 namespace IrcDotNet.Tests
 {
-
     using Collections;
     using Ctcp;
 
@@ -22,7 +21,6 @@ namespace IrcDotNet.Tests
     [TestClass()]
     public class IrcClientTestSet
     {
-
         // Information used for sending messages, to be used in tests.
         private const string clientVersionInfo = "IRC.NET Test Bot";
         private const string quitMessage = "Client 2 quitting test.";
@@ -1299,7 +1297,6 @@ namespace IrcDotNet.Tests
             }
             return false;
         }
-
     }
 
     // Defines set of test states managed by TestStateManager.
@@ -1316,5 +1313,4 @@ namespace IrcDotNet.Tests
         Client1InChannel,
         Client2InChannel,
     }
-
 }

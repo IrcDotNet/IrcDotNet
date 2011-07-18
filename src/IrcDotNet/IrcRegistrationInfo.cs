@@ -5,14 +5,12 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     /// <summary>
     /// Provides information used by an <see cref="IrcClient"/> for registering the connection as a service.
     /// </summary>
     /// <threadsafety static="true" instance="false"/>
     public class IrcServiceRegistrationInfo : IrcRegistrationInfo
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="IrcServiceRegistrationInfo"/> class.
         /// </summary>
@@ -126,7 +124,5 @@ namespace IrcDotNet
             get;
             set;
         }
-
     }
-
 }

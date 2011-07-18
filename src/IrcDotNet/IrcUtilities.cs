@@ -5,11 +5,9 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     // Utilities for IRC.
     internal static class IrcUtilities
     {
-
         // Updates collection of modes from specified mode string.
         // Mode string is of form `( "+" | "-" ) ( mode character )+`.
         public static void UpdateModes(this ICollection<char> collection, string newModes,
@@ -61,7 +59,5 @@ namespace IrcDotNet
                 }
             }
         }
-
     }
-
 }

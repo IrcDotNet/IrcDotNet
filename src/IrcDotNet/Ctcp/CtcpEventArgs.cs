@@ -6,14 +6,12 @@ using System.Text;
 
 namespace IrcDotNet.Ctcp
 {
-
     /// <summary>
     /// Provides data for events that are raised when a CTCP message or notice is sent or received.
     /// </summary>
     /// <threadsafety static="true" instance="false"/>
     public class CtcpMessageEventArgs : EventArgs
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CtcpMessageEventArgs"/> class.
         /// </summary>
@@ -64,7 +62,6 @@ namespace IrcDotNet.Ctcp
             get;
             private set;
         }
-
     }
 
     /// <summary>
@@ -73,7 +70,6 @@ namespace IrcDotNet.Ctcp
     /// <threadsafety static="true" instance="false"/>
     public class CtcpTimeResponseReceivedEventArgs : CtcpResponseReceivedEventArgs
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CtcpTimeResponseReceivedEventArgs"/> class.
         /// </summary>
@@ -93,7 +89,6 @@ namespace IrcDotNet.Ctcp
             get;
             private set;
         }
-
     }
 
     /// <summary>
@@ -102,7 +97,6 @@ namespace IrcDotNet.Ctcp
     /// <threadsafety static="true" instance="false"/>
     public class CtcpVersionResponseReceivedEventArgs : CtcpResponseReceivedEventArgs
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CtcpVersionResponseReceivedEventArgs"/> class.
         /// </summary>
@@ -122,7 +116,6 @@ namespace IrcDotNet.Ctcp
             get;
             private set;
         }
-
     }
 
     /// <summary>
@@ -131,7 +124,6 @@ namespace IrcDotNet.Ctcp
     /// <threadsafety static="true" instance="false"/>
     public class CtcpErrorMessageReceivedEventArgs : CtcpResponseReceivedEventArgs
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CtcpErrorMessageReceivedEventArgs"/> class,
         /// specifying that no error occurred.
@@ -189,7 +181,6 @@ namespace IrcDotNet.Ctcp
             get;
             private set;
         }
-
     }
 
     /// <summary>
@@ -198,7 +189,6 @@ namespace IrcDotNet.Ctcp
     /// <threadsafety static="true" instance="false"/>
     public class CtcpPingResponseReceivedEventArgs : CtcpResponseReceivedEventArgs
     {
-
         /// <inheritdoc/>
         /// <summary>
         /// Initializes a new instance of the <see cref="CtcpPingResponseReceivedEventArgs"/> class.
@@ -220,7 +210,6 @@ namespace IrcDotNet.Ctcp
             get;
             private set;
         }
-
     }
 
     /// <summary>
@@ -229,7 +218,6 @@ namespace IrcDotNet.Ctcp
     /// <threadsafety static="true" instance="false"/>
     public class CtcpResponseReceivedEventArgs : EventArgs
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CtcpResponseReceivedEventArgs"/> class.
         /// </summary>
@@ -248,7 +236,6 @@ namespace IrcDotNet.Ctcp
             get;
             private set;
         }
-
     }
 
     /// <summary>
@@ -258,7 +245,6 @@ namespace IrcDotNet.Ctcp
     /// <threadsafety static="true" instance="false"/>
     public class CtcpRawMessageEventArgs : EventArgs
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CtcpRawMessageEventArgs"/> class.
         /// </summary>
@@ -278,7 +264,5 @@ namespace IrcDotNet.Ctcp
             get;
             private set;
         }
-
     }
-
 }

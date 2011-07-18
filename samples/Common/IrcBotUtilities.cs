@@ -6,10 +6,8 @@ using IrcDotNet;
 
 namespace IrcDotNet.Samples.Common
 {
-
     public static class IrcBotUtilities
     {
-
         public static void SendMessage(this IrcLocalUser localUser, IIrcMessageTarget target, string format,
             params object[] args)
         {
@@ -33,7 +31,5 @@ namespace IrcDotNet.Samples.Common
         {
             localUser.SendNotice(targets, string.Format(format, args));
         }
-
     }
-
 }

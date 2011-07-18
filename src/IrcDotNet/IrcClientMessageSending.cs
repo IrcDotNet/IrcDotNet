@@ -6,11 +6,9 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     // Defines all message senders for the client.
     partial class IrcClient
     {
-
         /// <summary>
         /// Sends the password for registering the connection.
         /// This message must only be sent before the actual registration, which is done by
@@ -514,5 +512,4 @@ namespace IrcDotNet
         }
     
     }
-
 }
