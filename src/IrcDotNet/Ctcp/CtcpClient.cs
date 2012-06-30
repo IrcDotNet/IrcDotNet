@@ -7,8 +7,9 @@ using System.Text;
 
 namespace IrcDotNet.Ctcp
 {
-
     using Collections;
+
+    using Yaaf.Utils.Logging;
 
     /// <summary>
     /// Represents a client that communicates with a server using CTCP (Client to Client Protocol), operating over an
@@ -25,7 +26,6 @@ namespace IrcDotNet.Ctcp
     [DebuggerDisplay("{ToString(), nq}")]
     public partial class CtcpClient
     {
-
         // Message indicating that no error occurred.
         private const string messageNoError = "no error";
 
@@ -340,7 +340,7 @@ namespace IrcDotNet.Ctcp
             else
             {
                 // Command is unknown.
-                DebugUtilities.WriteEvent("Unknown CTCP message tag '{0}'.", message.Tag);
+                Logger.WriteLine("Unknown CTCP message tag '{0}'.", TraceEventType.Warning, message.Tag);
             }
         }
 
@@ -535,7 +535,6 @@ namespace IrcDotNet.Ctcp
         [DebuggerDisplay("{ToString(), nq}")]
         public struct CtcpMessage
         {
-
             /// <summary>
             /// The user that sent the message.
             /// </summary>
@@ -589,9 +588,6 @@ namespace IrcDotNet.Ctcp
             {
                 return string.Format("{0} {1}", this.Tag, this.Data);
             }
-
         }
-
     }
-
 }

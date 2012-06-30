@@ -6,17 +6,15 @@ using System.Text;
 
 namespace IrcDotNet.Ctcp
 {
-
     // Defines all message processors for the client.
     partial class CtcpClient
     {
-
         /// <summary>
         /// Process ACTION messages received from a user.
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("action")]
-        protected void ProcessMessageAction(CtcpMessage message)
+        protected internal void ProcessMessageAction(CtcpMessage message)
         {
             Debug.Assert(message.Data != null);
 
@@ -33,7 +31,7 @@ namespace IrcDotNet.Ctcp
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("time")]
-        protected void ProcessMessageTime(CtcpMessage message)
+        protected internal void ProcessMessageTime(CtcpMessage message)
         {
             if (message.IsResponse)
             {
@@ -54,7 +52,7 @@ namespace IrcDotNet.Ctcp
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("version")]
-        protected void ProcessMessageVersion(CtcpMessage message)
+        protected internal void ProcessMessageVersion(CtcpMessage message)
         {
             if (message.IsResponse)
             {
@@ -76,7 +74,7 @@ namespace IrcDotNet.Ctcp
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("errmsg")]
-        protected void ProcessMessageErrMsg(CtcpMessage message)
+        protected internal void ProcessMessageErrMsg(CtcpMessage message)
         {
             Debug.Assert(message.Data != null);
 
@@ -101,7 +99,7 @@ namespace IrcDotNet.Ctcp
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("ping")]
-        protected void ProcessMessagePing(CtcpMessage message)
+        protected internal void ProcessMessagePing(CtcpMessage message)
         {
             Debug.Assert(message.Data != null);
 
@@ -118,7 +116,5 @@ namespace IrcDotNet.Ctcp
                 SendMessagePing(new[] { message.Source }, message.Data, true);
             }
         }
-
     }
-
 }

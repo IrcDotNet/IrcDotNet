@@ -5,7 +5,6 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     /// <summary>
     /// Represents a flood protector that throttles data sent by the client according to the standard rules implemented
     /// by modern IRC servers.
@@ -20,7 +19,6 @@ namespace IrcDotNet
     /// <threadsafety static="true" instance="false"/>
     public class IrcStandardFloodPreventer : IIrcFloodPreventer
     {
-
         private const int ticksPerMillisecond = 10000;
 
         // Number of messages sent within current burst.
@@ -76,8 +74,10 @@ namespace IrcDotNet
             // Subtract however many counter periods have elapsed since last decrement of counter.
             var currentTime = DateTime.Now.Ticks / ticksPerMillisecond;
             var elapsedMilliseconds = currentTime - this.lastCounterDecrementTime;
-            this.messageCounter = Math.Max(0, this.messageCounter -
-                (int)(elapsedMilliseconds / this.counterPeriod));
+            var tempMessageCounter = Math.Max(
+                0L, this.messageCounter - (elapsedMilliseconds / this.counterPeriod));
+            this.messageCounter = tempMessageCounter > int.MaxValue ? int.MaxValue : (int)tempMessageCounter;
+
 
             // Update time of last decrement of counter to theoretical time of decrement.
             this.lastCounterDecrementTime = currentTime - (elapsedMilliseconds % this.counterPeriod);
@@ -94,7 +94,5 @@ namespace IrcDotNet
         }
 
         #endregion
-
     }
-
 }

@@ -12,12 +12,20 @@
     <AssemblyName>IrcDotNet</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\Debug\net40\</OutputPath>
+    <OutputPath>..\..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,11 +33,11 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\Release\net40\</OutputPath>
+    <OutputPath>..\..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Release\net40\IrcDotNet.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\Release\IrcDotNet.xml</DocumentationFile>
     <NoWarn>1573</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -49,7 +57,6 @@
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Collections\ReadOnlySet.cs" />
     <Compile Include="CollectionUtilities.cs" />
-    <Compile Include="DebugUtilities.cs" />
     <Compile Include="IrcServerInfo.cs" />
     <Compile Include="Ctcp\CtcpClient.cs" />
     <Compile Include="Ctcp\CtcpClientMessageProcessing.cs" />
@@ -80,6 +87,9 @@
     <Compile Include="IrcUser.cs" />
     <Compile Include="IrcUtilities.cs" />
     <Compile Include="IrcEventArgs.cs" />
+    <Compile Include="Logging\DictionaryExtensions.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\ThreadStaticField.cs" />
     <Compile Include="MessageProcessorAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
