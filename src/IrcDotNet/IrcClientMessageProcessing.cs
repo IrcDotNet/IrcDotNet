@@ -252,8 +252,18 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[0] != null);
             var server = message.Parameters[0];
             var target = message.Parameters[1];
-            OnPingReceived(new IrcPingOrPongReceivedEventArgs(server));
-            SendMessagePong(server, target);
+            var ircPingReceivedEventArgs = new IrcPingReceivedEventArgs(server);
+            try
+            {
+                OnPingReceived(ircPingReceivedEventArgs);
+            }
+            finally
+            {
+                if (ircPingReceivedEventArgs.SendPong)
+                {
+                    SendMessagePong(server, target);
+                }
+            }
         }
 
         /// <summary>

@@ -1204,7 +1204,6 @@ namespace IrcDotNet
                     channel = new IrcChannel(channelName);
                     channel.Client = this;
                     this.channels.Add(channel);
-
                     createdNew = true;
                 }
                 else
@@ -1241,20 +1240,22 @@ namespace IrcDotNet
                 throw new ArgumentException(Properties.Resources.MessageValueCannotBeEmptyString, "nickName");
 
             // Search for user with given nick name in list of known users. If it does not exist, add it.
-            var user = this.users.SingleOrDefault(u => u.NickName == nickName);
-            if (user == null)
+            IrcUser user;
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
             {
-                user = new IrcUser();
-                user.Client = this;
-                user.NickName = nickName;
-                lock (((ICollection)this.usersReadOnly).SyncRoot)
+                user = this.users.SingleOrDefault(u => u.NickName == nickName);
+                if (user == null)
+                {
+                    user = new IrcUser();
+                    user.Client = this;
+                    user.NickName = nickName;
                     this.users.Add(user);
-
-                createdNew = true;
-            }
-            else
-            {
-                createdNew = false;
+                    createdNew = true;
+                }
+                else
+                {
+                    createdNew = false;
+                }
             }
             user.IsOnline = isOnline;
             return user;
@@ -1611,7 +1612,9 @@ namespace IrcDotNet
             }
 
             // Extract command from message.
-            var command = lineAfterPrefix.Substring(0, lineAfterPrefix.IndexOf(' '));
+            var spaceIndex = lineAfterPrefix.IndexOf(' ');
+            Debug.Assert(spaceIndex != -1);
+            var command = lineAfterPrefix.Substring(0, spaceIndex);
             var paramsLine = lineAfterPrefix.Substring(command.Length + 1);
 
             // Extract parameters from message.

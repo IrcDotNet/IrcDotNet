@@ -225,6 +225,7 @@ namespace IrcDotNet
 
                 while (this.messageSendQueue.Count > 0)
                 {
+                    Debug.Assert(this.messageSendQueue.Count < 100);
                     // Check that flood preventer currently permits sending of messages.
                     if (FloodPreventer != null)
                     {
@@ -331,6 +332,7 @@ namespace IrcDotNet
         {
             // Read data received from socket to buffer asynchronously.
             var receiveEventArgs = new SocketAsyncEventArgs();
+            Debug.Assert(this.receiveStream.Buffer.Length - (int)this.receiveStream.WritePosition > 0);
             receiveEventArgs.SetBuffer(this.receiveStream.Buffer, (int)this.receiveStream.WritePosition,
                                        this.receiveStream.Buffer.Length - (int)this.receiveStream.WritePosition);
             receiveEventArgs.Completed += ReceiveCompleted;

@@ -74,8 +74,8 @@ namespace IrcDotNet
             // Subtract however many counter periods have elapsed since last decrement of counter.
             var currentTime = DateTime.Now.Ticks / ticksPerMillisecond;
             var elapsedMilliseconds = currentTime - this.lastCounterDecrementTime;
-            this.messageCounter = Math.Max(0, this.messageCounter -
-                (int)(elapsedMilliseconds / this.counterPeriod));
+            var tempMessageCounter = Math.Max(0L, this.messageCounter - (elapsedMilliseconds / this.counterPeriod));
+            this.messageCounter = tempMessageCounter > int.MaxValue ? int.MaxValue : (int)tempMessageCounter;
 
             // Update time of last decrement of counter to theoretical time of decrement.
             this.lastCounterDecrementTime = currentTime - (elapsedMilliseconds % this.counterPeriod);
