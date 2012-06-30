@@ -6,11 +6,9 @@ using System.Text;
 
 namespace IrcDotNet
 {
-
     // Defines all message senders for the client.
     partial class IrcClient
     {
-
         /// <summary>
         /// Sends the password for registering the connection.
         /// This message must only be sent before the actual registration, which is done by
@@ -107,8 +105,14 @@ namespace IrcDotNet
         /// <param name="channels">A collection of 2-tuples of the names and keys of the channels to join.</param>
         protected void SendMessageJoin(IEnumerable<Tuple<string, string>> channels)
         {
-            WriteMessage(null, "join", string.Join(",", channels.Select(c => c.Item1)),
-                string.Join(",", channels.Select(c => c.Item2)));
+            var secureChannels = channels.Select(
+                c =>
+                    {
+                        this.EnsureChannelName(c.Item1);
+                        return c;
+                    }).ToList();
+            WriteMessage(null, "join", string.Join(",", secureChannels.Select(c=>c.Item1)),
+                string.Join(",", secureChannels.Select(c => c.Item2)));
         }
 
         /// <summary>
@@ -117,7 +121,25 @@ namespace IrcDotNet
         /// <param name="channels">A collection of the names of the channels to join.</param>
         protected void SendMessageJoin(IEnumerable<string> channels)
         {
-            WriteMessage(null, "join", string.Join(",", channels));
+            var secureChannels = channels.Select(
+                  c =>
+                      {
+                          this.EnsureChannelName(c);
+                          return c;
+                      }).ToList();
+            WriteMessage(null, "join", string.Join(",", secureChannels));
+        }
+
+        private void EnsureChannelName(string c)
+        {
+            // NOTE: we are missing the Control G (Asci 7) restriction
+            if (!this.IsChannelName(c) || c.Length > 50 || c.IndexOfAny(new[]{' ', ',',':'}) != -1)
+            {
+                var t = new ArgumentException(string.Format("collection contains an invalid Channelname ({0})!", c));
+
+                t.Data["ChannelNameRequirements"] = "http://www.irchelp.org/irchelp/rfc/rfc2811.txt";
+                throw t;
+            }
         }
 
         /// <summary>
@@ -225,7 +247,7 @@ namespace IrcDotNet
             foreach (var target in targetsArray)
             {
                 if (target.Contains(","))
-                    throw new ArgumentException(Properties.Resources.MessageInvalidTargetName, "arguments");
+                    throw new ArgumentException(Properties.Resources.MessageInvalidTargetName, "targets");
             }
             WriteMessage(null, "privmsg", string.Join(",", targetsArray), text);
         }
@@ -514,5 +536,4 @@ namespace IrcDotNet
         }
     
     }
-
 }
