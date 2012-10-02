@@ -80,6 +80,7 @@
     </Compile>
     <Compile Include="ReflectionUtilities.cs" />
     <Compile Include="TextUtilities.cs" />
+    <Compile Include="DefaultIrcClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
