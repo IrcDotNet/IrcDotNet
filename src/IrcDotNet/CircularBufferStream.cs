@@ -49,7 +49,11 @@ namespace IrcDotNet
 
         public override long Length
         {
-            get { return this.writePosition - this.readPosition; }
+            get
+            {
+                var length = this.writePosition - this.readPosition;
+                return length < 0 ? this.buffer.Length + length : length;
+            }
         }
 
         public override bool CanSeek
@@ -59,7 +63,7 @@ namespace IrcDotNet
 
         public override bool CanWrite
         {
-            get { return true; ; }
+            get { return true; }
         }
 
         public override bool CanRead
@@ -74,6 +78,7 @@ namespace IrcDotNet
 
         public override long Seek(long offset, SeekOrigin origin)
         {
+            throw new NotSupportedException();
             switch (origin)
             {
                 case SeekOrigin.Begin:
@@ -103,8 +108,17 @@ namespace IrcDotNet
             int writeCount;
             while ((writeCount = Math.Min(count, (int)(this.buffer.Length - this.writePosition))) > 0)
             {
+                var oldWritePosition = this.writePosition;
+                var newWritePosition = (this.writePosition + writeCount) % this.buffer.Length;
+                if (newWritePosition > readPosition && oldWritePosition < readPosition)
+                {
+                    throw new InternalBufferOverflowException("Der CircularBuffer wurde überlaufen!");
+                }
                 System.Buffer.BlockCopy(buffer, offset, this.buffer, (int)this.writePosition, writeCount);
-                this.writePosition = (this.writePosition + writeCount) % this.buffer.Length;
+                this.writePosition = newWritePosition;
+               
+                offset += writeCount;
+                count -= writeCount; //writeCount <= count => now is count >=0
             }
         }
 
@@ -114,8 +128,12 @@ namespace IrcDotNet
             int totalReadCount = 0;
             int readCount;
             count = Math.Min(buffer.Length - offset, count);
-            while ((readCount = Math.Min(count, (int)(this.writePosition - this.readPosition))) > 0)
+            while ((readCount = Math.Min(count, (int)(Length))) > 0)
             {
+                if (readCount > this.buffer.Length - readPosition)
+                {
+                    readCount = (int)(this.buffer.Length - readPosition);
+                }
                 System.Buffer.BlockCopy(this.buffer, (int)this.readPosition, buffer, offset, readCount);
                 this.readPosition = (this.readPosition + readCount) % this.buffer.Length;
                 offset += readCount;
