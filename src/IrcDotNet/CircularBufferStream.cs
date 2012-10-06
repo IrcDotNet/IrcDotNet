@@ -78,7 +78,6 @@ namespace IrcDotNet
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            throw new NotSupportedException();
             switch (origin)
             {
                 case SeekOrigin.Begin:
@@ -112,7 +111,11 @@ namespace IrcDotNet
                 var newWritePosition = (this.writePosition + writeCount) % this.buffer.Length;
                 if (newWritePosition > readPosition && oldWritePosition < readPosition)
                 {
-                    throw new InternalBufferOverflowException("Der CircularBuffer wurde überlaufen!");
+#if !SILVERLIGHT
+                    throw new InternalBufferOverflowException("The CircularBuffer was overflowed!");
+#else
+                    throw new IOException("The CircularBuffer was overflowed!");
+#endif
                 }
                 System.Buffer.BlockCopy(buffer, offset, this.buffer, (int)this.writePosition, writeCount);
                 this.writePosition = newWritePosition;
