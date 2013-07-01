@@ -96,7 +96,7 @@ namespace IrcDotNet.Samples.Common
             this.isDisposed = true;
         }
 
-        public void Run()
+        public virtual void Run()
         {
             // Read commands from stdin until bot terminates.
             this.isRunning = true;
