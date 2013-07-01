@@ -6,24 +6,26 @@ using System.Text;
 
 namespace IrcDotNet
 {
+    // Utilities for reflection of managed entities.
     internal static class ReflectionUtilities
     {
-        public static IEnumerable<Tuple<TAttribute, TDelegate>> GetMethodAttributes<TAttribute, TDelegate>(
+        public static IEnumerable<Tuple<TAttribute, TDelegate>> GetAttributedMethods<TAttribute, TDelegate>(
             this object obj)
             where TAttribute : Attribute
             where TDelegate : class
         {
-            // Find all methods in class that are marked by one or more instances of TAttribute.
-            // Add each pair of attribute instance & method delegate to dictionary.
+            // Find all methods in class that are marked by one or more instances of given attribute.
             var messageProcessorsMethods = obj.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
             foreach (var methodInfo in messageProcessorsMethods)
             {
-                var messageProcessorAttributes = (TAttribute[])methodInfo.GetCustomAttributes(
+                var methodAttributes = (TAttribute[])methodInfo.GetCustomAttributes(
                     typeof(TAttribute), true);
-                if (messageProcessorAttributes.Length > 0)
+                if (methodAttributes.Length > 0)
                 {
                     var methodDelegate = (TDelegate)(object)Delegate.CreateDelegate(typeof(TDelegate), obj, methodInfo);
-                    foreach (var attribute in messageProcessorAttributes)
+
+                    // Get each attribute applied to method.
+                    foreach (var attribute in methodAttributes)
                         yield return Tuple.Create(attribute, methodDelegate);
                 }
             }

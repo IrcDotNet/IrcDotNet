@@ -134,7 +134,7 @@ namespace IrcDotNet.Samples.Common
                 }
                 catch (Exception ex)
                 {
-                    ConsoleUtilities.WriteError("Error executing command: {0}", ex.Message);
+                    ConsoleUtilities.WriteError("Error: {0}", ex.Message);
                 }
             }
             else
@@ -383,8 +383,14 @@ namespace IrcDotNet.Samples.Common
 
         protected IrcClient GetClientFromServerNameMask(string serverNameMask)
         {
-            return this.Clients.Single(c => c.ServerName != null &&
+            var client = this.Clients.SingleOrDefault(c => c.ServerName != null &&
                 Regex.IsMatch(c.ServerName, serverNameMask, RegexOptions.IgnoreCase));
+            if (client == null)
+            {
+                throw new IrcBotException(IrcBotExceptionType.NoConnection,
+                    string.Format(Properties.Resources.MessageBotNoConnection, serverNameMask));
+            }
+            return client;
         }
 
         protected delegate void ChatCommandProcessor(IrcClient client, IIrcMessageSource source,

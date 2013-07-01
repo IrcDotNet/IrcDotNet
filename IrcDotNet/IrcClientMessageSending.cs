@@ -54,7 +54,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends a request for server operator priveleges.
+        /// Sends a request for server operator privileges.
         /// </summary>
         /// <param name="userName">The user name with which to register.</param>
         /// <param name="password">The password with which to register.</param>
@@ -142,7 +142,7 @@ namespace IrcDotNet
             {
                 var modeParametersArray = modeParameters.ToArray();
                 if (modeParametersArray.Length > 3)
-                    throw new ArgumentException(Properties.Resources.ErrorMessageTooManyModeParameters);
+                    throw new ArgumentException(Properties.Resources.MessageTooManyModeParameters);
                 modeParametersList = string.Join(",", modeParametersArray);
             }
             WriteMessage(null, "mode", channel, modes, modeParametersList);
@@ -183,7 +183,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends a request to invite the specifier user to the specified channel.
+        /// Sends a request to invite the specified user to the specified channel.
         /// </summary>
         /// <param name="channel">The name of the channel to which to invite the user.</param>
         /// <param name="nickName">The nick name of the user to invite.</param>
@@ -223,7 +223,7 @@ namespace IrcDotNet
             foreach (var target in targetsArray)
             {
                 if (target.Contains(","))
-                    throw new ArgumentException(Properties.Resources.ErrorMessageInvalidTargetName, "arguments");
+                    throw new ArgumentException(Properties.Resources.MessageInvalidTargetName, "arguments");
             }
             WriteMessage(null, "privmsg", string.Join(",", targetsArray), text);
         }
@@ -239,7 +239,7 @@ namespace IrcDotNet
             foreach (var target in targetsArray)
             {
                 if (target.Contains(","))
-                    throw new ArgumentException(Properties.Resources.ErrorMessageInvalidTargetName, "arguments");
+                    throw new ArgumentException(Properties.Resources.MessageInvalidTargetName, "arguments");
             }
             WriteMessage(null, "notice", string.Join(",", targetsArray), text);
         }
@@ -277,7 +277,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Sends a request to query stastics for the server.
+        /// Sends a request to query statistics for the server.
         /// </summary>
         /// <param name="query">The query to send the server.</param>
         /// <param name="targetServer">The name of the server to which to forward the message, or <see langword="null"/>

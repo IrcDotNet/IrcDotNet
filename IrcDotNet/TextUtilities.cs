@@ -6,10 +6,12 @@ using System.Text.RegularExpressions;
 
 namespace IrcDotNet
 {
-    using Common.Collections;
+    using Collections;
 
+    // Utilities for text manipulation.
     internal static class TextUtilities
     {
+        // Gets single matched value of group, if match succeeded.
         public static string GetValue(this Group match)
         {
             if (!match.Success)
@@ -17,6 +19,7 @@ namespace IrcDotNet
             return match.Value;
         }
 
+        // Enquotes specified string given escape character and mapping for quotation characters.
         public static string Quote(this string value, char escapeChar, IDictionary<char, char> quotedChars)
         {
             var textBuilder = new StringBuilder(value.Length * 2);
@@ -37,6 +40,7 @@ namespace IrcDotNet
             return textBuilder.ToString();
         }
 
+        // Dequotes specified string given escape character and mapping for quotation characters.
         public static string Dequote(this string value, char escapeChar, IDictionary<char, char> dequotedChars)
         {
             var textBuilder = new StringBuilder(value.Length);
@@ -53,7 +57,7 @@ namespace IrcDotNet
                     else
                     {
                         throw new InvalidOperationException(
-                            Properties.Resources.ErrorMessageInvalidQuotedChar);
+                            Properties.Resources.MessageInvalidQuotedChar);
                     }
                 }
                 else
@@ -65,19 +69,23 @@ namespace IrcDotNet
             return textBuilder.ToString();
         }
 
-        public static Tuple<string, string> SplitAtIndex(this string value, int index)
+        // Splits specified string into pair of strings at position of first occurrence of separator.
+        public static Tuple<string, string> SplitIntoPair(this string value, string separator)
         {
+            var index = value.IndexOf(separator);
             if (index < 0)
                 return Tuple.Create(value, (string)null);
             else
-                return Tuple.Create(value.Substring(0, index), value.Substring(index + 1));
+                return Tuple.Create(value.Substring(0, index), value.Substring(index + separator.Length));
         }
 
+        // Change character encoding of specified string.
         internal static string ChangeEncoding(this string value, Encoding currentEncoding, Encoding newEncoding)
         {
             if (newEncoding == null)
                 return value;
-            return newEncoding.GetString(currentEncoding.GetBytes(value));
+            var buffer = currentEncoding.GetBytes(value);
+            return newEncoding.GetString(buffer, 0, buffer.Length);
         }
     }
 }

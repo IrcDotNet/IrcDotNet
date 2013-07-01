@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\bin\Debug\net40\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,24 +25,32 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\bin\Release\net40\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\IrcDotNet.xml</DocumentationFile>
-    <NoWarn>1573, 1591</NoWarn>
+    <DocumentationFile>..\..\bin\Release\net40\IrcDotNet.xml</DocumentationFile>
+    <NoWarn>1573</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\IrcDotNet.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\CollectionsUtilities.cs" />
+    <Compile Include="Collections\ReadOnlyDictionary.cs" />
+    <Compile Include="Collections\ReadOnlySet.cs" />
     <Compile Include="CollectionUtilities.cs" />
+    <Compile Include="DebugUtilities.cs" />
+    <Compile Include="IrcServerInfo.cs" />
     <Compile Include="Ctcp\CtcpClient.cs" />
     <Compile Include="Ctcp\CtcpClientMessageProcessing.cs" />
     <Compile Include="Ctcp\CtcpClientMessageSending.cs" />
@@ -50,6 +58,7 @@
     <Compile Include="IrcChannelInfo.cs" />
     <Compile Include="IrcNetworkInfo.cs" />
     <Compile Include="IrcRegistrationInfo.cs" />
+    <Compile Include="IrcServerStatisticalEntry.cs" />
     <Compile Include="IrcStandardFloodPreventer.cs" />
     <Compile Include="IIrcFloodPreventer.cs" />
     <Compile Include="IIrcMessageSendHandler.cs" />
@@ -79,9 +88,14 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ReflectionUtilities.cs" />
+    <Compile Include="CircularBufferStream.cs" />
+    <Compile Include="SafeLineReader.cs" />
     <Compile Include="TextUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\IrcDotNet.snk">
+      <Link>IrcDotNet.snk</Link>
+    </None>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup />
@@ -90,12 +104,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IrcDotNet.Common\IrcDotNet.Common.csproj">
-      <Project>{9138300E-94C6-4F79-999F-6830FA76488E}</Project>
-      <Name>IrcDotNet.Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

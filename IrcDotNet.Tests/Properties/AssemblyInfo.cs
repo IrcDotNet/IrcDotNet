@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("IRC.NET Tests")]
-[assembly: AssemblyDescription("Testing framework for the IRC.NET library.")]
+[assembly: AssemblyDescription("Testing framework for IRC.NET library.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("IRC.NET")]
-[assembly: AssemblyCopyright("Copyright © Alex Regueiro 2010")]
+[assembly: AssemblyCopyright("Copyright © Alex Regueiro 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("0.4.0.*")]
+[assembly: AssemblyVersion("0.4.1.*")]
 //[assembly: AssemblyFileVersion("0.1")]

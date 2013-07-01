@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Common library for IRC.NET samples")]
-[assembly: AssemblyDescription("A library for provides common functionality for sample projects using IRC.NET.")]
+[assembly: AssemblyTitle("IRC.NET Samples Common Library")]
+[assembly: AssemblyDescription("Common functionality for sample projects using IRC.NET library.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("IRC.NET Samples")]
-[assembly: AssemblyCopyright("Copyright © Alex Regueiro 2010")]
+[assembly: AssemblyCopyright("Copyright © Alex Regueiro 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.4.0.*")]
+[assembly: AssemblyVersion("0.4.1.*")]
 //[assembly: AssemblyFileVersion("0.1")]

@@ -117,94 +117,97 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ErrorMessageCannotSetUserMode" xml:space="preserve">
+  <data name="MessageCannotSetUserMode" xml:space="preserve">
     <value>Cannot set user mode for '{0}'.</value>
   </data>
-  <data name="ErrorMessageInvalidChannelType" xml:space="preserve">
+  <data name="MessageInvalidChannelType" xml:space="preserve">
     <value>The channel type '{0}' sent by the server is invalid.</value>
   </data>
-  <data name="ErrorMessageInvalidCommand" xml:space="preserve">
+  <data name="MessageInvalidCommand" xml:space="preserve">
     <value>The message command '{0}' is invalid.</value>
   </data>
-  <data name="ErrorMessageInvalidMessageCommand" xml:space="preserve">
+  <data name="MessageInvalidMessageCommand" xml:space="preserve">
     <value>The command '{0}' was not recognised.</value>
   </data>
-  <data name="ErrorMessageInvalidMiddleParameter" xml:space="preserve">
+  <data name="MessageInvalidMiddleParameter" xml:space="preserve">
     <value>The non-trailing parameter '{0}' is invalid.</value>
   </data>
-  <data name="ErrorMessageInvalidNickName" xml:space="preserve">
+  <data name="MessageInvalidNickName" xml:space="preserve">
     <value>The specified nick name is invalid.</value>
   </data>
-  <data name="ErrorMessageInvalidPassword" xml:space="preserve">
+  <data name="MessageInvalidPassword" xml:space="preserve">
     <value>The specified password is invalid.</value>
   </data>
-  <data name="ErrorMessageInvalidPrefix" xml:space="preserve">
+  <data name="MessageInvalidPrefix" xml:space="preserve">
     <value>The message prefix '{0}' is invalid.</value>
   </data>
-  <data name="ErrorMessageInvalidRealName" xml:space="preserve">
+  <data name="MessageInvalidRealName" xml:space="preserve">
     <value>The specified real name is invalid.</value>
   </data>
-  <data name="ErrorMessageInvalidSource" xml:space="preserve">
+  <data name="MessageInvalidSource" xml:space="preserve">
     <value>The source '{0}' of the message was not recognised as either a server or user.</value>
   </data>
-  <data name="ErrorMessageInvalidTargetName" xml:space="preserve">
+  <data name="MessageInvalidTargetName" xml:space="preserve">
     <value>A target name may not contain any ',' character.</value>
   </data>
-  <data name="ErrorMessageInvalidTrailingParameter" xml:space="preserve">
+  <data name="MessageInvalidTrailingParameter" xml:space="preserve">
     <value>The trailing parameter '{0}' is invalid.</value>
   </data>
-  <data name="ErrorMessageInvalidUserMode" xml:space="preserve">
+  <data name="MessageInvalidUserMode" xml:space="preserve">
     <value>The specified user mode is invalid.</value>
   </data>
-  <data name="ErrorMessageInvalidUserName" xml:space="preserve">
+  <data name="MessageInvalidUserName" xml:space="preserve">
     <value>The specified user name is invalid.</value>
   </data>
-  <data name="ErrorMessageISupportPrefixInvalid" xml:space="preserve">
+  <data name="MessageISupportPrefixInvalid" xml:space="preserve">
     <value>The ISUPPORT message sent by the server contains an invalid PREFIX parameter.</value>
   </data>
-  <data name="ErrorMessageRawMessageTooLong" xml:space="preserve">
+  <data name="MessageRawMessageTooLong" xml:space="preserve">
     <value>The length of a raw message must not exceed {0} characters.</value>
   </data>
-  <data name="ErrorMessageNotEnoughModeParameters" xml:space="preserve">
+  <data name="MessageNotEnoughModeParameters" xml:space="preserve">
     <value>Not enough mode parameters were specified for the given modes.</value>
   </data>
-  <data name="ErrorMessageSourceNotUser" xml:space="preserve">
+  <data name="MessageSourceNotUser" xml:space="preserve">
     <value>The message source '{0}' is not a user.</value>
   </data>
-  <data name="ErrorMessageTargetMaskInvalidType" xml:space="preserve">
+  <data name="MessageTargetMaskInvalidType" xml:space="preserve">
     <value>The type of the given target mask '{0}' is invalid.</value>
   </data>
-  <data name="ErrorMessageTargetMaskTooShort" xml:space="preserve">
+  <data name="MessageTargetMaskTooShort" xml:space="preserve">
     <value>The target mask must be contain at least two characters.</value>
   </data>
-  <data name="ErrorMessageTooManyModeParameters" xml:space="preserve">
+  <data name="MessageTooManyModeParameters" xml:space="preserve">
     <value>No more than 3 mode parameters may be sent per message.</value>
   </data>
-  <data name="ErrorMessageTooManyParams" xml:space="preserve">
+  <data name="MessageTooManyParams" xml:space="preserve">
     <value>No more than 15 command parameters may be specified.</value>
   </data>
-  <data name="ErrorMessageValueCannotBeEmptyString" xml:space="preserve">
+  <data name="MessageValueCannotBeEmptyString" xml:space="preserve">
     <value>The value cannot be an empty string</value>
   </data>
-  <data name="ErrorMessageInvalidCommandDefinition" xml:space="preserve">
+  <data name="MessageInvalidCommandDefinition" xml:space="preserve">
     <value>The command definition '{0}' is invalid.</value>
   </data>
-  <data name="ErrorMessageInvalidQuotedChar" xml:space="preserve">
+  <data name="MessageInvalidQuotedChar" xml:space="preserve">
     <value>The quoted character '{0}' was not recognised.</value>
   </data>
-  <data name="ErrorMessageInvalidTag" xml:space="preserve">
+  <data name="MessageInvalidTag" xml:space="preserve">
     <value>The message tag '{0}' is invalid.</value>
   </data>
-  <data name="ErrorMessageInvalidUrlScheme" xml:space="preserve">
+  <data name="MessageInvalidUrlScheme" xml:space="preserve">
     <value>The URL scheme '{0}' is not valid.</value>
   </data>
-  <data name="ErrorMessageInvalidRegistrationInfoObject" xml:space="preserve">
+  <data name="MessageInvalidRegistrationInfoObject" xml:space="preserve">
     <value>The object provided for registration info is of an unknown type.</value>
   </data>
-  <data name="ErrorMessageInvalidUserRegistrationInfo" xml:space="preserve">
+  <data name="MessageInvalidUserRegistrationInfo" xml:space="preserve">
     <value>The registration info for a user must have a valid nick name and user name.</value>
   </data>
-  <data name="ErrorMessageInvalidServiceRegistrationInfo" xml:space="preserve">
+  <data name="MessageInvalidServiceRegistrationInfo" xml:space="preserve">
     <value>The registration info for a service must have a valid nick name and description.</value>
+  </data>
+  <data name="MessageNoValidAddress" xml:space="preserve">
+    <value>The host name '{0}' does not resolve to a valid IP address.</value>
   </data>
 </root>

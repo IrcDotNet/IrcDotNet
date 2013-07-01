@@ -8,6 +8,7 @@ namespace IrcDotNet
     /// <summary>
     /// Represents a mask of an IRC server name or host name, used for specifying the targets of a message.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class IrcTargetMask : IIrcMessageTarget
     {
         private IrcTargetMaskType type;
@@ -15,35 +16,35 @@ namespace IrcDotNet
         private string mask;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IrcTargetMask"/> class.
+        /// Initializes a new instance of the <see cref="IrcTargetMask"/> class with the specified target mask
+        /// identifier.
         /// </summary>
-        /// <param name="targetMask">A wildcard expression for matching agsint server names or host names.
+        /// <param name="targetMask">A wildcard expression for matching against server names or host names.
         /// If the first character is '$', the mask is a server mask; if the first character is '#', the mask is a host
         /// mask.</param>
         /// <exception cref="ArgumentNullException"><paramref name="targetMask"/> is <see langword="null"/></exception>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="targetMask"/> is too short. -or-
-        /// <paramref name="targetMask"/> does not respresent a known mask type.
+        /// <exception cref="ArgumentException">The length of <paramref name="targetMask"/> is too short.</exception>
+        /// <exception cref="ArgumentException"><paramref name="targetMask"/> does not represent a known mask type.
         /// </exception>
         public IrcTargetMask(string targetMask)
         {
             if (targetMask == null)
                 throw new ArgumentNullException("targetMask");
-            if (Properties.Resources.ErrorMessageTargetMaskTooShort.Length < 2)
-                throw new ArgumentException(Properties.Resources.ErrorMessageTargetMaskTooShort, "targetMask");
-            
+            if (Properties.Resources.MessageTargetMaskTooShort.Length < 2)
+                throw new ArgumentException(Properties.Resources.MessageTargetMaskTooShort, "targetMask");
+
             if (targetMask[0] == '$')
                 this.type = IrcTargetMaskType.ServerMask;
-            if (targetMask[0] == '#')
+            else if (targetMask[0] == '#')
                 this.type = IrcTargetMaskType.HostMask;
             else
                 throw new ArgumentException(string.Format(
-                    Properties.Resources.ErrorMessageTargetMaskInvalidType, targetMask), "targetMask");
+                    Properties.Resources.MessageTargetMaskInvalidType, targetMask), "targetMask");
             this.mask = mask.Substring(1);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IrcTargetMask"/> class.
+        /// Initializes a new instance of the <see cref="IrcTargetMask"/> class with the specified type and mask.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="mask">The mask.</param>
@@ -107,7 +108,7 @@ namespace IrcDotNet
     }
 
     /// <summary>
-    /// Defines the type of a target mask.
+    /// Defines the types of a target mask.
     /// </summary>
     public enum IrcTargetMaskType
     {

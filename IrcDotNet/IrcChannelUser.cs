@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,15 +9,18 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    using Common.Collections;
+    using Collections;
 
     /// <summary>
-    /// Represents an IRC user that resides on a specific channel on a specific <see cref="IrcClient"/>.
+    /// Represents an IRC user that exists on a specific channel on a specific <see cref="IrcClient"/>.
     /// </summary>
-    [DebuggerDisplay("{ToString(),nq}")]
+    /// <threadsafety static="true" instance="false"/>
+    /// <seealso cref="IrcUser"/>
+    /// <seealso cref="IrcChannel"/>
+    [DebuggerDisplay("{ToString(), nq}")]
     public class IrcChannelUser : INotifyPropertyChanged
     {
-        // Internal and exposable collections of channel modes currently active on user.
+        // Collection of channel modes currently active on user.
         private HashSet<char> modes;
         private ReadOnlySet<char> modesReadOnly;
 
@@ -85,7 +89,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Ops the user in the channel.
+        /// Gives the user operator privileges in the channel.
         /// </summary>
         public void Op()
         {
@@ -93,7 +97,7 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Deops the user in the channel.
+        /// Removes operator privileges from the user in the channel.
         /// </summary>
         public void DeOp()
         {
@@ -118,10 +122,14 @@ namespace IrcDotNet
 
         internal void HandleModeChanged(bool add, char mode)
         {
-            if (add)
-                this.modes.Add(mode);
-            else
-                this.modes.Remove(mode);
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+            {
+                if (add)
+                    this.modes.Add(mode);
+                else
+                    this.modes.Remove(mode);
+            }
+
             OnModesChanged(new EventArgs());
         }
 

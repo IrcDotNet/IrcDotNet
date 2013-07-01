@@ -8,9 +8,10 @@ using System.Text;
 namespace IrcDotNet
 {
     /// <summary>
-    /// Represents an IRC user that resides on a specific <see cref="IrcClient"/>.
+    /// Represents an IRC user that exists on a specific <see cref="IrcClient"/>.
     /// </summary>
-    [DebuggerDisplay("{ToString(),nq}")]
+    /// <threadsafety static="true" instance="false"/>
+    [DebuggerDisplay("{ToString(), nq}")]
     public class IrcUser : INotifyPropertyChanged, IIrcMessageSource, IIrcMessageTarget
     {
         private bool isOnline;
@@ -217,7 +218,7 @@ namespace IrcDotNet
                 OnPropertyChanged(new PropertyChangedEventArgs("IdleDuration"));
             }
         }
-        
+
         /// <summary>
         /// Gets the hop count of the user, which is the number of servers between the user and the server on which the
         /// client is connected, within the network.
@@ -234,9 +235,9 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Gets the client to which the user belongs.
+        /// Gets the client on which the user exists.
         /// </summary>
-        /// <value>The client to which the user belongs.</value>
+        /// <value>The client on which the user exists.</value>
         public IrcClient Client
         {
             get { return this.client; }
@@ -256,6 +257,14 @@ namespace IrcDotNet
         /// Occurs when the user has been seen as away or here.
         /// </summary>
         public event EventHandler<EventArgs> IsAwayChanged;
+
+        /// <summary>
+        /// Occurs when an invitation to join a channel has been received.
+        /// </summary>
+        /// <remarks>
+        /// This event should only be raised for the local user (the instance of <see cref="IrcLocalUser"/>).
+        /// </remarks>
+        public event EventHandler<IrcChannelInvitationEventArgs> InviteReceived;
 
         /// <summary>
         /// Occurs when the user has quit the network. This may not always be sent.
@@ -304,6 +313,11 @@ namespace IrcDotNet
             }
         }
 
+        internal void HandleInviteReceived(IrcUser inviter, IrcChannel channel)
+        {
+            OnInviteReceived(new IrcChannelInvitationEventArgs(channel, inviter));
+        }
+
         internal void HandeQuit(string comment)
         {
             foreach (var cu in GetChannelUsers().ToArray())
@@ -329,6 +343,17 @@ namespace IrcDotNet
         protected virtual void OnIsAwayChanged(EventArgs e)
         {
             var handler = this.IsAwayChanged;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="InviteReceived"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcChannelEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnInviteReceived(IrcChannelInvitationEventArgs e)
+        {
+            var handler = this.InviteReceived;
             if (handler != null)
                 handler(this, e);
         }

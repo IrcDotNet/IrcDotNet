@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,20 +9,21 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    using Common.Collections;
+    using Collections;
 
     /// <summary>
     /// Represents the local user of a specific <see cref="IrcClient"/>.
     /// The local user is the user as which the client has connected and registered, and may be either a normal user or
     /// service.
     /// </summary>
-    [DebuggerDisplay("{ToString(),nq} (local)")]
+    /// <threadsafety static="true" instance="false"/>
+    [DebuggerDisplay("{ToString(), nq} (local)")]
     public class IrcLocalUser : IrcUser, IIrcMessageSendHandler, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
         // True if local user is service; false, if local user is normal user.
         private bool isService;
 
-        // Internal and exposable collections of current modes of user.
+        // Collection of current modes of user.
         private HashSet<char> modes;
         private ReadOnlySet<char> modesReadOnly;
 
@@ -179,8 +181,8 @@ namespace IrcDotNet
         /// <param name="targets">A collection of the names of targets to which to send the message.</param>
         /// <param name="text">The ASCII-encoded text of the message to send.</param>
         /// <param name="encoding">The encoding in which to send the value of <paramref name="text"/>.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>. -or-
-        /// <paramref name="text"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
         public void SendMessage(IEnumerable<string> targets, string text, Encoding encoding = null)
         {
             if (targets == null)
@@ -188,7 +190,7 @@ namespace IrcDotNet
             if (text == null)
                 throw new ArgumentNullException("text");
 
-            this.Client.SendPrivateMessage(targets, text.ChangeEncoding(Encoding.Default, encoding));
+            this.Client.SendPrivateMessage(targets, text.ChangeEncoding(this.Client.TextEncoding, encoding));
         }
 
         /// <inheritdoc cref="SendNotice(IEnumerable{IIrcMessageTarget}, string)"/>
@@ -237,8 +239,8 @@ namespace IrcDotNet
         /// <param name="targets">A collection of the names of targets to which to send the notice.</param>
         /// <param name="text">The ASCII-encoded text of the notice to send.</param>
         /// <param name="encoding">The encoding in which to send the value of <paramref name="text"/>.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>. -or-
-        /// <paramref name="text"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
         public void SendNotice(IEnumerable<string> targets, string text, Encoding encoding = null)
         {
             if (targets == null)
@@ -246,7 +248,7 @@ namespace IrcDotNet
             if (text == null)
                 throw new ArgumentNullException("text");
 
-            this.Client.SendNotice(targets, text.ChangeEncoding(Encoding.Default, encoding));
+            this.Client.SendNotice(targets, text.ChangeEncoding(this.Client.TextEncoding, encoding));
         }
 
         /// <summary>
@@ -307,12 +309,13 @@ namespace IrcDotNet
             if (newModes == null)
                 throw new ArgumentNullException("newModes");
 
-            SetModes(newModes.Except(this.modes), this.modes.Except(newModes));
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                SetModes(newModes.Except(this.modes), this.modes.Except(newModes));
         }
 
         /// <inheritdoc cref="SetModes(string)"/>
-        /// <exception cref="ArgumentNullException"><paramref name="setModes"/> is <see langword="null"/>. -or-
-        /// <paramref name="unsetModes"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="setModes"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="unsetModes"/> is <see langword="null"/>.</exception>
         public void SetModes(IEnumerable<char> setModes, IEnumerable<char> unsetModes)
         {
             if (setModes == null)
@@ -339,7 +342,9 @@ namespace IrcDotNet
 
         internal void HandleModesChanged(string newModes)
         {
-            this.modes.UpdateModes(newModes);
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                this.modes.UpdateModes(newModes);
+
             OnModesChanged(new EventArgs());
         }
 
@@ -355,28 +360,28 @@ namespace IrcDotNet
 
         internal void HandleMessageSent(IList<IIrcMessageTarget> targets, string text)
         {
-            OnMessageSent(new IrcMessageEventArgs(this, targets, text));
+            OnMessageSent(new IrcMessageEventArgs(this, targets, text, this.Client.TextEncoding));
         }
 
         internal void HandleNoticeSent(IList<IIrcMessageTarget> targets, string text)
         {
-            OnNoticeSent(new IrcMessageEventArgs(this, targets, text));
+            OnNoticeSent(new IrcMessageEventArgs(this, targets, text, this.Client.TextEncoding));
         }
 
         internal void HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text);
+            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text, this.Client.TextEncoding);
             OnPreviewMessageReceived(previewEventArgs);
             if (!previewEventArgs.Handled)
-                OnMessageReceived(new IrcMessageEventArgs(source, targets, text));
+                OnMessageReceived(new IrcMessageEventArgs(source, targets, text, this.Client.TextEncoding));
         }
 
         internal void HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text);
+            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text, this.Client.TextEncoding);
             OnPreviewNoticeReceived(previewEventArgs);
             if (!previewEventArgs.Handled)
-                OnNoticeReceived(new IrcMessageEventArgs(source, targets, text));
+                OnNoticeReceived(new IrcMessageEventArgs(source, targets, text, this.Client.TextEncoding));
         }
 
         /// <summary>

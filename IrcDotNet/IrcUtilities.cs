@@ -5,33 +5,11 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    /// <summary>
-    /// Contains common utilities for functionality relating to IRC.
-    /// </summary>
-    public static class IrcUtilities
+    // Utilities for IRC.
+    internal static class IrcUtilities
     {
-        /// <summary>
-        /// Updates the specified collection of mode characters from the specified mode string.
-        /// Optionally outputs any mode parameters.
-        /// </summary>
-        /// <param name="collection">A collection of mode characters, to which changes are made.</param>
-        /// <param name="newModes">A mode string. A mode string is of the form `( "+" / "-" ) *( mode character )`,
-        /// and specifies mode changes.</param>
-        /// <param name="newModeParameters">A collection of all mode parameters for the specified mode string.</param>
-        /// <param name="modesWithParameters">A collection of all modes that take parameters..</param>
-        /// <param name="handleModeParameter">A function that is called whenever a mode parameter is found for a certain
-        /// mode character. The first argument is <see langword="true"/> if the mode is being added; false if it is
-        /// being removed. The second argument is the mode character. The third argument is the mode parameter.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="collection"/> is <see langword="null"/>. -or-
-        /// <paramref name="newModes"/> is <see langword="null"/>. -or-
-        /// <paramref name="modesWithParameters"/> is <see langword="null"/> and <paramref name="newModeParameters"/>
-        /// is specified. -or-
-        /// <paramref name="handleModeParameter"/> is <see langword="null"/> and <paramref name="newModeParameters"/>
-        /// is specified.
-        /// </exception>
-        /// <exception cref="ArgumentException"><paramref name="newModeParameters"/> does not contain enough mode
-        /// parameters for the specified mode string, <paramref name="newModes"/>.</exception>
+        // Updates collection of modes from specified mode string.
+        // Mode string is of form `( "+" | "-" ) ( mode character )+`.
         public static void UpdateModes(this ICollection<char> collection, string newModes,
             IEnumerable<string> newModeParameters = null, ICollection<char> modesWithParameters = null,
             Action<bool, char, string> handleModeParameter = null)
@@ -67,7 +45,7 @@ namespace IrcDotNet
                     if (newModeParameters != null && modesWithParameters.Contains(mode))
                     {
                         if (!modeParametersEnumerator.MoveNext())
-                            throw new ArgumentException(Properties.Resources.ErrorMessageNotEnoughModeParameters,
+                            throw new ArgumentException(Properties.Resources.MessageNotEnoughModeParameters,
                                 "newModeParameters");
                         handleModeParameter(addMode.Value, mode, modeParametersEnumerator.Current);
                     }

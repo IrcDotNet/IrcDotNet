@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,24 +9,28 @@ using System.Text;
 
 namespace IrcDotNet
 {
-    using Common.Collections;
+    using Collections;
 
     /// <summary>
-    /// Represents an IRC channel that resides on a specific <see cref="IrcClient"/>.
+    /// Represents an IRC channel that exists on a specific <see cref="IrcClient"/>.
     /// </summary>
-    [DebuggerDisplay("{ToString(),nq}")]
+    /// <threadsafety static="true" instance="false"/>
+    [DebuggerDisplay("{ToString(), nq}")]
     public class IrcChannel : INotifyPropertyChanged, IIrcMessageTarget, IIrcMessageReceiveHandler, IIrcMessageReceiver
     {
         private string name;
 
         private IrcChannelType type;
 
+        // Current topic of channel.
         private string topic;
 
+        // Collection of current modes of channel.
         private HashSet<char> modes;
         private ReadOnlySet<char> modesReadOnly;
 
-        private ObservableCollection<IrcChannelUser> users;
+        // Collection of users that are currently members of this channel.
+        private Collection<IrcChannelUser> users;
         private IrcChannelUserCollection usersReadOnly;
 
         private IrcClient client;
@@ -36,7 +41,7 @@ namespace IrcDotNet
             this.type = IrcChannelType.Unspecified;
             this.modes = new HashSet<char>();
             this.modesReadOnly = new ReadOnlySet<char>(this.modes);
-            this.users = new ObservableCollection<IrcChannelUser>();
+            this.users = new Collection<IrcChannelUser>();
             this.usersReadOnly = new IrcChannelUserCollection(this, this.users);
         }
 
@@ -140,6 +145,11 @@ namespace IrcDotNet
         /// Occurs when a user is kicked from the channel.
         /// </summary>
         public event EventHandler<IrcChannelUserEventArgs> UserKicked;
+
+        /// <summary>
+        /// Occurs when a user is invited to join the channel.
+        /// </summary>
+        public event EventHandler<IrcUserEventArgs> UserInvited;
 
         /// <summary>
         /// Occurs when the channel has received a message, before the <see cref="MessageReceived"/> event.
@@ -252,12 +262,13 @@ namespace IrcDotNet
             if (newModes == null)
                 throw new ArgumentNullException("newModes");
 
-            SetModes(newModes.Except(this.modes), this.modes.Except(newModes));
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                SetModes(newModes.Except(this.modes), this.modes.Except(newModes));
         }
 
         /// <inheritdoc cref="SetModes(string, IEnumerable{string})"/>
-        /// <exception cref="ArgumentNullException"><paramref name="setModes"/> is <see langword="null"/>. -or-
-        /// <paramref name="unsetModes"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="setModes"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="unsetModes"/> is <see langword="null"/>.</exception>
         public void SetModes(IEnumerable<char> setModes, IEnumerable<char> unsetModes,
             IEnumerable<string> modeParameters = null)
         {
@@ -307,12 +318,22 @@ namespace IrcDotNet
 
         internal void HandleUserNameReply(IrcChannelUser channelUser)
         {
-            if (this.users.Contains(channelUser))
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
             {
-                Debug.Fail("User already in channel.");
-                return;
+                if (this.users.Contains(channelUser))
+                {
+#if SILVERLIGHT
+                    Debug.Assert(false, "User already in channel.");
+#else
+                    Debug.Fail("User already in channel.");
+#endif
+                    return;
+                }
             }
-            this.users.Add(channelUser);
+
+            channelUser.Channel = this;
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                this.users.Add(channelUser);
         }
 
         internal void HandleUsersListReceived()
@@ -322,64 +343,90 @@ namespace IrcDotNet
 
         internal void HandleModesChanged(string newModes, IEnumerable<string> newModeParameters)
         {
-            this.modes.UpdateModes(newModes, newModeParameters, this.client.ChannelUserModes,
-                (add, mode, modeParameter) => this.users.Single(
-                    cu => cu.User.NickName == modeParameter).HandleModeChanged(add, mode));
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                this.modes.UpdateModes(newModes, newModeParameters, this.client.ChannelUserModes,
+                    (add, mode, modeParameter) => this.users.Single(
+                        cu => cu.User.NickName == modeParameter).HandleModeChanged(add, mode));
+
             OnModesChanged(new EventArgs());
         }
 
         internal void HandleUserJoined(IrcChannelUser channelUser)
         {
-            if (this.users.Contains(channelUser))
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
             {
-                Debug.Fail("User already in channel.");
-                return;
+                if (this.users.Contains(channelUser))
+                {
+#if SILVERLIGHT
+                Debug.Assert(false, "User already in channel.");
+#else
+                    Debug.Fail("User already in channel.");
+#endif
+                    return;
+                }
             }
-            this.users.Add(channelUser);
+
+            channelUser.Channel = this;
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                this.users.Add(channelUser);
+
             OnUserJoined(new IrcChannelUserEventArgs(channelUser, null));
         }
 
         internal void HandleUserLeft(IrcUser user, string comment)
         {
-            HandleUserLeft(this.users.Single(u => u.User == user), comment);
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                HandleUserLeft(this.users.Single(u => u.User == user), comment);
         }
 
         internal void HandleUserLeft(IrcChannelUser channelUser, string comment)
         {
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                this.users.Remove(channelUser);
+
             OnUserLeft(new IrcChannelUserEventArgs(channelUser, comment));
-            this.users.Remove(channelUser);
         }
 
         internal void HandleUserKicked(IrcUser user, string comment)
         {
-            HandleUserKicked(this.users.Single(u => u.User == user), comment);
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                HandleUserKicked(this.users.Single(u => u.User == user), comment);
         }
 
         internal void HandleUserKicked(IrcChannelUser channelUser, string comment)
         {
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                this.users.Remove(channelUser);
+
             OnUserKicked(new IrcChannelUserEventArgs(channelUser, comment));
-            this.users.Remove(channelUser);
+        }
+
+        internal void HandleUserInvited(IrcUser user)
+        {
+            lock (((ICollection)this.modesReadOnly).SyncRoot)
+                OnUserInvited(new IrcUserEventArgs(user));
         }
 
         internal void HandleUserQuit(IrcChannelUser channelUser)
         {
-            this.users.Remove(channelUser);
+            lock (((ICollection)this.usersReadOnly).SyncRoot)
+                this.users.Remove(channelUser);
         }
 
         internal void HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text);
+            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text, this.Client.TextEncoding);
             OnPreviewMessageReceived(previewEventArgs);
             if (!previewEventArgs.Handled)
-                OnMessageReceived(new IrcMessageEventArgs(source, targets, text));
+                OnMessageReceived(new IrcMessageEventArgs(source, targets, text, this.Client.TextEncoding));
         }
 
         internal void HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text);
+            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text, this.Client.TextEncoding);
             OnPreviewNoticeReceived(previewEventArgs);
             if (!previewEventArgs.Handled)
-                OnNoticeReceived(new IrcMessageEventArgs(source, targets, text));
+                OnNoticeReceived(new IrcMessageEventArgs(source, targets, text, this.Client.TextEncoding));
         }
 
         /// <summary>
@@ -444,6 +491,17 @@ namespace IrcDotNet
         protected virtual void OnUserKicked(IrcChannelUserEventArgs e)
         {
             var handler = this.UserKicked;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="UserInvited"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcUserEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnUserInvited(IrcUserEventArgs e)
+        {
+            var handler = this.UserInvited;
             if (handler != null)
                 handler(this, e);
         }

@@ -6,9 +6,10 @@ using System.Text;
 
 namespace IrcDotNet.Ctcp
 {
-/// <summary>
+    /// <summary>
     /// Provides data for events that are raised when a CTCP message or notice is sent or received.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpMessageEventArgs : EventArgs
     {
         /// <summary>
@@ -16,7 +17,7 @@ namespace IrcDotNet.Ctcp
         /// </summary>
         /// <param name="source">The source of the message.</param>
         /// <param name="targets">A list of the targets of the message.</param>
-        /// <param name="text">The text of the mesage.</param>
+        /// <param name="text">The text of the message.</param>
         /// <exception cref="ArgumentNullException"><paramref name="targets"/> is <see langword="null"/>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
         public CtcpMessageEventArgs(IrcUser source, IList<IIrcMessageTarget> targets, string text)
@@ -62,10 +63,11 @@ namespace IrcDotNet.Ctcp
             private set;
         }
     }
-    
+
     /// <summary>
     /// Provides data for the <see cref="CtcpClient.TimeResponseReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpTimeResponseReceivedEventArgs : CtcpResponseReceivedEventArgs
     {
         /// <summary>
@@ -92,6 +94,7 @@ namespace IrcDotNet.Ctcp
     /// <summary>
     /// Provides data for the <see cref="CtcpClient.VersionResponseReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpVersionResponseReceivedEventArgs : CtcpResponseReceivedEventArgs
     {
         /// <summary>
@@ -116,10 +119,77 @@ namespace IrcDotNet.Ctcp
     }
 
     /// <summary>
+    /// Provides data for the <see cref="CtcpClient.ErrorMessageReceived"/> event.
+    /// </summary>
+    /// <threadsafety static="true" instance="false"/>
+    public class CtcpErrorMessageReceivedEventArgs : CtcpResponseReceivedEventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CtcpErrorMessageReceivedEventArgs"/> class,
+        /// specifying that no error occurred.
+        /// </summary>
+        /// <param name="noErrorMessage">The message indicating that no error occurred.</param>
+        public CtcpErrorMessageReceivedEventArgs(IrcUser user, string noErrorMessage)
+            : base(user)
+        {
+            this.ErrorOccurred = false;
+            this.FailedQuery = null;
+            this.ErrorMessage = noErrorMessage;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CtcpErrorMessageReceivedEventArgs"/> class,
+        /// specifying the query that failed with an error message.
+        /// </summary>
+        /// <param name="failedQuery">A string containing the query that failed.</param>
+        /// <param name="errorMessage">The message describing the error that occurred for the remote user.</param>
+        public CtcpErrorMessageReceivedEventArgs(IrcUser user, string failedQuery, string errorMessage)
+            : base(user)
+        {
+            this.ErrorOccurred = true;
+            this.FailedQuery = failedQuery;
+            this.ErrorMessage = errorMessage;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether an error occurred or the user confirmed that no error occurred.
+        /// </summary>
+        /// <value><see langword="true"/> if an error occurred; <see langword="false"/> if the remote user confirmed
+        /// that no error occurred.</value>
+        public bool ErrorOccurred
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets a string containing the query that failed
+        /// </summary>
+        /// <value>The failed query.</value>
+        public string FailedQuery
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets message describing the error that occurred for the remote user.
+        /// </summary>
+        /// <value>The error message.</value>
+        public string ErrorMessage
+        {
+            get;
+            private set;
+        }
+    }
+
+    /// <summary>
     /// Provides data for the <see cref="CtcpClient.PingResponseReceived"/> event.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpPingResponseReceivedEventArgs : CtcpResponseReceivedEventArgs
     {
+        /// <inheritdoc/>
         /// <summary>
         /// Initializes a new instance of the <see cref="CtcpPingResponseReceivedEventArgs"/> class.
         /// </summary>
@@ -145,6 +215,7 @@ namespace IrcDotNet.Ctcp
     /// <summary>
     /// Provides data for events that indicate a response to a CTCP request.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpResponseReceivedEventArgs : EventArgs
     {
         /// <summary>
@@ -171,6 +242,7 @@ namespace IrcDotNet.Ctcp
     /// Provides data for the <see cref="CtcpClient.RawMessageSent"/> and
     /// <see cref="CtcpClient.RawMessageReceived"/> events.
     /// </summary>
+    /// <threadsafety static="true" instance="false"/>
     public class CtcpRawMessageEventArgs : EventArgs
     {
         /// <summary>
