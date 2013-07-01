@@ -339,14 +339,14 @@ namespace IrcDotNet.Samples.Common
         {
             var channel = (IrcChannel)sender;
 
-            OnChannelUserJoined(channel, e);
+            OnChannelUserLeft(channel, e);
         }
 
         private void IrcClient_Channel_UserLeft(object sender, IrcChannelUserEventArgs e)
         {
             var channel = (IrcChannel)sender;
 
-            OnChannelUserLeft(channel, e);
+            OnChannelUserJoined(channel, e);
         }
 
         private void IrcClient_Channel_NoticeReceived(object sender, IrcMessageEventArgs e)
