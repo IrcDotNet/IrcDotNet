@@ -11,6 +11,7 @@ namespace IrcDotNet.Samples.Common
     // Provides core functionality for an IRC bot that operates via multiple clients.
     public abstract class IrcBot : IDisposable
     {
+        protected const string ChatCommandPrefix = "!";
         private const int clientQuitTimeout = 1000;
 
         // Regex for splitting space-separated list of command parts until first parameter that begins with '/'.
@@ -191,7 +192,7 @@ namespace IrcDotNet.Samples.Common
         {
             // Check if given message represents chat command.
             var line = eventArgs.Text;
-            if (line.Length > 1 && line.StartsWith("."))
+            if (line.Length > 1 && line.StartsWith(IrcBot.ChatCommandPrefix))
             {
                 // Process command.
                 var parts = commandPartsSplitRegex.Split(line.Substring(1)).Select(p => p.TrimStart('/')).ToArray();
