@@ -239,27 +239,27 @@ namespace IrcDotNet.Samples.Common
             }
         }
 
-        protected abstract void OnClientConnect(IrcClient client);
+        protected virtual void OnClientConnect(IrcClient client) { }
 
-        protected abstract void OnClientDisconnect(IrcClient client);
+        protected virtual void OnClientDisconnect(IrcClient client) { }
 
-        protected abstract void OnClientRegistered(IrcClient client);
+        protected virtual void OnClientRegistered(IrcClient client) { }
 
-        protected abstract void OnLocalUserJoinedChannel(IrcLocalUser localUser, IrcChannelEventArgs e);
+        protected virtual void OnLocalUserJoinedChannel(IrcLocalUser localUser, IrcChannelEventArgs e) { }
 
-        protected abstract void OnLocalUserLeftChannel(IrcLocalUser localUser, IrcChannelEventArgs e);
+        protected virtual void OnLocalUserLeftChannel(IrcLocalUser localUser, IrcChannelEventArgs e) { }
 
-        protected abstract void OnLocalUserNoticeReceived(IrcLocalUser localUser, IrcMessageEventArgs e);
+        protected virtual void OnLocalUserNoticeReceived(IrcLocalUser localUser, IrcMessageEventArgs e) { }
 
-        protected abstract void OnLocalUserMessageReceived(IrcLocalUser localUser, IrcMessageEventArgs e);
+        protected virtual void OnLocalUserMessageReceived(IrcLocalUser localUser, IrcMessageEventArgs e) { }
 
-        protected abstract void OnChannelUserJoined(IrcChannel channel, IrcChannelUserEventArgs e);
+        protected virtual void OnChannelUserJoined(IrcChannel channel, IrcChannelUserEventArgs e) { }
 
-        protected abstract void OnChannelUserLeft(IrcChannel channel, IrcChannelUserEventArgs e);
+        protected virtual void OnChannelUserLeft(IrcChannel channel, IrcChannelUserEventArgs e) { }
 
-        protected abstract void OnChannelNoticeReceived(IrcChannel channel, IrcMessageEventArgs e);
+        protected virtual void OnChannelNoticeReceived(IrcChannel channel, IrcMessageEventArgs e) { }
 
-        protected abstract void OnChannelMessageReceived(IrcChannel channel, IrcMessageEventArgs e);
+        protected virtual void OnChannelMessageReceived(IrcChannel channel, IrcMessageEventArgs e) { }
 
         #region IRC Client Event Handlers
 
