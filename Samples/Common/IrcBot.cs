@@ -212,23 +212,26 @@ namespace IrcDotNet.Samples.Common
             ChatCommandProcessor processor;
             if (this.chatCommandProcessors.TryGetValue(command, out processor))
             {
-                try
+                System.Threading.Tasks.Task.Factory.StartNew(() =>
                 {
-                    processor(client, source, targets, command, parameters);
-                }
-                catch (InvalidCommandParametersException exInvalidCommandParameters)
-                {
-                    client.LocalUser.SendNotice(defaultReplyTarget,
-                        exInvalidCommandParameters.GetMessage(command));
-                }
-                catch (Exception ex)
-                {
-                    if (source is IIrcMessageTarget)
+                    try
+                    {
+                        processor(client, source, targets, command, parameters);
+                    }
+                    catch (InvalidCommandParametersException exInvalidCommandParameters)
                     {
                         client.LocalUser.SendNotice(defaultReplyTarget,
-                            "Error processing '{0}' command: {1}", command, ex.Message);
+                            exInvalidCommandParameters.GetMessage(command));
                     }
-                }
+                    catch (Exception ex)
+                    {
+                        if (source is IIrcMessageTarget)
+                        {
+                            client.LocalUser.SendNotice(defaultReplyTarget,
+                                "Error processing '{0}' command: {1}", command, ex.Message);
+                        }
+                    }
+                }, System.Threading.Tasks.TaskCreationOptions.LongRunning);
             }
             else
             {
