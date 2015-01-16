@@ -27,6 +27,6 @@ Non-RFC Features
 Help
 ====
 
-* Talk to us on IRC at <irc://freenode.net/##irc.net>.
+* Talk to us on our [IRC channel](irc://freenode.net/##irc.net).
 
 * If you have confirmed that the behaviour is unexpected, submit an [issue](https://github.com/alexreg/ircdotnet/issues) on GitHub.
