@@ -1546,6 +1546,18 @@ namespace IrcDotNet
             return value == '\0' || value == '\r' || value == '\n';
         }
 
+        protected void Connect(IrcRegistrationInfo registrationInfo)
+        {
+            CheckDisposed();
+
+            if (registrationInfo == null)
+                throw new ArgumentNullException("registrationInfo");
+
+            CheckRegistrationInfo(registrationInfo, "registrationInfo");
+            ResetState();
+
+        }
+
         protected void CheckRegistrationInfo(IrcRegistrationInfo registrationInfo, string registrationInfoParamName)
         {
             // Check that given registration info is valid.

@@ -189,14 +189,7 @@ namespace IrcDotNet
         /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void Connect(EndPoint remoteEndPoint, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
-            CheckDisposed();
-
-            if (registrationInfo == null)
-                throw new ArgumentNullException("registrationInfo");
-
-            CheckRegistrationInfo(registrationInfo, "registrationInfo");
-            ResetState();
-
+            Connect(registrationInfo);
             // Connect socket to remote host.
             ConnectAsync(remoteEndPoint, Tuple.Create(useSsl, string.Empty, registrationInfo));
 
