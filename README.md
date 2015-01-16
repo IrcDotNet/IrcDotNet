@@ -6,6 +6,8 @@ IRC.NET is a complete IRC (Internet Relay Chat) client library for the
 efficient implementation of the protocol as described in RFCs 1459 and 2812,
 as well as de-facto modern features of the protocol.
 
+This project was formlery hosted on [Launchpad](https://launchpad.net/ircdotnet).
+
 Mono
 ----
 
@@ -18,24 +20,13 @@ the Moonlight framework, though it may be officially supported in the future.
 Non-RFC Features
 ----------------
 
- * Parsing of ISUPPORT parameters (draft specification at
-   <http://www.irc.org/tech_docs/draft-brocklesby-irc-isupport-03.txt>).
-   Interpretation of parameters is left to the user.
+* Parsing of [ISUPPORT parameters](http://www.irc.org/tech_docs/draft-brocklesby-irc-isupport-03.txt). Interpretation of parameters is left to the user.
  
- * CTCP (Client-To-Client Protocol) support (specification at
-   <http://www.irchelp.org/irchelp/rfc/ctcpspec.html>).
-   Common commands are supported.
+* [CTCP (Client-To-Client Protocol)](http://www.irchelp.org/irchelp/rfc/ctcpspec.html) support. Most common commands are supported.
 
-Feedback
-========
+Help
+====
 
-If you experience any issues with the software, need help understanding its
-usage, or you wish to submit any comments/suggestions, please contact us using
-one of the following methods.
+* Talk to us on IRC at <irc://freenode.net/##irc.net>.
 
- * Ask a question through our web support interface at
-   <https://answers.launchpad.net/ircdotnet/>.
- 
- * Report a bug at <https://bugs.launchpad.net/ircdotnet/+filebug>.
- 
- * Talk to us on IRC at <irc://freenode.net/##irc.net>.
+* If you have confirmed that the behaviour is unexpected, submit an [issue](https://github.com/alexreg/ircdotnet/issues) on GitHub.
