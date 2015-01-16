@@ -72,7 +72,7 @@ namespace IrcDotNet
         private bool isRegistered;
 
         // Stores information about local user.
-        private IrcLocalUser localUser;
+        protected IrcLocalUser localUser;
 
         // Dictionary of protocol features supported by server.
         private Dictionary<string, string> serverSupportedFeatures;
@@ -724,8 +724,6 @@ namespace IrcDotNet
         /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public virtual void Quit(int timeout, string comment = null)
         {
-            CheckDisposed();
-
             SendMessageQuit(comment);
         }
 
@@ -741,9 +739,7 @@ namespace IrcDotNet
         /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void Quit(string comment = null)
         {
-            CheckDisposed();
-
-            SendMessageQuit(comment);
+            Quit(0, comment);
         }
 
         /// <summary>
@@ -1307,7 +1303,7 @@ namespace IrcDotNet
             }
         }
 
-        private int GetNumericUserMode(ICollection<char> modes)
+        protected int GetNumericUserMode(ICollection<char> modes)
         {
             var value = 0;
             if (modes == null)
@@ -1343,7 +1339,7 @@ namespace IrcDotNet
             this.listedStatsEntries = new List<IrcServerStatisticalEntry>();
         }
 
-        private void InitializeMessageProcessors()
+        protected void InitializeMessageProcessors()
         {
             // Find each method defined as processor for IRC message.
             foreach (var method in this.GetAttributedMethods<MessageProcessorAttribute, MessageProcessor>())
