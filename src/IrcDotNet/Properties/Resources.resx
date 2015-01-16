@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MessageCannotSetUserMode" xml:space="preserve">
+    <value>Cannot set user mode for '{0}'.</value>
+  </data>
+  <data name="MessageInvalidChannelType" xml:space="preserve">
+    <value>The channel type '{0}' sent by the server is invalid.</value>
+  </data>
+  <data name="MessageInvalidCommand" xml:space="preserve">
+    <value>The message command '{0}' is invalid.</value>
+  </data>
+  <data name="MessageInvalidMessageCommand" xml:space="preserve">
+    <value>The command '{0}' was not recognised.</value>
+  </data>
+  <data name="MessageInvalidMiddleParameter" xml:space="preserve">
+    <value>The non-trailing parameter '{0}' is invalid.</value>
+  </data>
+  <data name="MessageInvalidNickName" xml:space="preserve">
+    <value>The specified nick name is invalid.</value>
+  </data>
+  <data name="MessageInvalidPassword" xml:space="preserve">
+    <value>The specified password is invalid.</value>
+  </data>
+  <data name="MessageInvalidPrefix" xml:space="preserve">
+    <value>The message prefix '{0}' is invalid.</value>
+  </data>
+  <data name="MessageInvalidRealName" xml:space="preserve">
+    <value>The specified real name is invalid.</value>
+  </data>
+  <data name="MessageInvalidSource" xml:space="preserve">
+    <value>The source '{0}' of the message was not recognised as either a server or user.</value>
+  </data>
+  <data name="MessageInvalidTargetName" xml:space="preserve">
+    <value>A target name may not contain any ',' character.</value>
+  </data>
+  <data name="MessageInvalidTrailingParameter" xml:space="preserve">
+    <value>The trailing parameter '{0}' is invalid.</value>
+  </data>
+  <data name="MessageInvalidUserMode" xml:space="preserve">
+    <value>The specified user mode is invalid.</value>
+  </data>
+  <data name="MessageInvalidUserName" xml:space="preserve">
+    <value>The specified user name is invalid.</value>
+  </data>
+  <data name="MessageISupportPrefixInvalid" xml:space="preserve">
+    <value>The ISUPPORT message sent by the server contains an invalid PREFIX parameter.</value>
+  </data>
+  <data name="MessageRawMessageTooLong" xml:space="preserve">
+    <value>The length of a raw message must not exceed {0} characters.</value>
+  </data>
+  <data name="MessageNotEnoughModeParameters" xml:space="preserve">
+    <value>Not enough mode parameters were specified for the given modes.</value>
+  </data>
+  <data name="MessageSourceNotUser" xml:space="preserve">
+    <value>The message source '{0}' is not a user.</value>
+  </data>
+  <data name="MessageTargetMaskInvalidType" xml:space="preserve">
+    <value>The type of the given target mask '{0}' is invalid.</value>
+  </data>
+  <data name="MessageTargetMaskTooShort" xml:space="preserve">
+    <value>The target mask must be contain at least two characters.</value>
+  </data>
+  <data name="MessageTooManyModeParameters" xml:space="preserve">
+    <value>No more than 3 mode parameters may be sent per message.</value>
+  </data>
+  <data name="MessageTooManyParams" xml:space="preserve">
+    <value>No more than 15 command parameters may be specified.</value>
+  </data>
+  <data name="MessageValueCannotBeEmptyString" xml:space="preserve">
+    <value>The value cannot be an empty string</value>
+  </data>
+  <data name="MessageInvalidCommandDefinition" xml:space="preserve">
+    <value>The command definition '{0}' is invalid.</value>
+  </data>
+  <data name="MessageInvalidQuotedChar" xml:space="preserve">
+    <value>The quoted character '{0}' was not recognised.</value>
+  </data>
+  <data name="MessageInvalidTag" xml:space="preserve">
+    <value>The message tag '{0}' is invalid.</value>
+  </data>
+  <data name="MessageInvalidUrlScheme" xml:space="preserve">
+    <value>The URL scheme '{0}' is not valid.</value>
+  </data>
+  <data name="MessageInvalidRegistrationInfoObject" xml:space="preserve">
+    <value>The object provided for registration info is of an unknown type.</value>
+  </data>
+  <data name="MessageInvalidUserRegistrationInfo" xml:space="preserve">
+    <value>The registration info for a user must have a valid nick name and user name.</value>
+  </data>
+  <data name="MessageInvalidServiceRegistrationInfo" xml:space="preserve">
+    <value>The registration info for a service must have a valid nick name and description.</value>
+  </data>
+  <data name="MessageNoValidAddress" xml:space="preserve">
+    <value>The host name '{0}' does not resolve to a valid IP address.</value>
+  </data>
+</root>

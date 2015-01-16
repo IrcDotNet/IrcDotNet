@@ -2,7 +2,10 @@
 *.log
 *.suo
 *.user
+*.docstates
+*.*_*
+tmp/
 bin/
 obj/
-output/
-./TestResults/
+out/
+TestResults/

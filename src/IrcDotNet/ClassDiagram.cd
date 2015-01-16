@@ -1,0 +1,255 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="IrcDotNet.IrcChannel" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="8" Y="1.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>KowQMyEAQIALCFAEoBQIGI0BwUEFIkAEIQmCBSCBAwQ=</HashCode>
+      <FileName>IrcChannel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="IrcDotNet.IrcChannelUser" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.5" Y="1.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAEBAAAgAAACIAAEIBAIAAAA4AAAAEAAAIAAAAAACQg=</HashCode>
+      <FileName>IrcChannelUser.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="IrcDotNet.IrcChannelCollection" Collapsed="true">
+    <Position X="9.75" Y="1.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAEAAAAAAAAABAAAAAQ=</HashCode>
+      <FileName>IrcChannelCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IrcDotNet.IrcUserCollection" Collapsed="true">
+    <Position X="8" Y="3.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAQ=</HashCode>
+      <FileName>IrcUserCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IrcDotNet.IrcUser" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="6.25" Width="3.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>gAiAAIIAAICIJASEKCRUEIBIgQCIwEMUAQAABAEIgQQ=</HashCode>
+      <FileName>IrcUser.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="IrcDotNet.IrcClient" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="8" Y="2.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>Pkfc0nZ3LnOvU/rVuc/IW/PVv+/6M1496f9ev05r2/s=</HashCode>
+      <FileName>IrcClient.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="IrcDotNet.IrcChannelUserCollection" Collapsed="true">
+    <Position X="6.25" Y="2.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>IAAAAAAgAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IrcChannelUserCollection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IrcDotNet.IrcLocalUser">
+    <Position X="0.5" Y="14.75" Width="3.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>CAgBggEAREADCGwAIDUMAIAEQUJAgUAMAAEAAAiBDwA=</HashCode>
+      <FileName>IrcLocalUser.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="IrcDotNet.IrcServer" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAIAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>IrcServer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="IrcDotNet.IrcTargetMask" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="6.25" Y="3.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAEAAAAAABAAAAAQCAAAAAgAA=</HashCode>
+      <FileName>IrcTargetMask.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="IrcDotNet.IrcStandardFloodPreventer" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.5" Y="2.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AABAFAAAAAAAAAAAAAAAAAAAAAAAAAAAgIAAAACCSAA=</HashCode>
+      <FileName>IrcStandardFloodPreventer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="IrcDotNet.IrcServiceRegistrationInfo">
+    <Position X="0.5" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IrcRegistrationInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IrcDotNet.IrcUserRegistrationInfo">
+    <Position X="3.25" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAACAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>IrcRegistrationInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IrcDotNet.IrcRegistrationInfo">
+    <Position X="2" Y="1.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAECAAAAAAAAAAA=</HashCode>
+      <FileName>IrcRegistrationInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IrcDotNet.IrcUtilities" Collapsed="true">
+    <Position X="9.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IrcUtilities.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IrcDotNet.TextUtilities" Collapsed="true">
+    <Position X="6.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIgAAAAAAAAAAAAAAgBAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>TextUtilities.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IrcDotNet.ReflectionUtilities" Collapsed="true">
+    <Position X="11.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ReflectionUtilities.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IrcDotNet.Ctcp.CtcpClient" Collapsed="true">
+    <Position X="6.25" Y="1.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AQUICWQMCwGRQUCFYdACARBIACkcAAAQQgkAiACSmEA=</HashCode>
+      <FileName>Ctcp\CtcpClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="IrcDotNet.IrcChannelInfo" Collapsed="true">
+    <Position X="6.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAIAAAAAACAAAAA=</HashCode>
+      <FileName>IrcChannelInfo.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="IrcDotNet.IrcNetworkInfo" Collapsed="true">
+    <Position X="8" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAgEIAAAACAYBAAAAAAAAAAA=</HashCode>
+      <FileName>IrcNetworkInfo.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="IrcDotNet.IrcServerInfo" Collapsed="true">
+    <Position X="9.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>IrcServerInfo.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="IrcDotNet.IrcServerStatisticalEntry" Collapsed="true">
+    <Position X="11.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAA=</HashCode>
+      <FileName>IrcServerStatisticalEntry.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="IrcDotNet.IIrcMessageReceiveHandler" Collapsed="true">
+    <Position X="8" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>IIrcMessageReceiveHandler.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IrcDotNet.IIrcMessageReceiver" Collapsed="true">
+    <Position X="9.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IIrcMessageReceiver.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IrcDotNet.IIrcMessageSource" Collapsed="true">
+    <Position X="6.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IIrcMessageSource.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IrcDotNet.IIrcMessageTarget" Collapsed="true">
+    <Position X="8" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IIrcMessageTarget.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IrcDotNet.IIrcMessageSendHandler" Collapsed="true">
+    <Position X="11.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAA=</HashCode>
+      <FileName>IIrcMessageSendHandler.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IrcDotNet.IIrcFloodPreventer" Collapsed="true">
+    <Position X="6.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAACAA=</HashCode>
+      <FileName>IIrcFloodPreventer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="IrcDotNet.IrcTargetMaskType" Collapsed="true">
+    <Position X="8" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAQAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IrcTargetMask.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="IrcDotNet.IrcServerStatisticalEntryCommonType" Collapsed="true">
+    <Position X="6.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAACAAEAAIQABAAAAAAAAAgAQAAAAACQAEA=</HashCode>
+      <FileName>IrcServerStatisticalEntry.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
