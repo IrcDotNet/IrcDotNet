@@ -9,7 +9,10 @@
 
 #I @".nuget/Build/FAKE/tools/" // FAKE
 #I @".nuget/Build/FSharp.Compiler.Service/lib/net40/"
-#I @".nuget/Build/FSharp.Formatting/lib/net40/"
+//#I @".nuget/Build/FSharp.Formatting/lib/net40/"
+#I @"lib/FSharp.Formatting/"
+#I @".nuget/Build/RazorEngine/lib/net40/"
+#I @".nuget/Build/Microsoft.AspNet.Razor/lib/net40/"
 #r @"FakeLib.dll"  //FAKE
 
 #load @"buildConfig.fsx"
