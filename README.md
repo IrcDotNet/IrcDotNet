@@ -1,5 +1,19 @@
 # IRC.NET
 
+*latest* documentation available on https://alexreg.github.io/IrcDotNet/.
+
+## Build status
+
+Devel Branch
+
+[![Build Status](https://travis-ci.org/alexreg/IrcDotNet.svg?branch=develop)](https://travis-ci.org/alexreg/IrcDotNet)
+[![Build status](https://ci.appveyor.com/api/projects/status/1kgumufg5xre9doo/branch/develop?svg=true)](https://ci.appveyor.com/project/alexreg/IrcDotNet/branch/develop)
+
+Master Branch
+
+[![Build Status](https://travis-ci.org/alexreg/IrcDotNet.svg?branch=master)](https://travis-ci.org/alexreg/IrcDotNet)
+[![Build status](https://ci.appveyor.com/api/projects/status/1kgumufg5xre9doo/branch/master?svg=true)](https://ci.appveyor.com/project/alexreg/IrcDotNet/branch/master)
+
 ## Overview
 
 IRC.NET is a complete IRC (Internet Relay Chat) client library for the
