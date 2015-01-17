@@ -168,7 +168,7 @@ let buildAllDocumentation outDocDir website_root =
           
           
       processDirectory template "./doc" outDir
-      processMarkdown indexTemplate "./readme.md" (outDir @@ indexName)
+      processMarkdown indexTemplate "./README.md" (outDir @@ indexName)
   
 
     // Build API reference from XML comments
