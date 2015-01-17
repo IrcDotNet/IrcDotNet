@@ -128,7 +128,7 @@ let buildAllDocumentation outDocDir website_root =
         | OutputKind.Html -> docTemplatesDir @@ "docpage-index.cshtml", docTemplatesDir @@ "docpage.cshtml", "html", "index.html"
         | OutputKind.Latex -> docTemplatesDir @@ "template-color.tex", docTemplatesDir @@ "template-color.tex", "latex", "Readme.tex"
       let outDir = outDocDir @@ outDirName
-      let handleDoc (doc:LiterateDocument) outfile =
+      let handleDoc template (doc:LiterateDocument) outfile =
         // prismjs support
         let ctx = formattingContext (Some template) (Some outputKind) (Some true) (Some projInfo) (Some layoutRoots)
         let newParagraphs = List.choose (replaceCodeBlocks ctx) doc.Paragraphs
@@ -136,10 +136,10 @@ let buildAllDocumentation outDocDir website_root =
         
       let processMarkdown template infile outfile =
         let doc = Literate.ParseMarkdownFile( infile )
-        handleDoc doc outfile
+        handleDoc template doc outfile
       let processScriptFile template infile outfile =
         let doc = Literate.ParseScriptFile( infile )
-        handleDoc doc outfile
+        handleDoc template doc outfile
         
       let rec processDirectory template indir outdir = 
         // Create output directory if it does not exist
@@ -164,7 +164,7 @@ let buildAllDocumentation outDocDir website_root =
       
         for d in Directory.EnumerateDirectories(indir) do
           let name = Path.GetFileName(d)
-          processDirectory (Path.Combine(indir, name)) (Path.Combine(outdir, name))
+          processDirectory template (Path.Combine(indir, name)) (Path.Combine(outdir, name))
           
           
       processDirectory template "./doc" outDir
