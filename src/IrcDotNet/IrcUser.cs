@@ -321,7 +321,7 @@ namespace IrcDotNet
         internal void HandeQuit(string comment)
         {
             foreach (var cu in GetChannelUsers().ToArray())
-                cu.Channel.HandleUserQuit(cu);
+                cu.Channel.HandleUserQuit(cu, comment);
             OnQuit(new IrcCommentEventArgs(comment));
         }
 

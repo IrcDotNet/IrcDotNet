@@ -557,13 +557,14 @@ namespace IrcDotNet
 
             // Extract network information from text.
             Debug.Assert(message.Parameters[1] != null);
-            var infoParts = message.Parameters[1].Split(' ');
+            var info = message.Parameters[1];
+            var infoParts = info.Split(' ');
             Debug.Assert(infoParts.Length == 10);
             this.networkInformation.VisibleUsersCount = int.Parse(infoParts[2]);
             this.networkInformation.InvisibleUsersCount = int.Parse(infoParts[5]);
             this.networkInformation.ServersCount = int.Parse(infoParts[8]);
 
-            OnNetworkInformationReceived(new EventArgs());
+            OnNetworkInformationReceived(new IrcCommentEventArgs(info));
         }
 
         /// <summary>
@@ -577,9 +578,10 @@ namespace IrcDotNet
 
             // Extract network information from text.
             Debug.Assert(message.Parameters[1] != null);
-            this.networkInformation.OperatorsCount = int.Parse(message.Parameters[1]);
+            var info = message.Parameters[1];
+            this.networkInformation.OperatorsCount = int.Parse(info);
 
-            OnNetworkInformationReceived(new EventArgs());
+            OnNetworkInformationReceived(new IrcCommentEventArgs(info));
         }
 
         /// <summary>
@@ -593,9 +595,10 @@ namespace IrcDotNet
 
             // Extract network information from text.
             Debug.Assert(message.Parameters[1] != null);
-            this.networkInformation.UnknownConnectionsCount = int.Parse(message.Parameters[1]);
+            var info = message.Parameters[1];
+            this.networkInformation.UnknownConnectionsCount = int.Parse(info);
 
-            OnNetworkInformationReceived(new EventArgs());
+            OnNetworkInformationReceived(new IrcCommentEventArgs(info));
         }
 
         /// <summary>
@@ -609,9 +612,10 @@ namespace IrcDotNet
 
             // Extract network information from text.
             Debug.Assert(message.Parameters[1] != null);
-            this.networkInformation.ChannelsCount = int.Parse(message.Parameters[1]);
+            var info = message.Parameters[1];
+            this.networkInformation.ChannelsCount = int.Parse(info);
 
-            OnNetworkInformationReceived(new EventArgs());
+            OnNetworkInformationReceived(new IrcCommentEventArgs(info));
         }
 
         /// <summary>
@@ -625,12 +629,28 @@ namespace IrcDotNet
 
             // Extract network information from text.
             Debug.Assert(message.Parameters[1] != null);
-            var infoParts = message.Parameters[1].Split(' ');
-            Debug.Assert(infoParts.Length == 7);
-            this.networkInformation.ServerClientsCount = int.Parse(infoParts[2]);
-            this.networkInformation.ServerServersCount = int.Parse(infoParts[5]);
+            var info = message.Parameters[1];
+            var infoParts = info.Split(' ');
+            for (int i = 0; i < infoParts.Length; i++)
+            {
+                switch (infoParts[i].ToLowerInvariant())
+                {
+                    case "user":
+                    case "users":
+                        this.networkInformation.ServerClientsCount = int.Parse(infoParts[i - 1]);
+                        break;
+                    case "server":
+                    case "servers":
+                        this.networkInformation.ServerServersCount = int.Parse(infoParts[i - 1]);
+                        break;
+                    case "service":
+                    case "services":
+                        this.networkInformation.ServerClientsCount = int.Parse(infoParts[i - 1]);
+                        break;
+                }
+            }
 
-            OnNetworkInformationReceived(new EventArgs());
+            OnNetworkInformationReceived(new IrcCommentEventArgs(info));
         }
 
         /// <summary>

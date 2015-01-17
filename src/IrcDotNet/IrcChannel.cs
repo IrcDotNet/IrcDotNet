@@ -418,7 +418,7 @@ namespace IrcDotNet
                 OnUserInvited(new IrcUserEventArgs(user));
         }
 
-        internal void HandleUserQuit(IrcChannelUser channelUser)
+        internal void HandleUserQuit(IrcChannelUser channelUser, string comment)
         {
             lock (((ICollection)this.usersReadOnly).SyncRoot)
                 this.users.Remove(channelUser);

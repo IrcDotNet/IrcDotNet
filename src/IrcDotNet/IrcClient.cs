@@ -471,7 +471,7 @@ namespace IrcDotNet
         /// <summary>
         /// Occurs when information about the IRC network has been received from the server.
         /// </summary>
-        public event EventHandler<EventArgs> NetworkInformationReceived;
+        public event EventHandler<IrcCommentEventArgs> NetworkInformationReceived;
 
         /// <summary>
         /// Occurs when information about a specific server on the IRC network has been received from the server.
@@ -1883,8 +1883,8 @@ namespace IrcDotNet
         /// <summary>
         /// Raises the <see cref="NetworkInformationReceived"/> event.
         /// </summary>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        protected virtual void OnNetworkInformationReceived(EventArgs e)
+        /// <param name="e">The <see cref="IrcCommentEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnNetworkInformationReceived(IrcCommentEventArgs e)
         {
             var handler = this.NetworkInformationReceived;
             if (handler != null)

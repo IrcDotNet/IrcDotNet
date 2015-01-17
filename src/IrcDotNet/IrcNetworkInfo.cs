@@ -49,5 +49,10 @@ namespace IrcDotNet
         /// The number of others servers connected to the server.
         /// </summary>
         public int? ServerServersCount;
+
+        /// <summary>
+        /// The number of services connected to the server.
+        /// </summary>
+        public int? ServerServicesCount;
     }
 }
