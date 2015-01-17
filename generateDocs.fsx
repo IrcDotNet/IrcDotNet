@@ -116,8 +116,8 @@ let buildAllDocumentation outDocDir website_root =
       
     // Copy static files and CSS + JS from F# Formatting
     let copyDocContentFiles () =
+      ensureDirectory (outDocDir @@ "html" @@ "content")
       CopyRecursive "./doc/content" (outDocDir @@ "html" @@ "content") true |> Log "Copying file: "
-      //ensureDirectory (outDocDir @@ "html" @@ "content")
       //CopyRecursive (formatting @@ "styles") (output @@ "content") true 
       //  |> Log "Copying styles and scripts: "
 
