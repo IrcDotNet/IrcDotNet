@@ -91,11 +91,11 @@ let buildAllDocumentation outDocDir website_root =
                 loadedList |> Seq.find (fun l -> l.Contains name)
             [ (getItem "FSharp.Core").Replace("4.3.0.0", "4.3.1.0")  // (if isMono then "/usr/lib64/mono/gac/FSharp.Core/4.3.1.0__b03f5f7f11d50a3a/FSharp.Core.dll" else "FSharp.Core") 
               Path.GetFullPath "./.nuget/Build/FSharp.Compiler.Service/lib/net40/FSharp.Compiler.Service.dll"
-              Path.GetFullPath "./.nuget/Build/FSharp.Formatting/lib/net40/System.Web.Razor.dll"
-              Path.GetFullPath "./.nuget/Build/FSharp.Formatting/lib/net40/RazorEngine.dll"
-              Path.GetFullPath "./.nuget/Build/FSharp.Formatting/lib/net40/FSharp.Literate.dll"
-              Path.GetFullPath "./.nuget/Build/FSharp.Formatting/lib/net40/FSharp.CodeFormat.dll"
-              Path.GetFullPath "./.nuget/Build/FSharp.Formatting/lib/net40/FSharp.MetadataFormat.dll" ] 
+              Path.GetFullPath "./.nuget/Build/Microsoft.AspNet.Razor/lib/net40/System.Web.Razor.dll"
+              Path.GetFullPath "./.nuget/Build/RazorEngine/lib/net40/RazorEngine.dll"
+              Path.GetFullPath "./lib/FSharp.Formatting/FSharp.Literate.dll"
+              Path.GetFullPath "./lib/FSharp.Formatting/FSharp.CodeFormat.dll"
+              Path.GetFullPath "./lib/FSharp.Formatting/FSharp.MetadataFormat.dll" ] 
             |> Some
         else None
     
