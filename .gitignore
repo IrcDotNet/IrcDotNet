@@ -1,7 +1,9 @@
-# Ignore file for Visual Studio 2010
-
-# use glob syntax
 syntax: glob
+
+[Bb]uild/
+[Tt]humbs.db
+*.userprefs
+*.docstates
 
 # Ignore Visual Studio 2010 files
 *.obj
@@ -24,7 +26,7 @@ syntax: glob
 *.lib
 *.sbr
 *.scc
-[Bb]in
+[Bb]in/
 [Dd]ebug*/
 [Oo]bj/
 [Rr]elease*/
@@ -32,8 +34,3 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 [Bb]uild[Ll]og.*
 *.[Pp]ublish.xml
-
-# Additions
-[Bb]uild/
-[Tt]humbs.db
-*.docstates
