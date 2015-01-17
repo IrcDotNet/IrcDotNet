@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>IrcChannel - IRC.Net</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Alex Regueiro">
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="https://matthid.github.io/ircdotnet/content/style.css" />
+    <link type="text/css" rel="stylesheet" href="https://matthid.github.io/ircdotnet/content/prism.css" />
+    <script type="text/javascript" src="https://matthid.github.io/ircdotnet/content/tips.js"></script>
+	<script type="text/javascript" src="https://matthid.github.io/ircdotnet/content/prism.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://tpetricek.github.io/FSharp.Formatting/"><img height="16" width="16" src="http://fsharp.org/images/thumbs/FSharp.Formatting.png" /> F# Formatting</a></li>
+        </ul>
+        <h3 class="muted"><a href="https://matthid.github.io/ircdotnet/index.html">IRC.Net</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>IrcChannel </h1>
+<div class="xmldoc">
+    Defined in IrcDotNet.dll.
+</div>
+<div class="xmldoc">
+
+            Represents an IRC channel that exists on a specific <a href="ircdotnet-ircclient.html">IrcClient</a>.
+            </br></div>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
+            Client()
+          </code>
+          <div class="tip" id="5">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the client to which the channel belongs.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
+            MessageReceived
+          </code>
+          <div class="tip" id="6">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcMessageEventArgs&gt;,IrcMessageEventArgs&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the channel has received a message.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
+            Modes
+          </code>
+          <div class="tip" id="7">
+            <strong>Signature:</strong> ReadOnlySet&lt;char&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets a read-only collection of the modes the channel currently has.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
+            ModesChanged
+          </code>
+          <div class="tip" id="8">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcUserEventArgs&gt;,IrcUserEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when any of the modes of the channel have changed.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
+            Name
+          </code>
+          <div class="tip" id="9">
+            <strong>Signature:</strong> string<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the name of the channel.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
+            NoticeReceived
+          </code>
+          <div class="tip" id="10">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcMessageEventArgs&gt;,IrcMessageEventArgs&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the channel has received a notice.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
+            PreviewMessageReceived
+          </code>
+          <div class="tip" id="11">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcPreviewMessageEventArgs&gt;,IrcPreviewMessageEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the channel has received a message, before the <a href="ircdotnet-ircchannel.html">IrcChannel.MessageReceived</a> event.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
+            PreviewNoticeReceived
+          </code>
+          <div class="tip" id="12">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcPreviewMessageEventArgs&gt;,IrcPreviewMessageEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the channel has received a notice, before the <a href="ircdotnet-ircchannel.html">IrcChannel.NoticeReceived</a> event.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
+            PropertyChanged
+          </code>
+          <div class="tip" id="13">
+            <strong>Signature:</strong> IEvent&lt;PropertyChangedEventHandler,PropertyChangedEventArgs&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a property value changes.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
+            Topic()
+          </code>
+          <div class="tip" id="14">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the current topic of the channel.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '15', 15)" onmouseover="showTip(event, '15', 15)">
+            TopicChanged
+          </code>
+          <div class="tip" id="15">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcUserEventArgs&gt;,IrcUserEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the topic of the channel has changed.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
+            Type()
+          </code>
+          <div class="tip" id="16">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the type of the channel.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
+            UserInvited
+          </code>
+          <div class="tip" id="17">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcUserEventArgs&gt;,IrcUserEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a user is invited to join the channel.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
+            UserJoined
+          </code>
+          <div class="tip" id="18">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcChannelUserEventArgs&gt;,IrcChannelUserEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a user has joined the channel.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+            UserKicked
+          </code>
+          <div class="tip" id="19">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcChannelUserEventArgs&gt;,IrcChannelUserEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a user is kicked from the channel.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+            UserLeft
+          </code>
+          <div class="tip" id="20">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcChannelUserEventArgs&gt;,IrcChannelUserEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a user has left the channel.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
+            Users
+          </code>
+          <div class="tip" id="21">
+            <strong>Signature:</strong> IrcChannelUserCollection<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets a collection of all channel users currently in the channel.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+            UsersListReceived
+          </code>
+          <div class="tip" id="22">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the list of users in the channel has been received.
+            The list of users is sent initially upon joining the channel, or on the request of the client.
+            </br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <a href="https://matthid.github.io/ircdotnet/index.html">
+            <img src="https://matthid.github.io/ircdotnet/images/logo.png" style="width:140px;height:140px;margin:10px 0px 0px 35px;border-style:none;" />
+          </a>
+
+          <ul class="nav nav-list" id="menu">
+
+            <li class="nav-header">IRC.Net</li>
+
+            <li class="divider"></li>
+            <li><a href="https://www.nuget.org/packages/IrcDotNet/">Get IRC.Net package via NuGet</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet">Source Code</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet/issues">Open bugs and feature requests</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet/issues/new">Report Issue or Request Feature</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet/blob/devel/LICENSE.md">License (MIT)</a></li>
+            <li><a href="https://matthid.github.io/ircdotnet/Contributing.html">Contributing</a></li>
+            
+            <li class="nav-header">Documentation</li>
+              
+            <li><a href="https://matthid.github.io/ircdotnet/index.html">Quick Intro</a></li>
+            <li><a href="https://matthid.github.io/ircdotnet/ReleaseNotes.html">Release Notes</a></li>
+            <li><a href="https://matthid.github.io/ircdotnet/DevelopReadme.html">Development Intro</a></li>
+
+            <li class="nav-header">Reference</li>
+              
+            <li><a href="https://matthid.github.io/ircdotnet/references/index.html">API Reference</a></li>
+
+          </ul>
+        </div>
+      </div>
+    </div>
+      <a href="https://github.com/matthid/ircdotnet"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+    </body>
+  </html>

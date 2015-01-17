@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>IrcUser - IRC.Net</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Alex Regueiro">
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="https://matthid.github.io/ircdotnet/content/style.css" />
+    <link type="text/css" rel="stylesheet" href="https://matthid.github.io/ircdotnet/content/prism.css" />
+    <script type="text/javascript" src="https://matthid.github.io/ircdotnet/content/tips.js"></script>
+	<script type="text/javascript" src="https://matthid.github.io/ircdotnet/content/prism.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://tpetricek.github.io/FSharp.Formatting/"><img height="16" width="16" src="http://fsharp.org/images/thumbs/FSharp.Formatting.png" /> F# Formatting</a></li>
+        </ul>
+        <h3 class="muted"><a href="https://matthid.github.io/ircdotnet/index.html">IRC.Net</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>IrcUser </h1>
+<div class="xmldoc">
+    Defined in IrcDotNet.dll.
+</div>
+<div class="xmldoc">
+
+            Represents an IRC user that exists on a specific <a href="ircdotnet-ircclient.html">IrcClient</a>.
+            </br></div>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '126', 126)" onmouseover="showTip(event, '126', 126)">
+            AwayMessage()
+          </code>
+          <div class="tip" id="126">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the current away message received when the user was seen as away.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '127', 127)" onmouseover="showTip(event, '127', 127)">
+            Client()
+          </code>
+          <div class="tip" id="127">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the client on which the user exists.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '128', 128)" onmouseover="showTip(event, '128', 128)">
+            HopCount()
+          </code>
+          <div class="tip" id="128">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the hop count of the user, which is the number of servers between the user and the server on which the
+            client is connected, within the network.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '129', 129)" onmouseover="showTip(event, '129', 129)">
+            HostName()
+          </code>
+          <div class="tip" id="129">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the host name of the user.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '130', 130)" onmouseover="showTip(event, '130', 130)">
+            IdleDuration()
+          </code>
+          <div class="tip" id="130">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the duration for which the user has been idle. This is set when a Who Is response is received.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '131', 131)" onmouseover="showTip(event, '131', 131)">
+            InviteReceived
+          </code>
+          <div class="tip" id="131">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcChannelInvitationEventArgs&gt;,IrcChannelInvitationEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when an invitation to join a channel has been received.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '132', 132)" onmouseover="showTip(event, '132', 132)">
+            IsAway()
+          </code>
+          <div class="tip" id="132">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets whether the user has been been seen as away. This value is always up-to-date for the local user;
+            though it is only updated for remote users when a private message is sent to them or a Who Is response
+            is received for the user.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '133', 133)" onmouseover="showTip(event, '133', 133)">
+            IsAwayChanged
+          </code>
+          <div class="tip" id="133">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the user has been seen as away or here.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '134', 134)" onmouseover="showTip(event, '134', 134)">
+            IsOnline()
+          </code>
+          <div class="tip" id="134">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets whether the user is currently connected to the IRC network. This value may not be always be
+            up-to-date.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '135', 135)" onmouseover="showTip(event, '135', 135)">
+            IsOperator()
+          </code>
+          <div class="tip" id="135">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets whether the user is a server operator.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '136', 136)" onmouseover="showTip(event, '136', 136)">
+            NickName()
+          </code>
+          <div class="tip" id="136">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the current nick name of the user.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '137', 137)" onmouseover="showTip(event, '137', 137)">
+            NickNameChanged
+          </code>
+          <div class="tip" id="137">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the nick name of the user has changed.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '138', 138)" onmouseover="showTip(event, '138', 138)">
+            PropertyChanged
+          </code>
+          <div class="tip" id="138">
+            <strong>Signature:</strong> IEvent&lt;PropertyChangedEventHandler,PropertyChangedEventArgs&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a property value changes.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '139', 139)" onmouseover="showTip(event, '139', 139)">
+            Quit
+          </code>
+          <div class="tip" id="139">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcCommentEventArgs&gt;,IrcCommentEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the user has quit the network. This may not always be sent.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '140', 140)" onmouseover="showTip(event, '140', 140)">
+            RealName()
+          </code>
+          <div class="tip" id="140">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the real name of the user. This value never changes until the user reconnects.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '141', 141)" onmouseover="showTip(event, '141', 141)">
+            ServerInfo()
+          </code>
+          <div class="tip" id="141">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets arbitrary information about the server to which the user is connected.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '142', 142)" onmouseover="showTip(event, '142', 142)">
+            ServerName()
+          </code>
+          <div class="tip" id="142">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the name of the server to which the user is connected.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '143', 143)" onmouseover="showTip(event, '143', 143)">
+            UserName()
+          </code>
+          <div class="tip" id="143">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the current user name of the user. This value never changes until the user reconnects.
+            </br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <a href="https://matthid.github.io/ircdotnet/index.html">
+            <img src="https://matthid.github.io/ircdotnet/images/logo.png" style="width:140px;height:140px;margin:10px 0px 0px 35px;border-style:none;" />
+          </a>
+
+          <ul class="nav nav-list" id="menu">
+
+            <li class="nav-header">IRC.Net</li>
+
+            <li class="divider"></li>
+            <li><a href="https://www.nuget.org/packages/IrcDotNet/">Get IRC.Net package via NuGet</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet">Source Code</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet/issues">Open bugs and feature requests</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet/issues/new">Report Issue or Request Feature</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet/blob/devel/LICENSE.md">License (MIT)</a></li>
+            <li><a href="https://matthid.github.io/ircdotnet/Contributing.html">Contributing</a></li>
+            
+            <li class="nav-header">Documentation</li>
+              
+            <li><a href="https://matthid.github.io/ircdotnet/index.html">Quick Intro</a></li>
+            <li><a href="https://matthid.github.io/ircdotnet/ReleaseNotes.html">Release Notes</a></li>
+            <li><a href="https://matthid.github.io/ircdotnet/DevelopReadme.html">Development Intro</a></li>
+
+            <li class="nav-header">Reference</li>
+              
+            <li><a href="https://matthid.github.io/ircdotnet/references/index.html">API Reference</a></li>
+
+          </ul>
+        </div>
+      </div>
+    </div>
+      <a href="https://github.com/matthid/ircdotnet"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+    </body>
+  </html>

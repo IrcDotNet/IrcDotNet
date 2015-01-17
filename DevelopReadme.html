@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>IRC.Net implementation documentation
+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IRC.NET is a complete IRC (Internet Relay Chat) client library for the .NET Framework.">
+    <meta name="author" content="Alex Regueiro">
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="https://matthid.github.io/ircdotnet/content/style.css" />
+    <link type="text/css" rel="stylesheet" href="https://matthid.github.io/ircdotnet/content/prism.css" />
+    <script type="text/javascript" src="https://matthid.github.io/ircdotnet/content/tips.js"></script>
+	<script type="text/javascript" src="https://matthid.github.io/ircdotnet/content/prism.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://tpetricek.github.io/FSharp.Formatting/"><img height="16" width="16" src="http://fsharp.org/images/thumbs/FSharp.Formatting.png" /> F# Formatting</a></li>
+        </ul>
+        <h3 class="muted"><a href="https://matthid.github.io/ircdotnet/index.html">IRC.Net</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+<h1><a name="IRC-Net-implementation-documentation" class="anchor" href="#IRC-Net-implementation-documentation">IRC.Net implementation documentation</a></h1>
+
+<h2><a name="Building" class="anchor" href="#Building">Building</a></h2>
+
+<p>Open the <code>.sln</code> file or run <code>./build</code>.</p>
+
+<blockquote>
+  <p>NOTE: It is possible that you can only build the <code>.sln</code> file AFTER doing an initial <code>./build</code> (because nuget dependencies have to be resolved).</p>
+</blockquote>
+
+<h2><a name="General-overview" class="anchor" href="#General-overview">General overview:</a></h2>
+
+<p>This project aims to be a very flexible, extendable and good performing IRC implementation in C#.</p>
+
+<h3><a name="Issues-Features-TODOs" class="anchor" href="#Issues-Features-TODOs">Issues / Features / TODOs</a></h3>
+
+<p>New features are accepted via github pull requests (so just fork away right now!):  <a href="https://github.com/alexreg/ircdotnet.">https://github.com/alexreg/ircdotnet.</a></p>
+
+<p>Issues and TODOs are tracked on github, see: <a href="https://github.com/alexreg/ircdotnet/issues.">https://github.com/alexreg/ircdotnet/issues.</a></p>
+
+<p>Discussions/Forums are on IRC.</p>
+
+<h3><a name="Versioning" class="anchor" href="#Versioning">Versioning:</a></h3>
+
+<p><a href="http://semver.org/">http://semver.org/</a></p>
+
+<h3><a name="High-level-documentation-ordered-by-project" class="anchor" href="#High-level-documentation-ordered-by-project">High level documentation ordered by project.</a></h3>
+
+<ul>
+<li><code>IrcDotNet</code>: The Core of the IRC.Net implementation, basically all you need to get started.</li>
+</ul>
+
+<h3><a name="The-Project-structure" class="anchor" href="#The-Project-structure">The Project structure:</a></h3>
+
+<ul>
+<li><p>/.nuget/</p>
+<p>Nuget dependencies will be downloaded into this folder. 
+  This folder can safely be deleted without affecting the build.</p></li>
+<li><p>/build/</p>
+<p>The project assemblies will be build into this folder. This folder can safely be deleted without affecting the build.</p></li>
+<li><p>/lib/</p>
+<p>library dependencies (currently not used). Most dependencies are automatically managed by nuget and not in this folder. 
+  Only some internal dependencies and packages not in nuget. The git repository should always be "complete".</p></li>
+<li><p>/doc/</p>
+<p>Project documentation files. This folder contains both development and user documentation.</p></li>
+<li><p>/src/</p>
+<p>The Solution directory for all projects</p>
+<ul>
+<li><p>/src/source/</p>
+<p>The root for all projects (not including unit test projects).</p></li>
+<li><p>/src/samples/</p>
+<p>The root for all sample projects.</p></li>
+<li><p>/src/test/</p>
+<p>The root for all unit test projects.</p></li>
+</ul></li>
+<li><p>/test/</p>
+<p>The unit test assemblies will be build into this folder. This folder can safely be deleted without affecting the build.</p></li>
+<li><p>/tmp/</p>
+<p>This folder is ignored by git.</p></li>
+<li><p>/build.cmd, /build.sh, /build.fsx</p>
+<p>Files to directly start a build including unit tests via console (windows &amp; linux).</p></li>
+<li><p>/packages.config</p>
+<p>Nuget packages required by the build process.</p></li>
+</ul>
+
+<p>Each project should have has a corresponding project with the name <code>Test.${ProjectName}</code> in the test folder.
+This test project provides unit tests for the project <code>${ProjectName}</code>.</p>
+
+<h2><a name="Advanced-Building" class="anchor" href="#Advanced-Building">Advanced Building</a></h2>
+
+<p>The build is done in different steps and you can execute the build until a given step or a single step:</p>
+
+<p>First <code>build.sh</code> and <code>build.cmd</code> restore build dependencies and <code>nuget.exe</code>, then build.fsx is invoked:</p>
+
+<ul>
+<li><code>Clean</code>: cleans the directories (previous builds)</li>
+<li><code>RestorePackages</code>: restores nuget packages</li>
+<li><code>SetVersions</code>: sets the current version</li>
+<li><code>BuildApp_40</code>: build for net40</li>
+<li><code>BuildTest_40</code>: build the tests for net40</li>
+<li><code>Test_40</code>: run the tests for net40</li>
+<li><code>BuildApp_45</code>: build for net45</li>
+<li><code>BuildTest_45</code>: build the tests for net45</li>
+<li><code>Test_45</code>: run the tests for net45</li>
+<li><code>CopyToRelease</code>: copy the generated .dlls to release/lib</li>
+<li><code>LocalDoc</code>: create the local documentation you can view that locally</li>
+<li><code>All</code>: this does nothing itself but is used as a marker (executed by default when no parameter is given to ./build)</li>
+<li><code>VersionBump</code>: commits all current changes (when you change the version before you start the build you will have some files changed)</li>
+<li><code>NuGet</code>: generates the nuget packages</li>
+<li><code>GithubDoc</code>: generates the documentation for github</li>
+<li><code>ReleaseGithubDoc</code>: pushes the documentation to github</li>
+<li><code>Release</code>: a marker like "All"</li>
+</ul>
+
+<p>You can execute all steps until a given point with <code>./build #Step#</code> (replace #Step# with <code>Test_40</code> to execute <code>Clean</code>, <code>RestorePackages</code>, <code>SetVersions</code>, ..., <code>Test_40</code>)</p>
+
+<p>You can execute a single step with <code>build #Step#_single</code>: For example to build the nuget packages you can just invoke <code>./build NuGet_single</code></p>
+
+<blockquote>
+  <p>Of course you need to have the appropriate dlls in place (otherwise the Nuget package creation will fail); ie have build IRC.Net before.</p>
+</blockquote>
+
+<p>There is another (hidden) step <code>CleanAll</code> which will clean everything up (even build dependencies and the downloaded Nuget.exe), 
+this step is only needed when build dependencies change. <code>git clean -d -x -f</code> is also a good way to do that</p>
+
+<h2><a name="Visual-Studio-Monodevelop" class="anchor" href="#Visual-Studio-Monodevelop">Visual Studio / Monodevelop</a></h2>
+
+<p>As mentioned above you need to <code>build</code> at least once before you can open the 
+solution file (<code>src/IrcDotNet.sln</code>) with Visual Studio / Monodevelop.</p>
+
+<p>The default is that Visual Studio is configured for the latest build (<code>net45</code>).
+If you want to build another target with Visual Studio / Monodevelop do the following:</p>
+
+<ul>
+<li>Close the solution</li>
+<li><p>Open <code>src/buildConfig.targets</code> and change the <code>CustomBuildName</code> entry (near the top) to <code>sl40</code>, <code>net45</code> or <code>net40</code>.
+The line should then look like this:</p>
+<pre class="line-numbers language-markup"><code class="language-markup">&lt;CustomBuildName Condition=&quot; &#39;$(CustomBuildName)&#39; == &#39;&#39; &quot;&gt;net40&lt;/CustomBuildName&gt; 
+</code></pre></li>
+<li>Save the <code>src/buildConfig.targets</code> file and re-open the solution.</li>
+</ul>
+
+
+        </div>
+        <div class="span3">
+          <a href="https://matthid.github.io/ircdotnet/index.html">
+            <img src="https://matthid.github.io/ircdotnet/images/logo.png" style="width:140px;height:140px;margin:10px 0px 0px 35px;border-style:none;" />
+          </a>
+
+          <ul class="nav nav-list" id="menu">
+
+            <li class="nav-header">IRC.Net</li>
+
+            <li class="divider"></li>
+            <li><a href="https://www.nuget.org/packages/IrcDotNet/">Get IRC.Net package via NuGet</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet">Source Code</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet/issues">Open bugs and feature requests</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet/issues/new">Report Issue or Request Feature</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet/blob/devel/LICENSE.md">License (MIT)</a></li>
+            <li><a href="https://matthid.github.io/ircdotnet/Contributing.html">Contributing</a></li>
+            
+            <li class="nav-header">Documentation</li>
+              
+            <li><a href="https://matthid.github.io/ircdotnet/index.html">Quick Intro</a></li>
+            <li><a href="https://matthid.github.io/ircdotnet/ReleaseNotes.html">Release Notes</a></li>
+            <li><a href="https://matthid.github.io/ircdotnet/DevelopReadme.html">Development Intro</a></li>
+
+            <li class="nav-header">Reference</li>
+              
+            <li><a href="https://matthid.github.io/ircdotnet/references/index.html">API Reference</a></li>
+
+          </ul>
+        </div>
+      </div>
+    </div>
+      <a href="https://github.com/matthid/ircdotnet"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+    </body>
+  </html>

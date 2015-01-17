@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>IrcClient - IRC.Net</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Alex Regueiro">
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="https://matthid.github.io/ircdotnet/content/style.css" />
+    <link type="text/css" rel="stylesheet" href="https://matthid.github.io/ircdotnet/content/prism.css" />
+    <script type="text/javascript" src="https://matthid.github.io/ircdotnet/content/tips.js"></script>
+	<script type="text/javascript" src="https://matthid.github.io/ircdotnet/content/prism.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://tpetricek.github.io/FSharp.Formatting/"><img height="16" width="16" src="http://fsharp.org/images/thumbs/FSharp.Formatting.png" /> F# Formatting</a></li>
+        </ul>
+        <h3 class="muted"><a href="https://matthid.github.io/ircdotnet/index.html">IRC.Net</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>IrcClient </h1>
+<div class="xmldoc">
+    Defined in IrcDotNet.dll.
+</div>
+<div class="xmldoc">
+
+            Represents a client that communicates with a server using the IRC (Internet Relay Chat) protocol.
+            
+            Do not inherit this class unless the protocol itself is being extended.
+            </br></div>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
+            ChannelListReceived
+          </code>
+          <div class="tip" id="34">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcChannelListReceivedEventArgs&gt;,IrcChannelListReceivedEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a list of channels has been received from the server in response to a query.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
+            Channels
+          </code>
+          <div class="tip" id="35">
+            <strong>Signature:</strong> IrcChannelCollection<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets a collection of all channels known to the client.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
+            ChannelUserModes
+          </code>
+          <div class="tip" id="36">
+            <strong>Signature:</strong> ReadOnlyCollection&lt;char&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets a collection of channel modes that apply to users in a channel.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
+            ClientInfoReceived
+          </code>
+          <div class="tip" id="37">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the client information has been received from the server, following registration.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
+            Connected
+          </code>
+          <div class="tip" id="38">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the client has connected to the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
+            ConnectFailed
+          </code>
+          <div class="tip" id="39">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcErrorEventArgs&gt;,IrcErrorEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the client has failed to connect to the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
+            Disconnected
+          </code>
+          <div class="tip" id="40">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the client has disconnected from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
+            Error
+          </code>
+          <div class="tip" id="41">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcErrorEventArgs&gt;,IrcErrorEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the client encounters an error during execution, while connected.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
+            ErrorMessageReceived
+          </code>
+          <div class="tip" id="42">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcErrorMessageEventArgs&gt;,IrcErrorMessageEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when an error message (ERROR command) is received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
+            FloodPreventer()
+          </code>
+          <div class="tip" id="43">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets or sets an object that limits the rate of outgoing messages in order to prevent flooding the server.
+            The value is  by default, which indicates that no flood prevention should be
+            performed.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
+            IsConnected
+          </code>
+          <div class="tip" id="44">
+            <strong>Signature:</strong> bool<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets whether the client is currently connected to a server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
+            IsDisposed
+          </code>
+          <div class="tip" id="45">
+            <strong>Signature:</strong> bool<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets whether the <a href="ircdotnet-ircclient.html">IrcClient</a> object has been disposed.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
+            IsRegistered
+          </code>
+          <div class="tip" id="46">
+            <strong>Signature:</strong> bool<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets whether the client connection has been registered with the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
+            LocalUser
+          </code>
+          <div class="tip" id="47">
+            <strong>Signature:</strong> IrcLocalUser<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the local user. The local user is the user managed by this client connection.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
+            MessageOfTheDay
+          </code>
+          <div class="tip" id="48">
+            <strong>Signature:</strong> string<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the Message of the Day (MOTD) sent by the server.
+            This value is set after successful registration of the connection.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
+            MotdReceived
+          </code>
+          <div class="tip" id="49">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the Message of the Day (MOTD) has been received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
+            NetworkInformation
+          </code>
+          <div class="tip" id="50">
+            <strong>Signature:</strong> Nullable&lt;IrcNetworkInfo&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets information about the IRC network that is given by the server.
+            This value is set after successful registration of the connection.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '51', 51)" onmouseover="showTip(event, '51', 51)">
+            NetworkInformationReceived
+          </code>
+          <div class="tip" id="51">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcCommentEventArgs&gt;,IrcCommentEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when information about the IRC network has been received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '52', 52)" onmouseover="showTip(event, '52', 52)">
+            PingReceived
+          </code>
+          <div class="tip" id="52">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcPingOrPongReceivedEventArgs&gt;,IrcPingOrPongReceivedEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a ping query is received from the server.
+            The client automatically replies to pings from the server; this event is only a notification.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '53', 53)" onmouseover="showTip(event, '53', 53)">
+            PongReceived
+          </code>
+          <div class="tip" id="53">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcPingOrPongReceivedEventArgs&gt;,IrcPingOrPongReceivedEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a pong reply is received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '54', 54)" onmouseover="showTip(event, '54', 54)">
+            ProtocolError
+          </code>
+          <div class="tip" id="54">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcProtocolErrorEventArgs&gt;,IrcProtocolErrorEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a protocol (numeric) error is received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '55', 55)" onmouseover="showTip(event, '55', 55)">
+            RawMessageReceived
+          </code>
+          <div class="tip" id="55">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcRawMessageEventArgs&gt;,IrcRawMessageEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a raw message has been received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
+            RawMessageSent
+          </code>
+          <div class="tip" id="56">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcRawMessageEventArgs&gt;,IrcRawMessageEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a raw message has been sent to the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
+            Registered
+          </code>
+          <div class="tip" id="57">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the connection has been registered.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
+            ServerAvailableChannelModes()
+          </code>
+          <div class="tip" id="58">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets a collection of the channel modes available on the server.
+            This value is set after successful registration of the connection.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
+            ServerAvailableUserModes()
+          </code>
+          <div class="tip" id="59">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets a collection of the user modes available on the server.
+            This value is set after successful registration of the connection.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
+            ServerBounce
+          </code>
+          <div class="tip" id="60">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcServerInfoEventArgs&gt;,IrcServerInfoEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a bounce message is received from the server, telling the client to connect to a new server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
+            ServerCreatedMessage()
+          </code>
+          <div class="tip" id="61">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the 'Created' message sent by the server.
+            This value is set after successful registration of the connection.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
+            ServerLinksListReceived
+          </code>
+          <div class="tip" id="62">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcServerLinksListReceivedEventArgs&gt;,IrcServerLinksListReceivedEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a list of server links has been received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
+            ServerName()
+          </code>
+          <div class="tip" id="63">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the host name of the server.
+            This value is set after successful registration of the connection.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
+            ServerStatsReceived
+          </code>
+          <div class="tip" id="64">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcServerStatsReceivedEventArgs&gt;,IrcServerStatsReceivedEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when server statistics have been received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
+            ServerSupportedFeatures
+          </code>
+          <div class="tip" id="65">
+            <strong>Signature:</strong> ReadOnlyDictionary&lt;string,string&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets a dictionary of the features supported by the server, keyed by feature name, as returned by the
+            ISUPPORT message.
+            This value is set after successful registration of the connection.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
+            ServerSupportedFeaturesReceived
+          </code>
+          <div class="tip" id="66">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a list of features supported by the server (ISUPPORT) has been received.
+            This event may be raised more than once after registration, depending on the size of the list received.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
+            ServerTimeReceived
+          </code>
+          <div class="tip" id="67">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcServerTimeEventArgs&gt;,IrcServerTimeEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the local date/time for a specific server has been received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
+            ServerVersion()
+          </code>
+          <div class="tip" id="68">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the version of the server.
+            This value is set after successful registration of the connection.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '69', 69)" onmouseover="showTip(event, '69', 69)">
+            ServerVersionInfoReceived
+          </code>
+          <div class="tip" id="69">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcServerVersionInfoEventArgs&gt;,IrcServerVersionInfoEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when information about a specific server on the IRC network has been received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
+            TextEncoding()
+          </code>
+          <div class="tip" id="70">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets or sets the text encoding to use for reading from and writing to the network data stream.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
+            Users
+          </code>
+          <div class="tip" id="71">
+            <strong>Signature:</strong> IrcUserCollection<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets a collection of all users known to the client, including the local user.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '72', 72)" onmouseover="showTip(event, '72', 72)">
+            ValidateSslCertificate
+          </code>
+          <div class="tip" id="72">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcValidateSslCertificateEventArgs&gt;,IrcValidateSslCertificateEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when the SSL certificate received from the server should be validated.
+            The certificate is automatically validated if this event is not handled.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '73', 73)" onmouseover="showTip(event, '73', 73)">
+            WelcomeMessage()
+          </code>
+          <div class="tip" id="73">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the 'Welcome' message sent by the server.
+            This value is set after successful registration of the connection.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '74', 74)" onmouseover="showTip(event, '74', 74)">
+            WhoIsReplyReceived
+          </code>
+          <div class="tip" id="74">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcUserEventArgs&gt;,IrcUserEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a reply to a Who Is query has been received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '75', 75)" onmouseover="showTip(event, '75', 75)">
+            WhoReplyReceived
+          </code>
+          <div class="tip" id="75">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcNameEventArgs&gt;,IrcNameEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a reply to a Who query has been received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '76', 76)" onmouseover="showTip(event, '76', 76)">
+            WhoWasReplyReceived
+          </code>
+          <div class="tip" id="76">
+            <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcUserEventArgs&gt;,IrcUserEventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Occurs when a reply to a Who Was query has been received from the server.
+            </br>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '77', 77)" onmouseover="showTip(event, '77', 77)">
+            YourHostMessage()
+          </code>
+          <div class="tip" id="77">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+            Gets the 'Your Host' message sent by the server.
+            This value is set after successful registration of the connection.
+            </br>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <a href="https://matthid.github.io/ircdotnet/index.html">
+            <img src="https://matthid.github.io/ircdotnet/images/logo.png" style="width:140px;height:140px;margin:10px 0px 0px 35px;border-style:none;" />
+          </a>
+
+          <ul class="nav nav-list" id="menu">
+
+            <li class="nav-header">IRC.Net</li>
+
+            <li class="divider"></li>
+            <li><a href="https://www.nuget.org/packages/IrcDotNet/">Get IRC.Net package via NuGet</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet">Source Code</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet/issues">Open bugs and feature requests</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet/issues/new">Report Issue or Request Feature</a></li>
+            <li><a href="https://github.com/matthid/ircdotnet/blob/devel/LICENSE.md">License (MIT)</a></li>
+            <li><a href="https://matthid.github.io/ircdotnet/Contributing.html">Contributing</a></li>
+            
+            <li class="nav-header">Documentation</li>
+              
+            <li><a href="https://matthid.github.io/ircdotnet/index.html">Quick Intro</a></li>
+            <li><a href="https://matthid.github.io/ircdotnet/ReleaseNotes.html">Release Notes</a></li>
+            <li><a href="https://matthid.github.io/ircdotnet/DevelopReadme.html">Development Intro</a></li>
+
+            <li class="nav-header">Reference</li>
+              
+            <li><a href="https://matthid.github.io/ircdotnet/references/index.html">API Reference</a></li>
+
+          </ul>
+        </div>
+      </div>
+    </div>
+      <a href="https://github.com/matthid/ircdotnet"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+    </body>
+  </html>
