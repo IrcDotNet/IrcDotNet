@@ -9,3 +9,8 @@ script:
 branches:
   except:
     - gh-pages
+
+notifications:
+  email: false
+  irc:
+    - "chat.freenode.net##irc.net"

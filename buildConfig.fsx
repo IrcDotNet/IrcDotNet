@@ -26,8 +26,8 @@ open Fake.FSharpFormatting
 open AssemblyInfoFile
 
 // properties
-let projectName = "IRC.Net"
-let copyrightNotice = "IRC.Net Copyright © Alex Regueiro 2011-2015 @"
+let projectName = "IRC.NET"
+let copyrightNotice = "IRC.NET Copyright © Alex Regueiro 2011-2015"
 let projectSummary = "IRC.NET is a complete IRC (Internet Relay Chat) client library for the .NET Framework."
 let projectDescription = "IRC.NET aims to provide a complete and efficient implementation of the protocol as described in RFCs 1459 and 2812, as well as de-facto modern features of the protocol."
 let authors = ["Alex Regueiro"]
