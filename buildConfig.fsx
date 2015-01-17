@@ -49,7 +49,7 @@ let nugetDir  = "./.nuget/"
 let packageDir  = "./.nuget/packages"
 
 let github_user = "alexreg"
-let github_project = "ircdotnet"
+let github_project = "IrcDotNet"
 let nuget_url = "https://www.nuget.org/packages/IrcDotNet/"
 
 let tags = "communication networking irc ctcp"
