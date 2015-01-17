@@ -91,7 +91,7 @@
     <Compile Include="CircularBufferStream.cs" />
     <Compile Include="SafeLineReader.cs" />
     <Compile Include="TextUtilities.cs" />
-    <Compile Include="DefaultIrcClient.cs" />
+    <Compile Include="StandardIrcClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\IrcDotNet.snk">
