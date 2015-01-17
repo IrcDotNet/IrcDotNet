@@ -15,7 +15,8 @@ using System.Net.Security;
 
 namespace IrcDotNet
 {
-    public class DefaultIrcClient : IrcClient
+    /// <inheritdoc/>
+    public class StandardIrcClient : IrcClient
     {
         // Minimum duration of time to wait between sending successive raw messages.
         private const long minimumSendWaitTime = 50;
@@ -35,7 +36,7 @@ namespace IrcDotNet
         private Timer sendTimer;
         private AutoResetEvent disconnectedEvent;
 
-        public DefaultIrcClient()
+        public StandardIrcClient()
             : base()
         {
             this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
