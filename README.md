@@ -1,6 +1,6 @@
 # IRC.NET
 
-*latest* documentation available on https://alexreg.github.io/IrcDotNet/.
+## [Documentation](https://alexreg.github.io/IrcDotNet/)
 
 ## Build status
 
