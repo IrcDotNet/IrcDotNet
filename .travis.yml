@@ -1,0 +1,11 @@
+language: csharp
+
+before_script:
+- chmod +x build.sh
+
+script: 
+  - ./build.sh All
+  
+branches:
+  except:
+    - gh-pages

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>IRC.Net</id>
+    <title>IRC.NET Samples</title>
+    <version>0.4.1</version>
+    <authors>Alex Regueiro</authors>
+    <owners>Alex Regueiro</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/alexreg/ircdotnet/blob/devel/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/alexreg/ircdotnet</projectUrl>
+    <summary>
+      Sample projects for IRC.NET library (.NET 4.0)
+    </summary>
+    <description>
+      These sample projects demonstrate how the IRC.NET library can be used in various ways.
+    </description>
+    <releaseNotes>This release primarily introduces thread-safety in the IrcClient and CtcpClient classes; this is important particularly in UI scenarios. Minor stability improvements have also been made. The TwitterBot sample project has been updated to use v2 of the TweetSharp library and has several bug fixes.
+IrcClient and CtcpClient classes are now properly thread-safe (including IDisposable implementaiton).
+IrcClient now handles replies to STATS messages (server statistics).
+Improved XML documentation.
+TwitterBot sample now uses TweetSharp v2 library.
+Created NuGet package for library and samples.
+Minor bug fixes; see commit log.</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>communication networking irc ctcp</tags>
+    <dependencies><group><dependency id="IrcDotNet" version="0.4.1" /></group></dependencies>
+  </metadata>
+  <files>
+    <file src="..\..\src\Samples\**" target="content\Samples\" />
+    <file src="..\..\README.md" target="content\App_Readme\IrcDotNet.readme.md" />
+    <file src="..\..\AUTHORS.md" target="content\App_Readme\IrcDotNet.authors.md" />
+    <file src="..\..\LICENSE.md" target="content\App_Readme\IrcDotNet.license.md" />
+  </files>
+</package>
