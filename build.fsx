@@ -147,6 +147,7 @@ MyTarget "NuGet" (fun _ ->
             Project = projectName
             Summary = projectSummary
             Description = projectDescription
+            WorkingDir = "."
             Version = version_nuget
             ReleaseNotes = toLines release.Notes
             Tags = tags
