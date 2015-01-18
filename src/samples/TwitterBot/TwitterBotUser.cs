@@ -60,17 +60,19 @@ namespace TwitterBot
 
         public TwitterStatus SendTweet(string text)
         {
-            return this.service.SendTweet(text);
+            return this.service.SendTweet(new SendTweetOptions() { Status = text });
         }
 
         public IEnumerable<TwitterStatus> ListTweetsMentioningMe(int tweetCount = defaultReplyTweetCount)
         {
-            return this.service.ListTweetsMentioningMe(tweetCount);
+            return this.service.ListTweetsMentioningMe(
+                    new ListTweetsMentioningMeOptions() { Count = tweetCount });
         }
 
         public IEnumerable<TwitterStatus> ListTweetsOnHomeTimeline(int tweetCount = defaultReplyTweetCount)
         {
-            return this.service.ListTweetsOnHomeTimeline(tweetCount);
+            return this.service.ListTweetsOnHomeTimeline(
+                new ListTweetsOnHomeTimelineOptions() { Count = tweetCount });
         }
 
         // Returns whether log-in succeeds.
@@ -81,7 +83,7 @@ namespace TwitterBot
                 // Log in to Twitter service using xAuth authentication.
                 var token = this.service.GetAccessTokenWithXAuth(username, password);
                 this.service.AuthenticateWith(token.Token, token.TokenSecret);
-                var user = this.service.GetUserProfile();
+                var user = this.service.GetUserProfile(new GetUserProfileOptions());
                 if (user.Name == null)
                     return false;
                 
@@ -105,7 +107,7 @@ namespace TwitterBot
         public void LogOut()
         {
             // Log out of Twitter service.
-            this.service.EndSession();
+            //this.service.EndSession();
             this.TwitterUser = null;
             this.IsAuthenticated = false;
         }

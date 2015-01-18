@@ -97,6 +97,7 @@
     <Compile Include="SafeLineReader.cs" />
     <Compile Include="TextUtilities.cs" />
     <Compile Include="StandardIrcClient.cs" />
+    <Compile Include="TwitchIrcClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\IrcDotNet.snk">
