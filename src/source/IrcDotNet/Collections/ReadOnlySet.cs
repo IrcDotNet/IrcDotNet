@@ -38,6 +38,23 @@ namespace IrcDotNet.Collections
             this.set = set;
         }
 
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            bool first = true;
+            foreach (T t in this)
+            {
+                if (!first)
+                    sb.Append(' ');
+
+                first = false;
+                sb.Append(t.ToString());
+            }
+
+            return sb.ToString();
+        }
+
         #region ISet<T> Members
 
         bool ISet<T>.Add(T item)

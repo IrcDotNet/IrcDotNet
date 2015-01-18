@@ -32,18 +32,18 @@ namespace IrcDotNet
         public static readonly int DefaultPort = 6667;
 
         // Regular expressions used for extracting information from protocol messages.
-        private static readonly string regexNickName;
-        private static readonly string regexUserName;
-        private static readonly string regexHostName;
-        private static readonly string regexChannelName;
-        private static readonly string regexTargetMask;
-        private static readonly string regexServerName;
-        private static readonly string regexNickNameId;
-        private static readonly string regexUserNameId;
-        private static readonly string regexMessagePrefix;
-        private static readonly string regexMessageTarget;
+        protected static readonly string regexNickName;
+        protected static readonly string regexUserName;
+        protected static readonly string regexHostName;
+        protected static readonly string regexChannelName;
+        protected static readonly string regexTargetMask;
+        protected static readonly string regexServerName;
+        protected static readonly string regexNickNameId;
+        protected static readonly string regexUserNameId;
+        protected static readonly string regexMessagePrefix;
+        protected static readonly string regexMessageTarget;
 
-        private static readonly string isupportPrefix;
+        protected static readonly string isupportPrefix;
 
         static IrcClient()
         {
@@ -69,7 +69,7 @@ namespace IrcDotNet
         private Collection<IrcServer> servers;
 
         // True if connection has been registered with server;
-        private bool isRegistered;
+        protected bool isRegistered;
 
         // Stores information about local user.
         protected IrcLocalUser localUser;
@@ -86,7 +86,7 @@ namespace IrcDotNet
         private Dictionary<char, char> channelUserModesPrefixes;
 
         // Builds MOTD (message of the day) string as it is received from server.
-        private StringBuilder motdBuilder;
+        protected StringBuilder motdBuilder;
 
         // Information about the IRC network given by the server.
         private IrcNetworkInfo networkInformation;
@@ -181,7 +181,7 @@ namespace IrcDotNet
         public string WelcomeMessage
         {
             get;
-            private set;
+            protected set;
         }
 
         /// <summary>

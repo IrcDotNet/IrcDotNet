@@ -1,4 +1,9 @@
-﻿### 0.4.1
+﻿### 0.5.0
+
+ * Support for twitch.tv (thanks to @DarkAutumn)
+ * Several bugfixes
+
+### 0.4.1
 
 This release primarily introduces thread-safety in the IrcClient and CtcpClient classes; this is important particularly in UI scenarios. Minor stability improvements have also been made. The TwitterBot sample project has been updated to use v2 of the TweetSharp library and has several bug fixes.
 

@@ -110,7 +110,9 @@ namespace IrcDotNet
                 // Get channel modes and list of mode parameters from message parameters.
                 Debug.Assert(message.Parameters[1] != null);
                 var modesAndParameters = GetModeAndParameters(message.Parameters.Skip(1));
-                channel.HandleModesChanged(message.Source as IrcUser, modesAndParameters.Item1,
+                var source = message.Source as IrcUser;
+                OnChannelModeChanged(channel, source, modesAndParameters.Item1, modesAndParameters.Item2);
+                channel.HandleModesChanged(source, modesAndParameters.Item1,
                     modesAndParameters.Item2);
             }
             else if (message.Parameters[0] == this.localUser.NickName)
@@ -124,6 +126,8 @@ namespace IrcDotNet
                     message.Parameters[0]));
             }
         }
+
+        protected virtual void OnChannelModeChanged(IrcChannel channel, IrcUser source, string newModes, IEnumerable<string> newModeParameters) { }
 
         /// <summary>
         /// Process TOPIC messages received from the server.
@@ -295,7 +299,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("001")]
-        protected internal void ProcessMessageReplyWelcome(IrcMessage message)
+        protected virtual internal void ProcessMessageReplyWelcome(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] != null);
 
@@ -343,7 +347,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("004")]
-        protected internal void ProcessMessageReplyMyInfo(IrcMessage message)
+        protected virtual internal void ProcessMessageReplyMyInfo(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
@@ -1124,7 +1128,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="message">The message received from the server.</param>
         [MessageProcessor("375")]
-        protected internal void ProcessMessageReplyMotdStart(IrcMessage message)
+        protected virtual internal void ProcessMessageReplyMotdStart(IrcMessage message)
         {
             Debug.Assert(message.Parameters[0] == this.localUser.NickName);
 
