@@ -41,4 +41,4 @@ the Moonlight framework, though it may be officially supported in the future.
 
 * Talk to us on our [IRC channel](irc://freenode.net/##irc.net).
 
-* If you have confirmed that the behaviour is unexpected, submit an [issue](https://github.com/alexreg/ircdotnet/issues) on GitHub.
+* If you have confirmed that some behaviour is unexpected, submit an [issue](https://github.com/alexreg/ircdotnet/issues) on GitHub.
