@@ -7,7 +7,7 @@
     <authors>@authors@</authors>
     <owners>@authors@</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <licenseUrl>https://github.com/alexreg/ircdotnet/blob/devel/LICENSE.md</licenseUrl>
+    <licenseUrl>https://github.com/alexreg/ircdotnet/blob/develop/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/alexreg/ircdotnet</projectUrl>
     <summary>@summary@</summary>
     <description>@description@</description>
