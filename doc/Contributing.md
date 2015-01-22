@@ -1,4 +1,4 @@
-﻿# RazorEngine
+﻿# IRC.NET
 
 ## Contributing
 
