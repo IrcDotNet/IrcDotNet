@@ -1,7 +1,6 @@
-﻿### 0.5.0
+### 0.5.0
 
- * Support for twitch.tv (thanks to @DarkAutumn)
- * Several bugfixes
+Various refactoring improvements have been made, along with a number of bug fixes. Some usability issues have also been resolved.
 
 ### 0.4.1
 

@@ -16,20 +16,15 @@
 
 ## Overview
 
-IRC.NET is a complete IRC (Internet Relay Chat) client library for the
-.NET Framework 4.0 and Silverlight 4.0. It aims to provide a complete and
-efficient implementation of the protocol as described in RFCs 1459 and 2812,
-as well as de-facto modern features of the protocol.
+IRC.NET is a complete IRC (Internet Relay Chat) client library for the .NET Framework 4.0 and Silverlight 4.0. It aims to provide a complete and efficient implementation of the protocol as described in RFCs 1459 and 2812, as well as de-facto modern features of the protocol.
 
 This project was formlery hosted on [Launchpad](https://launchpad.net/ircdotnet).
 
 ### Mono
 
-The .NET Framework version of the library is also intended to compile and run
-under Mono 2.6 and later.
+The .NET Framework version of the library is also intended to compile and run under Mono 2.6 and later.
 
-The Silverlight version of the library is not guaranteed to compile or run on
-the Moonlight framework, though it may be officially supported in the future.
+The Silverlight version of the library is not guaranteed to compile or run on the Moonlight framework, though it may be officially supported in the future.
 
 ### Non-RFC Features
 
@@ -39,6 +34,6 @@ the Moonlight framework, though it may be officially supported in the future.
 
 ## Help
 
-* Talk to us on our [IRC channel](irc://freenode.net/##irc.net) <irc://freenode.net/##irc.net>.
+* Talk to us on our [IRC channel](irc://chat.freenode.net/##irc.net).
 
-* If you have confirmed that some behaviour is unexpected, submit an [issue](https://github.com/alexreg/ircdotnet/issues) on GitHub.
+* If you have confirmed that the behaviour is unexpected, submit an [issue](https://github.com/alexreg/ircdotnet/issues) on GitHub.
