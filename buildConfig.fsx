@@ -27,14 +27,14 @@ open AssemblyInfoFile
 
 // properties
 let projectName = "IRC.NET"
-let copyrightNotice = "IRC.NET Copyright © Alex Regueiro 2011-2015"
-let projectSummary = "IRC.NET is a complete IRC (Internet Relay Chat) client library for the .NET Framework."
+let copyrightNotice = "IRC.NET is copyright © 2011-2015 Alex Regueiro"
+let projectSummary = "A complete IRC (Internet Relay Chat) client library for the .NET Framework"
 let projectDescription = "IRC.NET aims to provide a complete and efficient implementation of the protocol as described in RFCs 1459 and 2812, as well as de-facto modern features of the protocol."
 let authors = ["Alex Regueiro"]
 let page_author = "Matthias Dittrich"
-let mail = "alexreg@me.com"
-let version = "0.4.1.0"
-let version_nuget = "0.4.1"
+let mail = "alex@noldorin.com"
+let version = "0.5.0"
+let version_nuget = "0.5.0"
 let commitHash = Information.getCurrentSHA1(".")
 
 //let buildTargets = environVarOrDefault "BUILDTARGETS" ""

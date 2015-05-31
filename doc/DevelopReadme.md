@@ -1,36 +1,36 @@
-﻿# IRC.Net implementation documentation 
+﻿# IRC.NET Development
 
 ## Building
 
-Open the ``.sln`` file or run ``./build``.
+Open the solution (`.sln`) file in an IDE or run `./build` from the shell.
 
-> NOTE: It is possible that you can only build the ``.sln`` file AFTER doing an initial ``./build`` (because nuget dependencies have to be resolved).
+*Note:* It is possible that you can only build the ``.sln`` file *after* doing an initial ``./build`` (because NuGet dependencies have to be resolved).
 
-## General overview:
+## Overview
 
-This project aims to be a very flexible, extendable and good performing IRC implementation in C#.
+This project aims to be a simple, flexible, and efficient implementation of the IRC protocol in C#, for the .NET platform.
 
-### Issues / Features / TODOs
+### Issues & Features
 
-New features are accepted via github pull requests (so just fork away right now!):  https://github.com/alexreg/ircdotnet.
+New features are accepted via GitHub pull requests from the [official repository](https://github.com/alexreg/ircdotnet).
 
-Issues and TODOs are tracked on github, see: https://github.com/alexreg/ircdotnet/issues.
+Issues and TODOs are tracked on [GitHub](https://github.com/alexreg/ircdotnet/issues).
 
-Discussions/Forums are on IRC. 
+General discussions is held in our [IRC channel](irc://chat.freenode.net/).
 
-### Versioning: 
+### Versioning
 
-http://semver.org/
+This project uses [Semantic Versioning](http://semver.org/).
 
-### High level documentation ordered by project.
+### Documentation
 
-- `IrcDotNet`: The Core of the IRC.Net implementation, basically all you need to get started.
+- `IrcDotNet`: the core of the IRC.NET implementation; basically, all you need to get started.
 
-### The Project structure:
+### Project Structure
 
 - /.nuget/
 
-	Nuget dependencies will be downloaded into this folder. 
+	NuGet dependencies will be downloaded into this folder. 
 	This folder can safely be deleted without affecting the build.
 
 - /build/
@@ -39,8 +39,8 @@ http://semver.org/
 
 - /lib/
 
-	library dependencies (currently not used). Most dependencies are automatically managed by nuget and not in this folder. 
-	Only some internal dependencies and packages not in nuget. The git repository should always be "complete".
+	library dependencies (currently not used). Most dependencies are automatically managed by NuGet and not in this folder. 
+	Only some internal dependencies and packages not in NuGet. The Git repository should always be "complete".
 
 - /doc/
 
@@ -76,20 +76,19 @@ http://semver.org/
 
 -  /packages.config
 
-	Nuget packages required by the build process.
-
+	NuGet packages required by the build process.
 
 Each project should have has a corresponding project with the name `Test.${ProjectName}` in the test folder.
 This test project provides unit tests for the project `${ProjectName}`.
 
 ## Advanced Building
 
-The build is done in different steps and you can execute the build until a given step or a single step:
+The build is done in various steps, and you can execute the build until a given step or a single step:
 
-First `build.sh` and `build.cmd` restore build dependencies and `nuget.exe`, then build.fsx is invoked:
+Firstly, running `build.sh` and `build.cmd` restore build dependencies and `nuget.exe`, then build.fsx is invoked:
 
  - `Clean`: cleans the directories (previous builds)
- - `RestorePackages`: restores nuget packages
+ - `RestorePackages`: restores NuGet packages
  - `SetVersions`: sets the current version
  - `BuildApp_40`: build for net40
  - `BuildTest_40`: build the tests for net40
@@ -106,26 +105,23 @@ First `build.sh` and `build.cmd` restore build dependencies and `nuget.exe`, the
  - `ReleaseGithubDoc`: pushes the documentation to github
  - `Release`: a marker like "All"
 
-You can execute all steps until a given point with `./build #Step#` (replace #Step# with `Test_40` to execute `Clean`, `RestorePackages`, `SetVersions`, ..., `Test_40`)
+You can execute all steps until a given point with `./build #Step#`. (Replace `#Step#` with `Test_40` to execute `Clean`, `RestorePackages`, `SetVersions`, etc.)
 
-You can execute a single step with `build #Step#_single`: For example to build the nuget packages you can just invoke `./build NuGet_single` 
+You can execute a single step with `build #Step#_single`. For example, to build the NuGet packages you can just invoke `./build NuGet_single`. Of course, you need to have the appropriate DLLs already in place (otherwise the NuGet package creation will fail); this can be ensured simply by building IRC.NET previously.
 
-> Of course you need to have the appropriate dlls in place (otherwise the Nuget package creation will fail); ie have build IRC.Net before.
+There is another (hidden) step named `CleanAll` which will clean everything up (even build dependencies and the downloaded `nuget.exe`), 
+this step is only needed when build dependencies change. Alternatively, you can run `git clean -d -x -f` from the shell.
 
-
-There is another (hidden) step `CleanAll` which will clean everything up (even build dependencies and the downloaded Nuget.exe), 
-this step is only needed when build dependencies change. `git clean -d -x -f` is also a good way to do that
-
-## Visual Studio / Monodevelop
+## Visual Studio / MonoDevelop
 
 As mentioned above you need to `build` at least once before you can open the 
-solution file (`src/IrcDotNet.sln`) with Visual Studio / Monodevelop.
+solution file (`src/IrcDotNet.sln`) with Visual Studio / MonoDevelop.
 
 The default is that Visual Studio is configured for the latest build (`net45`).
-If you want to build another target with Visual Studio / Monodevelop do the following:
+If you want to build another target with Visual Studio / MonoDevelop do the following:
 
- - Close the solution
- - Open `src/buildConfig.targets` and change the `CustomBuildName` entry (near the top) to `sl40`, `net45` or `net40`.
+ - Close the solution.
+ - Open `src/buildConfig.targets` and change the `CustomBuildName` entry to `sl40`, `net45` or `net40`.
    The line should then look like this:
    
    ```markup
