@@ -30,6 +30,7 @@ namespace IrcDotNet
         // Network (TCP) I/O.
         private Socket socket;
         private CircularBufferStream receiveStream;
+        private Stream networkStream;
         private Stream dataStream;
         private StreamReader dataStreamReader;
         private SafeLineReader dataStreamLineReader;
@@ -66,6 +67,11 @@ namespace IrcDotNet
                     this.socket = null;
 
                     HandleClientDisconnected();
+                }
+                if (this.networkStream != null)
+                {
+                    this.networkStream.Dispose();
+                    this.networkStream = null;
                 }
                 if (this.receiveStream != null)
                 {
@@ -209,6 +215,8 @@ namespace IrcDotNet
             base.ResetState();
 
             // Reset network I/O objects.
+            if (this.networkStream != null)
+                this.networkStream.Dispose();
             if (this.receiveStream != null)
                 this.receiveStream.Dispose();
             if (this.dataStream != null)
@@ -287,17 +295,19 @@ namespace IrcDotNet
             var sendEventArgs = new SocketAsyncEventArgs();
             sendEventArgs.SetBuffer(buffer, offset, count);
             sendEventArgs.UserToken = token;
-            sendEventArgs.Completed += SendCompleted;
+            //sendEventArgs.Completed += SendCompleted;
 
-            if (!this.socket.SendAsync(sendEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>)SendCompleted).BeginInvoke(
-                    this.socket, sendEventArgs, null, null);
+            this.networkStream.BeginWrite(buffer, offset, count,
+                SendCompleted, sendEventArgs);
         }
 
-        private void SendCompleted(object sender, SocketAsyncEventArgs e)
+        private void SendCompleted(IAsyncResult ar)
         {
+            var e = (SocketAsyncEventArgs)(ar.AsyncState);
             try
             {
+                this.networkStream.EndWrite(ar);
+
                 if (e.SocketError != SocketError.Success)
                 {
                     HandleSocketError(e.SocketError);
@@ -329,24 +339,32 @@ namespace IrcDotNet
             }
         }
 
+        byte[] receiveAsyncBuffer;
         private void ReceiveAsync()
         {
             // Read data received from socket to buffer asynchronously.
             var receiveEventArgs = new SocketAsyncEventArgs();
             Debug.Assert(this.receiveStream.Buffer.Length - (int)this.receiveStream.WritePosition > 0);
-            receiveEventArgs.SetBuffer(this.receiveStream.Buffer, (int)this.receiveStream.WritePosition,
-                                       this.receiveStream.Buffer.Length - (int)this.receiveStream.WritePosition);
-            receiveEventArgs.Completed += ReceiveCompleted;
+            //receiveEventArgs.SetBuffer(this.receiveStream.Buffer, (int)this.receiveStream.WritePosition,
+            //                           this.receiveStream.Buffer.Length - (int)this.receiveStream.WritePosition);
+            //receiveEventArgs.Completed += ReceiveCompleted;
 
-            if (!this.socket.ReceiveAsync(receiveEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>)ReceiveCompleted).BeginInvoke(
-                    this.socket, receiveEventArgs, null, null);
+            if (receiveAsyncBuffer == null)
+            {
+                receiveAsyncBuffer = new byte[1024];
+            }
+
+            this.networkStream.BeginRead(receiveAsyncBuffer, 0,
+                receiveAsyncBuffer.Length, ReceiveCompleted, receiveEventArgs);
         }
 
-        private void ReceiveCompleted(object sender, SocketAsyncEventArgs e)
+        private void ReceiveCompleted(IAsyncResult ar)
         {
+            var e = (SocketAsyncEventArgs)(ar.AsyncState);
             try
             {
+                var bytesTransferred = this.networkStream.EndRead(ar);
+
                 if (e.SocketError != SocketError.Success)
                 {
                     HandleSocketError(e.SocketError);
@@ -354,14 +372,14 @@ namespace IrcDotNet
                 }
 
                 // Check if remote host has closed connection.
-                if (e.BytesTransferred == 0)
+                if (bytesTransferred == 0)
                 {
                     Disconnect();
                     return;
                 }
 
-                // Indicate that block of data has been read into receive buffer.
-                this.receiveStream.WritePosition += e.BytesTransferred;
+                // Take the data we just received and write it to the receiveStream
+                this.receiveStream.Write(receiveAsyncBuffer, 0, bytesTransferred);
                 this.dataStreamReader.DiscardBufferedData();
 
                 // Read each terminated line of characters from data stream.
@@ -428,10 +446,11 @@ namespace IrcDotNet
 
                 // Create stream for received data. Use SSL stream on top of network stream, if specified.
                 this.receiveStream = new CircularBufferStream(socketReceiveBufferSize);
-#if SILVERLIGHT
                 this.dataStream = this.receiveStream;
+#if SILVERLIGHT
+                this.networkStream = new NetworkStream(this.socket);
 #else
-                this.dataStream = GetDataStream(token.Item1, token.Item2);
+                this.networkStream = GetNetworkStream(token.Item1, token.Item2);
 #endif
                 this.dataStreamReader = new StreamReader(this.dataStream, TextEncoding);
                 this.dataStreamLineReader = new SafeLineReader(this.dataStreamReader);
@@ -515,12 +534,13 @@ namespace IrcDotNet
 
 #if !SILVERLIGHT
 
-        private Stream GetDataStream(bool useSsl, string targetHost)
+        private Stream GetNetworkStream(bool useSsl, string targetHost)
         {
+            var socketStream = new NetworkStream(this.socket);
             if (useSsl)
             {
                 // Create SSL stream over network stream to use for data transmission.
-                var sslStream = new SslStream(this.receiveStream, true,
+                var sslStream = new SslStream(socketStream, true,
                                               new RemoteCertificateValidationCallback(SslUserCertificateValidationCallback));
                 sslStream.AuthenticateAsClient(targetHost);
                 Debug.Assert(sslStream.IsAuthenticated);
@@ -529,7 +549,7 @@ namespace IrcDotNet
             else
             {
                 // Use network stream directly for data transmission.
-                return this.receiveStream;
+                return socketStream;
             }
         }
 
