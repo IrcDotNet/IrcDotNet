@@ -66,7 +66,19 @@ namespace IrcDotNet.Samples.Common
             if (parameters.Count < 1)
                 throw new ArgumentException(Properties.Resources.MessageNotEnoughArgs);
 
-            Connect(parameters[0], this.RegistrationInfo);
+            bool useSsl = false;
+            if (parameters.Count > 1)
+            {
+                bool.TryParse(parameters[1], out useSsl);
+            }
+
+            int port = 6697;
+            if (parameters.Count > 2)
+            {
+                int.TryParse(parameters[2], out port);
+            }
+
+            Connect(parameters[0], this.RegistrationInfo, port, useSsl);
         }
 
         private void ProcessCommandDisconnect(string command, IList<string> parameters)
