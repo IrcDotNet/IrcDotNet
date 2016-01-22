@@ -146,31 +146,31 @@ namespace IrcDotNet
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
 
-            Connect(new DnsEndPoint(hostName, port), useSsl, registrationInfo);
+            Connect(new DnsEndPoint(hostName, port), useSsl, registrationInfo, hostName);
         }
 
         /// <inheritdoc cref="Connect(IPAddress, int, bool, IrcRegistrationInfo)"/>
-        public void Connect(IPAddress address, bool useSsl, IrcRegistrationInfo registrationInfo)
+        public void Connect(IPAddress address, bool useSsl, IrcRegistrationInfo registrationInfo, string targetHost="")
         {
             CheckDisposed();
 
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
 
-            Connect(address, DefaultPort, useSsl, registrationInfo);
+            Connect(address, DefaultPort, useSsl, registrationInfo, targetHost);
         }
 
         /// <inheritdoc cref="Connect(EndPoint, bool, IrcRegistrationInfo)"/>
         /// <param name="address">An IP addresses that designates the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
-        public void Connect(IPAddress address, int port, bool useSsl, IrcRegistrationInfo registrationInfo)
+        public void Connect(IPAddress address, int port, bool useSsl, IrcRegistrationInfo registrationInfo, string targetHost="")
         {
             CheckDisposed();
 
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
 
-            Connect(new IPEndPoint(address, port), useSsl, registrationInfo);
+            Connect(new IPEndPoint(address, port), useSsl, registrationInfo, targetHost);
         }
 
         /// <summary>
@@ -188,11 +188,11 @@ namespace IrcDotNet
         /// <exception cref="ArgumentException"><paramref name="registrationInfo"/> does not specify valid registration
         /// information.</exception>
         /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
-        public void Connect(EndPoint remoteEndPoint, bool useSsl, IrcRegistrationInfo registrationInfo)
+        public void Connect(EndPoint remoteEndPoint, bool useSsl, IrcRegistrationInfo registrationInfo, string targetHost="")
         {
             Connect(registrationInfo);
             // Connect socket to remote host.
-            ConnectAsync(remoteEndPoint, Tuple.Create(useSsl, string.Empty, registrationInfo));
+            ConnectAsync(remoteEndPoint, Tuple.Create(useSsl, targetHost, registrationInfo));
 
             HandleClientConnecting();
         }
