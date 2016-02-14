@@ -9,6 +9,4 @@ script:
 - mkdir -p artifacts/ .nuget/
 - dnu restore source/IrcDotNet/ test/IrcDotNet.Test/
 - dnu build source/IrcDotNet/ test/IrcDotNet.Test/
-- wget -O .nuget/nuget.exe https://www.nuget.org/nuget.exe && mono .nuget/nuget.exe install NUnit.Runners -Version 3.0.1 -OutputDirectory tools
-  # - mono ./tools/NUnit.Console.3.0.1/tools/nunit3-console.exe ./test/IrcDotNet.Test/bin/Debug/net451/IrcDotNet.Test.dll
-  # add runners project
+- cd test/IrcDotNet.Test/ && dnx IrcDotNet.Test
