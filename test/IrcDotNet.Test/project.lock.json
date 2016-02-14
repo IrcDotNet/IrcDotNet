@@ -7,7 +7,7 @@
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1"
       },
-      "NUnit/3.0.0": {
+      "NUnit/3.0.1": {
         "type": "package",
         "compile": {
           "lib/net45/nunit.framework.dll": {}
@@ -17,12 +17,12 @@
         }
       }
     },
-    ".NETFramework,Version=v4.5.1/win7-x86": {
+    ".NETFramework,Version=v4.5.1/ubuntu.15.10-x86": {
       "IrcDotNet/0.5.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1"
       },
-      "NUnit/3.0.0": {
+      "NUnit/3.0.1": {
         "type": "package",
         "compile": {
           "lib/net45/nunit.framework.dll": {}
@@ -32,12 +32,12 @@
         }
       }
     },
-    ".NETFramework,Version=v4.5.1/win7-x64": {
+    ".NETFramework,Version=v4.5.1/ubuntu.15.10-x64": {
       "IrcDotNet/0.5.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1"
       },
-      "NUnit/3.0.0": {
+      "NUnit/3.0.1": {
         "type": "package",
         "compile": {
           "lib/net45/nunit.framework.dll": {}
@@ -53,9 +53,9 @@
       "type": "project",
       "path": "../../source/IrcDotNet/project.json"
     },
-    "NUnit/3.0.0": {
+    "NUnit/3.0.1": {
       "type": "package",
-      "sha512": "/7lqdUb+/e1NAd3NDhY05ppjQUieAamnUxHzhKgaxWVNyTJqhdR0z73MXNc2VV2dignM4MieF3Tzs1wXsWx8/w==",
+      "sha512": "Fhz2Flnzlb+HjVxTK+W3dNAb9FUIbGxUp/G6jTTL487lBxInaDOWigNGzWbj1Ipjb87ix77heBCzrsVhk8+X8w==",
       "files": [
         "CHANGES.txt",
         "lib/dotnet/nunit.framework.dll",
@@ -70,15 +70,15 @@
         "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/nunit.framework.xml",
         "LICENSE.txt",
         "NOTICES.txt",
-        "NUnit.3.0.0.nupkg",
-        "NUnit.3.0.0.nupkg.sha512",
+        "NUnit.3.0.1.nupkg",
+        "NUnit.3.0.1.nupkg.sha512",
         "NUnit.nuspec"
       ]
     }
   },
   "projectFileDependencyGroups": {
     "": [
-      "NUnit >= 3.0.0",
+      "NUnit >= 3.0.1",
       "IrcDotNet "
     ],
     ".NETFramework,Version=v4.5.1": []

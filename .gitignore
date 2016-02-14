@@ -44,3 +44,6 @@ test-results/
 packages/
 bin/
 *.swp
+
+tools/
+.nuget/
