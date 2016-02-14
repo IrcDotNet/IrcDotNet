@@ -6,13 +6,13 @@
 
 **Development Branch**
 
-[![Build Status](https://travis-ci.org/alexreg/IrcDotNet.svg?branch=develop)](https://travis-ci.org/alexreg/IrcDotNet)
-[![Build status](https://ci.appveyor.com/api/projects/status/1kgumufg5xre9doo/branch/develop?svg=true)](https://ci.appveyor.com/project/alexreg/IrcDotNet/branch/develop)
+[![Build Status](https://travis-ci.org/IrcDotNet/IrcDotNet.svg?branch=develop)](https://travis-ci.org/alexreg/IrcDotNet)
+[![Build status](https://ci.appveyor.com/api/projects/status/siar9pbr9l8i7mpt/branch/develop?svg=true)](https://ci.appveyor.com/project/alexreg/IrcDotNet/branch/develop)
 
 **Master Branch**
 
-[![Build Status](https://travis-ci.org/alexreg/IrcDotNet.svg?branch=master)](https://travis-ci.org/alexreg/IrcDotNet)
-[![Build status](https://ci.appveyor.com/api/projects/status/1kgumufg5xre9doo/branch/master?svg=true)](https://ci.appveyor.com/project/alexreg/IrcDotNet/branch/master)
+[![Build Status](https://travis-ci.org/IrcDotNet/IrcDotNet.svg?branch=master)](https://travis-ci.org/alexreg/IrcDotNet)
+[![Build status](https://ci.appveyor.com/api/projects/status/siar9pbr9l8i7mpt/branch/master?svg=true)](https://ci.appveyor.com/project/alexreg/IrcDotNet/branch/master)
 
 ## Overview
 
@@ -34,6 +34,6 @@ The Silverlight version of the library is not guaranteed to compile or run on th
 
 ## Help
 
-* Talk to us on our [IRC channel](irc://chat.freenode.net/##irc.net).
+* Talk to us on our [IRC channel](irc://chat.freenode.net/##irc.net) (*##irc.net* on Freenode).
 
 * If you have confirmed that the behaviour is unexpected, submit an [issue](https://github.com/alexreg/ircdotnet/issues) on GitHub.
