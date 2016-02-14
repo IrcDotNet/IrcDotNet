@@ -43,3 +43,4 @@ test-results/
 *.userprefs
 packages/
 bin/
+*.swp

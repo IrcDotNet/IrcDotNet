@@ -8,5 +8,5 @@ install:
 script:
 - cd ./source/IrcDotNet/ && dnu restore . && dnu build . && cd -
 - cd ./test/IrcDotNet.Test/ && dnu restore . && dnu build . && cd -
-- mkdir -p .nuget && wget -O .nuget/nuget.exe https://www.nuget.org/nuget.exe && mono .nuget/NuGet.exe install NUnit.Runners -Version 2.6.3 -OutputDirectory tools
+- mkdir -p .nuget && wget -O .nuget/nuget.exe https://www.nuget.org/nuget.exe && mono .nuget/nuget.exe install NUnit.Runners -Version 2.6.3 -OutputDirectory tools
 - mono ./tools/NUnit.Runners.2.6.3/tools/nunit-console.exe ./artifacts/bin/IrcDotNet.Test/Debug/net451/IrcDotNet.Test.dll
