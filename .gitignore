@@ -48,3 +48,4 @@ bin/
 tools/
 .nuget/
 TestResult.xml
+*.lock.json

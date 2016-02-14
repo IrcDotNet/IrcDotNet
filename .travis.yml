@@ -6,7 +6,6 @@ install:
 - curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | sh && source ~/.dnx/dnvm/dnvm.sh && dnvm upgrade
 
 script:
-- mkdir -p artifacts/ .nuget/
-- dnu restore source/IrcDotNet/ test/IrcDotNet.Test/
+- dnu restore
 - dnu build source/IrcDotNet/ test/IrcDotNet.Test/
 - cd test/IrcDotNet.Test/ && dnx IrcDotNet.Test
