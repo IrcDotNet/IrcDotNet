@@ -56,7 +56,7 @@
         }
       }
     },
-    ".NETFramework,Version=v4.5.1/win7-x86": {
+    ".NETFramework,Version=v4.5.1/ubuntu.15.10-x86": {
       "IrcDotNet/0.5.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1"
@@ -83,7 +83,7 @@
         }
       }
     },
-    ".NETFramework,Version=v4.5.1/win7-x64": {
+    ".NETFramework,Version=v4.5.1/ubuntu.15.10-x64": {
       "IrcDotNet/0.5.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1"
@@ -110,7 +110,7 @@
         }
       }
     },
-    "DNX,Version=v4.5.1/win7-x86": {
+    "DNX,Version=v4.5.1/ubuntu.15.10-x86": {
       "IrcDotNet/0.5.0": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1"
@@ -137,7 +137,7 @@
         }
       }
     },
-    "DNX,Version=v4.5.1/win7-x64": {
+    "DNX,Version=v4.5.1/ubuntu.15.10-x64": {
       "IrcDotNet/0.5.0": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1"
