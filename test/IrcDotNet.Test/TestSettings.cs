@@ -32,10 +32,22 @@ namespace IrcDotNet.Test
         /// </summary>
         public static string MessageProtocolError { get; set; }
 
+        private static string Env(string key)
+        {
+            var result = Environment.GetEnvironmentVariable(key);
+            if (string.IsNullOrWhiteSpace(result))
+                result = null;
+            return result;
+        }
+
         // Load settings from env, or use defaults.
         static TestSettings()
         {
-            MessageProtocolError = "Client {0}: protocol error {1}: {2}\nParameters: {2}";
+            MessageProtocolError = Env("MessageProtocolError") ?? "Client {0}: protocol error {1}: {2}\nParameters: {2}";
+            NickNameFormat = Env("NickNameFormat") ?? "itb-{0}";
+            RealName = Env("RealName") ?? "IRC.Net Tester";
+            ServerHostName = Env("ServerHostName") ?? "irc.freenode.net";
+            ServerPassword = Env("ServerPassword") ?? "";
         }
     }
 }

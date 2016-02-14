@@ -15,9 +15,48 @@
         "runtime": {
           "lib/net45/nunit.framework.dll": {}
         }
+      },
+      "NUnitLite/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "NUnit": "[3.0.1]"
+        },
+        "compile": {
+          "lib/net45/nunitlite.dll": {}
+        },
+        "runtime": {
+          "lib/net45/nunitlite.dll": {}
+        }
       }
     },
-    ".NETFramework,Version=v4.5.1/ubuntu.15.10-x86": {
+    "DNX,Version=v4.5.1": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1"
+      },
+      "NUnit/3.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/nunit.framework.dll": {}
+        },
+        "runtime": {
+          "lib/net45/nunit.framework.dll": {}
+        }
+      },
+      "NUnitLite/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "NUnit": "[3.0.1]"
+        },
+        "compile": {
+          "lib/net45/nunitlite.dll": {}
+        },
+        "runtime": {
+          "lib/net45/nunitlite.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5.1/win7-x86": {
       "IrcDotNet/0.5.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1"
@@ -30,9 +69,21 @@
         "runtime": {
           "lib/net45/nunit.framework.dll": {}
         }
+      },
+      "NUnitLite/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "NUnit": "[3.0.1]"
+        },
+        "compile": {
+          "lib/net45/nunitlite.dll": {}
+        },
+        "runtime": {
+          "lib/net45/nunitlite.dll": {}
+        }
       }
     },
-    ".NETFramework,Version=v4.5.1/ubuntu.15.10-x64": {
+    ".NETFramework,Version=v4.5.1/win7-x64": {
       "IrcDotNet/0.5.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5.1"
@@ -44,6 +95,72 @@
         },
         "runtime": {
           "lib/net45/nunit.framework.dll": {}
+        }
+      },
+      "NUnitLite/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "NUnit": "[3.0.1]"
+        },
+        "compile": {
+          "lib/net45/nunitlite.dll": {}
+        },
+        "runtime": {
+          "lib/net45/nunitlite.dll": {}
+        }
+      }
+    },
+    "DNX,Version=v4.5.1/win7-x86": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1"
+      },
+      "NUnit/3.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/nunit.framework.dll": {}
+        },
+        "runtime": {
+          "lib/net45/nunit.framework.dll": {}
+        }
+      },
+      "NUnitLite/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "NUnit": "[3.0.1]"
+        },
+        "compile": {
+          "lib/net45/nunitlite.dll": {}
+        },
+        "runtime": {
+          "lib/net45/nunitlite.dll": {}
+        }
+      }
+    },
+    "DNX,Version=v4.5.1/win7-x64": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1"
+      },
+      "NUnit/3.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/nunit.framework.dll": {}
+        },
+        "runtime": {
+          "lib/net45/nunit.framework.dll": {}
+        }
+      },
+      "NUnitLite/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "NUnit": "[3.0.1]"
+        },
+        "compile": {
+          "lib/net45/nunitlite.dll": {}
+        },
+        "runtime": {
+          "lib/net45/nunitlite.dll": {}
         }
       }
     }
@@ -74,13 +191,35 @@
         "NUnit.3.0.1.nupkg.sha512",
         "NUnit.nuspec"
       ]
+    },
+    "NUnitLite/3.0.1": {
+      "type": "package",
+      "sha512": "+zJ/WEom+1EB1X4bcyj3yVVsRMOyu+dfhQd7of/iHojPqBJH+QWbSgRbfluRXoQBRQQrTXxaqEF7JkM70OFCOA==",
+      "files": [
+        "CHANGES.txt",
+        "content/Program.cs",
+        "content/Program.vb",
+        "lib/dotnet/nunitlite.dll",
+        "lib/net20/nunitlite.dll",
+        "lib/net40/nunitlite.dll",
+        "lib/net45/nunitlite.dll",
+        "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac/nunitlite.dll",
+        "LICENSE.txt",
+        "NOTICES.txt",
+        "NUnitLite.3.0.1.nupkg",
+        "NUnitLite.3.0.1.nupkg.sha512",
+        "NUnitLite.nuspec",
+        "tools/install.ps1"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     "": [
       "NUnit >= 3.0.1",
+      "NUnitLite >= 3.0.1",
       "IrcDotNet "
     ],
-    ".NETFramework,Version=v4.5.1": []
+    ".NETFramework,Version=v4.5.1": [],
+    "DNX,Version=v4.5.1": []
   }
 }
