@@ -47,3 +47,4 @@ bin/
 
 tools/
 .nuget/
+TestResult.xml
