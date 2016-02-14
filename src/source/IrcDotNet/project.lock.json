@@ -1,0 +1,30 @@
+{
+  "locked": false,
+  "version": 2,
+  "targets": {
+    ".NETFramework,Version=v4.0": {},
+    ".NETFramework,Version=v4.5": {},
+    ".NETFramework,Version=v4.5.1": {},
+    "DNX,Version=v4.5.1": {},
+    "DNX,Version=v5.0": {},
+    ".NETFramework,Version=v4.0/win7-x86": {},
+    ".NETFramework,Version=v4.0/win7-x64": {},
+    ".NETFramework,Version=v4.5/win7-x86": {},
+    ".NETFramework,Version=v4.5/win7-x64": {},
+    ".NETFramework,Version=v4.5.1/win7-x86": {},
+    ".NETFramework,Version=v4.5.1/win7-x64": {},
+    "DNX,Version=v4.5.1/win7-x86": {},
+    "DNX,Version=v4.5.1/win7-x64": {},
+    "DNX,Version=v5.0/win7-x86": {},
+    "DNX,Version=v5.0/win7-x64": {}
+  },
+  "libraries": {},
+  "projectFileDependencyGroups": {
+    "": [],
+    ".NETFramework,Version=v4.0": [],
+    ".NETFramework,Version=v4.5": [],
+    ".NETFramework,Version=v4.5.1": [],
+    "DNX,Version=v4.5.1": [],
+    "DNX,Version=v5.0": []
+  }
+}

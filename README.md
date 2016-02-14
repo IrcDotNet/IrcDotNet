@@ -18,7 +18,7 @@
 
 IRC.NET is a complete IRC (Internet Relay Chat) client library for the .NET Framework 4.0 and Silverlight 4.0. It aims to provide a complete and efficient implementation of the protocol as described in RFCs 1459 and 2812, as well as de-facto modern features of the protocol.
 
-This project was formlery hosted on [Launchpad](https://launchpad.net/ircdotnet).
+This project was formerly hosted on [Launchpad](https://launchpad.net/ircdotnet).
 
 ### Mono
 
