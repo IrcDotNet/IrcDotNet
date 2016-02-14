@@ -1,0 +1,15 @@
+﻿{
+  "version": "0.5-*",
+
+  "description": "IrcDotNet Tests",
+  "authors": [ "paralin" ],
+
+  "frameworks": {
+    "net451": { }
+  },
+
+  "dependencies": {
+    "NUnit": "3.0.0",
+    "IrcDotNet": ""
+  }
+}

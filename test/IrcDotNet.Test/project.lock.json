@@ -1,0 +1,86 @@
+{
+  "locked": false,
+  "version": 2,
+  "targets": {
+    ".NETFramework,Version=v4.5.1": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1"
+      },
+      "NUnit/3.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net45/nunit.framework.dll": {}
+        },
+        "runtime": {
+          "lib/net45/nunit.framework.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5.1/win7-x86": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1"
+      },
+      "NUnit/3.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net45/nunit.framework.dll": {}
+        },
+        "runtime": {
+          "lib/net45/nunit.framework.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5.1/win7-x64": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1"
+      },
+      "NUnit/3.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net45/nunit.framework.dll": {}
+        },
+        "runtime": {
+          "lib/net45/nunit.framework.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "IrcDotNet/0.5.0": {
+      "type": "project",
+      "path": "../../source/IrcDotNet/project.json"
+    },
+    "NUnit/3.0.0": {
+      "type": "package",
+      "sha512": "/7lqdUb+/e1NAd3NDhY05ppjQUieAamnUxHzhKgaxWVNyTJqhdR0z73MXNc2VV2dignM4MieF3Tzs1wXsWx8/w==",
+      "files": [
+        "CHANGES.txt",
+        "lib/dotnet/nunit.framework.dll",
+        "lib/dotnet/nunit.framework.xml",
+        "lib/net20/nunit.framework.dll",
+        "lib/net20/nunit.framework.xml",
+        "lib/net40/nunit.framework.dll",
+        "lib/net40/nunit.framework.xml",
+        "lib/net45/nunit.framework.dll",
+        "lib/net45/nunit.framework.xml",
+        "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/nunit.framework.dll",
+        "lib/portable-net45+win8+wp8+wpa81+Xamarin.Mac+MonoAndroid10+MonoTouch10+Xamarin.iOS10/nunit.framework.xml",
+        "LICENSE.txt",
+        "NOTICES.txt",
+        "NUnit.3.0.0.nupkg",
+        "NUnit.3.0.0.nupkg.sha512",
+        "NUnit.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "": [
+      "NUnit >= 3.0.0",
+      "IrcDotNet "
+    ],
+    ".NETFramework,Version=v4.5.1": []
+  }
+}

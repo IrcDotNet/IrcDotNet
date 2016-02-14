@@ -1,0 +1,221 @@
+{
+  "locked": false,
+  "version": 2,
+  "targets": {
+    ".NETFramework,Version=v4.0": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.0"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.0",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5.1": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    "DNX,Version=v4.5.1": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    "DNX,Version=v5.0": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v5.0"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v5.0",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    ".NETFramework,Version=v4.0/win7-x86": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.0"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.0",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    ".NETFramework,Version=v4.0/win7-x64": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.0"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.0",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5/win7-x86": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5/win7-x64": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5.1/win7-x86": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5.1/win7-x64": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.1",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    "DNX,Version=v4.5.1/win7-x86": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    "DNX,Version=v4.5.1/win7-x64": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    "DNX,Version=v5.0/win7-x86": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v5.0"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v5.0",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    },
+    "DNX,Version=v5.0/win7-x64": {
+      "IrcDotNet/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v5.0"
+      },
+      "IrcDotNet.Samples.Common/0.5.0": {
+        "type": "project",
+        "framework": "DNX,Version=v5.0",
+        "dependencies": {
+          "IrcDotNet": null
+        }
+      }
+    }
+  },
+  "libraries": {
+    "IrcDotNet/0.5.0": {
+      "type": "project",
+      "path": "../../source/IrcDotNet/project.json"
+    },
+    "IrcDotNet.Samples.Common/0.5.0": {
+      "type": "project",
+      "path": "../IrcDotNet.Samples.Common/project.json"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "": [
+      "IrcDotNet.Samples.Common "
+    ],
+    ".NETFramework,Version=v4.0": [],
+    ".NETFramework,Version=v4.5": [],
+    ".NETFramework,Version=v4.5.1": [],
+    "DNX,Version=v4.5.1": [],
+    "DNX,Version=v5.0": []
+  }
+}

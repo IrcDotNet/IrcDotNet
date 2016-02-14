@@ -1,0 +1,27 @@
+﻿{
+  "version": "0.5-*",
+
+  "summary": "IrcDotNet twitch chat example.",
+  "copyright": "IRC.NET is copyright © 2011-2016 Alex Regueiro, Christian Stewart",
+  "authors": [ "Alexander Regueiro", "Christian Stewart" ],
+  "owners": [ "Alexander Regueiro", "Christian Stewart" ],
+  "tags": [ "communication", "irc", "networking", "ctcp" ],
+
+  "projectUrl": "https://github.com/IrcDotNet/IrcDotNet/",
+  "iconUrl": "https://raw.githubusercontent.com/IrcDotNet/IrcDotNet/master/doc/content/img/logo.png",
+
+  "licenseUrl": "https://github.com/IrcDotNet/IrcDotNet/License.txt",
+  "requireLicenseAcceptance": true,
+
+  "frameworks": {
+    "net40": { },
+    "net45": { },
+    "net451": { },
+    "dnx451": { },
+    "dnx50": { }
+  },
+
+  "dependencies": {
+    "IrcDotNet.Samples.Common": ""
+  }
+}
