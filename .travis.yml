@@ -1,16 +1,11 @@
 language: csharp
+mono:
+- beta
+solution: DOTA2.sln
+install:
+- curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | sh && source ~/.dnx/dnvm/dnvm.sh && dnvm upgrade
 
-before_script:
-- chmod +x build.sh
-
-script: 
-  - ./build.sh All
-  
-branches:
-  except:
-    - gh-pages
-
-notifications:
-  email: false
-  irc:
-    - "chat.freenode.net##irc.net"
+script:
+- dnu restore
+- dnu build source/IrcDotNet/ test/IrcDotNet.Test/
+- cd test/IrcDotNet.Test/ && dnx IrcDotNet.Test

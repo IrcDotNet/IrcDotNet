@@ -1,0 +1,25 @@
+﻿{
+  "version": "0.6-*",
+
+  "description": "IrcDotNet Tests",
+  "authors": [ "paralin" ],
+
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+
+  "frameworks": {
+    "net451": { },
+    "dnx451": { }
+  },
+
+  "dependencies": {
+    "NUnit": "3.0.1",
+    "NUnitLite": "3.0.1",
+    "IrcDotNet": ""
+  },
+
+  "commands": {
+    "IrcDotNet.Test": "IrcDotNet.Test"
+  }
+}
