@@ -1,6 +1,6 @@
 ﻿{
-  "version": "0.5.0",
-  "releaseNotes": "https://github.com/IrcDotNet/IrcDotNet/releases/tag/0.5.0",
+  "version": "0.6.0",
+  "releaseNotes": "https://github.com/IrcDotNet/IrcDotNet/releases/tag/0.6.0",
 
   "summary": "A complete IRC (Internet Relay Chat) client library for the .NET Framework",
   "description": "IRC.NET aims to provide a complete and efficient implementation of the protocol as described in RFCs 1459 and 2812, as well as de-facto modern features of the protocol.",

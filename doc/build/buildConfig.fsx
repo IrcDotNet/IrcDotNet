@@ -33,7 +33,7 @@ let projectDescription = "IRC.NET aims to provide a complete and efficient imple
 let authors = ["Alex Regueiro", "Christian Stewart"]
 let page_author = "Matthias Dittrich"
 let mail = "christian+ircdotnet@paral.in"
-let version = "0.5.0"
+let version = "0.6.0"
 let version_nuget = version
 
 let buildDir = "./build/"

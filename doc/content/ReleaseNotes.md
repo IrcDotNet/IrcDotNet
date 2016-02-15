@@ -1,3 +1,9 @@
+### 0.6.0
+
+The project has been restructured around DNX and the new .NET Core libraries. This release targets .NET 4.0 and higher, as well as DNX4.5 and higher. Cross-platform compatibility is improved with the open source DNX command line tools.
+
+Added this release is the TwitchIrcClient which supports the twitch.tv IRC chat protocol.
+
 ### 0.5.0
 
 Various refactoring improvements have been made, along with a number of bug fixes. Some usability issues have also been resolved.

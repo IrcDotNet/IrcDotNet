@@ -1,5 +1,5 @@
 ﻿{
-  "version": "0.5-*",
+  "version": "0.6-*",
 
   "summary": "Common files for IrcDotNet samples.",
   "copyright": "IRC.NET is copyright © 2011-2016 Alex Regueiro, Christian Stewart",

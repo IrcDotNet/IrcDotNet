@@ -1,5 +1,5 @@
 ﻿{
-  "version": "0.5-*",
+  "version": "0.6-*",
 
   "description": "IrcDotNet Tests",
   "authors": [ "paralin" ],
