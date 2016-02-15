@@ -5,7 +5,7 @@
     <title>IrcClient - IRC.NET</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="author" content="Alex Regueiro">
+    <meta name="author" content="Alexander Regueiro and Christian Stewart">
 
     <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
     <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
@@ -13,10 +13,10 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
 
-    <link type="text/css" rel="stylesheet" href="https://alexreg.github.io/IrcDotNet/content/style.css" />
-    <link type="text/css" rel="stylesheet" href="https://alexreg.github.io/IrcDotNet/content/prism.css" />
-    <script type="text/javascript" src="https://alexreg.github.io/IrcDotNet/content/tips.js"></script>
-	<script type="text/javascript" src="https://alexreg.github.io/IrcDotNet/content/prism.js"></script>
+    <link type="text/css" rel="stylesheet" href="http://ircdotnet.github.io//content/style.css" />
+    <link type="text/css" rel="stylesheet" href="http://ircdotnet.github.io//content/prism.css" />
+    <script type="text/javascript" src="http://ircdotnet.github.io//content/tips.js"></script>
+	<script type="text/javascript" src="http://ircdotnet.github.io//content/prism.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -29,7 +29,7 @@
           <li><a href="http://fsharp.org">fsharp.org</a></li>
           <li><a href="http://tpetricek.github.io/FSharp.Formatting/"><img height="16" width="16" src="http://fsharp.org/images/thumbs/FSharp.Formatting.png" /> F# Formatting</a></li>
         </ul>
-        <h3 class="muted"><a href="https://alexreg.github.io/IrcDotNet/index.html">IRC.NET</a></h3>
+        <h3 class="muted"><a href="http://ircdotnet.github.io//index.html">IRC.NET</a></h3>
       </div>
       <hr />
       <div class="row">
@@ -106,9 +106,23 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
-            ClientInfoReceived
+            ClientId()
           </code>
           <div class="tip" id="37">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
+            ClientInfoReceived
+          </code>
+          <div class="tip" id="38">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
                       </div>
         </td>
@@ -121,10 +135,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
+          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
             Connected
           </code>
-          <div class="tip" id="38">
+          <div class="tip" id="39">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
                       </div>
         </td>
@@ -137,10 +151,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
+          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
             ConnectFailed
           </code>
-          <div class="tip" id="39">
+          <div class="tip" id="40">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcErrorEventArgs&gt;,IrcErrorEventArgs&gt;<br />
                       </div>
         </td>
@@ -153,10 +167,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
+          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
             Disconnected
           </code>
-          <div class="tip" id="40">
+          <div class="tip" id="41">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
                       </div>
         </td>
@@ -169,10 +183,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
+          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
             Error
           </code>
-          <div class="tip" id="41">
+          <div class="tip" id="42">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcErrorEventArgs&gt;,IrcErrorEventArgs&gt;<br />
                       </div>
         </td>
@@ -185,10 +199,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
+          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
             ErrorMessageReceived
           </code>
-          <div class="tip" id="42">
+          <div class="tip" id="43">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcErrorMessageEventArgs&gt;,IrcErrorMessageEventArgs&gt;<br />
                       </div>
         </td>
@@ -201,10 +215,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
+          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
             FloodPreventer()
           </code>
-          <div class="tip" id="43">
+          <div class="tip" id="44">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
@@ -219,10 +233,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
+          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
             IsConnected
           </code>
-          <div class="tip" id="44">
+          <div class="tip" id="45">
             <strong>Signature:</strong> bool<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
@@ -236,10 +250,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
+          <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
             IsDisposed
           </code>
-          <div class="tip" id="45">
+          <div class="tip" id="46">
             <strong>Signature:</strong> bool<br />
                       </div>
         </td>
@@ -252,10 +266,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
+          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
             IsRegistered
           </code>
-          <div class="tip" id="46">
+          <div class="tip" id="47">
             <strong>Signature:</strong> bool<br />
                       </div>
         </td>
@@ -268,10 +282,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
+          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
             LocalUser
           </code>
-          <div class="tip" id="47">
+          <div class="tip" id="48">
             <strong>Signature:</strong> IrcLocalUser<br />
                       </div>
         </td>
@@ -284,10 +298,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
+          <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
             MessageOfTheDay
           </code>
-          <div class="tip" id="48">
+          <div class="tip" id="49">
             <strong>Signature:</strong> string<br />
                       </div>
         </td>
@@ -301,10 +315,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
+          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
             MotdReceived
           </code>
-          <div class="tip" id="49">
+          <div class="tip" id="50">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
                       </div>
         </td>
@@ -317,10 +331,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
+          <code onmouseout="hideTip(event, '51', 51)" onmouseover="showTip(event, '51', 51)">
             NetworkInformation
           </code>
-          <div class="tip" id="50">
+          <div class="tip" id="51">
             <strong>Signature:</strong> Nullable&lt;IrcNetworkInfo&gt;<br />
                       </div>
         </td>
@@ -334,10 +348,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '51', 51)" onmouseover="showTip(event, '51', 51)">
+          <code onmouseout="hideTip(event, '52', 52)" onmouseover="showTip(event, '52', 52)">
             NetworkInformationReceived
           </code>
-          <div class="tip" id="51">
+          <div class="tip" id="52">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcCommentEventArgs&gt;,IrcCommentEventArgs&gt;<br />
                       </div>
         </td>
@@ -350,10 +364,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '52', 52)" onmouseover="showTip(event, '52', 52)">
+          <code onmouseout="hideTip(event, '53', 53)" onmouseover="showTip(event, '53', 53)">
             PingReceived
           </code>
-          <div class="tip" id="52">
+          <div class="tip" id="53">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcPingOrPongReceivedEventArgs&gt;,IrcPingOrPongReceivedEventArgs&gt;<br />
                       </div>
         </td>
@@ -367,10 +381,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '53', 53)" onmouseover="showTip(event, '53', 53)">
+          <code onmouseout="hideTip(event, '54', 54)" onmouseover="showTip(event, '54', 54)">
             PongReceived
           </code>
-          <div class="tip" id="53">
+          <div class="tip" id="54">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcPingOrPongReceivedEventArgs&gt;,IrcPingOrPongReceivedEventArgs&gt;<br />
                       </div>
         </td>
@@ -383,10 +397,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '54', 54)" onmouseover="showTip(event, '54', 54)">
+          <code onmouseout="hideTip(event, '55', 55)" onmouseover="showTip(event, '55', 55)">
             ProtocolError
           </code>
-          <div class="tip" id="54">
+          <div class="tip" id="55">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcProtocolErrorEventArgs&gt;,IrcProtocolErrorEventArgs&gt;<br />
                       </div>
         </td>
@@ -399,10 +413,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '55', 55)" onmouseover="showTip(event, '55', 55)">
+          <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
             RawMessageReceived
           </code>
-          <div class="tip" id="55">
+          <div class="tip" id="56">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcRawMessageEventArgs&gt;,IrcRawMessageEventArgs&gt;<br />
                       </div>
         </td>
@@ -415,10 +429,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '56', 56)" onmouseover="showTip(event, '56', 56)">
+          <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
             RawMessageSent
           </code>
-          <div class="tip" id="56">
+          <div class="tip" id="57">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcRawMessageEventArgs&gt;,IrcRawMessageEventArgs&gt;<br />
                       </div>
         </td>
@@ -431,10 +445,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '57', 57)" onmouseover="showTip(event, '57', 57)">
+          <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
             Registered
           </code>
-          <div class="tip" id="57">
+          <div class="tip" id="58">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
                       </div>
         </td>
@@ -447,10 +461,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '58', 58)" onmouseover="showTip(event, '58', 58)">
+          <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
             ServerAvailableChannelModes()
           </code>
-          <div class="tip" id="58">
+          <div class="tip" id="59">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
@@ -464,10 +478,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '59', 59)" onmouseover="showTip(event, '59', 59)">
+          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
             ServerAvailableUserModes()
           </code>
-          <div class="tip" id="59">
+          <div class="tip" id="60">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
@@ -481,10 +495,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '60', 60)" onmouseover="showTip(event, '60', 60)">
+          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
             ServerBounce
           </code>
-          <div class="tip" id="60">
+          <div class="tip" id="61">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcServerInfoEventArgs&gt;,IrcServerInfoEventArgs&gt;<br />
                       </div>
         </td>
@@ -497,10 +511,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '61', 61)" onmouseover="showTip(event, '61', 61)">
+          <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
             ServerCreatedMessage()
           </code>
-          <div class="tip" id="61">
+          <div class="tip" id="62">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
@@ -514,10 +528,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '62', 62)" onmouseover="showTip(event, '62', 62)">
+          <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
             ServerLinksListReceived
           </code>
-          <div class="tip" id="62">
+          <div class="tip" id="63">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcServerLinksListReceivedEventArgs&gt;,IrcServerLinksListReceivedEventArgs&gt;<br />
                       </div>
         </td>
@@ -530,10 +544,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '63', 63)" onmouseover="showTip(event, '63', 63)">
+          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
             ServerName()
           </code>
-          <div class="tip" id="63">
+          <div class="tip" id="64">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
@@ -547,10 +561,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '64', 64)" onmouseover="showTip(event, '64', 64)">
+          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
             ServerStatsReceived
           </code>
-          <div class="tip" id="64">
+          <div class="tip" id="65">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcServerStatsReceivedEventArgs&gt;,IrcServerStatsReceivedEventArgs&gt;<br />
                       </div>
         </td>
@@ -563,10 +577,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '65', 65)" onmouseover="showTip(event, '65', 65)">
+          <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
             ServerSupportedFeatures
           </code>
-          <div class="tip" id="65">
+          <div class="tip" id="66">
             <strong>Signature:</strong> ReadOnlyDictionary&lt;string,string&gt;<br />
                       </div>
         </td>
@@ -581,10 +595,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '66', 66)" onmouseover="showTip(event, '66', 66)">
+          <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
             ServerSupportedFeaturesReceived
           </code>
-          <div class="tip" id="66">
+          <div class="tip" id="67">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;EventArgs&gt;,EventArgs&gt;<br />
                       </div>
         </td>
@@ -598,10 +612,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '67', 67)" onmouseover="showTip(event, '67', 67)">
+          <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
             ServerTimeReceived
           </code>
-          <div class="tip" id="67">
+          <div class="tip" id="68">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcServerTimeEventArgs&gt;,IrcServerTimeEventArgs&gt;<br />
                       </div>
         </td>
@@ -614,10 +628,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '68', 68)" onmouseover="showTip(event, '68', 68)">
+          <code onmouseout="hideTip(event, '69', 69)" onmouseover="showTip(event, '69', 69)">
             ServerVersion()
           </code>
-          <div class="tip" id="68">
+          <div class="tip" id="69">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
@@ -631,10 +645,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '69', 69)" onmouseover="showTip(event, '69', 69)">
+          <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
             ServerVersionInfoReceived
           </code>
-          <div class="tip" id="69">
+          <div class="tip" id="70">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcServerVersionInfoEventArgs&gt;,IrcServerVersionInfoEventArgs&gt;<br />
                       </div>
         </td>
@@ -647,10 +661,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '70', 70)" onmouseover="showTip(event, '70', 70)">
+          <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
             TextEncoding()
           </code>
-          <div class="tip" id="70">
+          <div class="tip" id="71">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
@@ -663,10 +677,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '71', 71)" onmouseover="showTip(event, '71', 71)">
+          <code onmouseout="hideTip(event, '72', 72)" onmouseover="showTip(event, '72', 72)">
             Users
           </code>
-          <div class="tip" id="71">
+          <div class="tip" id="72">
             <strong>Signature:</strong> IrcUserCollection<br />
                       </div>
         </td>
@@ -679,10 +693,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '72', 72)" onmouseover="showTip(event, '72', 72)">
+          <code onmouseout="hideTip(event, '73', 73)" onmouseover="showTip(event, '73', 73)">
             ValidateSslCertificate
           </code>
-          <div class="tip" id="72">
+          <div class="tip" id="73">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcValidateSslCertificateEventArgs&gt;,IrcValidateSslCertificateEventArgs&gt;<br />
                       </div>
         </td>
@@ -696,10 +710,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '73', 73)" onmouseover="showTip(event, '73', 73)">
+          <code onmouseout="hideTip(event, '74', 74)" onmouseover="showTip(event, '74', 74)">
             WelcomeMessage()
           </code>
-          <div class="tip" id="73">
+          <div class="tip" id="74">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
@@ -713,10 +727,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '74', 74)" onmouseover="showTip(event, '74', 74)">
+          <code onmouseout="hideTip(event, '75', 75)" onmouseover="showTip(event, '75', 75)">
             WhoIsReplyReceived
           </code>
-          <div class="tip" id="74">
+          <div class="tip" id="75">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcUserEventArgs&gt;,IrcUserEventArgs&gt;<br />
                       </div>
         </td>
@@ -729,10 +743,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '75', 75)" onmouseover="showTip(event, '75', 75)">
+          <code onmouseout="hideTip(event, '76', 76)" onmouseover="showTip(event, '76', 76)">
             WhoReplyReceived
           </code>
-          <div class="tip" id="75">
+          <div class="tip" id="76">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcNameEventArgs&gt;,IrcNameEventArgs&gt;<br />
                       </div>
         </td>
@@ -745,10 +759,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '76', 76)" onmouseover="showTip(event, '76', 76)">
+          <code onmouseout="hideTip(event, '77', 77)" onmouseover="showTip(event, '77', 77)">
             WhoWasReplyReceived
           </code>
-          <div class="tip" id="76">
+          <div class="tip" id="77">
             <strong>Signature:</strong> IEvent&lt;EventHandler&lt;IrcUserEventArgs&gt;,IrcUserEventArgs&gt;<br />
                       </div>
         </td>
@@ -761,10 +775,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '77', 77)" onmouseover="showTip(event, '77', 77)">
+          <code onmouseout="hideTip(event, '78', 78)" onmouseover="showTip(event, '78', 78)">
             YourHostMessage()
           </code>
-          <div class="tip" id="77">
+          <div class="tip" id="78">
             <strong>Signature:</strong> unit -&gt; unit<br />
                       </div>
         </td>
@@ -780,8 +794,8 @@
 
         </div>
         <div class="span3">
-          <a href="https://alexreg.github.io/IrcDotNet/index.html">
-            <img src="https://alexreg.github.io/IrcDotNet/content/img/logo.png" style="width:140px;height:140px;margin:10px 0px 0px 35px;border-style:none;" />
+          <a href="http://ircdotnet.github.io//index.html">
+            <img src="http://ircdotnet.github.io//content/img/logo.png" style="width:140px;height:140px;margin:10px 0px 0px 35px;border-style:none;" />
           </a>
 
           <ul class="nav nav-list" id="menu">
@@ -790,26 +804,26 @@
 
             <li class="divider"></li>
             <li><a href="https://www.nuget.org/packages/IrcDotNet/">Get IRC.NET package via NuGet</a></li>
-            <li><a href="https://github.com/alexreg/IrcDotNet">Source Code</a></li>
-            <li><a href="https://github.com/alexreg/IrcDotNet/issues">Open bugs and feature requests</a></li>
-            <li><a href="https://github.com/alexreg/IrcDotNet/issues/new">Report Issue or Request Feature</a></li>
-            <li><a href="https://github.com/alexreg/IrcDotNet/blob/develop/LICENSE.md">License (MIT)</a></li>
-            <li><a href="https://alexreg.github.io/IrcDotNet/Contributing.html">Contributing</a></li>
+            <li><a href="http://github.com/IrcDotNet/IrcDotNet/">Source Code</a></li>
+            <li><a href="http://github.com/IrcDotNet/IrcDotNet//issues">Open bugs and feature requests</a></li>
+            <li><a href="http://github.com/IrcDotNet/IrcDotNet//issues/new">Report Issue or Request Feature</a></li>
+            <li><a href="http://github.com/IrcDotNet/IrcDotNet//blob/develop/LICENSE.md">License (MIT)</a></li>
+            <li><a href="http://ircdotnet.github.io//Contributing.html">Contributing</a></li>
             
             <li class="nav-header">Documentation</li>
               
-            <li><a href="https://alexreg.github.io/IrcDotNet/index.html">Quick Intro</a></li>
-            <li><a href="https://alexreg.github.io/IrcDotNet/ReleaseNotes.html">Release Notes</a></li>
-            <li><a href="https://alexreg.github.io/IrcDotNet/DevelopReadme.html">Development Intro</a></li>
+            <li><a href="http://ircdotnet.github.io//index.html">Quick Intro</a></li>
+            <li><a href="http://ircdotnet.github.io//ReleaseNotes.html">Release Notes</a></li>
+            <li><a href="http://ircdotnet.github.io//DevelopReadme.html">Development Intro</a></li>
 
             <li class="nav-header">Reference</li>
               
-            <li><a href="https://alexreg.github.io/IrcDotNet/references/index.html">API Reference</a></li>
+            <li><a href="http://ircdotnet.github.io//references/index.html">API Reference</a></li>
 
           </ul>
         </div>
       </div>
     </div>
-      <a href="https://github.com/alexreg/IrcDotNet"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+      <a href="http://github.com/IrcDotNet/IrcDotNet/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
     </body>
   </html>

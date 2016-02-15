@@ -5,8 +5,8 @@
     <title>IRC.NET
 </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="IRC.NET is a complete IRC (Internet Relay Chat) client library for the .NET Framework.">
-    <meta name="author" content="Alex Regueiro">
+    <meta name="description" content="A complete IRC (Internet Relay Chat) client library for the .NET Framework">
+    <meta name="author" content="Alexander Regueiro and Christian Stewart">
 
     <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
     <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
@@ -14,10 +14,10 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
 
-    <link type="text/css" rel="stylesheet" href="https://alexreg.github.io/IrcDotNet/content/style.css" />
-    <link type="text/css" rel="stylesheet" href="https://alexreg.github.io/IrcDotNet/content/prism.css" />
-    <script type="text/javascript" src="https://alexreg.github.io/IrcDotNet/content/tips.js"></script>
-	<script type="text/javascript" src="https://alexreg.github.io/IrcDotNet/content/prism.js"></script>
+    <link type="text/css" rel="stylesheet" href="http://ircdotnet.github.io//content/style.css" />
+    <link type="text/css" rel="stylesheet" href="http://ircdotnet.github.io//content/prism.css" />
+    <script type="text/javascript" src="http://ircdotnet.github.io//content/tips.js"></script>
+	<script type="text/javascript" src="http://ircdotnet.github.io//content/prism.js"></script>
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -30,13 +30,12 @@
           <li><a href="http://fsharp.org">fsharp.org</a></li>
           <li><a href="http://tpetricek.github.io/FSharp.Formatting/"><img height="16" width="16" src="http://fsharp.org/images/thumbs/FSharp.Formatting.png" /> F# Formatting</a></li>
         </ul>
-        <h3 class="muted"><a href="https://alexreg.github.io/IrcDotNet/index.html">IRC.NET</a></h3>
+        <h3 class="muted"><a href="http://ircdotnet.github.io//index.html">IRC.NET</a></h3>
       </div>
       <hr />
       <div class="row">
         <div class="span9" id="main">
           
-<!-- GENERATED FROM COMMIT: fb4b964024c392e66774168af3cae92eeab424e2 -->
 <h1><a name="IRC-NET" class="anchor" href="#IRC-NET">IRC.NET</a></h1>
 
 <h2><a name="Documentation" class="anchor" href="#Documentation"><a href="https://alexreg.github.io/IrcDotNet/">Documentation</a></a></h2>
@@ -45,30 +44,25 @@
 
 <p><strong>Development Branch</strong></p>
 
-<p><a href="https://travis-ci.org/alexreg/IrcDotNet"><img src="https://travis-ci.org/alexreg/IrcDotNet.svg?branch=develop" alt="Build Status" /></a>
-<a href="https://ci.appveyor.com/project/alexreg/IrcDotNet/branch/develop"><img src="https://ci.appveyor.com/api/projects/status/1kgumufg5xre9doo/branch/develop?svg=true" alt="Build status" /></a></p>
+<p><a href="https://travis-ci.org/alexreg/IrcDotNet"><img src="https://travis-ci.org/IrcDotNet/IrcDotNet.svg?branch=develop" alt="Build Status" /></a>
+<a href="https://ci.appveyor.com/project/alexreg/IrcDotNet/branch/develop"><img src="https://ci.appveyor.com/api/projects/status/siar9pbr9l8i7mpt/branch/develop?svg=true" alt="Build status" /></a></p>
 
 <p><strong>Master Branch</strong></p>
 
-<p><a href="https://travis-ci.org/alexreg/IrcDotNet"><img src="https://travis-ci.org/alexreg/IrcDotNet.svg?branch=master" alt="Build Status" /></a>
-<a href="https://ci.appveyor.com/project/alexreg/IrcDotNet/branch/master"><img src="https://ci.appveyor.com/api/projects/status/1kgumufg5xre9doo/branch/master?svg=true" alt="Build status" /></a></p>
+<p><a href="https://travis-ci.org/alexreg/IrcDotNet"><img src="https://travis-ci.org/IrcDotNet/IrcDotNet.svg?branch=master" alt="Build Status" /></a>
+<a href="https://ci.appveyor.com/project/alexreg/IrcDotNet/branch/master"><img src="https://ci.appveyor.com/api/projects/status/siar9pbr9l8i7mpt/branch/master?svg=true" alt="Build status" /></a></p>
 
 <h2><a name="Overview" class="anchor" href="#Overview">Overview</a></h2>
 
-<p>IRC.NET is a complete IRC (Internet Relay Chat) client library for the
-.NET Framework 4.0 and Silverlight 4.0. It aims to provide a complete and
-efficient implementation of the protocol as described in RFCs 1459 and 2812,
-as well as de-facto modern features of the protocol.</p>
+<p>IRC.NET is a complete IRC (Internet Relay Chat) client library for the .NET Framework 4.0 and Silverlight 4.0. It aims to provide a complete and efficient implementation of the protocol as described in RFCs 1459 and 2812, as well as de-facto modern features of the protocol.</p>
 
-<p>This project was formlery hosted on <a href="https://launchpad.net/ircdotnet">Launchpad</a>.</p>
+<p>This project was formerly hosted on <a href="https://launchpad.net/ircdotnet">Launchpad</a>.</p>
 
 <h3><a name="Mono" class="anchor" href="#Mono">Mono</a></h3>
 
-<p>The .NET Framework version of the library is also intended to compile and run
-under Mono 2.6 and later.</p>
+<p>The .NET Framework version of the library is also intended to compile and run under Mono 2.6 and later.</p>
 
-<p>The Silverlight version of the library is not guaranteed to compile or run on
-the Moonlight framework, though it may be officially supported in the future.</p>
+<p>The Silverlight version of the library is not guaranteed to compile or run on the Moonlight framework, though it may be officially supported in the future.</p>
 
 <h3><a name="Non-RFC-Features" class="anchor" href="#Non-RFC-Features">Non-RFC Features</a></h3>
 
@@ -80,15 +74,16 @@ the Moonlight framework, though it may be officially supported in the future.</p
 <h2><a name="Help" class="anchor" href="#Help">Help</a></h2>
 
 <ul>
-<li><p>Talk to us on our <a href="irc://freenode.net/##irc.net">IRC channel</a>.</p></li>
-<li>If you have confirmed that some behaviour is unexpected, submit an <a href="https://github.com/alexreg/ircdotnet/issues">issue</a> on GitHub.</li>
+<li><p>Talk to us on our <a href="irc://chat.freenode.net/##irc.net">IRC channel</a> (<em>##irc.net</em> on Freenode).</p></li>
+<li>If you have confirmed that the behaviour is unexpected, submit an <a href="https://github.com/alexreg/ircdotnet/issues">issue</a> on GitHub.</li>
 </ul>
+
 
 
         </div>
         <div class="span3">
-          <a href="https://alexreg.github.io/IrcDotNet/index.html">
-            <img src="https://alexreg.github.io/IrcDotNet/content/img/logo.png" style="width:140px;height:140px;margin:10px 0px 0px 35px;border-style:none;" />
+          <a href="http://ircdotnet.github.io//index.html">
+            <img src="http://ircdotnet.github.io//content/img/logo.png" style="width:140px;height:140px;margin:10px 0px 0px 35px;border-style:none;" />
           </a>
 
           <ul class="nav nav-list" id="menu">
@@ -97,26 +92,26 @@ the Moonlight framework, though it may be officially supported in the future.</p
 
             <li class="divider"></li>
             <li><a href="https://www.nuget.org/packages/IrcDotNet/">Get IRC.NET package via NuGet</a></li>
-            <li><a href="https://github.com/alexreg/IrcDotNet">Source Code</a></li>
-            <li><a href="https://github.com/alexreg/IrcDotNet/issues">Open bugs and feature requests</a></li>
-            <li><a href="https://github.com/alexreg/IrcDotNet/issues/new">Report Issue or Request Feature</a></li>
-            <li><a href="https://github.com/alexreg/IrcDotNet/blob/develop/LICENSE.md">License (MIT)</a></li>
-            <li><a href="https://alexreg.github.io/IrcDotNet/Contributing.html">Contributing</a></li>
+            <li><a href="http://github.com/IrcDotNet/IrcDotNet/">Source Code</a></li>
+            <li><a href="http://github.com/IrcDotNet/IrcDotNet//issues">Open bugs and feature requests</a></li>
+            <li><a href="http://github.com/IrcDotNet/IrcDotNet//issues/new">Report Issue or Request Feature</a></li>
+            <li><a href="http://github.com/IrcDotNet/IrcDotNet//blob/develop/LICENSE.md">License (MIT)</a></li>
+            <li><a href="http://ircdotnet.github.io//Contributing.html">Contributing</a></li>
             
             <li class="nav-header">Documentation</li>
               
-            <li><a href="https://alexreg.github.io/IrcDotNet/index.html">Quick Intro</a></li>
-            <li><a href="https://alexreg.github.io/IrcDotNet/ReleaseNotes.html">Release Notes</a></li>
-            <li><a href="https://alexreg.github.io/IrcDotNet/DevelopReadme.html">Development Intro</a></li>
+            <li><a href="http://ircdotnet.github.io//index.html">Quick Intro</a></li>
+            <li><a href="http://ircdotnet.github.io//ReleaseNotes.html">Release Notes</a></li>
+            <li><a href="http://ircdotnet.github.io//DevelopReadme.html">Development Intro</a></li>
 
             <li class="nav-header">Reference</li>
               
-            <li><a href="https://alexreg.github.io/IrcDotNet/references/index.html">API Reference</a></li>
+            <li><a href="http://ircdotnet.github.io//references/index.html">API Reference</a></li>
 
           </ul>
         </div>
       </div>
     </div>
-      <a href="https://github.com/alexreg/IrcDotNet"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+      <a href="http://github.com/IrcDotNet/IrcDotNet/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
     </body>
   </html>
