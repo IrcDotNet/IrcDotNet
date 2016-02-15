@@ -7,12 +7,12 @@
 **Development Branch**
 
 [![Build Status](https://travis-ci.org/IrcDotNet/IrcDotNet.svg?branch=develop)](https://travis-ci.org/alexreg/IrcDotNet)
-[![Build status](https://ci.appveyor.com/api/projects/status/siar9pbr9l8i7mpt/branch/develop?svg=true)](https://ci.appveyor.com/project/alexreg/IrcDotNet/branch/develop)
+[![Build status](https://ci.appveyor.com/api/projects/status/jwqsdu436hwl2ngx/branch/develop?svg=true)](https://ci.appveyor.com/project/paralin/ircdotnet)
 
 **Master Branch**
 
 [![Build Status](https://travis-ci.org/IrcDotNet/IrcDotNet.svg?branch=master)](https://travis-ci.org/alexreg/IrcDotNet)
-[![Build status](https://ci.appveyor.com/api/projects/status/siar9pbr9l8i7mpt/branch/master?svg=true)](https://ci.appveyor.com/project/alexreg/IrcDotNet/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/jwqsdu436hwl2ngx/branch/master?svg=true)](https://ci.appveyor.com/project/paralin/ircdotnet)
 
 ## Overview
 
