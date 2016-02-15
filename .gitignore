@@ -49,3 +49,4 @@ tools/
 .nuget/
 TestResult.xml
 *.lock.json
+.vs/
