@@ -9,7 +9,7 @@
   "owners": [ "Alexander Regueiro", "Christian Stewart" ],
   "tags": [ "communication", "irc", "networking", "ctcp" ],
 
-  "projectUrl": "https://github.com/IrcDotNet/IrcDotNet/",
+  "projectUrl": "https://IrcDotNet.github.io/IrcDotNet/",
   "iconUrl": "https://raw.githubusercontent.com/IrcDotNet/IrcDotNet/master/doc/content/img/logo.png",
 
   "licenseUrl": "https://github.com/IrcDotNet/IrcDotNet/License.txt",
