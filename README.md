@@ -6,12 +6,12 @@
 
 **Development Branch**
 
-[![Build Status](https://travis-ci.org/IrcDotNet/IrcDotNet.svg?branch=develop)](https://travis-ci.org/alexreg/IrcDotNet)
+[![Build Status](https://travis-ci.org/IrcDotNet/IrcDotNet.svg?branch=develop)](https://travis-ci.org/IrcDotNet/IrcDotNet)
 [![Build status](https://ci.appveyor.com/api/projects/status/jwqsdu436hwl2ngx/branch/develop?svg=true)](https://ci.appveyor.com/project/paralin/ircdotnet)
 
 **Master Branch**
 
-[![Build Status](https://travis-ci.org/IrcDotNet/IrcDotNet.svg?branch=master)](https://travis-ci.org/alexreg/IrcDotNet)
+[![Build Status](https://travis-ci.org/IrcDotNet/IrcDotNet.svg?branch=master)](https://travis-ci.org/IrcDotNet/IrcDotNet)
 [![Build status](https://ci.appveyor.com/api/projects/status/jwqsdu436hwl2ngx/branch/master?svg=true)](https://ci.appveyor.com/project/paralin/ircdotnet)
 
 ## Overview
@@ -36,4 +36,4 @@ The Silverlight version of the library is not guaranteed to compile or run on th
 
 * Talk to us on our [IRC channel](irc://chat.freenode.net/##irc.net) (*##irc.net* on Freenode).
 
-* If you have confirmed that the behaviour is unexpected, submit an [issue](https://github.com/alexreg/ircdotnet/issues) on GitHub.
+* If you have confirmed that the behaviour is unexpected, submit an [issue](https://github.com/ircdotnet/ircdotnet/issues) on GitHub.
