@@ -50,20 +50,22 @@
 
 <p>If you're on windows, <a href="http://git-scm.com/">Install Git</a> and make sure to enable the "Git Bash" option as well as the "Add to context menu" option.</p>
 
-<p>To install DNX on Linux or in a bash shell on Windows, run the following commands:
- - <code>curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | DNX_BRANCH=dev sh &amp;&amp; source ~/.dnx/dnvm/dnvm.sh</code>
- - <code>dnvm upgrade</code></p>
+<p>To install DNX on Linux or in a bash shell on Windows, run the following commands:</p>
 
+<ul>
+<li><code>curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | DNX_BRANCH=dev sh &amp;&amp; source ~/.dnx/dnvm/dnvm.sh</code></li>
+<li><p><code>dnvm upgrade</code></p>
 <p>This will download and upgrade the dotnet version manager and CoreCLR (or Mono for Linux) execution environments.</p>
-
-<p>Next, compile IrcDotNet:
-  - <code>cd Path/To/IrcDotNet</code>
-  - <code>dnu restore</code>
-  - <code>dnu build source/IrcDotNet/</code></p>
-
-<p>To run the tests:
-  - <code>dnu build test/IrcDotNet.Test/</code>
-  - <code>cd test/IrcDotNet.Test &amp;&amp; dnx IrcDotNet.Test</code></p>
+<p>Next, compile IrcDotNet:</p>
+<ul>
+<li><code>cd Path/To/IrcDotNet</code></li>
+<li><code>dnu restore</code></li>
+<li><p><code>dnu build source/IrcDotNet/</code></p>
+<p>To run the tests:</p></li>
+<li><code>dnu build test/IrcDotNet.Test/</code></li>
+<li><code>cd test/IrcDotNet.Test &amp;&amp; dnx IrcDotNet.Test</code></li>
+</ul></li>
+</ul>
 
 <h2><a name="Overview" class="anchor" href="#Overview">Overview</a></h2>
 
