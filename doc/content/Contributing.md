@@ -5,7 +5,7 @@ Please make the pull request against the `develop` branch, as the master branch 
 See http://nvie.com/posts/a-successful-git-branching-model/ for details.
 
 As the documentation is generated from the repository you can help improving the documentation by editing the files in the `/doc` folder.
-You can even edit a page directly on github by clicking the edit button (for example, [this page](https://github.com/alexreg/ircdotnet/blob/develop/doc/Contributing.md)).
+You can even edit a page directly on github by clicking the edit button (for example, [this page](https://github.com/ircdotnet/ircdotnet/blob/develop/doc/Contributing.md)).
 See also https://help.github.com/articles/editing-files-in-your-repository/. (Remember to send a pull request back after forking and changing something.)
 
 ## Licensing
