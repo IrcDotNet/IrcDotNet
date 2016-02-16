@@ -7,6 +7,10 @@
   "owners": [ "Alexander Regueiro", "Christian Stewart" ],
   "tags": [ "communication", "irc", "networking", "ctcp" ],
 
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+
   "projectUrl": "https://github.com/IrcDotNet/IrcDotNet/",
   "iconUrl": "https://raw.githubusercontent.com/IrcDotNet/IrcDotNet/master/doc/content/img/logo.png",
 
@@ -23,5 +27,9 @@
 
   "dependencies": {
     "IrcDotNet.Samples.Common": ""
+  },
+
+  "commands": {
+    "IrcDotNet.Samples.TwitchChat": "IrcDotNet.Samples.TwitchChat"
   }
 }
