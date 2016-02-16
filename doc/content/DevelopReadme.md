@@ -17,18 +17,18 @@ To install DNX on Linux or in a bash shell on Windows, run the following command
  - `curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh`
  - `dnvm upgrade`
 
- This will download and upgrade the dotnet version manager and CoreCLR (or Mono for Linux) execution environments.
+This will download and upgrade the dotnet version manager and CoreCLR (or Mono for Linux) execution environments.
 
- Next, compile IrcDotNet:
+Next, compile IrcDotNet:
 
-  - `cd Path/To/IrcDotNet`
-  - `dnu restore`
-  - `dnu build source/IrcDotNet/`
+- `cd Path/To/IrcDotNet`
+- `dnu restore`
+- `dnu build source/IrcDotNet/`
 
- To run the tests:
+To run the tests:
 
-  - `dnu build test/IrcDotNet.Test/`
-  - `cd test/IrcDotNet.Test && dnx IrcDotNet.Test`
+- `dnu build test/IrcDotNet.Test/`
+- `cd test/IrcDotNet.Test && dnx IrcDotNet.Test`
 
 ## Overview
 
