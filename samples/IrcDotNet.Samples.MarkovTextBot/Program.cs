@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using IrcDotNet.Samples.Common;
 
-namespace MarkovChainTextBox
+namespace IrcDotNet
 {
     internal static class Program
     {

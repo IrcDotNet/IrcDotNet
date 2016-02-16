@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
-namespace IrcDotNet.Samples.Common
+namespace IrcDotNet
 {
     public class InvalidCommandParametersException : Exception
     {
@@ -43,12 +40,12 @@ namespace IrcDotNet.Samples.Common
         public string GetMessage(string command)
         {
             if (this.MinParameters == 0 && this.MaxParameters == 0)
-                return string.Format(Properties.Resources.MessageCommandTakesNoParams, command);
+                return string.Format("Command {0} takes no arguments.", command);
             else if (this.MinParameters == this.MaxParameters)
-                return string.Format(Properties.Resources.MessageCommandTakesXParams, command,
+                return string.Format("Command {0} takes {1} arguments.", command,
                     this.MinParameters);
             else
-                return string.Format(Properties.Resources.MessageCommandTakesXToYParams, command,
+                return string.Format("Command {0} takes {1} to {2} arguments.", command,
                     this.MinParameters, this.MaxParameters);
         }
     }

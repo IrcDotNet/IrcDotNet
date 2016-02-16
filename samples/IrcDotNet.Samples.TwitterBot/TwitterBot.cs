@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using IrcDotNet;
-using IrcDotNet.Samples.Common;
 using TweetSharp;
 
-namespace TwitterBot
+namespace IrcDotNet
 {
     public class TwitterBot : BasicIrcBot
     {

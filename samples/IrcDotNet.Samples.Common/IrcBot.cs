@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace IrcDotNet.Samples.Common
+namespace IrcDotNet
 {
     // Provides core functionality for an IRC bot that operates via multiple clients.
     public abstract class IrcBot : IDisposable
@@ -392,7 +391,7 @@ namespace IrcDotNet.Samples.Common
             if (client == null)
             {
                 throw new IrcBotException(IrcBotExceptionType.NoConnection,
-                    string.Format(Properties.Resources.MessageBotNoConnection, serverNameMask));
+                    string.Format("No connection", serverNameMask));
             }
             return client;
         }

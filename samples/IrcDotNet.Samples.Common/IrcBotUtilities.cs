@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using IrcDotNet;
+﻿using System.Collections.Generic;
 
-namespace IrcDotNet.Samples.Common
+namespace IrcDotNet
 {
     public static class IrcBotUtilities
     {

@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace IrcDotNet.Samples.Common
+namespace IrcDotNet
 {
     // Provides access to basic commands for controlling an IRC bot.
     public abstract class BasicIrcBot : IrcBot
     {
-        public BasicIrcBot()
-            : base()
-        {
-        }
-
         public abstract IrcRegistrationInfo RegistrationInfo
         {
             get;
@@ -64,7 +58,7 @@ namespace IrcDotNet.Samples.Common
         private void ProcessCommandConnect(string command, IList<string> parameters)
         {
             if (parameters.Count < 1)
-                throw new ArgumentException(Properties.Resources.MessageNotEnoughArgs);
+                throw new ArgumentException("Not enough arguments.");
 
             Connect(parameters[0], this.RegistrationInfo);
         }
@@ -72,7 +66,7 @@ namespace IrcDotNet.Samples.Common
         private void ProcessCommandDisconnect(string command, IList<string> parameters)
         {
             if (parameters.Count < 1)
-                throw new ArgumentException(Properties.Resources.MessageNotEnoughArgs);
+                throw new ArgumentException("Not enough arguments.");
 
             Disconnect(parameters[0]);
         }
@@ -80,7 +74,7 @@ namespace IrcDotNet.Samples.Common
         private void ProcessCommandJoin(string command, IList<string> parameters)
         {
             if (parameters.Count < 2)
-                throw new ArgumentException(Properties.Resources.MessageNotEnoughArgs);
+                throw new ArgumentException("Not enough arguments.");
 
             // Join given channel on given server.
             var client = GetClientFromServerNameMask(parameters[0]);
@@ -91,7 +85,7 @@ namespace IrcDotNet.Samples.Common
         private void ProcessCommandLeave(string command, IList<string> parameters)
         {
             if (parameters.Count < 2)
-                throw new ArgumentException(Properties.Resources.MessageNotEnoughArgs);
+                throw new ArgumentException("Not enough arguments.");
 
             // Leave given channel on the given server.
             var client = GetClientFromServerNameMask(parameters[0]);
