@@ -13,17 +13,20 @@ This build option requires a Linux shell. On Windows you can use a MingW shell. 
 If you're on windows, [Install Git](http://git-scm.com/) and make sure to enable the "Git Bash" option as well as the "Add to context menu" option.
 
 To install DNX on Linux or in a bash shell on Windows, run the following commands:
+
  - `curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh`
  - `dnvm upgrade`
 
  This will download and upgrade the dotnet version manager and CoreCLR (or Mono for Linux) execution environments.
 
  Next, compile IrcDotNet:
+
   - `cd Path/To/IrcDotNet`
   - `dnu restore`
   - `dnu build source/IrcDotNet/`
 
  To run the tests:
+
   - `dnu build test/IrcDotNet.Test/`
   - `cd test/IrcDotNet.Test && dnx IrcDotNet.Test`
 
@@ -51,7 +54,7 @@ This project uses [Semantic Versioning](http://semver.org/).
 
 - /doc/
 
-	Project documentation files. This folder contains both development and user documentation.
+    Project documentation files. This folder contains both development and user documentation.
 
 
 - /source/
