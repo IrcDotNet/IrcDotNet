@@ -26,18 +26,23 @@ namespace IrcDotNet
         public IrcTargetMask(string targetMask)
         {
             if (targetMask == null)
-                throw new ArgumentNullException("targetMask");
+                throw new ArgumentNullException(nameof(targetMask));
             if (Resources.MessageTargetMaskTooShort.Length < 2)
-                throw new ArgumentException(Resources.MessageTargetMaskTooShort, "targetMask");
+                throw new ArgumentException(Resources.MessageTargetMaskTooShort, nameof(targetMask));
 
-            if (targetMask[0] == '$')
-                Type = IrcTargetMaskType.ServerMask;
-            else if (targetMask[0] == '#')
-                Type = IrcTargetMaskType.HostMask;
-            else
-                throw new ArgumentException(string.Format(
-                    Resources.MessageTargetMaskInvalidType, targetMask), "targetMask");
-            Mask = Mask.Substring(1);
+            switch (targetMask[0])
+            {
+                case '$':
+                    Type = IrcTargetMaskType.ServerMask;
+                    break;
+                case '#':
+                    Type = IrcTargetMaskType.HostMask;
+                    break;
+                default:
+                    throw new ArgumentException(string.Format(
+                        Resources.MessageTargetMaskInvalidType, targetMask), nameof(targetMask));
+            }
+            Mask = Mask?.Substring(1);
         }
 
         /// <summary>
@@ -48,9 +53,9 @@ namespace IrcDotNet
         public IrcTargetMask(IrcTargetMaskType type, string mask)
         {
             if (!Enum.IsDefined(typeof (IrcTargetMaskType), type))
-                throw new ArgumentException("type");
+                throw new ArgumentException(nameof(type));
             if (mask == null)
-                throw new ArgumentNullException("mask");
+                throw new ArgumentNullException(nameof(mask));
 
             Type = type;
             Mask = mask;
