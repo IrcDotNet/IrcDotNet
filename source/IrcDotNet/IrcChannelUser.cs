@@ -1,168 +1,154 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using IrcDotNet.Collections;
 
 namespace IrcDotNet
 {
-    using Collections;
-
     /// <summary>
-    /// Represents an IRC user that exists on a specific channel on a specific <see cref="IrcClient"/>.
+    ///     Represents an IRC user that exists on a specific channel on a specific <see cref="IrcClient" />.
     /// </summary>
-    /// <threadsafety static="true" instance="false"/>
-    /// <seealso cref="IrcUser"/>
-    /// <seealso cref="IrcChannel"/>
+    /// <threadsafety static="true" instance="false" />
+    /// <seealso cref="IrcUser" />
+    /// <seealso cref="IrcChannel" />
     [DebuggerDisplay("{ToString(), nq}")]
     public class IrcChannelUser : INotifyPropertyChanged
     {
-        // Collection of channel modes currently active on user.
-        private HashSet<char> modes;
-        private ReadOnlySet<char> modesReadOnly;
-
         private IrcChannel channel;
-        private IrcUser user;
+        // Collection of channel modes currently active on user.
+        private readonly HashSet<char> modes;
 
         internal IrcChannelUser(IrcUser user, IEnumerable<char> modes = null)
         {
-            this.user = user;
+            User = user;
 
             this.modes = new HashSet<char>();
-            this.modesReadOnly = new ReadOnlySet<char>(this.modes);
+            Modes = new ReadOnlySet<char>(this.modes);
             if (modes != null)
                 this.modes.AddRange(modes);
         }
 
         /// <summary>
-        /// A read-only collection of the channel modes the user currently has.
+        ///     A read-only collection of the channel modes the user currently has.
         /// </summary>
         /// <value>The current channel modes of the user.</value>
-        public ReadOnlySet<char> Modes
-        {
-            get { return this.modesReadOnly; }
-        }
+        public ReadOnlySet<char> Modes { get; }
 
         /// <summary>
-        /// Gets or sets the channel.
+        ///     Gets or sets the channel.
         /// </summary>
         /// <value>The channel.</value>
         public IrcChannel Channel
         {
-            get { return this.channel; }
+            get { return channel; }
             internal set
             {
-                this.channel = value;
+                channel = value;
                 OnPropertyChanged(new PropertyChangedEventArgs("Channel"));
             }
         }
 
         /// <summary>
-        /// Gets the <see cref="IrcUser"/> that is represented by the <see cref="IrcChannelUser"/>.
+        ///     Gets the <see cref="IrcUser" /> that is represented by the <see cref="IrcChannelUser" />.
         /// </summary>
-        /// <value>The <see cref="IrcUser"/> that is represented by the <see cref="IrcChannelUser"/>.</value>
-        public IrcUser User
-        {
-            get { return this.user; }
-        }
+        /// <value>The <see cref="IrcUser" /> that is represented by the <see cref="IrcChannelUser" />.</value>
+        public IrcUser User { get; }
 
         /// <summary>
-        /// Occurs when the channel modes of the user have changed.
-        /// </summary>
-        public event EventHandler<EventArgs> ModesChanged;
-
-        /// <summary>
-        /// Occurs when a property value changes.
+        ///     Occurs when a property value changes.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Kicks the user from the channel, giving the specified comment.
+        ///     Occurs when the channel modes of the user have changed.
         /// </summary>
-        /// <param name="comment">The comment to give for the kick, or <see langword="null"/> for none.</param>
+        public event EventHandler<EventArgs> ModesChanged;
+
+        /// <summary>
+        ///     Kicks the user from the channel, giving the specified comment.
+        /// </summary>
+        /// <param name="comment">The comment to give for the kick, or <see langword="null" /> for none.</param>
         public void Kick(string comment = null)
         {
-            this.channel.Kick(this.user.NickName, comment);
+            channel.Kick(User.NickName, comment);
         }
 
         /// <summary>
-        /// Gives the user operator privileges in the channel.
+        ///     Gives the user operator privileges in the channel.
         /// </summary>
         public void Op()
         {
-            this.channel.SetModes("+o", this.user.NickName);
+            channel.SetModes("+o", User.NickName);
         }
 
         /// <summary>
-        /// Removes operator privileges from the user in the channel.
+        ///     Removes operator privileges from the user in the channel.
         /// </summary>
         public void DeOp()
         {
-            this.channel.SetModes("-o", this.user.NickName);
+            channel.SetModes("-o", User.NickName);
         }
 
         /// <summary>
-        /// Voices the user in the channel.
+        ///     Voices the user in the channel.
         /// </summary>
         public void Voice()
         {
-            this.channel.SetModes("+v", this.user.NickName);
+            channel.SetModes("+v", User.NickName);
         }
 
         /// <summary>
-        /// Devoices the user in the channel
+        ///     Devoices the user in the channel
         /// </summary>
         public void DeVoice()
         {
-            this.channel.SetModes("-v", this.user.NickName);
+            channel.SetModes("-v", User.NickName);
         }
 
         internal void HandleModeChanged(bool add, char mode)
         {
-            lock (((ICollection)this.modesReadOnly).SyncRoot)
+            lock (((ICollection) Modes).SyncRoot)
             {
                 if (add)
-                    this.modes.Add(mode);
+                    modes.Add(mode);
                 else
-                    this.modes.Remove(mode);
+                    modes.Remove(mode);
             }
 
             OnModesChanged(new EventArgs());
         }
 
         /// <summary>
-        /// Raises the <see cref="ModesChanged"/> event.
+        ///     Raises the <see cref="ModesChanged" /> event.
         /// </summary>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         protected virtual void OnModesChanged(EventArgs e)
         {
-            var handler = this.ModesChanged;
+            var handler = ModesChanged;
             if (handler != null)
                 handler(this, e);
         }
 
         /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
+        ///     Raises the <see cref="PropertyChanged" /> event.
         /// </summary>
-        /// <param name="e">The <see cref="PropertyChangedEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="PropertyChangedEventArgs" /> instance containing the event data.</param>
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            var handler = this.PropertyChanged;
+            var handler = PropertyChanged;
             if (handler != null)
                 handler(this, e);
         }
 
         /// <summary>
-        /// Returns a string representation of this instance.
+        ///     Returns a string representation of this instance.
         /// </summary>
         /// <returns>A string that represents this instance.</returns>
         public override string ToString()
         {
-            return string.Format("{0}/{1}", this.channel.Name, this.user.NickName);
+            return string.Format("{0}/{1}", channel.Name, User.NickName);
         }
-    
     }
 }

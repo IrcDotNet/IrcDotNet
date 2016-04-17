@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace IrcDotNet
 {
@@ -10,13 +7,9 @@ namespace IrcDotNet
     {
         public MessageProcessorAttribute(string commandName)
         {
-            this.CommandName = commandName;
+            CommandName = commandName;
         }
 
-        public string CommandName
-        {
-            get;
-            private set;
-        }
+        public string CommandName { get; private set; }
     }
 }

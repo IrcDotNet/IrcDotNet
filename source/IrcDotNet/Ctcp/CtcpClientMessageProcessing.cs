@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace IrcDotNet.Ctcp
 {
@@ -10,7 +7,7 @@ namespace IrcDotNet.Ctcp
     partial class CtcpClient
     {
         /// <summary>
-        /// Process ACTION messages received from a user.
+        ///     Process ACTION messages received from a user.
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("action")]
@@ -27,7 +24,7 @@ namespace IrcDotNet.Ctcp
         }
 
         /// <summary>
-        /// Process TIME messages received from a user.
+        ///     Process TIME messages received from a user.
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("time")]
@@ -43,12 +40,12 @@ namespace IrcDotNet.Ctcp
             {
                 var localDateTime = DateTimeOffset.Now.ToString("o");
 
-                SendMessageTime(new[] { message.Source }, localDateTime, true);
+                SendMessageTime(new[] {message.Source}, localDateTime, true);
             }
         }
 
         /// <summary>
-        /// Process VERSION messages received from a user.
+        ///     Process VERSION messages received from a user.
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("version")]
@@ -62,15 +59,15 @@ namespace IrcDotNet.Ctcp
             }
             else
             {
-                if (this.ClientVersion != null)
+                if (ClientVersion != null)
                 {
-                    SendMessageVersion(new[] { message.Source }, this.ClientVersion, true);
+                    SendMessageVersion(new[] {message.Source}, ClientVersion, true);
                 }
             }
         }
 
         /// <summary>
-        /// Process ERRMSG messages received from a user.
+        ///     Process ERRMSG messages received from a user.
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("errmsg")]
@@ -90,12 +87,12 @@ namespace IrcDotNet.Ctcp
             }
             else
             {
-                SendMessageErrMsg(new[] { message.Source }, message.Data + " :" + messageNoError, true);
+                SendMessageErrMsg(new[] {message.Source}, message.Data + " :" + messageNoError, true);
             }
         }
 
         /// <summary>
-        /// Process PING messages received from a user.
+        ///     Process PING messages received from a user.
         /// </summary>
         /// <param name="message">The message received from the user.</param>
         [MessageProcessor("ping")]
@@ -113,7 +110,7 @@ namespace IrcDotNet.Ctcp
             }
             else
             {
-                SendMessagePing(new[] { message.Source }, message.Data, true);
+                SendMessagePing(new[] {message.Source}, message.Data, true);
             }
         }
     }

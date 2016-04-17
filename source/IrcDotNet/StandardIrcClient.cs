@@ -6,14 +6,15 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-
+using IrcDotNet.Properties;
 #if !SILVERLIGHT
 using System.Net.Security;
+
 #endif
 
 namespace IrcDotNet
 {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public class StandardIrcClient : IrcClient
     {
         // Minimum duration of time to wait between sending successive raw messages.
@@ -21,35 +22,35 @@ namespace IrcDotNet
 
         // Size of buffer for data received by socket, in bytes.
         private const int socketReceiveBufferSize = 0xFFFF;
+        private Stream dataStream;
+        private SafeLineReader dataStreamLineReader;
+        private StreamReader dataStreamReader;
+        private AutoResetEvent disconnectedEvent;
 
         // Queue of pending messages and their tokens to be sent when ready.
-        private Queue<Tuple<string, object>> messageSendQueue;
+        private readonly Queue<Tuple<string, object>> messageSendQueue;
+        private CircularBufferStream receiveStream;
+        private Timer sendTimer;
 
         // Network (TCP) I/O.
         private Socket socket;
-        private CircularBufferStream receiveStream;
-        private Stream dataStream;
-        private StreamReader dataStreamReader;
-        private SafeLineReader dataStreamLineReader;
-        private Timer sendTimer;
-        private AutoResetEvent disconnectedEvent;
 
         public StandardIrcClient()
-            : base()
         {
-            this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            this.sendTimer = new Timer(new TimerCallback(WritePendingMessages), null,
-                                       Timeout.Infinite, Timeout.Infinite);
-            this.disconnectedEvent = new AutoResetEvent(false);
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            sendTimer = new Timer(WritePendingMessages, null,
+                Timeout.Infinite, Timeout.Infinite);
+            disconnectedEvent = new AutoResetEvent(false);
 
-            this.messageSendQueue = new Queue<Tuple<string, object>>();
+            messageSendQueue = new Queue<Tuple<string, object>>();
         }
 
-        public override bool IsConnected {
+        public override bool IsConnected
+        {
             get
             {
                 CheckDisposed();
-                return this.socket != null && this.socket.Connected;
+                return socket != null && socket.Connected;
             }
         }
 
@@ -58,37 +59,37 @@ namespace IrcDotNet
             base.Dispose(disposing);
             if (disposing)
             {
-                if (this.socket != null)
+                if (socket != null)
                 {
-                    this.socket.Dispose();
-                    this.socket = null;
+                    socket.Dispose();
+                    socket = null;
 
                     HandleClientDisconnected();
                 }
-                if (this.receiveStream != null)
+                if (receiveStream != null)
                 {
-                    this.receiveStream.Dispose();
-                    this.receiveStream = null;
+                    receiveStream.Dispose();
+                    receiveStream = null;
                 }
-                if (this.dataStream != null)
+                if (dataStream != null)
                 {
-                    this.dataStream.Dispose();
-                    this.dataStream = null;
+                    dataStream.Dispose();
+                    dataStream = null;
                 }
-                if (this.dataStreamReader != null)
+                if (dataStreamReader != null)
                 {
-                    this.dataStreamReader.Dispose();
-                    this.dataStreamReader = null;
+                    dataStreamReader.Dispose();
+                    dataStreamReader = null;
                 }
-                if (this.sendTimer != null)
+                if (sendTimer != null)
                 {
-                    this.sendTimer.Dispose();
-                    this.sendTimer = null;
+                    sendTimer.Dispose();
+                    sendTimer = null;
                 }
-                if (this.disconnectedEvent != null)
+                if (disconnectedEvent != null)
                 {
-                    this.disconnectedEvent.Close();
-                    this.disconnectedEvent = null;
+                    disconnectedEvent.Close();
+                    disconnectedEvent = null;
                 }
             }
         }
@@ -99,9 +100,9 @@ namespace IrcDotNet
             messageSendQueue.Enqueue(Tuple.Create(line + Environment.NewLine, token));
         }
 
-        /// <inheritdoc cref="Connect(string, int, bool, IrcRegistrationInfo)"/>
+        /// <inheritdoc cref="Connect(string, int, bool, IrcRegistrationInfo)" />
         /// <summary>
-        /// Connects to a server using the specified URL and user information.
+        ///     Connects to a server using the specified URL and user information.
         /// </summary>
         public void Connect(Uri url, IrcRegistrationInfo registrationInfo)
         {
@@ -117,13 +118,13 @@ namespace IrcDotNet
             else if (url.Scheme == "ircs")
                 useSsl = true;
             else
-                throw new ArgumentException(string.Format(Properties.Resources.MessageInvalidUrlScheme,
-                                                          url.Scheme), "url");
+                throw new ArgumentException(string.Format(Resources.MessageInvalidUrlScheme,
+                    url.Scheme), "url");
 
             Connect(url.Host, url.Port == -1 ? DefaultPort : url.Port, useSsl, registrationInfo);
         }
 
-        /// <inheritdoc cref="Connect(string, int, bool, IrcRegistrationInfo)"/>
+        /// <inheritdoc cref="Connect(string, int, bool, IrcRegistrationInfo)" />
         public void Connect(string hostName, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
@@ -134,7 +135,7 @@ namespace IrcDotNet
             Connect(hostName, DefaultPort, useSsl, registrationInfo);
         }
 
-        /// <inheritdoc cref="Connect(EndPoint, bool, IrcRegistrationInfo)"/>
+        /// <inheritdoc cref="Connect(EndPoint, bool, IrcRegistrationInfo)" />
         /// <param name="hostName">The name of the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
         public void Connect(string hostName, int port, bool useSsl, IrcRegistrationInfo registrationInfo)
@@ -147,7 +148,7 @@ namespace IrcDotNet
             Connect(new DnsEndPoint(hostName, port), useSsl, registrationInfo);
         }
 
-        /// <inheritdoc cref="Connect(IPAddress, int, bool, IrcRegistrationInfo)"/>
+        /// <inheritdoc cref="Connect(IPAddress, int, bool, IrcRegistrationInfo)" />
         public void Connect(IPAddress address, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
@@ -158,7 +159,7 @@ namespace IrcDotNet
             Connect(address, DefaultPort, useSsl, registrationInfo);
         }
 
-        /// <inheritdoc cref="Connect(EndPoint, bool, IrcRegistrationInfo)"/>
+        /// <inheritdoc cref="Connect(EndPoint, bool, IrcRegistrationInfo)" />
         /// <param name="address">An IP addresses that designates the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
         public void Connect(IPAddress address, int port, bool useSsl, IrcRegistrationInfo registrationInfo)
@@ -172,19 +173,27 @@ namespace IrcDotNet
         }
 
         /// <summary>
-        /// Connects asynchronously to the specified server.
+        ///     Connects asynchronously to the specified server.
         /// </summary>
-        /// <param name="remoteEndPoint">The network endpoint (IP address and port) of the server to which to connect.
+        /// <param name="remoteEndPoint">
+        ///     The network endpoint (IP address and port) of the server to which to connect.
         /// </param>
-        /// <param name="useSsl"><see langword="true"/> to connect to the server via SSL; <see langword="false"/>,
-        /// otherwise</param>
-        /// <param name="registrationInfo">The information used for registering the client.
-        /// The type of the object may be either <see cref="IrcUserRegistrationInfo"/> or
-        /// <see cref="IrcServiceRegistrationInfo"/>.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="registrationInfo"/> is <see langword="null"/>.
+        /// <param name="useSsl">
+        ///     <see langword="true" /> to connect to the server via SSL; <see langword="false" />,
+        ///     otherwise
+        /// </param>
+        /// <param name="registrationInfo">
+        ///     The information used for registering the client.
+        ///     The type of the object may be either <see cref="IrcUserRegistrationInfo" /> or
+        ///     <see cref="IrcServiceRegistrationInfo" />.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="registrationInfo" /> is <see langword="null" />.
         /// </exception>
-        /// <exception cref="ArgumentException"><paramref name="registrationInfo"/> does not specify valid registration
-        /// information.</exception>
+        /// <exception cref="ArgumentException">
+        ///     <paramref name="registrationInfo" /> does not specify valid registration
+        ///     information.
+        /// </exception>
         /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
         public void Connect(EndPoint remoteEndPoint, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
@@ -198,7 +207,7 @@ namespace IrcDotNet
         public override void Quit(int timeout, string comment)
         {
             base.Quit(timeout, comment);
-            if (!this.disconnectedEvent.WaitOne(timeout))
+            if (!disconnectedEvent.WaitOne(timeout))
                 Disconnect();
         }
 
@@ -207,12 +216,12 @@ namespace IrcDotNet
             base.ResetState();
 
             // Reset network I/O objects.
-            if (this.receiveStream != null)
-                this.receiveStream.Dispose();
-            if (this.dataStream != null)
-                this.dataStream.Dispose();
-            if (this.dataStreamReader != null)
-                this.dataStreamReader = null;
+            if (receiveStream != null)
+                receiveStream.Dispose();
+            if (dataStream != null)
+                dataStream.Dispose();
+            if (dataStreamReader != null)
+                dataStreamReader = null;
         }
 
         private void WritePendingMessages(object state)
@@ -222,9 +231,9 @@ namespace IrcDotNet
                 // Send pending messages in queue until flood preventer indicates to stop.
                 long sendDelay = 0;
 
-                while (this.messageSendQueue.Count > 0)
+                while (messageSendQueue.Count > 0)
                 {
-                    Debug.Assert(this.messageSendQueue.Count < 100);
+                    Debug.Assert(messageSendQueue.Count < 100);
                     // Check that flood preventer currently permits sending of messages.
                     if (FloodPreventer != null)
                     {
@@ -234,7 +243,7 @@ namespace IrcDotNet
                     }
 
                     // Send next message in queue.
-                    var message = this.messageSendQueue.Dequeue();
+                    var message = messageSendQueue.Dequeue();
                     var line = message.Item1;
                     var token = message.Item2;
                     var lineBuffer = TextEncoding.GetBytes(line);
@@ -246,7 +255,7 @@ namespace IrcDotNet
                 }
 
                 // Make timer fire when next message in send queue should be written.
-                this.sendTimer.Change(Math.Max(sendDelay, minimumSendWaitTime), Timeout.Infinite);
+                sendTimer.Change(Math.Max(sendDelay, minimumSendWaitTime), Timeout.Infinite);
             }
             catch (SocketException exSocket)
             {
@@ -287,9 +296,9 @@ namespace IrcDotNet
             sendEventArgs.UserToken = token;
             sendEventArgs.Completed += SendCompleted;
 
-            if (!this.socket.SendAsync(sendEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>)SendCompleted).BeginInvoke(
-                    this.socket, sendEventArgs, null, null);
+            if (!socket.SendAsync(sendEventArgs))
+                ((EventHandler<SocketAsyncEventArgs>) SendCompleted).BeginInvoke(
+                    socket, sendEventArgs, null, null);
         }
 
         private void SendCompleted(object sender, SocketAsyncEventArgs e)
@@ -304,7 +313,7 @@ namespace IrcDotNet
 
                 // Handle sent IRC message.
                 Debug.Assert(e.UserToken != null);
-                var messageSentEventArgs = (IrcRawMessageEventArgs)e.UserToken;
+                var messageSentEventArgs = (IrcRawMessageEventArgs) e.UserToken;
                 OnRawMessageSent(messageSentEventArgs);
 
 #if DEBUG
@@ -331,14 +340,14 @@ namespace IrcDotNet
         {
             // Read data received from socket to buffer asynchronously.
             var receiveEventArgs = new SocketAsyncEventArgs();
-            Debug.Assert(this.receiveStream.Buffer.Length - (int)this.receiveStream.WritePosition > 0);
-            receiveEventArgs.SetBuffer(this.receiveStream.Buffer, (int)this.receiveStream.WritePosition,
-                                       this.receiveStream.Buffer.Length - (int)this.receiveStream.WritePosition);
+            Debug.Assert(receiveStream.Buffer.Length - (int) receiveStream.WritePosition > 0);
+            receiveEventArgs.SetBuffer(receiveStream.Buffer, (int) receiveStream.WritePosition,
+                receiveStream.Buffer.Length - (int) receiveStream.WritePosition);
             receiveEventArgs.Completed += ReceiveCompleted;
 
-            if (!this.socket.ReceiveAsync(receiveEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>)ReceiveCompleted).BeginInvoke(
-                    this.socket, receiveEventArgs, null, null);
+            if (!socket.ReceiveAsync(receiveEventArgs))
+                ((EventHandler<SocketAsyncEventArgs>) ReceiveCompleted).BeginInvoke(
+                    socket, receiveEventArgs, null, null);
         }
 
         private void ReceiveCompleted(object sender, SocketAsyncEventArgs e)
@@ -359,14 +368,14 @@ namespace IrcDotNet
                 }
 
                 // Indicate that block of data has been read into receive buffer.
-                this.receiveStream.WritePosition += e.BytesTransferred;
-                this.dataStreamReader.DiscardBufferedData();
+                receiveStream.WritePosition += e.BytesTransferred;
+                dataStreamReader.DiscardBufferedData();
 
                 // Read each terminated line of characters from data stream.
                 while (true)
                 {
                     // Read next line from data stream.
-                    var line = this.dataStreamLineReader.ReadLine();
+                    var line = dataStreamLineReader.ReadLine();
                     if (line == null)
                         break;
                     if (line.Length == 0)
@@ -406,9 +415,9 @@ namespace IrcDotNet
             connectEventArgs.UserToken = token;
             connectEventArgs.Completed += ConnectCompleted;
 
-            if (!this.socket.ConnectAsync(connectEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>)ConnectCompleted).BeginInvoke(
-                    this.socket, connectEventArgs, null, null);
+            if (!socket.ConnectAsync(connectEventArgs))
+                ((EventHandler<SocketAsyncEventArgs>) ConnectCompleted).BeginInvoke(
+                    socket, connectEventArgs, null, null);
         }
 
         private void ConnectCompleted(object sender, SocketAsyncEventArgs e)
@@ -422,20 +431,20 @@ namespace IrcDotNet
                 }
 
                 Debug.Assert(e.UserToken != null);
-                var token = (Tuple<bool, string, IrcRegistrationInfo>)e.UserToken;
+                var token = (Tuple<bool, string, IrcRegistrationInfo>) e.UserToken;
 
                 // Create stream for received data. Use SSL stream on top of network stream, if specified.
-                this.receiveStream = new CircularBufferStream(socketReceiveBufferSize);
+                receiveStream = new CircularBufferStream(socketReceiveBufferSize);
 #if SILVERLIGHT
                 this.dataStream = this.receiveStream;
 #else
-                this.dataStream = GetDataStream(token.Item1, token.Item2);
+                dataStream = GetDataStream(token.Item1, token.Item2);
 #endif
-                this.dataStreamReader = new StreamReader(this.dataStream, TextEncoding);
-                this.dataStreamLineReader = new SafeLineReader(this.dataStreamReader);
+                dataStreamReader = new StreamReader(dataStream, TextEncoding);
+                dataStreamLineReader = new SafeLineReader(dataStreamReader);
 
                 // Start sending and receiving data to/from server.
-                this.sendTimer.Change(0, Timeout.Infinite);
+                sendTimer.Change(0, Timeout.Infinite);
                 ReceiveAsync();
 
                 HandleClientConnected(token.Item3);
@@ -473,9 +482,9 @@ namespace IrcDotNet
                 this.socket, disconnectEventArgs, null, null);
 #else
             disconnectEventArgs.DisconnectReuseSocket = true;
-            if (!this.socket.DisconnectAsync(disconnectEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>)DisconnectCompleted).BeginInvoke(
-                    this.socket, disconnectEventArgs, null, null);
+            if (!socket.DisconnectAsync(disconnectEventArgs))
+                ((EventHandler<SocketAsyncEventArgs>) DisconnectCompleted).BeginInvoke(
+                    socket, disconnectEventArgs, null, null);
 #endif
         }
 
@@ -511,6 +520,62 @@ namespace IrcDotNet
             }
         }
 
+        protected override void HandleClientConnected(IrcRegistrationInfo regInfo)
+        {
+            DebugUtilities.WriteEvent(string.Format("Connected to server at '{0}'.",
+                ((IPEndPoint) socket.RemoteEndPoint).Address));
+
+            base.HandleClientConnected(regInfo);
+        }
+
+        protected override void HandleClientDisconnected()
+        {
+            // Ensure that client has not already handled disconnection.
+            if (disconnectedEvent.WaitOne(0))
+                return;
+
+            DebugUtilities.WriteEvent("Disconnected from server.");
+
+            // Stop sending messages immediately.
+            sendTimer.Change(Timeout.Infinite, Timeout.Infinite);
+
+            // Set that client has disconnected.
+            disconnectedEvent.Set();
+
+            base.HandleClientDisconnected();
+        }
+
+        private void HandleSocketError(SocketError error)
+        {
+            HandleSocketError(new SocketException((int) error));
+        }
+
+        private void HandleSocketError(SocketException exception)
+        {
+            switch (exception.SocketErrorCode)
+            {
+                case SocketError.NotConnected:
+                case SocketError.ConnectionReset:
+                    HandleClientDisconnected();
+                    return;
+                default:
+                    OnError(new IrcErrorEventArgs(exception));
+                    return;
+            }
+        }
+
+        /// <summary>
+        ///     Returns a string representation of this instance.
+        /// </summary>
+        /// <returns>A string that represents this instance.</returns>
+        public override string ToString()
+        {
+            if (!IsDisposed && IsConnected)
+                return string.Format("{0}@{1}", LocalUser.UserName,
+                    ServerName ?? socket.RemoteEndPoint.ToString());
+            return "(Not connected)";
+        }
+
 #if !SILVERLIGHT
 
         private Stream GetDataStream(bool useSsl, string targetHost)
@@ -518,21 +583,18 @@ namespace IrcDotNet
             if (useSsl)
             {
                 // Create SSL stream over network stream to use for data transmission.
-                var sslStream = new SslStream(this.receiveStream, true,
-                                              new RemoteCertificateValidationCallback(SslUserCertificateValidationCallback));
+                var sslStream = new SslStream(receiveStream, true,
+                    SslUserCertificateValidationCallback);
                 sslStream.AuthenticateAsClient(targetHost);
                 Debug.Assert(sslStream.IsAuthenticated);
                 return sslStream;
             }
-            else
-            {
-                // Use network stream directly for data transmission.
-                return this.receiveStream;
-            }
+            // Use network stream directly for data transmission.
+            return receiveStream;
         }
 
         private bool SslUserCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain,
-                                                          SslPolicyErrors sslPolicyErrors)
+            SslPolicyErrors sslPolicyErrors)
         {
             // Raise an event to decide whether the certificate is valid.
             var eventArgs = new IrcValidateSslCertificateEventArgs(certificate, chain, sslPolicyErrors);
@@ -542,63 +604,5 @@ namespace IrcDotNet
         }
 
 #endif
-
-        protected override void HandleClientConnected(IrcRegistrationInfo regInfo)
-        {
-            DebugUtilities.WriteEvent(string.Format("Connected to server at '{0}'.",
-                ((IPEndPoint)this.socket.RemoteEndPoint).Address));
-
-            base.HandleClientConnected(regInfo);
-        }
-
-        protected override void HandleClientDisconnected()
-        {
-            // Ensure that client has not already handled disconnection.
-            if (this.disconnectedEvent.WaitOne(0))
-                return;
-
-            DebugUtilities.WriteEvent("Disconnected from server.");
-
-            // Stop sending messages immediately.
-            this.sendTimer.Change(Timeout.Infinite, Timeout.Infinite);
-
-            // Set that client has disconnected.
-            this.disconnectedEvent.Set();
-
-            base.HandleClientDisconnected();
-        }
-
-        private void HandleSocketError(SocketError error)
-        {
-            HandleSocketError(new SocketException((int)error));
-        }
-
-        private void HandleSocketError(SocketException exception)
-        {
-            switch (exception.SocketErrorCode)
-            {
-            case SocketError.NotConnected:
-            case SocketError.ConnectionReset:
-                HandleClientDisconnected();
-                return;
-            default:
-                OnError(new IrcErrorEventArgs(exception));
-                return;
-            }
-        }
-
-        /// <summary>
-        /// Returns a string representation of this instance.
-        /// </summary>
-        /// <returns>A string that represents this instance.</returns>
-        public override string ToString()
-        {
-            if (!this.IsDisposed && this.IsConnected)
-                return string.Format("{0}@{1}", LocalUser.UserName,
-                                     this.ServerName ?? this.socket.RemoteEndPoint.ToString());
-            else
-                return "(Not connected)";
-        }
     }
 }
-

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
 
 namespace IrcDotNet
 {
@@ -12,11 +8,10 @@ namespace IrcDotNet
     internal class CircularBufferStream : Stream
     {
         // Buffer for storing data.
-        private byte[] buffer;
+        private long readPosition;
 
         // Current index within buffer for writing and reading.
         private long writePosition;
-        private long readPosition;
 
         public CircularBufferStream(int length)
             : this(new byte[length])
@@ -25,34 +20,31 @@ namespace IrcDotNet
 
         public CircularBufferStream(byte[] buffer)
         {
-            this.buffer = buffer;
-            this.writePosition = 0;
-            this.readPosition = 0;
+            Buffer = buffer;
+            writePosition = 0;
+            readPosition = 0;
         }
 
-        public byte[] Buffer
-        {
-            get { return this.buffer; }
-        }
+        public byte[] Buffer { get; }
 
         public long WritePosition
         {
-            get { return this.writePosition; }
-            set { this.writePosition = value % this.buffer.Length; }
+            get { return writePosition; }
+            set { writePosition = value%Buffer.Length; }
         }
 
         public override long Position
         {
-            get { return this.readPosition; }
-            set { this.readPosition = value % this.buffer.Length; }
+            get { return readPosition; }
+            set { readPosition = value%Buffer.Length; }
         }
 
         public override long Length
         {
             get
             {
-                var length = this.writePosition - this.readPosition;
-                return length < 0 ? this.buffer.Length + length : length;
+                var length = writePosition - readPosition;
+                return length < 0 ? Buffer.Length + length : length;
             }
         }
 
@@ -81,19 +73,19 @@ namespace IrcDotNet
             switch (origin)
             {
                 case SeekOrigin.Begin:
-                    this.readPosition = offset % this.buffer.Length;
+                    readPosition = offset%Buffer.Length;
                     break;
                 case SeekOrigin.End:
-                    this.readPosition = (this.buffer.Length - offset) % this.buffer.Length;
+                    readPosition = (Buffer.Length - offset)%Buffer.Length;
                     break;
                 case SeekOrigin.Current:
-                    this.readPosition = (this.readPosition + offset) % this.buffer.Length;
+                    readPosition = (readPosition + offset)%Buffer.Length;
                     break;
                 default:
                     throw new NotSupportedException();
             }
 
-            return this.readPosition;
+            return readPosition;
         }
 
         public override void SetLength(long value)
@@ -105,10 +97,10 @@ namespace IrcDotNet
         {
             // Write block of bytes from given buffer into circular buffer, wrapping around when necessary.
             int writeCount;
-            while ((writeCount = Math.Min(count, (int)(this.buffer.Length - this.writePosition))) > 0)
+            while ((writeCount = Math.Min(count, (int) (Buffer.Length - writePosition))) > 0)
             {
-                var oldWritePosition = this.writePosition;
-                var newWritePosition = (this.writePosition + writeCount) % this.buffer.Length;
+                var oldWritePosition = writePosition;
+                var newWritePosition = (writePosition + writeCount)%Buffer.Length;
                 if (newWritePosition > readPosition && oldWritePosition < readPosition)
                 {
 #if !SILVERLIGHT
@@ -117,9 +109,9 @@ namespace IrcDotNet
                     throw new IOException("The CircularBuffer was overflowed!");
 #endif
                 }
-                System.Buffer.BlockCopy(buffer, offset, this.buffer, (int)this.writePosition, writeCount);
-                this.writePosition = newWritePosition;
-               
+                System.Buffer.BlockCopy(buffer, offset, Buffer, (int) writePosition, writeCount);
+                writePosition = newWritePosition;
+
                 offset += writeCount;
                 count -= writeCount; //writeCount <= count => now is count >=0
             }
@@ -128,17 +120,17 @@ namespace IrcDotNet
         public override int Read(byte[] buffer, int offset, int count)
         {
             // Read block of bytes from circular buffer, wrapping around when necessary.
-            int totalReadCount = 0;
+            var totalReadCount = 0;
             int readCount;
             count = Math.Min(buffer.Length - offset, count);
-            while ((readCount = Math.Min(count, (int)(Length))) > 0)
+            while ((readCount = Math.Min(count, (int) Length)) > 0)
             {
-                if (readCount > this.buffer.Length - readPosition)
+                if (readCount > Buffer.Length - readPosition)
                 {
-                    readCount = (int)(this.buffer.Length - readPosition);
+                    readCount = (int) (Buffer.Length - readPosition);
                 }
-                System.Buffer.BlockCopy(this.buffer, (int)this.readPosition, buffer, offset, readCount);
-                this.readPosition = (this.readPosition + readCount) % this.buffer.Length;
+                System.Buffer.BlockCopy(Buffer, (int) readPosition, buffer, offset, readCount);
+                readPosition = (readPosition + readCount)%Buffer.Length;
                 offset += readCount;
                 count = Math.Min(buffer.Length - offset, count);
                 totalReadCount += readCount;
