@@ -121,7 +121,7 @@ namespace IrcDotNet
                             continue;
                         // Ignore word if it is first in sentence and same as nick name.
                         if (lastWord == null && channel.Users.Any(cu => cu.User.NickName.Equals(w,
-                            StringComparison.InvariantCultureIgnoreCase)))
+                            StringComparison.OrdinalIgnoreCase)))
                             break;
 
                         markovChain.Train(lastWord, w);
