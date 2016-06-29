@@ -251,7 +251,12 @@ namespace IrcDotNet.Test
 
         private static void ircClient1_Error(object sender, IrcErrorEventArgs e)
         {
-            if (!client2ErrorEvent.SafeWaitHandle.IsClosed)
+#if NETCOREAPP
+            var handle = client1ErrorEvent.GetSafeWaitHandle();
+#else
+            var handle = client1ErrorEvent.SafeWaitHandle;
+#endif
+            if (!handle.IsClosed)
             {
                 if (client1ErrorEvent != null)
                     client1ErrorEvent.Set();
@@ -482,9 +487,9 @@ namespace IrcDotNet.Test
                 client1ChannelNoticeReceivedEvent.Set();
         }
 
-        #endregion
+#endregion
 
-        #region IRC Client 2 Event Handlers
+#region IRC Client 2 Event Handlers
 
         private static void ircClient2_Connected(object sender, EventArgs e)
         {
@@ -506,7 +511,12 @@ namespace IrcDotNet.Test
 
         private static void ircClient2_Error(object sender, IrcErrorEventArgs e)
         {
-            if (!client2ErrorEvent.SafeWaitHandle.IsClosed)
+#if NETCOREAPP
+            var handle = client2ErrorEvent.GetSafeWaitHandle();
+#else
+            var handle = client2ErrorEvent.SafeWaitHandle;
+#endif
+            if (!handle.IsClosed)
             {
                 if (client2ErrorEvent != null)
                     client2ErrorEvent.Set();
@@ -615,9 +625,9 @@ namespace IrcDotNet.Test
                 client2ChannelNoticeReceivedEvent.Set();
         }
 
-        #endregion
+#endregion
 
-        #region CTCP Client 1 Event Handlers
+#region CTCP Client 1 Event Handlers
 
         private static void ctcpClient1_PingResponseReceived(object sender, CtcpPingResponseReceivedEventArgs e)
         {
@@ -655,9 +665,9 @@ namespace IrcDotNet.Test
                 ctcpClient1ActionReceivedEvent.Set();
         }
 
-        #endregion
+#endregion
 
-        #region CTCP Client 2 Event Handlers
+#region CTCP Client 2 Event Handlers
 
         private static void ctcpClient2_PingResponseReceived(object sender, CtcpPingResponseReceivedEventArgs e)
         {
@@ -683,7 +693,7 @@ namespace IrcDotNet.Test
                 ctcpClient2ActionReceivedEvent.Set();
         }
 
-        #endregion
+#endregion
 
         public IrcClientTestSet()
             : base()
@@ -702,7 +712,7 @@ namespace IrcDotNet.Test
         {
         }
 
-        #region Test Methods
+#region Test Methods
 
         [Test]
         [Category("Integration")]
@@ -1202,7 +1212,7 @@ namespace IrcDotNet.Test
             Assert.AreEqual(testMessage1, client2ReceivedActionText);
         }
 
-        #endregion
+#endregion
 
         private bool WaitForClientEvent(WaitHandle eventHandle, int millisecondsTimeout = Timeout.Infinite)
         {

@@ -38,7 +38,11 @@ namespace IrcDotNet.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
+#if NETCOREAPP
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("IrcDotNet.Properties.Resources", typeof(Resources).GetTypeInfo().Assembly);
+#else
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("IrcDotNet.Properties.Resources", typeof(Resources).Assembly);
+#endif
                     resourceMan = temp;
                 }
                 return resourceMan;

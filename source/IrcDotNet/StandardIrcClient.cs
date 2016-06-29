@@ -88,7 +88,7 @@ namespace IrcDotNet
                 }
                 if (disconnectedEvent != null)
                 {
-                    disconnectedEvent.Close();
+                    disconnectedEvent.Dispose();
                     disconnectedEvent = null;
                 }
             }
@@ -144,8 +144,14 @@ namespace IrcDotNet
 
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
+#if NETSTANDARD1_5
+            var dnsTask = Dns.GetHostAddressesAsync(hostName);
+            var addresses = dnsTask.Result;
 
+            Connect(new IPEndPoint(addresses[0], port), useSsl, registrationInfo);
+#else
             Connect(new DnsEndPoint(hostName, port), useSsl, registrationInfo);
+#endif
         }
 
         /// <inheritdoc cref="Connect(IPAddress, int, bool, IrcRegistrationInfo)" />
@@ -255,7 +261,7 @@ namespace IrcDotNet
                 }
 
                 // Make timer fire when next message in send queue should be written.
-                sendTimer.Change(Math.Max(sendDelay, minimumSendWaitTime), Timeout.Infinite);
+                sendTimer.Change((int)Math.Max(sendDelay, minimumSendWaitTime), Timeout.Infinite);
             }
             catch (SocketException exSocket)
             {
@@ -297,8 +303,7 @@ namespace IrcDotNet
             sendEventArgs.Completed += SendCompleted;
 
             if (!socket.SendAsync(sendEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>) SendCompleted).BeginInvoke(
-                    socket, sendEventArgs, null, null);
+                SendCompleted(socket, sendEventArgs);
         }
 
         private void SendCompleted(object sender, SocketAsyncEventArgs e)
@@ -346,8 +351,7 @@ namespace IrcDotNet
             receiveEventArgs.Completed += ReceiveCompleted;
 
             if (!socket.ReceiveAsync(receiveEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>) ReceiveCompleted).BeginInvoke(
-                    socket, receiveEventArgs, null, null);
+                ReceiveCompleted(socket, receiveEventArgs);
         }
 
         private void ReceiveCompleted(object sender, SocketAsyncEventArgs e)
@@ -416,8 +420,7 @@ namespace IrcDotNet
             connectEventArgs.Completed += ConnectCompleted;
 
             if (!socket.ConnectAsync(connectEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>) ConnectCompleted).BeginInvoke(
-                    socket, connectEventArgs, null, null);
+                ConnectCompleted(socket, connectEventArgs);
         }
 
         private void ConnectCompleted(object sender, SocketAsyncEventArgs e)
@@ -475,16 +478,14 @@ namespace IrcDotNet
             var disconnectEventArgs = new SocketAsyncEventArgs();
             disconnectEventArgs.Completed += DisconnectCompleted;
 
-#if SILVERLIGHT
+#if SILVERLIGHT || NETSTANDARD1_5
             this.socket.Shutdown(SocketShutdown.Both);
             disconnectEventArgs.SocketError = SocketError.Success;
-            ((EventHandler<SocketAsyncEventArgs>)DisconnectCompleted).BeginInvoke(
-                this.socket, disconnectEventArgs, null, null);
+            DisconnectCompleted(socket, disconnectEventArgs);
 #else
             disconnectEventArgs.DisconnectReuseSocket = true;
             if (!socket.DisconnectAsync(disconnectEventArgs))
-                ((EventHandler<SocketAsyncEventArgs>) DisconnectCompleted).BeginInvoke(
-                    socket, disconnectEventArgs, null, null);
+                DisconnectCompleted(socket, disconnectEventArgs);
 #endif
         }
 
@@ -585,7 +586,13 @@ namespace IrcDotNet
                 // Create SSL stream over network stream to use for data transmission.
                 var sslStream = new SslStream(receiveStream, true,
                     SslUserCertificateValidationCallback);
+
+#if NETSTANDARD1_5
+                var authTask = sslStream.AuthenticateAsClientAsync(targetHost);
+                authTask.Wait();
+#else
                 sslStream.AuthenticateAsClient(targetHost);
+#endif
                 Debug.Assert(sslStream.IsAuthenticated);
                 return sslStream;
             }
@@ -604,5 +611,5 @@ namespace IrcDotNet
         }
 
 #endif
-    }
+            }
 }

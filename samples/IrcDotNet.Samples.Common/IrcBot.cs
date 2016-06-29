@@ -35,13 +35,13 @@ namespace IrcDotNet
         {
             this.isRunning = false;
             this.commandProcessors = new Dictionary<string, CommandProcessor>(
-                StringComparer.InvariantCultureIgnoreCase);
+                StringComparer.OrdinalIgnoreCase);
             InitializeCommandProcessors();
 
             this.allClients = new Collection<IrcClient>();
             this.allClientsReadOnly = new ReadOnlyCollection<IrcClient>(this.allClients);
             this.chatCommandProcessors = new Dictionary<string, ChatCommandProcessor>(
-                StringComparer.InvariantCultureIgnoreCase);
+                StringComparer.OrdinalIgnoreCase);
             InitializeChatCommandProcessors();
         }
 

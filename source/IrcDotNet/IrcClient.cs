@@ -81,7 +81,7 @@ namespace IrcDotNet
         {
             TextEncoding = Encoding.UTF8;
             messageProcessors = new Dictionary<string, MessageProcessor>(
-                StringComparer.InvariantCultureIgnoreCase);
+                StringComparer.OrdinalIgnoreCase);
             numericMessageProcessors = new Dictionary<int, MessageProcessor>(1000);
             FloodPreventer = null;
 
