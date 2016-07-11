@@ -2,8 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.Serialization;
 using System.Text;
+
+#if !NETSTANDARD1_5
+using System.Runtime.Serialization;
+#endif
 
 namespace IrcDotNet.Collections
 {
@@ -11,12 +14,12 @@ namespace IrcDotNet.Collections
     /// Represents a read-only set of values.
     /// </summary>
     /// <typeparam name="T">The type of elements in the set.</typeparam>
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !NETSTANDARD1_5
     [Serializable()]
 #endif
     [DebuggerDisplay("Count = {Count}")]
     public class ReadOnlySet<T> : ISet<T>, ICollection<T>, IEnumerable<T>, ICollection, IEnumerable
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !NETSTANDARD1_5
         , ISerializable, IDeserializationCallback
 #endif
     {
@@ -55,7 +58,7 @@ namespace IrcDotNet.Collections
             return sb.ToString();
         }
 
-        #region ISet<T> Members
+#region ISet<T> Members
 
         bool ISet<T>.Add(T item)
         {
@@ -184,9 +187,9 @@ namespace IrcDotNet.Collections
             return this.set.SetEquals(other);
         }
 
-        #endregion
+#endregion
 
-        #region ICollection<T> Members
+#region ICollection<T> Members
 
         /// <summary>
         /// Gets the number of elements that are contained in the set.
@@ -256,9 +259,9 @@ namespace IrcDotNet.Collections
             this.set.CopyTo(array, arrayIndex);
         }
 
-        #endregion
+#endregion
 
-        #region IEnumerable<T> Members
+#region IEnumerable<T> Members
 
         /// <summary>
         /// Returns an enumerator that iterates through the set.
@@ -269,9 +272,9 @@ namespace IrcDotNet.Collections
             return ((IEnumerable<T>)this.set).GetEnumerator();
         }
 
-        #endregion
+#endregion
 
-        #region ICollection Members
+#region ICollection Members
 
         void ICollection.CopyTo(Array array, int index)
         {
@@ -288,36 +291,36 @@ namespace IrcDotNet.Collections
             get { return this.syncRoot; }
         }
 
-        #endregion
+#endregion
 
-        #region IEnumerable Members
+#region IEnumerable Members
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable)this.set).GetEnumerator();
         }
 
-        #endregion
+#endregion
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !NETSTANDARD1_5
 
-        #region ISerializable Members
+#region ISerializable Members
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
             ((ISerializable)this.set).GetObjectData(info, context);
         }
 
-        #endregion
+#endregion
 
-        #region IDeserializationCallback Members
+#region IDeserializationCallback Members
 
         void IDeserializationCallback.OnDeserialization(object sender)
         {
             ((IDeserializationCallback)this.set).OnDeserialization(sender);
         }
 
-        #endregion
+#endregion
 
 #endif
     }

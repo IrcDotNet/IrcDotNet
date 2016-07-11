@@ -1,25 +1,45 @@
 ﻿{
   "version": "0.6-*",
 
-  "description": "IrcDotNet Tests",
-  "authors": [ "paralin" ],
+  "packOptions": {
+    "summary": "Integration tests for the IrcDotNet library.",
+    "copyright": "IRC.NET is copyright © 2011-2016 Alex Regueiro, Christian Stewart",
+    "authors": [ "Alexander Regueiro", "Christian Stewart" ],
+    "owners": [ "Alexander Regueiro", "Christian Stewart" ],
+    "tags": [ "communication", "irc", "networking", "ctcp" ],
 
-  "compilationOptions": {
+    "projectUrl": "https://github.com/IrcDotNet/IrcDotNet/",
+    "iconUrl": "https://raw.githubusercontent.com/IrcDotNet/IrcDotNet/master/doc/content/img/logo.png",
+
+    "licenseUrl": "https://github.com/IrcDotNet/IrcDotNet/License.txt",
+    "requireLicenseAcceptance": true
+  },
+
+  "buildOptions": {
     "emitEntryPoint": true
   },
 
   "frameworks": {
-    "net451": { },
-    "dnx451": { }
+    "net451": {},
+    "netcoreapp1.0": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      },
+      "buildOptions": {
+        "define": [ "NETCOREAPP" ]
+      }
+    }
   },
 
   "dependencies": {
-    "NUnit": "3.0.1",
-    "NUnitLite": "3.0.1",
-    "IrcDotNet": ""
-  },
-
-  "commands": {
-    "IrcDotNet.Test": "IrcDotNet.Test"
+    "NUnit": "3.4.0",
+    "NUnitLite": "3.4.0",
+    "IrcDotNet": {
+      "target": "project"
+    }
   }
 }

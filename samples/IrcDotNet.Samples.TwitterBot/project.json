@@ -1,38 +1,36 @@
 ﻿{
   "version": "0.6-*",
 
-  "summary": "IrcDotNet twitter bot example.",
-  "copyright": "IRC.NET is copyright © 2011-2016 Alex Regueiro, Christian Stewart",
-  "authors": [ "Alexander Regueiro", "Christian Stewart" ],
-  "owners": [ "Alexander Regueiro", "Christian Stewart" ],
-  "tags": [ "communication", "irc", "networking", "ctcp" ],
+  "packOptions": {
+    "summary": "IrcDotNet twitter bot example.",
+    "copyright": "IRC.NET is copyright © 2011-2016 Alex Regueiro, Christian Stewart",
+    "authors": [ "Alexander Regueiro", "Christian Stewart" ],
+    "owners": [ "Alexander Regueiro", "Christian Stewart" ],
+    "tags": [ "communication", "irc", "networking", "ctcp" ],
 
-  "compilationOptions": {
-    "emitEntryPoint": true
+    "projectUrl": "https://github.com/IrcDotNet/IrcDotNet/",
+    "iconUrl": "https://raw.githubusercontent.com/IrcDotNet/IrcDotNet/master/doc/content/img/logo.png",
+
+    "licenseUrl": "https://github.com/IrcDotNet/IrcDotNet/License.txt",
+    "requireLicenseAcceptance": true
   },
 
-  "projectUrl": "https://github.com/IrcDotNet/IrcDotNet/",
-  "iconUrl": "https://raw.githubusercontent.com/IrcDotNet/IrcDotNet/master/doc/content/img/logo.png",
-
-  "licenseUrl": "https://github.com/IrcDotNet/IrcDotNet/License.txt",
-  "requireLicenseAcceptance": true,
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
 
   "frameworks": {
     "net40": { },
     "net45": { },
-    "net451": { },
-    "dnx451": { },
-    "dnx50": { }
+    "net451": { }
   },
 
   "dependencies": {
-    "IrcDotNet.Samples.Common": "",
+    "IrcDotNet.Samples.Common": {
+      "target": "project"
+    },
     "Hammock": "1.3.1",
     "Newtonsoft.Json": "5.0.6",
     "TweetSharp": "2.3.1"
-  },
-
-  "commands": {
-    "IrcDotNet.Samples.TwitterBot": "IrcDotNet.Samples.TwitterBot"
   }
 }

@@ -69,7 +69,7 @@ namespace IrcDotNet.Ctcp
 
             IrcClient = ircClient;
             messageProcessors = new Dictionary<string, MessageProcessor>(
-                StringComparer.InvariantCultureIgnoreCase);
+                StringComparer.OrdinalIgnoreCase);
 
             InitializeMessageProcessors();
 

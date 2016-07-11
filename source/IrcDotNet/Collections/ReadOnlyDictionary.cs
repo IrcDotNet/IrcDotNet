@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+
+#if !NETSTANDARD1_5
 using System.Runtime.Serialization;
-using System.Text;
+#endif
 
 namespace IrcDotNet.Collections
 {
@@ -12,13 +14,13 @@ namespace IrcDotNet.Collections
     /// </summary>
     /// <typeparam name="TKey">The type of the keys in the dictionary.</typeparam>
     /// <typeparam name="TValue">The type of the values in the dictionary.</typeparam>
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !NETSTANDARD1_5
     [Serializable()]
 #endif
     [DebuggerDisplay("Count = {Count}")]
     public class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>,
         IEnumerable<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !NETSTANDARD1_5
         , ISerializable, IDeserializationCallback
 #endif
     {
@@ -38,7 +40,7 @@ namespace IrcDotNet.Collections
             this.dictionary = dictionary;
         }
 
-        #region IDictionary<TKey, TValue> Members
+#region IDictionary<TKey, TValue> Members
 
         /// <summary>
         /// Gets a collection containing the keys in the dictionary.
@@ -119,9 +121,9 @@ namespace IrcDotNet.Collections
             throw new NotSupportedException();
         }
 
-        #endregion
+#endregion
 
-        #region ICollection<KeyValuePair<TKey, TValue>> Members
+#region ICollection<KeyValuePair<TKey, TValue>> Members
 
         /// <summary>
         /// Gets the number of key/value pairs contained in the dictionary.
@@ -162,9 +164,9 @@ namespace IrcDotNet.Collections
             this.dictionary.CopyTo(array, arrayIndex);
         }
 
-        #endregion
+#endregion
 
-        #region IEnumerable<KeyValuePair<TKey, TValue>> Members
+#region IEnumerable<KeyValuePair<TKey, TValue>> Members
 
         /// <summary>
         /// Returns an enumerator that iterates through the dictionary.
@@ -175,9 +177,9 @@ namespace IrcDotNet.Collections
             return ((IEnumerable<KeyValuePair<TKey, TValue>>)this.dictionary).GetEnumerator();
         }
 
-        #endregion
+#endregion
 
-        #region IDictionary Members
+#region IDictionary Members
 
         ICollection IDictionary.Keys
         {
@@ -236,9 +238,9 @@ namespace IrcDotNet.Collections
             return ((IDictionary)this.dictionary).GetEnumerator();
         }
 
-        #endregion
+#endregion
 
-        #region ICollection Members
+#region ICollection Members
 
         void ICollection.CopyTo(Array array, int index)
         {
@@ -260,36 +262,36 @@ namespace IrcDotNet.Collections
             get { return ((ICollection)this.dictionary).SyncRoot; }
         }
 
-        #endregion
+#endregion
 
-        #region IEnumerable Members
+#region IEnumerable Members
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable)this.dictionary).GetEnumerator();
         }
 
-        #endregion
+#endregion
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !NETSTANDARD1_5
 
-        #region ISerializable Members
+#region ISerializable Members
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
             ((ISerializable)this.dictionary).GetObjectData(info, context);
         }
 
-        #endregion
+#endregion
 
-        #region IDeserializationCallback Members
+#region IDeserializationCallback Members
 
         void IDeserializationCallback.OnDeserialization(object sender)
         {
             ((IDeserializationCallback)this.dictionary).OnDeserialization(sender);
         }
 
-        #endregion
+#endregion
 
 #endif
     }

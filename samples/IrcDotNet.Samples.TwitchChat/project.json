@@ -1,35 +1,41 @@
 ﻿{
   "version": "0.6-*",
 
-  "summary": "IrcDotNet twitch chat example.",
-  "copyright": "IRC.NET is copyright © 2011-2016 Alex Regueiro, Christian Stewart",
-  "authors": [ "Alexander Regueiro", "Christian Stewart" ],
-  "owners": [ "Alexander Regueiro", "Christian Stewart" ],
-  "tags": [ "communication", "irc", "networking", "ctcp" ],
+  "packOptions": {
+    "summary": "IrcDotNet twitch chat example.",
+    "copyright": "IRC.NET is copyright © 2011-2016 Alex Regueiro, Christian Stewart",
+    "authors": [ "Alexander Regueiro", "Christian Stewart" ],
+    "owners": [ "Alexander Regueiro", "Christian Stewart" ],
+    "tags": [ "communication", "irc", "networking", "ctcp" ],
 
-  "compilationOptions": {
-    "emitEntryPoint": true
+    "projectUrl": "https://github.com/IrcDotNet/IrcDotNet/",
+    "iconUrl": "https://raw.githubusercontent.com/IrcDotNet/IrcDotNet/master/doc/content/img/logo.png",
+
+    "licenseUrl": "https://github.com/IrcDotNet/IrcDotNet/License.txt",
+    "requireLicenseAcceptance": true
   },
 
-  "projectUrl": "https://github.com/IrcDotNet/IrcDotNet/",
-  "iconUrl": "https://raw.githubusercontent.com/IrcDotNet/IrcDotNet/master/doc/content/img/logo.png",
-
-  "licenseUrl": "https://github.com/IrcDotNet/IrcDotNet/License.txt",
-  "requireLicenseAcceptance": true,
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
 
   "frameworks": {
     "net40": { },
     "net45": { },
     "net451": { },
-    "dnx451": { },
-    "dnx50": { }
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      }
+    }
   },
 
   "dependencies": {
-    "IrcDotNet.Samples.Common": ""
-  },
-
-  "commands": {
-    "IrcDotNet.Samples.TwitchChat": "IrcDotNet.Samples.TwitchChat"
+    "IrcDotNet.Samples.Common": {
+      "target": "project"
+    }
   }
 }
