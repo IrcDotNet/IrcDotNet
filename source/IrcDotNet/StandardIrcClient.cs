@@ -144,7 +144,7 @@ namespace IrcDotNet
 
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
-#if NETSTANDARD1_5
+#if NETSTANDARD1_5 || NETCOREAPP1_0
             var dnsTask = Dns.GetHostAddressesAsync(hostName);
             var addresses = dnsTask.Result;
 
@@ -478,7 +478,7 @@ namespace IrcDotNet
             var disconnectEventArgs = new SocketAsyncEventArgs();
             disconnectEventArgs.Completed += DisconnectCompleted;
 
-#if SILVERLIGHT || NETSTANDARD1_5
+#if SILVERLIGHT || NETSTANDARD1_5 || NETCOREAPP1_0
             this.socket.Shutdown(SocketShutdown.Both);
             disconnectEventArgs.SocketError = SocketError.Success;
             DisconnectCompleted(socket, disconnectEventArgs);
@@ -587,7 +587,7 @@ namespace IrcDotNet
                 var sslStream = new SslStream(receiveStream, true,
                     SslUserCertificateValidationCallback);
 
-#if NETSTANDARD1_5
+#if NETSTANDARD1_5 || NETCOREAPP1_0
                 var authTask = sslStream.AuthenticateAsClientAsync(targetHost);
                 authTask.Wait();
 #else

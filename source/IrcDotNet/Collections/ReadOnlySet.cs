@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_5 && !NETCOREAPP1_0
 using System.Runtime.Serialization;
 #endif
 
@@ -14,12 +14,12 @@ namespace IrcDotNet.Collections
     /// Represents a read-only set of values.
     /// </summary>
     /// <typeparam name="T">The type of elements in the set.</typeparam>
-#if !SILVERLIGHT && !NETSTANDARD1_5
+#if !SILVERLIGHT && !NETSTANDARD1_5 && !NETCOREAPP1_0
     [Serializable()]
 #endif
     [DebuggerDisplay("Count = {Count}")]
     public class ReadOnlySet<T> : ISet<T>, ICollection<T>, IEnumerable<T>, ICollection, IEnumerable
-#if !SILVERLIGHT && !NETSTANDARD1_5
+#if !SILVERLIGHT && !NETSTANDARD1_5 && !NETCOREAPP1_0
         , ISerializable, IDeserializationCallback
 #endif
     {
@@ -302,7 +302,7 @@ namespace IrcDotNet.Collections
 
 #endregion
 
-#if !SILVERLIGHT && !NETSTANDARD1_5
+#if !SILVERLIGHT && !NETSTANDARD1_5 && !NETCOREAPP1_0
 
 #region ISerializable Members
 

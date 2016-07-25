@@ -13,7 +13,7 @@ namespace IrcDotNet
             where TDelegate : class
         {
             // Find all methods in class that are marked by one or more instances of given attribute.
-#if NETSTANDARD1_5
+#if NETSTANDARD1_5 || NETCOREAPP1_0
             var messageProcessorsMethods = obj.GetType().GetTypeInfo().GetMethods(
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 #else
@@ -26,7 +26,7 @@ namespace IrcDotNet
                     typeof (TAttribute), true);
                 if (methodAttributes.Length > 0)
                 {
-#if NETSTANDARD1_5
+#if NETSTANDARD1_5 || NETCOREAPP1_0
                     var methodDelegate =
                         (TDelegate)(object)methodInfo.CreateDelegate(typeof(TDelegate), obj);
 #else

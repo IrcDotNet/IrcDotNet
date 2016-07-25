@@ -41,7 +41,7 @@ namespace IrcDotNet.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-#if NETSTANDARD1_5
+#if NETSTANDARD1_5 || NETCOREAPP1_0
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("IrcDotNet.Properties.Resources", typeof(Resources).GetTypeInfo().Assembly);
 #else
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("IrcDotNet.Properties.Resources", typeof(Resources).Assembly);
