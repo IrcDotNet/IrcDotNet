@@ -10,7 +10,7 @@ namespace IrcDotNet
         {
             get
             {
-#if NETSTANDARD1_5
+#if NETSTANDARD1_5 || NETCOREAPP1_0
                 return ((AssemblyTitleAttribute)Assembly.GetEntryAssembly().GetCustomAttributes(
                     typeof(AssemblyTitleAttribute)).First()).Title;
 #else
@@ -24,7 +24,7 @@ namespace IrcDotNet
         {
             get
             {
-#if NETSTANDARD1_5
+#if NETSTANDARD1_5 || NETCOREAPP1_0
                 return ((AssemblyCopyrightAttribute)Assembly.GetEntryAssembly().GetCustomAttributes(
                     typeof(AssemblyCopyrightAttribute)).First()).Copyright;
 #else

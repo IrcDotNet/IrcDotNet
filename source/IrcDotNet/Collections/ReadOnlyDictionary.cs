@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_5 && !NETCOREAPP1_0
 using System.Runtime.Serialization;
 #endif
 
@@ -14,13 +14,13 @@ namespace IrcDotNet.Collections
     /// </summary>
     /// <typeparam name="TKey">The type of the keys in the dictionary.</typeparam>
     /// <typeparam name="TValue">The type of the values in the dictionary.</typeparam>
-#if !SILVERLIGHT && !NETSTANDARD1_5
+#if !SILVERLIGHT && !NETSTANDARD1_5 && !NETCOREAPP1_0
     [Serializable()]
 #endif
     [DebuggerDisplay("Count = {Count}")]
     public class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>,
         IEnumerable<KeyValuePair<TKey, TValue>>, IDictionary, ICollection, IEnumerable
-#if !SILVERLIGHT && !NETSTANDARD1_5
+#if !SILVERLIGHT && !NETSTANDARD1_5 && !NETCOREAPP1_0
         , ISerializable, IDeserializationCallback
 #endif
     {
@@ -273,7 +273,7 @@ namespace IrcDotNet.Collections
 
 #endregion
 
-#if !SILVERLIGHT && !NETSTANDARD1_5
+#if !SILVERLIGHT && !NETSTANDARD1_5 && !NETCOREAPP1_0
 
 #region ISerializable Members
 
