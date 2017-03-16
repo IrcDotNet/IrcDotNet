@@ -201,7 +201,7 @@ namespace IrcDotNet
         ///     information.
         /// </exception>
         /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
-        public void Connect(EndPoint remoteEndPoint, bool useSsl, IrcRegistrationInfo registrationInfo)
+        public virtual void Connect(EndPoint remoteEndPoint, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             Connect(registrationInfo);
             // Connect socket to remote host.
