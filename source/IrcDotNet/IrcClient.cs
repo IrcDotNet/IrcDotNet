@@ -170,6 +170,13 @@ namespace IrcDotNet
         public Collections.ReadOnlyDictionary<string, string> ServerSupportedFeatures { get; private set; }
 
         /// <summary>
+        ///     Gets a set of capabilities supported by the server, as returned by the CAP LS command.
+        ///     This value is set upon connecting to the server.
+        /// </summary>
+        /// <value>A set of capabilities supported by the server.</value>
+        public ReadOnlyCollection<string> ServerCapabilities { get; private set; }
+
+        /// <summary>
         ///     Gets a collection of channel modes that apply to users in a channel.
         /// </summary>
         /// <value>A collection of channel modes that apply to users.</value>
@@ -322,6 +329,23 @@ namespace IrcDotNet
         ///     Occurs when an error message (ERROR command) is received from the server.
         /// </summary>
         public event EventHandler<IrcErrorMessageEventArgs> ErrorMessageReceived;
+
+        /// <summary>
+        ///     Occours when the server capability list is received (CAP LS command, 
+        ///     happens upon connection.
+        /// </summary>
+        public event EventHandler<EventArgs> ServerCapabilitiesReceived;
+
+        /// <summary>
+        ///     Occours when the list of capabilities associated with the active
+        ///     connection is received from the server. 
+        /// </summary>
+        public event EventHandler<ActiveCapabilitiesEventArgs> ActiveCapabilitiesReceived;
+
+        /// <summary>
+        ///     Happens when a capability request is acknowledged (or NAKd) by the server
+        /// </summary>
+        public event EventHandler<CapabilityAcknowledgedEventArgs> CapabilityAcknowledged;
 
         /// <summary>
         ///     Occurs when the connection has been registered.
@@ -678,6 +702,26 @@ namespace IrcDotNet
             var token = new IrcRawMessageEventArgs(new IrcMessage(), message);
 
             WriteMessage(message, token);
+        }
+
+        /// <summary>
+        ///     Requests a capability to be enabled for the active connection.
+        ///     If the server doesn't support the capability (as specified by the CAP LS command),
+        ///     the request is ignored
+        /// </summary>
+        /// <param name="caps">A list of capabilities to request</param>
+        public void RequestCapability(params string[] caps)
+        {
+            SendMessageCapRequest(caps.Where(ServerCapabilities.Contains).ToArray());
+        }
+
+        /// <summary>
+        ///     Requests a list of capabilities associated with the active
+        ///     connection.
+        /// </summary>
+        public void RequestActiveCapabilities()
+        {
+            SendMessageCapListActive();
         }
 
         /// <summary>
@@ -1176,6 +1220,8 @@ namespace IrcDotNet
             localUser = null;
             serverSupportedFeatures = new Dictionary<string, string>();
             ServerSupportedFeatures = new Collections.ReadOnlyDictionary<string, string>(serverSupportedFeatures);
+            serverCapabilities = new List<string>();
+            ServerCapabilities = new ReadOnlyCollection<string>(serverCapabilities);
             channelUserModes = new Collection<char>
             {
                 'o',
@@ -1522,6 +1568,8 @@ namespace IrcDotNet
 
         protected virtual void HandleClientConnected(IrcRegistrationInfo regInfo)
         {
+            SendMessageCapList();
+
             if (regInfo.Password != null)
                 // Authenticate with server using password.
                 SendMessagePassword(regInfo.Password);
@@ -1665,6 +1713,32 @@ namespace IrcDotNet
             var handler = ErrorMessageReceived;
             if (handler != null)
                 handler(this, e);
+        }
+
+        /// <summary>
+        ///     Raises the <see cref="ServerCapabilitiesReceived" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        protected virtual void OnServerCapabilitiesReceived(EventArgs e)
+        {
+            ServerCapabilitiesReceived?.Invoke(this, e);
+        }
+        /// <summary>
+        ///     Raises the <see cref="ActiveCapabilitiesReceived" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="ActiveCapabilitiesEventArgs" /> instance containing the event data.</param>
+        protected virtual void OnActiveCapabilitiesReceived(ActiveCapabilitiesEventArgs e)
+        {
+            ActiveCapabilitiesReceived?.Invoke(this, e);
+        }
+
+        /// <summary>
+        ///     Raises the <see cref="CapabilityAcknowledged" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="CapabilityAcknowledgedEventArgs" /> instance containing the event data.</param>
+        protected virtual void OnCapabilityAcknowledged(CapabilityAcknowledgedEventArgs e)
+        {
+            CapabilityAcknowledged?.Invoke(this, e);
         }
 
         /// <summary>
@@ -1944,6 +2018,9 @@ namespace IrcDotNet
         // Dictionary of protocol features supported by server.
         private Dictionary<string, string> serverSupportedFeatures;
 
+        // List of capabilities supported by the server, populated upon successful connection
+        private List<string> serverCapabilities;
+        
         // Collection of channel modes that apply to users in a channel.
         private Collection<char> channelUserModes;
 
