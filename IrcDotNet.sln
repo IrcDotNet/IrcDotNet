@@ -1,38 +1,35 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26114.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{E424B1D1-BF95-4241-97C3-7519D843EE19}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{05792403-2495-4F7B-A926-FBD8D9A09AEE}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IrcDotNet", "source\IrcDotNet\IrcDotNet.xproj", "{16C78B4C-E12E-4DC1-80BD-DB5AE257A1C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrcDotNet", "source\IrcDotNet\IrcDotNet.csproj", "{16C78B4C-E12E-4DC1-80BD-DB5AE257A1C3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7917C5C1-A606-45B9-A791-159D94904D45}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IrcDotNet.Test", "test\IrcDotNet.Test\IrcDotNet.Test.xproj", "{E7F4F8A2-C7A7-4C01-A412-1E428F51B692}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrcDotNet.Test", "test\IrcDotNet.Test\IrcDotNet.Test.csproj", "{E7F4F8A2-C7A7-4C01-A412-1E428F51B692}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{58B13A53-06DB-443D-8919-2EFD23F425E4}"
 	ProjectSection(SolutionItems) = preProject
 		samples\README.md = samples\README.md
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IrcDotNet.Samples.Common", "samples\IrcDotNet.Samples.Common\IrcDotNet.Samples.Common.xproj", "{79D383D5-AF2A-4D3A-991C-D1588C0E220D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrcDotNet.Samples.Common", "samples\IrcDotNet.Samples.Common\IrcDotNet.Samples.Common.csproj", "{79D383D5-AF2A-4D3A-991C-D1588C0E220D}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IrcDotNet.Samples.MarkovChainTextBot", "samples\IrcDotNet.Samples.MarkovTextBot\IrcDotNet.Samples.MarkovChainTextBot.xproj", "{BA6ABC78-0882-4B9E-851B-1735F049A7F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrcDotNet.Samples.TwitchChat", "samples\IrcDotNet.Samples.TwitchChat\IrcDotNet.Samples.TwitchChat.csproj", "{2C2D7884-8BAB-488D-A491-F1F0D9139EB7}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IrcDotNet.Samples.TwitchChat", "samples\IrcDotNet.Samples.TwitchChat\IrcDotNet.Samples.TwitchChat.xproj", "{2C2D7884-8BAB-488D-A491-F1F0D9139EB7}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IrcDotNet.Samples.TwitterBot", "samples\IrcDotNet.Samples.TwitterBot\IrcDotNet.Samples.TwitterBot.xproj", "{1C3D933F-CB6A-4DCA-AC66-37AB0AA0F025}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrcDotNet.Samples.MarkovTextBot", "samples\IrcDotNet.Samples.MarkovTextBot\IrcDotNet.Samples.MarkovTextBot.csproj", "{2AA0268A-D069-4A5F-976A-2CC959214800}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{16C78B4C-E12E-4DC1-80BD-DB5AE257A1C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -47,18 +44,22 @@ Global
 		{79D383D5-AF2A-4D3A-991C-D1588C0E220D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79D383D5-AF2A-4D3A-991C-D1588C0E220D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79D383D5-AF2A-4D3A-991C-D1588C0E220D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BA6ABC78-0882-4B9E-851B-1735F049A7F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA6ABC78-0882-4B9E-851B-1735F049A7F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA6ABC78-0882-4B9E-851B-1735F049A7F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA6ABC78-0882-4B9E-851B-1735F049A7F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C2D7884-8BAB-488D-A491-F1F0D9139EB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C2D7884-8BAB-488D-A491-F1F0D9139EB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C2D7884-8BAB-488D-A491-F1F0D9139EB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C2D7884-8BAB-488D-A491-F1F0D9139EB7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C3D933F-CB6A-4DCA-AC66-37AB0AA0F025}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C3D933F-CB6A-4DCA-AC66-37AB0AA0F025}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C3D933F-CB6A-4DCA-AC66-37AB0AA0F025}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C3D933F-CB6A-4DCA-AC66-37AB0AA0F025}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AA0268A-D069-4A5F-976A-2CC959214800}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AA0268A-D069-4A5F-976A-2CC959214800}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AA0268A-D069-4A5F-976A-2CC959214800}.Debug|x64.ActiveCfg = Debug|x64
+		{2AA0268A-D069-4A5F-976A-2CC959214800}.Debug|x64.Build.0 = Debug|x64
+		{2AA0268A-D069-4A5F-976A-2CC959214800}.Debug|x86.ActiveCfg = Debug|x86
+		{2AA0268A-D069-4A5F-976A-2CC959214800}.Debug|x86.Build.0 = Debug|x86
+		{2AA0268A-D069-4A5F-976A-2CC959214800}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AA0268A-D069-4A5F-976A-2CC959214800}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AA0268A-D069-4A5F-976A-2CC959214800}.Release|x64.ActiveCfg = Release|x64
+		{2AA0268A-D069-4A5F-976A-2CC959214800}.Release|x64.Build.0 = Release|x64
+		{2AA0268A-D069-4A5F-976A-2CC959214800}.Release|x86.ActiveCfg = Release|x86
+		{2AA0268A-D069-4A5F-976A-2CC959214800}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,8 +68,7 @@ Global
 		{16C78B4C-E12E-4DC1-80BD-DB5AE257A1C3} = {E424B1D1-BF95-4241-97C3-7519D843EE19}
 		{E7F4F8A2-C7A7-4C01-A412-1E428F51B692} = {7917C5C1-A606-45B9-A791-159D94904D45}
 		{79D383D5-AF2A-4D3A-991C-D1588C0E220D} = {58B13A53-06DB-443D-8919-2EFD23F425E4}
-		{BA6ABC78-0882-4B9E-851B-1735F049A7F2} = {58B13A53-06DB-443D-8919-2EFD23F425E4}
 		{2C2D7884-8BAB-488D-A491-F1F0D9139EB7} = {58B13A53-06DB-443D-8919-2EFD23F425E4}
-		{1C3D933F-CB6A-4DCA-AC66-37AB0AA0F025} = {58B13A53-06DB-443D-8919-2EFD23F425E4}
+		{2AA0268A-D069-4A5F-976A-2CC959214800} = {58B13A53-06DB-443D-8919-2EFD23F425E4}
 	EndGlobalSection
 EndGlobal

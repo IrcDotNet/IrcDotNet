@@ -251,16 +251,8 @@ namespace IrcDotNet.Test
 
         private static void ircClient1_Error(object sender, IrcErrorEventArgs e)
         {
-#if NETCOREAPP
-            var handle = client1ErrorEvent.GetSafeWaitHandle();
-#else
-            var handle = client1ErrorEvent.SafeWaitHandle;
-#endif
-            if (!handle.IsClosed)
-            {
-                if (client1ErrorEvent != null)
-                    client1ErrorEvent.Set();
-            }
+            if (client1ErrorEvent != null)
+                client1ErrorEvent.Set();
         }
 
         private static void ircClient1_ProtocolError(object sender, IrcProtocolErrorEventArgs e)
@@ -511,11 +503,7 @@ namespace IrcDotNet.Test
 
         private static void ircClient2_Error(object sender, IrcErrorEventArgs e)
         {
-#if NETCOREAPP
             var handle = client2ErrorEvent.GetSafeWaitHandle();
-#else
-            var handle = client2ErrorEvent.SafeWaitHandle;
-#endif
             if (!handle.IsClosed)
             {
                 if (client2ErrorEvent != null)
