@@ -1,33 +1,8 @@
 language: csharp
 dist: trusty
-sudo: required
-
-env:
-- MONO_THREADS_PER_CPU=2000
-mono:
-- 4.0.5
-os:
-- linux
-addons:
-  apt:
-    packages:
-    - gettext
-    - libcurl4-openssl-dev
-    - libicu-dev
-    - libssl-dev
-    - libunwind8
-    - zlib1g
-
-solution: IrcDotNet.sln
-
-install:
-- sudo sh -c 'echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
-- sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
-- sudo apt-get update
-- sudo apt-get install -y dotnet-dev-1.0.0-preview2-003121
+mono: none
+dotnet: 1.0.1
 
 script:
 - dotnet restore
-- cd source/IrcDotNet/ && dotnet restore && dotnet build && cd -
-- cd test/IrcDotNet.Test/ && dotnet restore && dotnet build && cd -
-- cd test/IrcDotNet.Test/ && dotnet run && cd -
+- cd test/IrcDotNet.Test/ && dotnet build && dotnet run && cd -

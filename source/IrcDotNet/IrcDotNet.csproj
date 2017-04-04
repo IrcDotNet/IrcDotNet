@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionPrefix>0.6.0</VersionPrefix>
+    <TargetFrameworks>netstandard1.5</TargetFrameworks>
+    <AssemblyName>IrcDotNet</AssemblyName>
+    <PackageId>IrcDotNet</PackageId>
+    <PackageTags>communication;irc;networking;ctcp</PackageTags>
+    <PackageReleaseNotes>https://github.com/IrcDotNet/IrcDotNet/releases/tag/0.6.0</PackageReleaseNotes>
+    <PackageIconUrl>https://raw.githubusercontent.com/IrcDotNet/IrcDotNet/master/doc/content/img/logo.png</PackageIconUrl>
+    <PackageProjectUrl>https://IrcDotNet.github.io/IrcDotNet/</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/IrcDotNet/IrcDotNet/License.txt</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <PackageReference Include="System.Net.Security" Version="4.0.0" />
+    <PackageReference Include="System.Net.Requests" Version="4.0.11" />
+    <PackageReference Include="System.Net.NameResolution" Version="4.0.0" />
+  </ItemGroup>
+
+</Project>
