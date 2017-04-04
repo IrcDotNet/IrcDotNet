@@ -24,7 +24,6 @@ namespace IrcDotNet
             catch (Exception ex)
             {
                 ConsoleUtilities.WriteError("Fatal error: " + ex.Message);
-                Environment.ExitCode = 1;
             }
 #endif
             finally

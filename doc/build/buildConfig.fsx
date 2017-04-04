@@ -27,13 +27,13 @@ open AssemblyInfoFile
 
 // properties
 let projectName = "IRC.NET"
-let copyrightNotice = "IRC.NET is copyright © 2011-2016 Alex Regueiro, Christian Stewart"
+let copyrightNotice = "IRC.NET is copyright © 2011-2017 Alex Regueiro, Christian Stewart"
 let projectSummary = "A complete IRC (Internet Relay Chat) client library for the .NET Framework"
 let projectDescription = "IRC.NET aims to provide a complete and efficient implementation of the protocol as described in RFCs 1459 and 2812, as well as de-facto modern features of the protocol."
 let authors = ["Alex Regueiro", "Christian Stewart"]
 let page_author = "Matthias Dittrich"
 let mail = "christian+ircdotnet@paral.in"
-let version = "0.6.0"
+let version = "0.7.0"
 let version_nuget = version
 
 let buildDir = "./build/"
