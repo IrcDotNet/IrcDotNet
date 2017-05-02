@@ -1914,7 +1914,7 @@ namespace IrcDotNet
             public IrcMessage(IrcClient client, string prefix, string command, IList<string> parameters)
             {
                 Prefix = prefix;
-                Command = command;
+                Command = command.ToUpper();
                 Parameters = parameters;
 
                 Source = client.GetSourceFromPrefix(prefix);
