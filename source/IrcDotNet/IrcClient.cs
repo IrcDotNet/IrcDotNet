@@ -1568,7 +1568,6 @@ namespace IrcDotNet
 
         protected virtual void HandleClientConnected(IrcRegistrationInfo regInfo)
         {
-            SendMessageCapList();
 
             if (regInfo.Password != null)
                 // Authenticate with server using password.
@@ -1601,6 +1600,8 @@ namespace IrcDotNet
             // Add local user to list of known users.
             lock (((ICollection) Users).SyncRoot)
                 users.Add(localUser);
+
+            SendMessageCapList();
 
             OnConnected(new EventArgs());
         }
