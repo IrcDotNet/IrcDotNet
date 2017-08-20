@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using IrcDotNet.Collections;
+using static IrcDotNet.IrcClient;
 
 namespace IrcDotNet
 {
@@ -351,24 +352,24 @@ namespace IrcDotNet
             OnUsersListReceived(new EventArgs());
         }
 
-        internal void HandleTopicChanged(IrcUser source, string newTopic)
+        internal void HandleTopicChanged(IrcMessage ircMessage, IrcUser source, string newTopic)
         {
             Topic = newTopic;
 
-            OnTopicChanged(new IrcUserEventArgs(source));
+            OnTopicChanged(new IrcUserEventArgs(ircMessage, source));
         }
 
-        internal void HandleModesChanged(IrcUser source, string newModes, IEnumerable<string> newModeParameters)
+        internal void HandleModesChanged(IrcMessage ircMessage, IrcUser source, string newModes, IEnumerable<string> newModeParameters)
         {
             lock (((ICollection) Modes).SyncRoot)
                 modes.UpdateModes(newModes, newModeParameters, client.ChannelUserModes,
                     (add, mode, modeParameter) => users.Single(
                         cu => cu.User.NickName == modeParameter).HandleModeChanged(add, mode));
 
-            OnModesChanged(new IrcUserEventArgs(source));
+            OnModesChanged(new IrcUserEventArgs(ircMessage, source));
         }
 
-        internal void HandleUserJoined(IrcChannelUser channelUser)
+        internal void HandleUserJoined(IrcMessage ircMessage, IrcChannelUser channelUser)
         {
             lock (((ICollection) Modes).SyncRoot)
             {
@@ -387,41 +388,41 @@ namespace IrcDotNet
             lock (((ICollection) Users).SyncRoot)
                 users.Add(channelUser);
 
-            OnUserJoined(new IrcChannelUserEventArgs(channelUser, null));
+            OnUserJoined(new IrcChannelUserEventArgs(ircMessage, channelUser, null));
         }
 
-        internal void HandleUserLeft(IrcUser user, string comment)
+        internal void HandleUserLeft(IrcMessage ircMessage, IrcUser user, string comment)
         {
             lock (((ICollection) Modes).SyncRoot)
-                HandleUserLeft(users.Single(u => u.User == user), comment);
+                HandleUserLeft(ircMessage, users.Single(u => u.User == user), comment);
         }
 
-        internal void HandleUserLeft(IrcChannelUser channelUser, string comment)
+        internal void HandleUserLeft(IrcMessage ircMessage, IrcChannelUser channelUser, string comment)
         {
             lock (((ICollection) Users).SyncRoot)
                 users.Remove(channelUser);
 
-            OnUserLeft(new IrcChannelUserEventArgs(channelUser, comment));
+            OnUserLeft(new IrcChannelUserEventArgs(ircMessage, channelUser, comment));
         }
 
-        internal void HandleUserKicked(IrcUser user, string comment)
+        internal void HandleUserKicked(IrcMessage ircMessage, IrcUser user, string comment)
         {
             lock (((ICollection) Modes).SyncRoot)
-                HandleUserKicked(users.Single(u => u.User == user), comment);
+                HandleUserKicked(ircMessage, users.Single(u => u.User == user), comment);
         }
 
-        internal void HandleUserKicked(IrcChannelUser channelUser, string comment)
+        internal void HandleUserKicked(IrcMessage ircMessage, IrcChannelUser channelUser, string comment)
         {
             lock (((ICollection) Users).SyncRoot)
                 users.Remove(channelUser);
 
-            OnUserKicked(new IrcChannelUserEventArgs(channelUser, comment));
+            OnUserKicked(new IrcChannelUserEventArgs(ircMessage, channelUser, comment));
         }
 
-        internal void HandleUserInvited(IrcUser user)
+        internal void HandleUserInvited(IrcMessage ircMessage, IrcUser user)
         {
             lock (((ICollection) Modes).SyncRoot)
-                OnUserInvited(new IrcUserEventArgs(user));
+                OnUserInvited(new IrcUserEventArgs(ircMessage, user));
         }
 
         internal void HandleUserQuit(IrcChannelUser channelUser, string comment)
@@ -430,20 +431,20 @@ namespace IrcDotNet
                 users.Remove(channelUser);
         }
 
-        internal void HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
+        internal void HandleMessageReceived(IrcMessage ircMessage, IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text, Client.TextEncoding);
+            var previewEventArgs = new IrcPreviewMessageEventArgs(ircMessage, source, targets, text, Client.TextEncoding);
             OnPreviewMessageReceived(previewEventArgs);
             if (!previewEventArgs.Handled)
-                OnMessageReceived(new IrcMessageEventArgs(source, targets, text, Client.TextEncoding));
+                OnMessageReceived(new IrcMessageEventArgs(ircMessage, source, targets, text, Client.TextEncoding));
         }
 
-        internal void HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
+        internal void HandleNoticeReceived(IrcMessage ircMessage, IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text, Client.TextEncoding);
+            var previewEventArgs = new IrcPreviewMessageEventArgs(ircMessage, source, targets, text, Client.TextEncoding);
             OnPreviewNoticeReceived(previewEventArgs);
             if (!previewEventArgs.Handled)
-                OnNoticeReceived(new IrcMessageEventArgs(source, targets, text, Client.TextEncoding));
+                OnNoticeReceived(new IrcMessageEventArgs(ircMessage, source, targets, text, Client.TextEncoding));
         }
 
         /// <summary>
@@ -589,16 +590,16 @@ namespace IrcDotNet
 
         #region IIrcMessageReceiveHandler Members
 
-        void IIrcMessageReceiveHandler.HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets,
-            string text)
+        void IIrcMessageReceiveHandler.HandleMessageReceived(IrcMessage ircMessage, IIrcMessageSource source,
+            IList<IIrcMessageTarget> targets, string text)
         {
-            HandleMessageReceived(source, targets, text);
+            HandleMessageReceived(ircMessage, source, targets, text);
         }
 
-        void IIrcMessageReceiveHandler.HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets,
-            string text)
+        void IIrcMessageReceiveHandler.HandleNoticeReceived(IrcMessage ircMessage, IIrcMessageSource source,
+            IList<IIrcMessageTarget> targets, string text)
         {
-            HandleNoticeReceived(source, targets, text);
+            HandleNoticeReceived(ircMessage, source, targets, text);
         }
 
         #endregion

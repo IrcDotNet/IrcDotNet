@@ -44,7 +44,7 @@ namespace IrcDotNet
 
             // Remote user has quit server.
             Debug.Assert(message.Parameters[0] != null);
-            sourceUser.HandeQuit(message.Parameters[0]);
+            sourceUser.HandleQuit(message, message.Parameters[0]);
 
             lock (((ICollection) Users).SyncRoot)
                 users.Remove(sourceUser);
@@ -66,9 +66,9 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[0] != null);
             var chans = GetChannelsFromList(message.Parameters[0]).ToArray();
             if (sourceUser == localUser)
-                chans.ForEach(c => localUser.HandleJoinedChannel(c));
+                chans.ForEach(c => localUser.HandleJoinedChannel(message, c));
             else
-                chans.ForEach(c => c.HandleUserJoined(new IrcChannelUser(sourceUser)));
+                chans.ForEach(c => c.HandleUserJoined(message, new IrcChannelUser(sourceUser)));
         }
 
         /// <summary>
@@ -88,9 +88,9 @@ namespace IrcDotNet
             var comment = message.Parameters[1];
             var chans = GetChannelsFromList(message.Parameters[0]).ToArray();
             if (sourceUser == localUser)
-                chans.ForEach(c => localUser.HandleLeftChannel(c));
+                chans.ForEach(c => localUser.HandleLeftChannel(message, c));
             else
-                chans.ForEach(c => c.HandleUserLeft(sourceUser, comment));
+                chans.ForEach(c => c.HandleUserLeft(message, sourceUser, comment));
         }
 
         /// <summary>
@@ -110,8 +110,8 @@ namespace IrcDotNet
                 Debug.Assert(message.Parameters[1] != null);
                 var modesAndParameters = GetModeAndParameters(message.Parameters.Skip(1));
                 var source = message.Source as IrcUser;
-                OnChannelModeChanged(channel, source, modesAndParameters.Item1, modesAndParameters.Item2);
-                channel.HandleModesChanged(source, modesAndParameters.Item1,
+                OnChannelModeChanged(message, channel, source, modesAndParameters.Item1, modesAndParameters.Item2);
+                channel.HandleModesChanged(message, source, modesAndParameters.Item1,
                     modesAndParameters.Item2);
             }
             else if (message.Parameters[0] == localUser.NickName)
@@ -126,7 +126,7 @@ namespace IrcDotNet
             }
         }
 
-        protected virtual void OnChannelModeChanged(IrcChannel channel, IrcUser source, string newModes,
+        protected virtual void OnChannelModeChanged(IrcMessage ircMessage, IrcChannel channel, IrcUser source, string newModes,
             IEnumerable<string> newModeParameters)
         {
         }
@@ -141,7 +141,7 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[0] != null);
             var channel = GetChannelFromName(message.Parameters[0]);
             Debug.Assert(message.Parameters[1] != null);
-            channel.HandleTopicChanged(message.Source as IrcUser, message.Parameters[1]);
+            channel.HandleTopicChanged(message, message.Source as IrcUser, message.Parameters[1]);
         }
 
         /// <summary>
@@ -168,14 +168,14 @@ namespace IrcDotNet
                     lock (((ICollection) Channels).SyncRoot)
                         this.channels.Remove(channel);
 
-                    channelUser.Channel.HandleUserKicked(channelUser, comment);
-                    localUser.HandleLeftChannel(channel);
+                    channelUser.Channel.HandleUserKicked(message, channelUser, comment);
+                    localUser.HandleLeftChannel(message, channel);
 
                     // Local user has left channel. Do not process kicks of remote users.
                     break;
                 }
                 // Remote user was kicked from channel.
-                channelUser.Channel.HandleUserKicked(channelUser, comment);
+                channelUser.Channel.HandleUserKicked(message, channelUser, comment);
             }
         }
 
@@ -193,7 +193,7 @@ namespace IrcDotNet
 
             Debug.Assert(message.Source is IrcUser);
             if (message.Source is IrcUser)
-                user.HandleInviteReceived((IrcUser) message.Source, channel);
+                user.HandleInviteReceived(message, (IrcUser) message.Source, channel);
         }
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace IrcDotNet
             {
                 Debug.Assert(curTarget != null);
                 var messageHandler = curTarget as IIrcMessageReceiveHandler ?? localUser;
-                messageHandler.HandleMessageReceived(message.Source, targets, text);
+                messageHandler.HandleMessageReceived(message, message.Source, targets, text);
             }
         }
 
@@ -241,7 +241,7 @@ namespace IrcDotNet
                 Debug.Assert(curTarget != null);
                 var messageHandler = curTarget as IIrcMessageReceiveHandler ?? localUser;
                 if (messageHandler != null)
-                    messageHandler.HandleNoticeReceived(message.Source, targets, text);
+                    messageHandler.HandleNoticeReceived(message, message.Source, targets, text);
             }
         }
 
@@ -255,7 +255,7 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[0] != null);
             var server = message.Parameters[0];
             var target = message.Parameters[1];
-            var ircPingReceivedEventArgs = new IrcPingReceivedEventArgs(server);
+            var ircPingReceivedEventArgs = new IrcPingReceivedEventArgs(message, server);
             try
             {
                 OnPingReceived(ircPingReceivedEventArgs);
@@ -278,7 +278,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] != null);
             var server = message.Parameters[0];
-            OnPongReceived(new IrcPingOrPongReceivedEventArgs(server));
+            OnPongReceived(new IrcPingOrPongReceivedEventArgs(message, server));
         }
 
         /// <summary>
@@ -290,7 +290,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] != null);
             var errorMessage = message.Parameters[0];
-            OnErrorMessageReceived(new IrcErrorMessageEventArgs(errorMessage));
+            OnErrorMessageReceived(new IrcErrorMessageEventArgs(message, errorMessage));
         }
 
         /// <summary>
@@ -382,7 +382,7 @@ namespace IrcDotNet
                 var serverAddress = textParts[2];
                 var serverPort = int.Parse(textParts[6]);
 
-                OnServerBounce(new IrcServerInfoEventArgs(serverAddress, serverPort));
+                OnServerBounce(new IrcServerInfoEventArgs(message, serverAddress, serverPort));
             }
             else
             {
@@ -497,7 +497,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            OnServerStatsReceived(new IrcServerStatsReceivedEventArgs(listedStatsEntries));
+            OnServerStatsReceived(new IrcServerStatsReceivedEventArgs(message, listedStatsEntries));
             listedStatsEntries = new List<IrcServerStatisticalEntry>();
         }
 
@@ -567,7 +567,7 @@ namespace IrcDotNet
             networkInformation.InvisibleUsersCount = int.Parse(infoParts[5]);
             networkInformation.ServersCount = int.Parse(infoParts[8]);
 
-            OnNetworkInformationReceived(new IrcCommentEventArgs(info));
+            OnNetworkInformationReceived(new IrcCommentEventArgs(message, info));
         }
 
         /// <summary>
@@ -584,7 +584,7 @@ namespace IrcDotNet
             var info = message.Parameters[1];
             networkInformation.OperatorsCount = int.Parse(info);
 
-            OnNetworkInformationReceived(new IrcCommentEventArgs(info));
+            OnNetworkInformationReceived(new IrcCommentEventArgs(message, info));
         }
 
         /// <summary>
@@ -601,7 +601,7 @@ namespace IrcDotNet
             var info = message.Parameters[1];
             networkInformation.UnknownConnectionsCount = int.Parse(info);
 
-            OnNetworkInformationReceived(new IrcCommentEventArgs(info));
+            OnNetworkInformationReceived(new IrcCommentEventArgs(message, info));
         }
 
         /// <summary>
@@ -618,7 +618,7 @@ namespace IrcDotNet
             var info = message.Parameters[1];
             networkInformation.ChannelsCount = int.Parse(info);
 
-            OnNetworkInformationReceived(new IrcCommentEventArgs(info));
+            OnNetworkInformationReceived(new IrcCommentEventArgs(message, info));
         }
 
         /// <summary>
@@ -653,7 +653,7 @@ namespace IrcDotNet
                 }
             }
 
-            OnNetworkInformationReceived(new IrcCommentEventArgs(info));
+            OnNetworkInformationReceived(new IrcCommentEventArgs(message, info));
         }
 
         /// <summary>
@@ -793,7 +793,7 @@ namespace IrcDotNet
 
             Debug.Assert(message.Parameters[1] != null);
             var mask = message.Parameters[1];
-            OnWhoReplyReceived(new IrcNameEventArgs(mask));
+            OnWhoReplyReceived(new IrcNameEventArgs(message, mask));
         }
 
         /// <summary>
@@ -822,7 +822,7 @@ namespace IrcDotNet
 
             Debug.Assert(message.Parameters[1] != null);
             var user = GetUserFromNickName(message.Parameters[1]);
-            OnWhoIsReplyReceived(new IrcUserEventArgs(user, null));
+            OnWhoIsReplyReceived(new IrcUserEventArgs(message, user, null));
         }
 
         /// <summary>
@@ -847,7 +847,7 @@ namespace IrcDotNet
                 var channelNameAndUserMode = GetUserModeAndNickName(channelId);
                 var channel = GetChannelFromName(channelNameAndUserMode.Item1);
                 if (channel.GetChannelUser(user) == null)
-                    channel.HandleUserJoined(new IrcChannelUser(user, channelNameAndUserMode.Item2));
+                    channel.HandleUserJoined(message, new IrcChannelUser(user, channelNameAndUserMode.Item2));
             }
         }
 
@@ -880,7 +880,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            OnChannelListReceived(new IrcChannelListReceivedEventArgs(listedChannels));
+            OnChannelListReceived(new IrcChannelListReceivedEventArgs(message, listedChannels));
             listedChannels = new List<IrcChannelInfo>();
         }
 
@@ -895,7 +895,7 @@ namespace IrcDotNet
 
             Debug.Assert(message.Parameters[1] != null);
             var channel = GetChannelFromName(message.Parameters[1]);
-            channel.HandleTopicChanged(null, null);
+            channel.HandleTopicChanged(message, null, null);
         }
 
         /// <summary>
@@ -910,7 +910,7 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[1] != null);
             var channel = GetChannelFromName(message.Parameters[1]);
             Debug.Assert(message.Parameters[2] != null);
-            channel.HandleTopicChanged(null, message.Parameters[2]);
+            channel.HandleTopicChanged(message, null, message.Parameters[2]);
         }
 
         /// <summary>
@@ -927,7 +927,7 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[2] != null);
             var channel = GetChannelFromName(message.Parameters[2]);
 
-            channel.HandleUserInvited(invitedUser);
+            channel.HandleUserInvited(message, invitedUser);
         }
 
         /// <summary>
@@ -949,7 +949,7 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[3] != null);
             var comments = message.Parameters[3];
 
-            OnServerVersionInfoReceived(new IrcServerVersionInfoEventArgs(version, debugLevel, server, comments));
+            OnServerVersionInfoReceived(new IrcServerVersionInfoEventArgs(message, version, debugLevel, server, comments));
         }
 
         /// <summary>
@@ -989,7 +989,7 @@ namespace IrcDotNet
                 if (channelUser == null)
                 {
                     channelUser = new IrcChannelUser(user);
-                    channel.HandleUserJoined(channelUser);
+                    channel.HandleUserJoined(message, channelUser);
                 }
 
                 // Set modes on user corresponding to given mode flags (prefix characters).
@@ -1077,7 +1077,7 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[1] != null);
             var mask = message.Parameters[1];
 
-            OnServerLinksListReceived(new IrcServerLinksListReceivedEventArgs(listedServerLinks));
+            OnServerLinksListReceived(new IrcServerLinksListReceivedEventArgs(message, listedServerLinks));
             listedServerLinks = new List<IrcServerInfo>();
         }
 
@@ -1106,7 +1106,7 @@ namespace IrcDotNet
 
             Debug.Assert(message.Parameters[1] != null);
             var user = GetUserFromNickName(message.Parameters[1], false);
-            OnWhoWasReplyReceived(new IrcUserEventArgs(user, null));
+            OnWhoWasReplyReceived(new IrcUserEventArgs(message, user, null));
         }
 
         /// <summary>
@@ -1181,7 +1181,7 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[2] != null);
             var dateTime = message.Parameters[2];
 
-            OnServerTimeReceived(new IrcServerTimeEventArgs(server, dateTime));
+            OnServerTimeReceived(new IrcServerTimeEventArgs(message, server, dateTime));
         }
 
         /// <summary>
@@ -1208,7 +1208,8 @@ namespace IrcDotNet
             }
 
             Debug.Assert(errorMessage != null);
-            OnProtocolError(new IrcProtocolErrorEventArgs(int.Parse(message.Command), errorParameters, errorMessage));
+            OnProtocolError(new IrcProtocolErrorEventArgs(message, int.Parse(message.Command), errorParameters,
+                errorMessage));
         }
     }
 }
