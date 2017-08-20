@@ -1287,6 +1287,10 @@ namespace IrcDotNet
 
             var lineBuilder = new StringBuilder();
 
+            // Append tags to line, if any
+            if (message.Tags != null)
+                lineBuilder.Append("@" + IrcUtilities.EncodeTags(message.Tags) + " ");
+
             // Append prefix to line, if specified.
             if (message.Prefix != null)
                 lineBuilder.Append(":" + CheckPrefix(message.Prefix) + " ");
@@ -1458,20 +1462,36 @@ namespace IrcDotNet
 
         protected void ParseMessage(string line)
         {
+            IDictionary<string, string> tags = null;
+            string lineAfterTags = null;
             string prefix = null;
             string lineAfterPrefix = null;
 
-            // Extract prefix from message line, if it contains one.
-            if (line[0] == ':')
+            // Extract tags from message, if it contains any
+            if (line[0] == '@')
             {
-                var firstSpaceIndex = line.IndexOf(' ');
-                Debug.Assert(firstSpaceIndex != -1);
-                prefix = line.Substring(1, firstSpaceIndex - 1);
-                lineAfterPrefix = line.Substring(firstSpaceIndex + 1);
+                // tags are separated to the rest of the message with a space
+                var endTagsIndex = line.IndexOf(' ');
+                Debug.Assert(endTagsIndex != -1);
+                tags = IrcUtilities.DecodeTags(line.Substring(1, endTagsIndex - 1));
+                lineAfterTags = line.Substring(endTagsIndex + 1);
             }
             else
             {
-                lineAfterPrefix = line;
+                lineAfterTags = line;
+            }
+
+            // Extract prefix from message line, if it contains one.
+            if (lineAfterTags[0] == ':')
+            {
+                var firstSpaceIndex = lineAfterTags.IndexOf(' ');
+                Debug.Assert(firstSpaceIndex != -1);
+                prefix = lineAfterTags.Substring(1, firstSpaceIndex - 1);
+                lineAfterPrefix = lineAfterTags.Substring(firstSpaceIndex + 1);
+            }
+            else
+            {
+                lineAfterPrefix = lineAfterTags;
             }
 
             // Extract command from message.
@@ -1505,7 +1525,7 @@ namespace IrcDotNet
             }
 
             // Parse received IRC message.
-            var message = new IrcMessage(this, prefix, command, parameters);
+            var message = new IrcMessage(this, prefix, command, parameters, tags);
             var messageReceivedEventArgs = new IrcRawMessageEventArgs(message, line);
             OnRawMessageReceived(messageReceivedEventArgs);
             ReadMessage(message, line);
@@ -1888,6 +1908,11 @@ namespace IrcDotNet
             public IIrcMessageSource Source;
 
             /// <summary>
+            ///     The message's tags. Null if tags aren't enabled for this message.
+            /// </summary>
+            public IDictionary<string, string> Tags;
+
+            /// <summary>
             ///     The message prefix.
             /// </summary>
             public string Prefix;
@@ -1908,14 +1933,16 @@ namespace IrcDotNet
             /// <param name="client">A client object that has sent/will receive the message.</param>
             /// <param name="prefix">The message prefix that represents the source of the message.</param>
             /// <param name="command">The command name; either an alphabetic word or 3-digit number.</param>
+            /// <param name="tags">(optional) The message's tags.</param>
             /// <param name="parameters">
             ///     A list of the parameters to the message. Can contain a maximum of 15 items.
             /// </param>
-            public IrcMessage(IrcClient client, string prefix, string command, IList<string> parameters)
+            public IrcMessage(IrcClient client, string prefix, string command, IList<string> parameters, IDictionary<string, string> tags=null)
             {
                 Prefix = prefix;
                 Command = command;
                 Parameters = parameters;
+                Tags = tags;
 
                 Source = client.GetSourceFromPrefix(prefix);
             }
