@@ -443,6 +443,25 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        ///     Sends a WhoX query to the server targeting the specified channel or user masks.
+        /// </summary>
+        /// <param name="mask">
+        ///     A wildcard expression for matching against channel names; or if none can be found,
+        ///     host names, server names, real names, and nick names of users. If the value is <see langword="null" />,
+        ///     all users are matched.
+        /// </param>
+        /// <param name="flags">
+        ///     Flags for requesting specific data, see http://faerion.sourceforge.net/doc/irc/whox.var.
+        /// </param>
+        /// <param name="mask2">
+        ///     A second mask field, which can contain spaces and overrides the first mask field.
+        /// </param>
+        protected void SendMessageWhoX(string mask = null, string flags = null, string mask2 = null)
+        {
+            WriteMessage(null, "who", mask, flags, mask2);
+        }
+
+        /// <summary>
         ///     Sends a request to perform a WhoIs query on users.
         /// </summary>
         /// <param name="nickNameMasks">

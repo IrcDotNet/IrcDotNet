@@ -399,6 +399,11 @@ namespace IrcDotNet
         public event EventHandler<IrcNameEventArgs> WhoReplyReceived;
 
         /// <summary>
+        ///     Occurs when a reply to a WhoX query has been received from the server.
+        /// </summary>
+        public event EventHandler<IrcRawMessageEventArgs> WhoXReplyReceived;
+
+        /// <summary>
         ///     Occurs when a reply to a Who Is query has been received from the server.
         /// </summary>
         public event EventHandler<IrcUserEventArgs> WhoIsReplyReceived;
@@ -570,6 +575,28 @@ namespace IrcDotNet
             CheckDisposed();
 
             SendMessageWho(mask, onlyOperators);
+        }
+
+        /// <summary>
+        ///     Sends a WhoX query to the server targeting the specified channel or user masks.
+        /// </summary>
+        /// <param name="mask">
+        ///     A wildcard expression for matching against channel names; or if none can be found,
+        ///     host names, server names, real names, and nick names of users. If the value is <see langword="null" />,
+        ///     all users are matched.
+        /// </param>
+        /// <param name="flags">
+        ///     Flags for requesting specific data, see http://faerion.sourceforge.net/doc/irc/whox.var.
+        /// </param>
+        /// <param name="mask2">
+        ///     A second mask field, which can contain spaces and overrides the first mask field.
+        /// </param>
+        /// <exception cref="ObjectDisposedException">The current instance has already been disposed.</exception>
+        public void QueryWhoX(string mask = null, string flags = null, string mask2 = null)
+        {
+            CheckDisposed();
+
+            SendMessageWhoX(mask, flags, mask2);
         }
 
         /// <inheritdoc cref="QueryWhoIs(IEnumerable{string})" />
@@ -1810,6 +1837,17 @@ namespace IrcDotNet
         protected virtual void OnWhoReplyReceived(IrcNameEventArgs e)
         {
             var handler = WhoReplyReceived;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        /// <summary>
+        ///     Raises the <see cref="WhoXReplyReceived" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="IrcRawMessageEventArgs" /> instance containing the event data.</param>
+        protected virtual void OnWhoXReplyReceived(IrcRawMessageEventArgs e)
+        {
+            var handler = WhoXReplyReceived;
             if (handler != null)
                 handler(this, e);
         }
