@@ -13,6 +13,11 @@ namespace IrcDotNet.Test
         public static string ServerHostName { get; set; }
 
         /// <summary>
+        /// Server port
+        /// </summary>
+        public static int ServerPort { get; set; }
+
+        /// <summary>
         /// Test server password.
         /// </summary>
         public static string ServerPassword { get; set; }
@@ -47,6 +52,7 @@ namespace IrcDotNet.Test
             NickNameFormat = Env("NickNameFormat") ?? "itb-{0}";
             RealName = Env("RealName") ?? "IRC.Net Tester";
             ServerHostName = Env("ServerHostName") ?? "irc.freenode.net";
+            ServerPort = Env("ServerPort") == null ? 8000 : Int32.Parse(Env("ServerPort"));  //Appveyor blocks port 6667
             ServerPassword = Env("ServerPassword") ?? "";
         }
     }
