@@ -5,4 +5,4 @@ dotnet: 1.0.4
 
 script:
 - dotnet restore
-- cd test/IrcDotNet.Test/ && dotnet build && dotnet run && cd -
+- cd test/IrcDotNet.Test/ && dotnet build && cd -
