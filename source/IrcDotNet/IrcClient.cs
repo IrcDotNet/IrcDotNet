@@ -675,7 +675,9 @@ namespace IrcDotNet
             if (message == null)
                 throw new ArgumentNullException("message");
 
-            WriteMessage(message);
+            var token = new IrcRawMessageEventArgs(new IrcMessage(), message);
+
+            WriteMessage(message, token);
         }
 
         /// <summary>
@@ -1221,7 +1223,7 @@ namespace IrcDotNet
                         // Command is numeric.
                         numericMessageProcessors.Add(commandCode, methodDelegate);
                     else
-                    // Command is alphabetic.
+                        // Command is alphabetic.
                         messageProcessors.Add(attribute.CommandName, methodDelegate);
                 }
                 else
