@@ -8,7 +8,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/jwqsdu436hwl2ngx/branch/master?svg=true)](https://ci.appveyor.com/project/paralin/ircdotnet)
 [![NuGet](https://img.shields.io/nuget/v/IrcDotNet.svg?colorB=007ec6)](https://www.nuget.org/packages/IrcDotNet)
 
-
 ## Overview
 
 IRC.NET is a complete IRC (Internet Relay Chat) client library for the .NET Framework. It aims to provide a complete and efficient implementation of the protocol as described in RFCs 1459 and 2812, as well as de-facto modern features of the protocol.
