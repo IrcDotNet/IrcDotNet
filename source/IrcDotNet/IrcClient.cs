@@ -1292,7 +1292,7 @@ namespace IrcDotNet
                 lineBuilder.Append(":" + CheckPrefix(message.Prefix) + " ");
 
             // Append command name to line.
-            lineBuilder.Append(CheckCommand(message.Command).ToUpper());
+            lineBuilder.Append(CheckCommand(message.Command).ToUpperInvariant());
 
             // Append each parameter to line, adding ':' character before last parameter.
             for (var i = 0; i < message.Parameters.Count - 1; i++)
