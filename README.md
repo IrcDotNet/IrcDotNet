@@ -6,6 +6,7 @@
 
 [![Build Status](https://travis-ci.org/IrcDotNet/IrcDotNet.svg?branch=master)](https://travis-ci.org/IrcDotNet/IrcDotNet)
 [![Build status](https://ci.appveyor.com/api/projects/status/jwqsdu436hwl2ngx/branch/master?svg=true)](https://ci.appveyor.com/project/paralin/ircdotnet)
+[![NuGet](https://img.shields.io/nuget/v/IrcDotNet.svg?colorB=007ec6)](https://www.nuget.org/packages/IrcDotNet)
 
 ## Overview
 
