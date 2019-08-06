@@ -27,8 +27,12 @@ namespace IrcDotNet
 
             // Local or remote user has changed nick name.
             Debug.Assert(message.Parameters[0] != null);
-            sourceUser.NickName = message.Parameters[0];
-        }
+
+			string oldNickName = sourceUser.NickName;
+			string newNickName = message.Parameters[0];
+			sourceUser.NickName = newNickName;
+			OnNickChanged(new IrcNickChangedEventArgs(newNickName, oldNickName));
+		}
 
         /// <summary>
         ///     Process QUIT messages received from the server.

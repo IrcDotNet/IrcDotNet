@@ -413,8 +413,13 @@ namespace IrcDotNet
         /// </summary>
         public event EventHandler<IrcChannelListReceivedEventArgs> ChannelListReceived;
 
-        /// <inheritdoc cref="ListChannels(IEnumerable{string})" />
-        public void ListChannels(params string[] channelNames)
+		/// <summary>
+		///     Occurs when a nick has been sent from the server.
+		/// </summary>
+		public event EventHandler<IrcNickChangedEventArgs> NickChanged;
+
+		/// <inheritdoc cref="ListChannels(IEnumerable{string})" />
+		public void ListChannels(params string[] channelNames)
         {
             CheckDisposed();
 
@@ -1849,7 +1854,18 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
-        protected void CheckDisposed()
+		/// <summary>
+		///     Raises the <see cref="NickChanged" /> event.
+		/// </summary>
+		/// <param name="e">The <see cref="IrcNickChangedEventArgs" /> instance containing the event data.</param>
+		protected virtual void OnNickChanged(IrcNickChangedEventArgs e)
+		{
+			var handler = NickChanged;
+			if (handler != null)
+				handler(this, e);
+		}
+
+		protected void CheckDisposed()
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(GetType().FullName);
