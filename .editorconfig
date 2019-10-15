@@ -9,7 +9,7 @@ root = true
 indent_style = space
 
 # Code files
-[*.{cs,csx,vb,vbx}]
+[*.{cs,csx}]
 indent_size = 4
 insert_final_newline = true
 charset = utf-8-bom
@@ -18,7 +18,7 @@ charset = utf-8-bom
 # .NET Coding Conventions     #
 ###############################
 
-[*.{cs,vb}]
+[*.{cs}]
 # Organize usings
 dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = false
@@ -143,11 +143,3 @@ csharp_space_after_dot = false
 # Wrapping preferences
 csharp_preserve_single_line_statements = true
 csharp_preserve_single_line_blocks = true
-
-##################################
-# Visual Basic Code Style Rules  #
-##################################
-
-[*.vb]
-# Modifier preferences
-visual_basic_preferred_modifier_order = Partial,Default,Private,Protected,Public,Friend,NotOverridable,Overridable,MustOverride,Overloads,Overrides,MustInherit,NotInheritable,Static,Shared,Shadows,ReadOnly,WriteOnly,Dim,Const,WithEvents,Widening,Narrowing,Custom,Async:suggestion
