@@ -28,8 +28,8 @@ namespace IrcDotNet
             // Local or remote user has changed nick name.
             Debug.Assert(message.Parameters[0] != null);
 
-            string oldNickName = sourceUser.NickName;
-            string newNickName = message.Parameters[0];
+            var oldNickName = sourceUser.NickName;
+            var newNickName = message.Parameters[0];
             sourceUser.NickName = newNickName;
             OnNickChanged(new IrcNickChangedEventArgs(newNickName, oldNickName));
         }
