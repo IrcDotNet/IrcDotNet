@@ -27,7 +27,11 @@ namespace IrcDotNet
 
             // Local or remote user has changed nick name.
             Debug.Assert(message.Parameters[0] != null);
-            sourceUser.NickName = message.Parameters[0];
+
+            var oldNickName = sourceUser.NickName;
+            var newNickName = message.Parameters[0];
+            sourceUser.NickName = newNickName;
+            OnNickChanged(new IrcNickChangedEventArgs(newNickName, oldNickName));
         }
 
         /// <summary>
@@ -46,7 +50,7 @@ namespace IrcDotNet
             Debug.Assert(message.Parameters[0] != null);
             sourceUser.HandeQuit(message.Parameters[0]);
 
-            lock (((ICollection) Users).SyncRoot)
+            lock (((ICollection)Users).SyncRoot)
                 users.Remove(sourceUser);
         }
 
@@ -165,7 +169,7 @@ namespace IrcDotNet
                 {
                     // Local user was kicked from channel.
                     var channel = channelUser.Channel;
-                    lock (((ICollection) Channels).SyncRoot)
+                    lock (((ICollection)Channels).SyncRoot)
                         this.channels.Remove(channel);
 
                     channelUser.Channel.HandleUserKicked(channelUser, comment);
@@ -193,7 +197,7 @@ namespace IrcDotNet
 
             Debug.Assert(message.Source is IrcUser);
             if (message.Source is IrcUser)
-                user.HandleInviteReceived((IrcUser) message.Source, channel);
+                user.HandleInviteReceived((IrcUser)message.Source, channel);
         }
 
         /// <summary>
@@ -413,7 +417,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            HandleStatsEntryReceived((int) IrcServerStatisticalEntryCommonType.Connection, message);
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.Connection, message);
         }
 
         /// <summary>
@@ -425,7 +429,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            HandleStatsEntryReceived((int) IrcServerStatisticalEntryCommonType.Command, message);
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.Command, message);
         }
 
         /// <summary>
@@ -437,7 +441,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            HandleStatsEntryReceived((int) IrcServerStatisticalEntryCommonType.AllowedServerConnect, message);
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.AllowedServerConnect, message);
         }
 
         /// <summary>
@@ -449,7 +453,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            HandleStatsEntryReceived((int) IrcServerStatisticalEntryCommonType.AllowedServerAccept, message);
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.AllowedServerAccept, message);
         }
 
         /// <summary>
@@ -461,7 +465,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            HandleStatsEntryReceived((int) IrcServerStatisticalEntryCommonType.AllowedClient, message);
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.AllowedClient, message);
         }
 
         /// <summary>
@@ -473,7 +477,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            HandleStatsEntryReceived((int) IrcServerStatisticalEntryCommonType.BannedClient, message);
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.BannedClient, message);
         }
 
         /// <summary>
@@ -485,7 +489,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            HandleStatsEntryReceived((int) IrcServerStatisticalEntryCommonType.ConnectionClass, message);
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.ConnectionClass, message);
         }
 
         /// <summary>
@@ -510,7 +514,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            HandleStatsEntryReceived((int) IrcServerStatisticalEntryCommonType.LeafDepth, message);
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.LeafDepth, message);
         }
 
         /// <summary>
@@ -522,7 +526,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            HandleStatsEntryReceived((int) IrcServerStatisticalEntryCommonType.Uptime, message);
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.Uptime, message);
         }
 
         /// <summary>
@@ -534,7 +538,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            HandleStatsEntryReceived((int) IrcServerStatisticalEntryCommonType.AllowedOperator, message);
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.AllowedOperator, message);
         }
 
         /// <summary>
@@ -546,7 +550,7 @@ namespace IrcDotNet
         {
             Debug.Assert(message.Parameters[0] == localUser.NickName);
 
-            HandleStatsEntryReceived((int) IrcServerStatisticalEntryCommonType.HubServer, message);
+            HandleStatsEntryReceived((int)IrcServerStatisticalEntryCommonType.HubServer, message);
         }
 
         /// <summary>
