@@ -8,7 +8,7 @@ namespace IrcDotNet
     // Utilities for IRC.
     internal static class IrcUtilities
     {
-        private static readonly Regex ValidTagKeyRegex = new Regex(@"^([\w.-]+/)?[\w-]+$");
+        private static readonly Regex ValidTagKeyRegex = new Regex(@"^\+?(?:[\w.-]+/)?[\w-]+$");
 
         // Updates collection of modes from specified mode string.
         // Mode string is of form `( "+" | "-" ) ( mode character )+`.
@@ -115,7 +115,7 @@ namespace IrcDotNet
         // takes a dictionary and turns it into a tag-string
         public static string EncodeTags(IDictionary<string, string> tags)
         {
-            // encode dictionary entires into something like this: key1=value1;key2=value2
+            // encode dictionary entries into something like this: key1=value1;key2=value2
             IList<string> tagstrings = new List<string>(tags.Count);
             foreach (var tag in tags)
             {
