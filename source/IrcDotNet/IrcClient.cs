@@ -61,7 +61,7 @@ namespace IrcDotNet
             regexNickName = @"(?<nick>[^!@]+)";
             regexUserName = @"(?<user>[^!@]+)";
             regexHostName = @"(?<host>[^%@]+)";
-            regexChannelName = @"(?<channel>[#+!&].+)";
+            regexChannelName = @"@?(?<channel>[#+!&].+)";
             regexTargetMask = @"(?<targetMask>[$#].+)";
             regexServerName = @"(?<server>[^%@]+?\.[^%@]*)";
             regexNickNameId = string.Format(@"{0}(?:(?:!{1})?@{2})?", regexNickName, regexUserName, regexHostName);
@@ -413,8 +413,13 @@ namespace IrcDotNet
         /// </summary>
         public event EventHandler<IrcChannelListReceivedEventArgs> ChannelListReceived;
 
-        /// <inheritdoc cref="ListChannels(IEnumerable{string})" />
-        public void ListChannels(params string[] channelNames)
+		/// <summary>
+		///     Occurs when a nick has been sent from the server.
+		/// </summary>
+		public event EventHandler<IrcNickChangedEventArgs> NickChanged;
+
+		/// <inheritdoc cref="ListChannels(IEnumerable{string})" />
+		public void ListChannels(params string[] channelNames)
         {
             CheckDisposed();
 
@@ -1302,7 +1307,7 @@ namespace IrcDotNet
                 lineBuilder.Append(":" + CheckPrefix(message.Prefix) + " ");
 
             // Append command name to line.
-            lineBuilder.Append(CheckCommand(message.Command).ToUpper());
+            lineBuilder.Append(CheckCommand(message.Command).ToUpperInvariant());
 
             // Append each parameter to line, adding ':' character before last parameter.
             for (var i = 0; i < message.Parameters.Count - 1; i++)
@@ -1875,7 +1880,18 @@ namespace IrcDotNet
                 handler(this, e);
         }
 
-        protected void CheckDisposed()
+		/// <summary>
+		///     Raises the <see cref="NickChanged" /> event.
+		/// </summary>
+		/// <param name="e">The <see cref="IrcNickChangedEventArgs" /> instance containing the event data.</param>
+		protected virtual void OnNickChanged(IrcNickChangedEventArgs e)
+		{
+			var handler = NickChanged;
+			if (handler != null)
+				handler(this, e);
+		}
+
+		protected void CheckDisposed()
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(GetType().FullName);
@@ -1947,7 +1963,7 @@ namespace IrcDotNet
                 IDictionary<string, string> tags = null)
             {
                 Prefix = prefix;
-                Command = command;
+                Command = command.ToUpper();
                 Parameters = parameters;
                 Tags = tags;
 
