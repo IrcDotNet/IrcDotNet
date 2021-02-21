@@ -31,7 +31,7 @@ namespace IrcDotNet
             var oldNickName = sourceUser.NickName;
             var newNickName = message.Parameters[0];
             sourceUser.NickName = newNickName;
-            OnNickChanged(new IrcNickChangedEventArgs(newNickName, oldNickName));
+            OnNickChanged(new IrcNickChangedEventArgs(message, newNickName, oldNickName));
         }
 
         /// <summary>

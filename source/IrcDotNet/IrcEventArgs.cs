@@ -35,7 +35,7 @@ namespace IrcDotNet
     /// <summary>
     ///     Provides data for the <see cref="IrcClient.IrcNickChangedEventArgs" /> event.
     /// </summary>
-    public class IrcNickChangedEventArgs : EventArgs
+    public class IrcNickChangedEventArgs : IrcEventArgs
     {
         /// <summary>
         /// Provides the new nickname.
@@ -52,7 +52,7 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="newNickName"></param>
         /// <param name="oldNickName"></param>
-        public IrcNickChangedEventArgs(string newNickName, string oldNickName)
+        public IrcNickChangedEventArgs(IrcMessage ircMessage, string newNickName, string oldNickName) : base(ircMessage)
         {
             NewNickName = newNickName;
             OldNickName = oldNickName;
