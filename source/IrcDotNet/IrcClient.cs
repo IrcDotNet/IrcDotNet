@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1547,11 +1547,23 @@ namespace IrcDotNet
                 // Register client as normal user.
                 var userRegInfo = (IrcUserRegistrationInfo) regInfo;
                 SendMessageNick(userRegInfo.NickName);
-                SendMessageUser(userRegInfo.UserName, GetNumericUserMode(userRegInfo.UserModes),
-                    userRegInfo.RealName);
 
-                localUser = new IrcLocalUser(userRegInfo.NickName, userRegInfo.UserName, userRegInfo.RealName,
-                    userRegInfo.UserModes);
+                if (userRegInfo is ZncRegistrationInfo zncRegistrationInfo)
+                {
+                    var zncUsernameAndNetwork = $"{zncRegistrationInfo.ZncUsername}/{zncRegistrationInfo.Network}";
+                    SendMessageUser(zncUsernameAndNetwork, GetNumericUserMode(zncRegistrationInfo.UserModes),
+                        zncRegistrationInfo.RealName);
+                    localUser = new IrcLocalUser(zncRegistrationInfo.NickName, zncUsernameAndNetwork, zncRegistrationInfo.RealName,
+                        zncRegistrationInfo.UserModes);
+                }
+                else
+                {
+                    SendMessageUser(userRegInfo.UserName, GetNumericUserMode(userRegInfo.UserModes),
+                        userRegInfo.RealName);
+                    localUser = new IrcLocalUser(userRegInfo.NickName, userRegInfo.UserName, userRegInfo.RealName,
+                        userRegInfo.UserModes);
+                }
+
             }
             localUser.Client = this;
 
