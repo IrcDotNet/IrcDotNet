@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace IrcDotNet
 {
@@ -23,6 +23,12 @@ namespace IrcDotNet
         /// </summary>
         /// <value>A description of the service.</value>
         public string Description { get; set; }
+    }
+
+    public class ZncRegistrationInfo : IrcUserRegistrationInfo
+    {
+        public string Network { get; set; }
+        public string ZncUsername { get; set; }
     }
 
     /// <summary>
