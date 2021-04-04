@@ -293,7 +293,7 @@ namespace IrcDotNet
             SendAsync(buffer, 0, buffer.Length, token);
         }
 
-        private void SendAsync(byte[] buffer, int offset, int count, object token = null)
+        private async void SendAsync(byte[] buffer, int offset, int count, object token = null)
         {
             // Write data from buffer to socket asynchronously.
             var sendEventArgs = new SocketAsyncEventArgs();
@@ -302,7 +302,7 @@ namespace IrcDotNet
 
             try
             {
-                dataStream.WriteAsync(buffer, offset, count).Wait();
+                await dataStream.WriteAsync(buffer, offset, count);
                 sendEventArgs.SocketError = SocketError.Success;
             }
             catch (SocketException e)
@@ -354,7 +354,7 @@ namespace IrcDotNet
             }
         }
 
-        private async Task ReceiveAsync()
+        private async void ReceiveAsync()
         {
             // Read data received from socket to buffer asynchronously.
             var receiveEventArgs = new SyntheticSocketAsyncEventArgs(); //can't set BytesTransferred on the SocketAsyncEventArgs so use synthetic instead
@@ -440,7 +440,7 @@ namespace IrcDotNet
             }
         }
 
-        private void ConnectAsync(IPEndPoint remoteEndPoint, object token = null)
+        private async void ConnectAsync(IPEndPoint remoteEndPoint, object token = null)
         {
             // Connect socket to remote endpoint asynchronously.
             var connectEventArgs = new SocketAsyncEventArgs();
@@ -450,7 +450,7 @@ namespace IrcDotNet
 
             try
             {
-                tcpClient.ConnectAsync(remoteEndPoint.Address, remoteEndPoint.Port).Wait();
+                await tcpClient.ConnectAsync(remoteEndPoint.Address, remoteEndPoint.Port);
                 connectEventArgs.SocketError = SocketError.Success;
             }
             catch (SocketException e)
