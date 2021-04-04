@@ -177,6 +177,16 @@ namespace IrcDotNet
             Connect(new IPEndPoint(address.Address, port), useSsl, registrationInfo);
         }
 
+        public virtual void Connect(EndPoint endpoint, bool useSsl, IrcRegistrationInfo registrationInfo)
+        {
+            CheckDisposed();
+
+            if (registrationInfo == null)
+                throw new ArgumentNullException("registrationInfo");
+
+            Connect(new IPEndPoint(((IPEndPoint)endpoint).Address, DefaultPort), useSsl, registrationInfo);
+        }
+
         /// <summary>
         ///     Connects asynchronously to the specified server.
         /// </summary>

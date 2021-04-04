@@ -7,7 +7,7 @@ namespace IrcDotNet
 {
     public class TwitchIrcClient : StandardIrcClient
     {
-        public override void Connect(IPEndPoint remoteEndPoint, bool useSsl, IrcRegistrationInfo registrationInfo)
+        public override void Connect(EndPoint remoteEndPoint, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             registrationInfo.NickName = registrationInfo.NickName.ToLower();
             base.Connect(remoteEndPoint, useSsl, registrationInfo);
