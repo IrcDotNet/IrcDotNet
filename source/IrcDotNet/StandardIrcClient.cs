@@ -39,7 +39,6 @@ namespace IrcDotNet
 
         public StandardIrcClient()
         {
-            tcpClient = new TcpClient();
             sendTimer = new Timer(WritePendingMessages, null,
                 Timeout.Infinite, Timeout.Infinite);
             disconnectedEvent = new AutoResetEvent(false);
@@ -460,6 +459,7 @@ namespace IrcDotNet
 
             try
             {
+                tcpClient = new TcpClient(remoteEndPoint.AddressFamily);
                 await tcpClient.ConnectAsync(remoteEndPoint.Address, remoteEndPoint.Port);
                 connectEventArgs.SocketError = SocketError.Success;
             }
