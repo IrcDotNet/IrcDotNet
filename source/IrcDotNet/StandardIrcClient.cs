@@ -161,20 +161,20 @@ namespace IrcDotNet
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
 
-            Connect(address, DefaultPort, useSsl, registrationInfo);
+            Connect(new IPEndPoint(address, DefaultPort), useSsl, registrationInfo);
         }
 
         /// <inheritdoc cref="Connect(IPEndPoint, bool, IrcRegistrationInfo)" />
         /// <param name="address">An IP addresses that designates the remote host.</param>
         /// <param name="port">The port number of the remote host.</param>
-        public void Connect(IPAddress address, int port, bool useSsl, IrcRegistrationInfo registrationInfo)
+        public void Connect(IPEndPoint address, int port, bool useSsl, IrcRegistrationInfo registrationInfo)
         {
             CheckDisposed();
 
             if (registrationInfo == null)
                 throw new ArgumentNullException("registrationInfo");
 
-            Connect(new IPEndPoint(address, port), useSsl, registrationInfo);
+            Connect(new IPEndPoint(address.Address, port), useSsl, registrationInfo);
         }
 
         /// <summary>
@@ -523,7 +523,7 @@ namespace IrcDotNet
             disconnectEventArgs.Completed += DisconnectCompleted;
             disconnectEventArgs.SocketError = SocketError.Success;
 
-            tcpClient.Close();
+            tcpClient.Client.Shutdown(SocketShutdown.Both);
             DisconnectCompleted(tcpClient, disconnectEventArgs);
         }
 
