@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using static IrcDotNet.IrcClient;
 
 namespace IrcDotNet
 {
@@ -10,17 +11,19 @@ namespace IrcDotNet
         /// <summary>
         ///     Handles the specified message that was received by the client.
         /// </summary>
+        /// <param name="ircMessage">The original irc message.</param>
         /// <param name="source">The source of the message.</param>
         /// <param name="targets">A collection of the target of the message.</param>
         /// <param name="text">The text of the message.</param>
-        void HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text);
+        void HandleMessageReceived(IrcMessage ircMessage, IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text);
 
         /// <summary>
         ///     Handles the specified notice that was received by the client.
         /// </summary>
+        /// <param name="ircMessage">The original irc message.</param>
         /// <param name="source">The source of the notice.</param>
         /// <param name="targets">A collection of the target of the notice.</param>
         /// <param name="text">The text of the message.</param>
-        void HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text);
+        void HandleNoticeReceived(IrcMessage ircMessage, IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text);
     }
 }

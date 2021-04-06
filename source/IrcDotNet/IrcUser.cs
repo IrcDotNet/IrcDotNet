@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using static IrcDotNet.IrcClient;
 
 namespace IrcDotNet
 {
@@ -336,16 +337,16 @@ namespace IrcDotNet
             }
         }
 
-        internal void HandleInviteReceived(IrcUser inviter, IrcChannel channel)
+        internal void HandleInviteReceived(IrcMessage ircMessage, IrcUser inviter, IrcChannel channel)
         {
-            OnInviteReceived(new IrcChannelInvitationEventArgs(channel, inviter));
+            OnInviteReceived(new IrcChannelInvitationEventArgs(ircMessage, channel, inviter));
         }
 
-        internal void HandeQuit(string comment)
+        internal void HandleQuit(IrcMessage ircMessage, string comment)
         {
             foreach (var cu in GetChannelUsers().ToArray())
                 cu.Channel.HandleUserQuit(cu, comment);
-            OnQuit(new IrcCommentEventArgs(comment));
+            OnQuit(new IrcCommentEventArgs(ircMessage, comment));
         }
 
         /// <summary>

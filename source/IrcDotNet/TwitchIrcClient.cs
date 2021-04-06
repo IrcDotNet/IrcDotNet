@@ -19,8 +19,8 @@ namespace IrcDotNet
                 token ?? new IrcRawMessageEventArgs(new IrcMessage(this, null, null, null), message));
         }
 
-        protected override void OnChannelModeChanged(IrcChannel channel, IrcUser source, string newModes,
-            IEnumerable<string> newModeParameters)
+        protected override void OnChannelModeChanged(IrcMessage ircMessage, IrcChannel channel, IrcUser source,
+            string newModes, IEnumerable<string> newModeParameters)
         {
             // Twitch doesn't actually send JOIN messages. This means we need to add users
             // to the channel when changing their mode if we haven't already.
@@ -28,7 +28,7 @@ namespace IrcDotNet
             {
                 var user = GetUserFromNickName(username);
                 if (channel.GetChannelUser(user) == null)
-                    channel.HandleUserJoined(new IrcChannelUser(user));
+                    channel.HandleUserJoined(ircMessage, new IrcChannelUser(user));
             }
         }
 
