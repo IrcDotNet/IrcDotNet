@@ -42,6 +42,42 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        ///     Requests a list of supported capabilities from the server
+        /// </summary>
+        protected void SendMessageCapList()
+        {
+            WriteMessage(null, "CAP", "LS");
+        }
+
+        /// <summary>
+        ///     Requests a list of capabilities associated with the current connection from the server.
+        /// </summary>
+        protected void SendMessageCapListActive()
+        {
+            WriteMessage(null, "CAP", "LIST");
+        }
+
+        /// <summary>
+        ///     Indicates the end of the Capability negotiation process to the server.
+        /// </summary>
+        protected void SendMessageCapEnd()
+        {
+            WriteMessage(null, "CAP", "END");
+        }
+
+        /// <summary>
+        ///     Sends a request to activate a capability to the server
+        /// </summary>
+        /// <param name="caps"></param>
+        protected void SendMessageCapRequest(string[] caps)
+        {
+            if (caps == null || caps.Length == 0)
+                return;
+
+            WriteMessage(null, "CAP", "REQ", string.Join(" ", caps));
+        }
+        
+        /// <summary>
         ///     Sends a request to register the client as a user on the server.
         /// </summary>
         /// <param name="userName">The user name of the user.</param>
