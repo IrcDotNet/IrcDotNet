@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using IrcDotNet.Collections;
+using static IrcDotNet.IrcClient;
 
 namespace IrcDotNet
 {
@@ -337,40 +338,40 @@ namespace IrcDotNet
             OnModesChanged(new EventArgs());
         }
 
-        internal void HandleJoinedChannel(IrcChannel channel)
+        internal void HandleJoinedChannel(IrcMessage ircMessage, IrcChannel channel)
         {
-            OnJoinedChannel(new IrcChannelEventArgs(channel, null));
+            OnJoinedChannel(new IrcChannelEventArgs(ircMessage, channel, null));
         }
 
-        internal void HandleLeftChannel(IrcChannel channel)
+        internal void HandleLeftChannel(IrcMessage ircMessage, IrcChannel channel)
         {
-            OnLeftChannel(new IrcChannelEventArgs(channel, null));
+            OnLeftChannel(new IrcChannelEventArgs(ircMessage, channel, null));
         }
 
-        internal void HandleMessageSent(IList<IIrcMessageTarget> targets, string text)
+        internal void HandleMessageSent(IrcMessage ircMessage, IList<IIrcMessageTarget> targets, string text)
         {
-            OnMessageSent(new IrcMessageEventArgs(this, targets, text, Client.TextEncoding));
+            OnMessageSent(new IrcMessageEventArgs(ircMessage, this, targets, text, Client.TextEncoding));
         }
 
-        internal void HandleNoticeSent(IList<IIrcMessageTarget> targets, string text)
+        internal void HandleNoticeSent(IrcMessage ircMessage, IList<IIrcMessageTarget> targets, string text)
         {
-            OnNoticeSent(new IrcMessageEventArgs(this, targets, text, Client.TextEncoding));
+            OnNoticeSent(new IrcMessageEventArgs(ircMessage, this, targets, text, Client.TextEncoding));
         }
 
-        internal void HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
+        internal void HandleMessageReceived(IrcMessage ircMessage, IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text, Client.TextEncoding);
+            var previewEventArgs = new IrcPreviewMessageEventArgs(ircMessage, source, targets, text, Client.TextEncoding);
             OnPreviewMessageReceived(previewEventArgs);
             if (!previewEventArgs.Handled)
-                OnMessageReceived(new IrcMessageEventArgs(source, targets, text, Client.TextEncoding));
+                OnMessageReceived(new IrcMessageEventArgs(ircMessage, source, targets, text, Client.TextEncoding));
         }
 
-        internal void HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
+        internal void HandleNoticeReceived(IrcMessage ircMessage, IIrcMessageSource source, IList<IIrcMessageTarget> targets, string text)
         {
-            var previewEventArgs = new IrcPreviewMessageEventArgs(source, targets, text, Client.TextEncoding);
+            var previewEventArgs = new IrcPreviewMessageEventArgs(ircMessage, source, targets, text, Client.TextEncoding);
             OnPreviewNoticeReceived(previewEventArgs);
             if (!previewEventArgs.Handled)
-                OnNoticeReceived(new IrcMessageEventArgs(source, targets, text, Client.TextEncoding));
+                OnNoticeReceived(new IrcMessageEventArgs(ircMessage, source, targets, text, Client.TextEncoding));
         }
 
         /// <summary>
@@ -474,30 +475,30 @@ namespace IrcDotNet
 
         #region IIrcMessageSendHandler Members
 
-        void IIrcMessageSendHandler.HandleMessageSent(IList<IIrcMessageTarget> targets, string text)
+        void IIrcMessageSendHandler.HandleMessageSent(IrcMessage ircMessage, IList<IIrcMessageTarget> targets, string text)
         {
-            HandleMessageSent(targets, text);
+            HandleMessageSent(ircMessage, targets, text);
         }
 
-        void IIrcMessageSendHandler.HandleNoticeSent(IList<IIrcMessageTarget> targets, string text)
+        void IIrcMessageSendHandler.HandleNoticeSent(IrcMessage ircMessage, IList<IIrcMessageTarget> targets, string text)
         {
-            HandleNoticeSent(targets, text);
+            HandleNoticeSent(ircMessage, targets, text);
         }
 
         #endregion
 
         #region IIrcMessageReceiveHandler Members
 
-        void IIrcMessageReceiveHandler.HandleMessageReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets,
+        void IIrcMessageReceiveHandler.HandleMessageReceived(IrcMessage ircMessage, IIrcMessageSource source, IList<IIrcMessageTarget> targets,
             string text)
         {
-            HandleMessageReceived(source, targets, text);
+            HandleMessageReceived(ircMessage, source, targets, text);
         }
 
-        void IIrcMessageReceiveHandler.HandleNoticeReceived(IIrcMessageSource source, IList<IIrcMessageTarget> targets,
+        void IIrcMessageReceiveHandler.HandleNoticeReceived(IrcMessage ircMessage, IIrcMessageSource source, IList<IIrcMessageTarget> targets,
             string text)
         {
-            HandleNoticeReceived(source, targets, text);
+            HandleNoticeReceived(ircMessage, source, targets, text);
         }
 
         #endregion

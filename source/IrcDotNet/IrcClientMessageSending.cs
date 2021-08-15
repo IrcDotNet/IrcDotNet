@@ -26,9 +26,10 @@ namespace IrcDotNet
         ///     <see cref="SendMessageUser" /> (for normal users) or <see cref="SendMessageService" /> (for services).
         /// </summary>
         /// <param name="password">The connection password.</param>
-        protected void SendMessagePassword(string password)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessagePassword(string password)
         {
-            WriteMessage(null, "pass", password);
+            return WriteMessage(null, "pass", password);
         }
 
         /// <summary>
@@ -36,9 +37,10 @@ namespace IrcDotNet
         ///     the nick name or changing it at any point.
         /// </summary>
         /// <param name="nickName">The nick name to set.</param>
-        protected void SendMessageNick(string nickName)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageNick(string nickName)
         {
-            WriteMessage(null, "nick", nickName);
+            return WriteMessage(null, "nick", nickName);
         }
 
         /// <summary>
@@ -83,9 +85,10 @@ namespace IrcDotNet
         /// <param name="userName">The user name of the user.</param>
         /// <param name="userMode">The initial mode of the user.</param>
         /// <param name="realName">The real name of the user.</param>
-        protected void SendMessageUser(string userName, int userMode, string realName)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageUser(string userName, int userMode, string realName)
         {
-            WriteMessage(null, "user", userName, userMode.ToString(), "*", realName);
+            return WriteMessage(null, "user", userName, userMode.ToString(), "*", realName);
         }
 
         /// <summary>
@@ -97,9 +100,10 @@ namespace IrcDotNet
         ///     the service is visible.
         /// </param>
         /// <param name="description">A description of the service.</param>
-        protected void SendMessageService(string nickName, string distribution, string description = "")
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageService(string nickName, string distribution, string description = "")
         {
-            WriteMessage(null, "service", nickName, distribution, "0", "0", description);
+            return WriteMessage(null, "service", nickName, distribution, "0", "0", description);
         }
 
         /// <summary>
@@ -107,9 +111,10 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="userName">The user name with which to register.</param>
         /// <param name="password">The password with which to register.</param>
-        protected void SendMessageOper(string userName, string password)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageOper(string userName, string password)
         {
-            WriteMessage(null, "oper", userName, password);
+            return WriteMessage(null, "oper", userName, password);
         }
 
         /// <summary>
@@ -117,18 +122,20 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="nickName">The nick name of the user whose modes to update/request.</param>
         /// <param name="modes">The mode string that indicates the user modes to change.</param>
-        protected void SendMessageUserMode(string nickName, string modes = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageUserMode(string nickName, string modes = null)
         {
-            WriteMessage(null, "mode", nickName, modes);
+            return WriteMessage(null, "mode", nickName, modes);
         }
 
         /// <summary>
         ///     Sends a notification to the server indicating that the client is quitting the network.
         /// </summary>
         /// <param name="comment">The comment to send the server, or <see langword="null" /> for none.</param>
-        protected void SendMessageQuit(string comment = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageQuit(string comment = null)
         {
-            WriteMessage(null, "quit", comment);
+            return WriteMessage(null, "quit", comment);
         }
 
         /// <summary>
@@ -137,29 +144,32 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="targetServer">The name of the server to disconnected from the network.</param>
         /// <param name="comment">The comment to send the server.</param>
-        protected void SendMessageSquit(string targetServer, string comment)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageSquit(string targetServer, string comment)
         {
-            WriteMessage(null, "squit", targetServer, comment);
+            return WriteMessage(null, "squit", targetServer, comment);
         }
 
         /// <summary>
         ///     Sends a request to leave all channels in which the user is currently present.
         /// </summary>
-        protected void SendMessageLeaveAll()
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageLeaveAll()
         {
-            WriteMessage(null, "join", "0");
+            return WriteMessage(null, "join", "0");
         }
 
         /// <inheritdoc cref="SendMessageJoin(IEnumerable{string})" />
         /// <param name="channels">A collection of 2-tuples of the names and keys of the channels to join.</param>
-        protected void SendMessageJoin(IEnumerable<Tuple<string, string>> channels)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageJoin(IEnumerable<Tuple<string, string>> channels)
         {
             var secureChannels = channels.Select(c =>
             {
                 EnsureChannelName(c.Item1);
                 return c;
             }).ToList();
-            WriteMessage(null, "join", string.Join(",", secureChannels.Select(c => c.Item1)),
+            return WriteMessage(null, "join", string.Join(",", secureChannels.Select(c => c.Item1)),
                 string.Join(",", secureChannels.Select(c => c.Item2)));
         }
 
@@ -167,14 +177,15 @@ namespace IrcDotNet
         ///     Sends a request to join the specified channels.
         /// </summary>
         /// <param name="channels">A collection of the names of the channels to join.</param>
-        protected void SendMessageJoin(IEnumerable<string> channels)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageJoin(IEnumerable<string> channels)
         {
             var secureChannels = channels.Select(c =>
             {
                 EnsureChannelName(c);
                 return c;
             }).ToList();
-            WriteMessage(null, "join", string.Join(",", secureChannels));
+            return WriteMessage(null, "join", string.Join(",", secureChannels));
         }
 
         /// <summary>
@@ -182,9 +193,10 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="channels">A collection of the names of the channels to leave.</param>
         /// <param name="comment">The comment to send the server, or <see langword="null" /> for none.</param>
-        protected void SendMessagePart(IEnumerable<string> channels, string comment = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessagePart(IEnumerable<string> channels, string comment = null)
         {
-            WriteMessage(null, "part", string.Join(",", channels), comment);
+            return WriteMessage(null, "part", string.Join(",", channels), comment);
         }
 
         /// <summary>
@@ -193,7 +205,8 @@ namespace IrcDotNet
         /// <param name="channel">The channel whose modes to update.</param>
         /// <param name="modes">The mode string that indicates the channel modes to change.</param>
         /// <param name="modeParameters">A collection of parameters to the specified <paramref name="modes" />.</param>
-        protected void SendMessageChannelMode(string channel, string modes = null,
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageChannelMode(string channel, string modes = null,
             IEnumerable<string> modeParameters = null)
         {
             string modeParametersList = null;
@@ -204,7 +217,7 @@ namespace IrcDotNet
                     throw new ArgumentException(Resources.MessageTooManyModeParameters);
                 modeParametersList = string.Join(",", modeParametersArray);
             }
-            WriteMessage(null, "mode", channel, modes, modeParametersList);
+            return WriteMessage(null, "mode", channel, modes, modeParametersList);
         }
 
         /// <summary>
@@ -212,9 +225,10 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="channel">The name of the channel whose topic to change.</param>
         /// <param name="topic">The new topic to set, or <see langword="null" /> to request the current topic.</param>
-        protected void SendMessageTopic(string channel, string topic = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageTopic(string channel, string topic = null)
         {
-            WriteMessage(null, "topic", channel, topic);
+            return WriteMessage(null, "topic", channel, topic);
         }
 
         /// <summary>
@@ -228,9 +242,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageNames(IEnumerable<string> channels = null, string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageNames(IEnumerable<string> channels = null, string targetServer = null)
         {
-            WriteMessage(null, "names", channels == null ? null : string.Join(",", channels), targetServer);
+            return WriteMessage(null, "names", channels == null ? null : string.Join(",", channels), targetServer);
         }
 
         /// <summary>
@@ -244,9 +259,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageList(IEnumerable<string> channels = null, string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageList(IEnumerable<string> channels = null, string targetServer = null)
         {
-            WriteMessage(null, "list", channels == null ? null : string.Join(",", channels), targetServer);
+            return WriteMessage(null, "list", channels == null ? null : string.Join(",", channels), targetServer);
         }
 
         /// <summary>
@@ -254,17 +270,19 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="channel">The name of the channel to which to invite the user.</param>
         /// <param name="nickName">The nick name of the user to invite.</param>
-        protected void SendMessageInvite(string channel, string nickName)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageInvite(string channel, string nickName)
         {
-            WriteMessage(null, "invite", nickName, channel);
+            return WriteMessage(null, "invite", nickName, channel);
         }
 
         /// <inheritdoc cref="SendMessageKick(IEnumerable{Tuple{string, string}}, string)" />
         /// <param name="channel">The name of the channel from which to kick the users.</param>
         /// <param name="nickNames">A collection of the nick names of the users to kick from the channel.</param>
-        protected void SendMessageKick(string channel, IEnumerable<string> nickNames, string comment = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageKick(string channel, IEnumerable<string> nickNames, string comment = null)
         {
-            WriteMessage(null, "kick", channel, string.Join(",", nickNames), comment);
+            return WriteMessage(null, "kick", channel, string.Join(",", nickNames), comment);
         }
 
         /// <summary>
@@ -275,9 +293,10 @@ namespace IrcDotNet
         ///     kick from the channel.
         /// </param>
         /// <param name="comment">The comment to send the server, or <see langword="null" /> for none.</param>
-        protected void SendMessageKick(IEnumerable<Tuple<string, string>> channelsUsers, string comment = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageKick(IEnumerable<Tuple<string, string>> channelsUsers, string comment = null)
         {
-            WriteMessage(null, "kick", string.Join(",", channelsUsers.Select(user => user.Item1)),
+            return WriteMessage(null, "kick", string.Join(",", channelsUsers.Select(user => user.Item1)),
                 string.Join(",", channelsUsers.Select(user => user.Item2)), comment);
         }
 
@@ -286,7 +305,8 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="targets">A collection of the targets to which to send the message.</param>
         /// <param name="text">The text of the message to send.</param>
-        protected void SendMessagePrivateMessage(IEnumerable<string> targets, string text)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessagePrivateMessage(IEnumerable<string> targets, string text)
         {
             var targetsArray = targets.ToArray();
             foreach (var target in targetsArray)
@@ -294,7 +314,7 @@ namespace IrcDotNet
                 if (target.Contains(","))
                     throw new ArgumentException(Resources.MessageInvalidTargetName, "arguments");
             }
-            WriteMessage(null, "privmsg", string.Join(",", targetsArray), text);
+            return WriteMessage(null, "privmsg", string.Join(",", targetsArray), text);
         }
 
         /// <summary>
@@ -302,7 +322,8 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="targets">A collection of the targets to which to send the message.</param>
         /// <param name="text">The text of the message to send.</param>
-        protected void SendMessageNotice(IEnumerable<string> targets, string text)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageNotice(IEnumerable<string> targets, string text)
         {
             var targetsArray = targets.ToArray();
             foreach (var target in targetsArray)
@@ -310,7 +331,7 @@ namespace IrcDotNet
                 if (target.Contains(","))
                     throw new ArgumentException(Resources.MessageInvalidTargetName, "arguments");
             }
-            WriteMessage(null, "notice", string.Join(",", targetsArray), text);
+            return WriteMessage(null, "notice", string.Join(",", targetsArray), text);
         }
 
         /// <summary>
@@ -320,9 +341,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" /> for
         ///     the current server.
         /// </param>
-        protected void SendMessageMotd(string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageMotd(string targetServer = null)
         {
-            WriteMessage(null, "motd", targetServer);
+            return WriteMessage(null, "motd", targetServer);
         }
 
         /// <summary>
@@ -336,9 +358,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageLUsers(string serverMask = null, string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageLUsers(string serverMask = null, string targetServer = null)
         {
-            WriteMessage(null, "lusers", serverMask, targetServer);
+            return WriteMessage(null, "lusers", serverMask, targetServer);
         }
 
         /// <summary>
@@ -348,9 +371,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageVersion(string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageVersion(string targetServer = null)
         {
-            WriteMessage(null, "version", targetServer);
+            return WriteMessage(null, "version", targetServer);
         }
 
         /// <summary>
@@ -361,9 +385,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageStats(string query = null, string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageStats(string query = null, string targetServer = null)
         {
-            WriteMessage(null, "stats", query, targetServer);
+            return WriteMessage(null, "stats", query, targetServer);
         }
 
         /// <summary>
@@ -374,9 +399,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageLinks(string serverMask = null, string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageLinks(string serverMask = null, string targetServer = null)
         {
-            WriteMessage(null, "links", targetServer, serverMask);
+            return WriteMessage(null, "links", targetServer, serverMask);
         }
 
         /// <summary>
@@ -386,9 +412,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageTime(string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageTime(string targetServer = null)
         {
-            WriteMessage(null, "time", targetServer);
+            return WriteMessage(null, "time", targetServer);
         }
 
         /// <summary>
@@ -400,9 +427,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageConnect(string hostName, int port, string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageConnect(string hostName, int port, string targetServer = null)
         {
-            WriteMessage(null, "connect", hostName, port.ToString(), targetServer);
+            return WriteMessage(null, "connect", hostName, port.ToString(), targetServer);
         }
 
         /// <summary>
@@ -412,9 +440,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageTrace(string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageTrace(string targetServer = null)
         {
-            WriteMessage(null, "trace", targetServer);
+            return WriteMessage(null, "trace", targetServer);
         }
 
         /// <summary>
@@ -424,9 +453,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageAdmin(string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageAdmin(string targetServer = null)
         {
-            WriteMessage(null, "admin", targetServer);
+            return WriteMessage(null, "admin", targetServer);
         }
 
         /// <summary>
@@ -436,9 +466,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageInfo(string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageInfo(string targetServer = null)
         {
-            WriteMessage(null, "info", targetServer);
+            return WriteMessage(null, "info", targetServer);
         }
 
         /// <summary>
@@ -446,9 +477,10 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="mask">A wildcard expression for matching against the names of services.</param>
         /// <param name="type">The type of services to list.</param>
-        protected void SendMessageServlist(string mask = null, string type = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageServlist(string mask = null, string type = null)
         {
-            WriteMessage(null, "servlist", mask, type);
+            return WriteMessage(null, "servlist", mask, type);
         }
 
         /// <summary>
@@ -456,9 +488,10 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="serviceName">The name of the service.</param>
         /// <param name="text">The text of the message to send.</param>
-        protected void SendMessageSquery(string serviceName, string text)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageSquery(string serviceName, string text)
         {
-            WriteMessage(null, "squery", serviceName, text);
+            return WriteMessage(null, "squery", serviceName, text);
         }
 
         /// <summary>
@@ -473,9 +506,10 @@ namespace IrcDotNet
         ///     <see langword="true" /> to match only server operators;
         ///     <see langword="false" /> to match all users.
         /// </param>
-        protected void SendMessageWho(string mask = null, bool onlyOperators = false)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageWho(string mask = null, bool onlyOperators = false)
         {
-            WriteMessage(null, "who", mask, onlyOperators ? "o" : null);
+            return WriteMessage(null, "who", mask, onlyOperators ? "o" : null);
         }
 
         /// <summary>
@@ -489,9 +523,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageWhoIs(IEnumerable<string> nickNameMasks, string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageWhoIs(IEnumerable<string> nickNameMasks, string targetServer = null)
         {
-            WriteMessage(null, "whois", targetServer, string.Join(",", nickNameMasks));
+            return WriteMessage(null, "whois", targetServer, string.Join(",", nickNameMasks));
         }
 
         /// <summary>
@@ -506,10 +541,11 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageWhoWas(IEnumerable<string> nickNames, int entriesCount = -1,
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageWhoWas(IEnumerable<string> nickNames, int entriesCount = -1,
             string targetServer = null)
         {
-            WriteMessage(null, "whowas", string.Join(",", nickNames), entriesCount.ToString(), targetServer);
+            return WriteMessage(null, "whowas", string.Join(",", nickNames), entriesCount.ToString(), targetServer);
         }
 
         /// <summary>
@@ -517,9 +553,10 @@ namespace IrcDotNet
         /// </summary>
         /// <param name="nickName">The nick name of the user to disconnect.</param>
         /// <param name="comment">The comment to send the server.</param>
-        protected void SendMessageKill(string nickName, string comment)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageKill(string nickName, string comment)
         {
-            WriteMessage(null, "kill", nickName, comment);
+            return WriteMessage(null, "kill", nickName, comment);
         }
 
         /// <summary>
@@ -530,9 +567,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessagePing(string server, string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessagePing(string server, string targetServer = null)
         {
-            WriteMessage(null, "ping", server, targetServer);
+            return WriteMessage(null, "ping", server, targetServer);
         }
 
         /// <summary>
@@ -543,9 +581,10 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessagePong(string server, string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessagePong(string server, string targetServer = null)
         {
-            WriteMessage(null, "pong", server, targetServer);
+            return WriteMessage(null, "pong", server, targetServer);
         }
 
         /// <summary>
@@ -555,33 +594,37 @@ namespace IrcDotNet
         ///     The text of the away message. The away message is sent to any user that tries to contact
         ///     the local user while it is away.
         /// </param>
-        protected void SendMessageAway(string text = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageAway(string text = null)
         {
-            WriteMessage(null, "away", text);
+            return WriteMessage(null, "away", text);
         }
 
         /// <summary>
         ///     Sends a request to the server telling it to reprocess its configuration settings.
         /// </summary>
-        protected void SendMessageRehash()
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageRehash()
         {
-            WriteMessage(null, "rehash");
+            return WriteMessage(null, "rehash");
         }
 
         /// <summary>
         ///     Sends a request to the server telling it to shut down.
         /// </summary>
-        protected void SendMessageDie()
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageDie()
         {
-            WriteMessage(null, "die");
+            return WriteMessage(null, "die");
         }
 
         /// <summary>
         ///     Sends a message to the server telling it to restart.
         /// </summary>
-        protected void SendMessageRestart()
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageRestart()
         {
-            WriteMessage(null, "restart");
+            return WriteMessage(null, "restart");
         }
 
         /// <summary>
@@ -591,36 +634,40 @@ namespace IrcDotNet
         ///     The name of the server to which to forward the message, or <see langword="null" />
         ///     for the current server.
         /// </param>
-        protected void SendMessageUsers(string targetServer = null)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageUsers(string targetServer = null)
         {
-            WriteMessage(null, "users", targetServer);
+            return WriteMessage(null, "users", targetServer);
         }
 
         /// <summary>
         ///     Sends a message to all connected users that have the 'w' mode set.
         /// </summary>
         /// <param name="text">The text of the message to send.</param>
-        protected void SendMessageWallops(string text)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageWallops(string text)
         {
-            WriteMessage(null, "wallops", text);
+            return WriteMessage(null, "wallops", text);
         }
 
         /// <summary>
         ///     Sends a request to return the host names of the specified users.
         /// </summary>
         /// <param name="nickNames">A collection of the nick names of the users to query.</param>
-        protected void SendMessageUserHost(IEnumerable<string> nickNames)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageUserHost(IEnumerable<string> nickNames)
         {
-            WriteMessage(null, "userhost", nickNames);
+            return WriteMessage(null, "userhost", nickNames);
         }
 
         /// <summary>
         ///     Sends a request to check whether the specified users are currently online.
         /// </summary>
         /// <param name="nickNames">A collection of the nick names of the users to query.</param>
-        protected void SendMessageIsOn(IEnumerable<string> nickNames)
+        /// <returns>The produced <see cref="IrcMessage"/></returns>
+        protected IrcMessage SendMessageIsOn(IEnumerable<string> nickNames)
         {
-            WriteMessage(null, "ison", nickNames);
+            return WriteMessage(null, "ison", nickNames);
         }
     }
 }
