@@ -298,6 +298,44 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        ///     Process CAP messages received from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("cap")]
+        protected internal void ProcessMessageCap(IrcMessage message)
+        {
+            string subCmd = message.Parameters[1];
+            Debug.Assert(subCmd != null);
+
+            switch (subCmd.ToUpper())
+            {
+                case "LS":
+                    string[] caps = message.Parameters[2]?.Split(' ');
+                    Debug.Assert(caps != null);
+
+                    serverCapabilities.Clear();
+                    serverCapabilities.AddRange(caps);
+
+                    OnServerCapabilitiesReceived(new EventArgs());
+                    break;
+                case "LIST":
+                    string[] active = message.Parameters[2]?.Split(' ');
+                    OnActiveCapabilitiesReceived(new ActiveCapabilitiesEventArgs(active));
+                    break;
+                case "ACK":
+                    string[] ackd = message.Parameters[2]?.Split(' ');
+                    OnCapabilityAcknowledged(new CapabilityAcknowledgedEventArgs(true, ackd));
+                    SendMessageCapEnd();
+                    break;
+                case "NACK":
+                    string[] nakd = message.Parameters[2]?.Split(' ');
+                    OnCapabilityAcknowledged(new CapabilityAcknowledgedEventArgs(false, nakd));
+                    SendMessageCapEnd();
+                    break;
+            }
+        }
+
+        /// <summary>
         ///     Process RPL_WELCOME responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>

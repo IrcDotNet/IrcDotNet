@@ -548,6 +548,61 @@ namespace IrcDotNet
     }
 
     /// <summary>
+    ///     Provides data for the <see cref="IrcClient.ActiveCapabilitiesReceived" /> event.
+    /// </summary>
+    /// <threadsafety static="true" instance="false" />
+    public class ActiveCapabilitiesEventArgs : EventArgs
+    {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ActiveCapabilitiesEventArgs" /> class.
+        /// </summary>
+        /// <param name="caps">The list of active capabilities</param>
+        public ActiveCapabilitiesEventArgs(string[] caps)
+        {
+            if (caps == null)
+                throw new ArgumentNullException("caps");
+
+            Capabilities = caps;
+        }
+
+        /// <summary>
+        ///     Gets the list of capabilities.
+        /// </summary>
+        /// <value>The list of capabilities.</value>
+        public string[] Capabilities { get; private set; }
+    }
+
+    /// <summary>
+    ///     Provides data for the <see cref="IrcClient.CapabilityAcknowledged" /> event.
+    /// </summary>
+    /// <threadsafety static="true" instance="false" />
+    public class CapabilityAcknowledgedEventArgs : EventArgs
+    {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="CapabilityAcknowledgedEventArgs" /> class.
+        /// </summary>
+        /// <param name="acknowledged">Whether (ACK) or not (NAK) the request has been acknowledged by the server</param>
+        /// <param name="caps">The list of active capabilities</param>
+        public CapabilityAcknowledgedEventArgs(bool acknowledged, string[] caps)
+        {
+            Capabilities = caps;
+            Acknowledged = acknowledged;
+        }
+
+        /// <summary>
+        ///     Gets the list of capabilities.
+        /// </summary>
+        /// <value>The list of capabilities.</value>
+        public string[] Capabilities { get; private set; }
+
+        /// <summary>
+        ///     Gets whether (ACK) or not (NAK) the request has been acknowledged by the server.
+        /// </summary>
+        /// <value>Whether (ACK) or not (NAK) the request has been acknowledged by the server.</value>
+        public bool Acknowledged { get; private set; }
+    }
+
+    /// <summary>
     ///     Provides data for the <see cref="IrcClient.ProtocolError" /> event.
     /// </summary>
     /// <threadsafety static="true" instance="false" />
