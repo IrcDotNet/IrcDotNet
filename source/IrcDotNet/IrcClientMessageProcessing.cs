@@ -1084,6 +1084,18 @@ namespace IrcDotNet
         }
 
         /// <summary>
+        ///     Process RPL_WHOSPCRPL responses from the server.
+        /// </summary>
+        /// <param name="message">The message received from the server.</param>
+        [MessageProcessor("354")]
+        protected internal void ProcessMessageReplyWhoXReply(IrcMessage message)
+        {
+            Debug.Assert(message.Parameters[0] == localUser.NickName);
+
+            OnWhoXReplyReceived(new IrcRawMessageEventArgs(message, message.Parameters[1]));
+        }
+
+        /// <summary>
         ///     Process RPL_LINKS responses from the server.
         /// </summary>
         /// <param name="message">The message received from the server.</param>
