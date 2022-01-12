@@ -22,6 +22,4 @@ This project was formerly hosted on [Launchpad](https://launchpad.net/ircdotnet)
 
 ## Help
 
-* Talk to us on our [IRC channel](irc://chat.freenode.net/##irc.net) (*##irc.net* on Freenode).
-
 * If you have confirmed that the behaviour is unexpected, submit an [issue](https://github.com/ircdotnet/ircdotnet/issues) on GitHub.
